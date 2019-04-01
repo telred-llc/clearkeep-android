@@ -362,7 +362,7 @@ public class CommonActivityUtils {
 
                     // go to login page
 //                    Intent intent = new Intent(activeActivity, LoginActivity.class);
-                    Intent intent = new Intent(activeActivity, vmodev.clearkeep.Activities.LoginActivity.class);
+                    Intent intent = new Intent(activeActivity, vmodev.clearkeep.activities.LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
                     if (null != activeActivity) {

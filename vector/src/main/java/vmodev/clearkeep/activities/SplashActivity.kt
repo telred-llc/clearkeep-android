@@ -1,12 +1,10 @@
-package vmodev.clearkeep.Activities
+package vmodev.clearkeep.activities
 
 import android.content.Intent
 import android.databinding.DataBindingUtil
-import android.graphics.drawable.Drawable
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import im.vector.R
-import im.vector.activity.VectorLauncherActivity
 import im.vector.databinding.ActivitySplashBinding
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers

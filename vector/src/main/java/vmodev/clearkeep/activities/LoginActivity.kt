@@ -1,12 +1,11 @@
-package vmodev.clearkeep.Activities
+package vmodev.clearkeep.activities
 
-import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import im.vector.R
 import kotlinx.android.synthetic.main.activity_login.*
-import vmodev.clearkeep.Fragments.LoginFragment
+import vmodev.clearkeep.fragments.LoginFragment
 
 class LoginActivity : AppCompatActivity(), LoginFragment.OnFragmentInteractionListener {
 

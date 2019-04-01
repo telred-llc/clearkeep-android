@@ -92,8 +92,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         tools:replace="allowBackup,label">
-        <activity android:name="vmodev.clearkeep.Activities.LoginActivity"></activity>
-        <activity android:name="vmodev.clearkeep.Activities.SplashActivity">
+        <activity android:name="vmodev.clearkeep.activities.LoginActivity"></activity>
+        <activity android:name="vmodev.clearkeep.activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
