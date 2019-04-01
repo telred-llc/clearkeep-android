@@ -84,7 +84,7 @@
         android:name=".VectorApp"
         android:allowBackup="false"
         android:description="@string/store_short_description"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_app_icon"
         android:label="@string/riot_app_name"
         android:largeHeap="true"
         android:resizeableActivity="true"
@@ -92,19 +92,27 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         tools:replace="allowBackup,label">
-        <activity android:name="vmodev.clearkeep.SplashActivity"></activity>
-        <!-- No limit for screen ratio: avoid black strips -->
+        <activity android:name="vmodev.clearkeep.Activities.LoginActivity"></activity>
+        <activity android:name="vmodev.clearkeep.Activities.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity> <!-- No limit for screen ratio: avoid black strips -->
         <meta-data
             android:name="android.max_aspect"
             android:value="9.9" /> <!-- activities list starts here -->
         <activity
             android:name=".activity.VectorLauncherActivity"
             android:theme="@style/AppTheme.Launcher">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+             <!--<intent-filter>-->
+             <!--<action android:name="android.intent.action.MAIN" />-->
+
+
+             <!--<category android:name="android.intent.category.LAUNCHER" />-->
+             <!--</intent-filter>-->
         </activity>
         <activity
             android:name=".activity.LoginActivity"

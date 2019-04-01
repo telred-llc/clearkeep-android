@@ -32,6 +32,7 @@ import org.matrix.androidsdk.rest.callback.ApiCallback;
 import org.matrix.androidsdk.rest.model.MatrixError;
 import org.matrix.androidsdk.util.Log;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,6 +49,8 @@ import im.vector.push.PushManager;
 import im.vector.receiver.VectorUniversalLinkReceiver;
 import im.vector.services.EventStreamService;
 import im.vector.util.PreferencesManager;
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 /**
  * SplashActivity displays a splash while loading and initializing the client.
@@ -70,7 +73,7 @@ public class SplashActivity extends MXCActionBarActivity {
      * ========================================================================================== */
 
     @BindView(R.id.animated_logo_image_view)
-    ImageView animatedLogo;
+    GifImageView animatedLogo;
 
     /**
      * @return true if a store is corrupted.
@@ -148,7 +151,12 @@ public class SplashActivity extends MXCActionBarActivity {
             finish();
             return;
         }
-
+//        try {
+//            GifDrawable drawable = new GifDrawable(getAssets(), "splash_animation.gif");
+//            animatedLogo.setBackground(drawable);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         // Check if store is corrupted, due to change of type of some maps from HashMap to Map in Serialized objects
         // Only on Android 7.1+
         // Only if previous versionCode of the installation is < 81200
@@ -166,10 +174,11 @@ public class SplashActivity extends MXCActionBarActivity {
             return;
         }
 
-        Drawable background = animatedLogo.getBackground();
-        if (background instanceof AnimationDrawable) {
-            ((AnimationDrawable) background).start();
-        }
+//        Drawable background = animatedLogo.getBackground();
+//        if (background instanceof AnimationDrawable) {
+//            ((AnimationDrawable) background).start();
+//        }
+
 
         // Check the lazy loading status
         checkLazyLoadingStatus(sessions);

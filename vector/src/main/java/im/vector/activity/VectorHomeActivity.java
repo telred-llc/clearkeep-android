@@ -141,6 +141,7 @@ import im.vector.util.VectorUtils;
 import im.vector.view.KeysBackupBanner;
 import im.vector.view.UnreadCounterBadgeView;
 import im.vector.view.VectorPendingCallView;
+import vmodev.clearkeep.Activities.LoginActivity;
 
 /**
  * Displays the main screen of the app, with rooms the user has joined and the ability to create

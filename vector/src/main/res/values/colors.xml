@@ -145,6 +145,10 @@
 
     <!-- Notification (do not depends on theme -->
     <color name="notification_accent_color">#368BD6</color>
+    <color name="login_background_main_color">#3C4B62</color>
+    <color name="main_text_color_hint">#B8BDC7</color>
+    <color name="main_text_color">#FFFFFF</color>
+    <color name="button_login_background_color">#25B4CA</color>
 
 
 </resources>
