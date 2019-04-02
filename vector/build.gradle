@@ -348,7 +348,9 @@ dependencies {
     implementation 'android.arch.lifecycle:runtime:1.1.1'
     kapt 'android.arch.lifecycle:compiler:1.1.1'
     implementation 'android.arch.lifecycle:reactivestreams:1.1.1'
-
+    implementation "android.arch.persistence.room:runtime:1.1.1"
+    kapt "android.arch.persistence.room:compiler:1.1.1"
+    implementation "android.arch.persistence.room:rxjava2:1.1.1"
     //===========================================================================//
 
     //======================= Android Gif Drawable =============================//

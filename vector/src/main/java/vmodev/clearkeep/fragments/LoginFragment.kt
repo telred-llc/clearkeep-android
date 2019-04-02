@@ -78,21 +78,21 @@ class LoginFragment : Fragment() {
                     override fun onNetworkError(e: Exception?) {
                         onPressedClose();
                         if (e != null) {
-                            showAlertDiaglong("Sign In Error", e.message!!)
+                            showAlertDiaglong("Sign in error", e.message!!)
                         }
                     }
 
                     override fun onMatrixError(e: MatrixError?) {
                         onPressedClose();
                         if (e != null) {
-                            showAlertDiaglong("Sign In Error", e.message)
+                            showAlertDiaglong("Sign in error", e.message)
                         };
                     }
 
                     override fun onUnexpectedError(e: Exception?) {
                         onPressedClose();
                         if (e != null) {
-                            showAlertDiaglong("Sign In Error", e.message!!)
+                            showAlertDiaglong("Sign in error", e.message!!)
                         }
                     }
                 });
