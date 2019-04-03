@@ -98,6 +98,9 @@ class LoginFragment : Fragment() {
                 });
             }
         });
+        view.findViewById<Button>(R.id.button_sign_up).setOnClickListener { v -> run {
+            onPressedSignUp();
+        } }
         return view;
     }
 
@@ -122,6 +125,9 @@ class LoginFragment : Fragment() {
 
     fun onPressedClose() {
         listener?.hideLoading();
+    }
+    fun onPressedSignUp(){
+        listener?.onPressedSignUp();
     }
 
     override fun onAttach(context: Context) {
@@ -150,11 +156,10 @@ class LoginFragment : Fragment() {
      * for more information.
      */
     interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         fun onLoginSuccess()
-
         fun showLoading();
         fun hideLoading();
+        fun onPressedSignUp();
     }
 
     companion object {
