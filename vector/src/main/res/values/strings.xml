@@ -1409,5 +1409,8 @@ Why choose Riot.im?
     <string name="verify_email_content">We sent you an email verification. Please verify it to complete the registration</string>
     <string name="error_empty_field_your_password_confirm">Please enter your confirm password.</string>
     <string name="error_empty_field_enter_user_name_or_email">Please enter a username or email.</string>
+    <string name="password_too_short">Password too short (min 6)</string>
+    <string name="password_too_long">Password too long (max 15)</string>
+    <string name="password_contain_space">Password cannot contain space character</string>
 
 </resources>

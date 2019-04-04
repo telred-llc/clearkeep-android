@@ -53,7 +53,7 @@ class HandlerVerifyEmailFragment : Fragment() {
 //        view.findViewById<RelativeLayout>(R.id.relative_layout_background).background = rainbow;
         view.findViewById<Button>(R.id.button_cancel).setOnClickListener { v ->
             run {
-                AlertDialog.Builder(this.context).setTitle("Cancel Registration").setMessage("Are you sure cancel the registration?").setPositiveButton("Yes", { dialog, which ->
+                AlertDialog.Builder(this.context).setTitle("Cancel Registration").setMessage("Are you sure to cancel this registration?").setPositiveButton("Yes", { dialog, which ->
                     run {
                         onButtonPressed()
                     }

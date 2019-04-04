@@ -56,11 +56,10 @@ class SignUpFragment : Fragment() {
         view.findViewById<Button>(R.id.button_register).setOnClickListener { v ->
             kotlin.run {
                 var email = text_input_edit_text_username.text.toString().trim();
-                var username : String = "";
-                if (isEmailValid(email)){
+                var username: String = "";
+                if (isEmailValid(email)) {
                     username = email.split("@")[0];
-                }
-                else{
+                } else {
                     email = "";
                     username = text_input_edit_text_username.text.toString().trim();
                 }
@@ -82,6 +81,18 @@ class SignUpFragment : Fragment() {
                 }
                 if (TextUtils.isEmpty(password)) {
                     text_input_edit_text_password.setError(getString(R.string.error_empty_field_your_password));
+                    return@run;
+                }
+                if (password.length < 6) {
+                    showAlertDiaglong("Password error", getString(R.string.password_too_short));
+                    return@run;
+                }
+                if (password.length > 15) {
+                    showAlertDiaglong("Password error", getString(R.string.password_too_long));
+                    return@run;
+                }
+                if (password.contains(" ")){
+                    showAlertDiaglong("Password error", getString(R.string.password_contain_space));
                     return@run;
                 }
                 if (TextUtils.isEmpty(confirmPassword)) {
@@ -149,6 +160,7 @@ class SignUpFragment : Fragment() {
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         fun onPressedHaveAnAccount()
+
         fun onPressedRegister(username: String, email: String, password: String);
     }
 

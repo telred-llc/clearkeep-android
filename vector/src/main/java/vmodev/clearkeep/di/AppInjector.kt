@@ -7,6 +7,5 @@ import vmodev.clearkeep.applications.ClearKeepApplication
  */
 object AppInjector {
     fun init(clearKeepApplication: ClearKeepApplication){
-        
     }
 }
