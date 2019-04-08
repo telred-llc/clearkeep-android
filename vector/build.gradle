@@ -357,6 +357,9 @@ dependencies {
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.+'
 
     //==========================================================================//
+    //======================== Circle ImageView ================================//
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
+    //==========================================================================//
 }
 
 

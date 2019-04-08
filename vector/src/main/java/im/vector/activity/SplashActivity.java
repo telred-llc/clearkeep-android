@@ -51,6 +51,7 @@ import im.vector.services.EventStreamService;
 import im.vector.util.PreferencesManager;
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
+import vmodev.clearkeep.activities.HomeScreenActivity;
 
 /**
  * SplashActivity displays a splash while loading and initializing the client.
@@ -102,8 +103,8 @@ public class SplashActivity extends MXCActionBarActivity {
 
         if (!hasCorruptedStore()) {
             // Go to the home page
-            Intent intent = new Intent(this, VectorHomeActivity.class);
-
+//            Intent intent = new Intent(this, VectorHomeActivity.class);
+            Intent intent = new Intent(this, HomeScreenActivity.class);
             Bundle receivedBundle = getIntent().getExtras();
 
             if (null != receivedBundle) {

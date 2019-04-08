@@ -149,6 +149,9 @@
     <color name="main_text_color_hint">#B8BDC7</color>
     <color name="main_text_color">#FFFFFF</color>
     <color name="button_login_background_color">#25B4CA</color>
+    <color name="home_screen_bottom_navigation_view_background">#F3F2F3</color>
+    <color name="app_green">#63CD9A</color>
+    <color name="lock_background">#BBBBBB</color>
 
 
 </resources>

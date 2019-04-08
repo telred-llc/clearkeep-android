@@ -1412,5 +1412,8 @@ Why choose Riot.im?
     <string name="password_too_short">Password too short (min 6)</string>
     <string name="password_too_long">Password too long (max 15)</string>
     <string name="password_contain_space">Password cannot contain space character</string>
+    <string name="home">Home</string>
+    <string name="contacts">Contacts</string>
+    <string name="date_default">Mar 27</string>
 
 </resources>
