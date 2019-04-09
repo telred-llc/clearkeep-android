@@ -4,7 +4,9 @@ import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.SearchView
 import android.util.Log
+import android.view.View
 import im.vector.Matrix
 import im.vector.R
 import im.vector.util.HomeRoomsViewModel
@@ -31,6 +33,7 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home_screen)
         mxSession = Matrix.getInstance(this).defaultSession;
+
         bottom_navigation_view_home_screen.setOnNavigationItemSelectedListener({ menuItem ->
             kotlin.run {
                 when (menuItem.itemId) {
@@ -51,6 +54,11 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
         VectorUtils.loadUserAvatar(this, mxSession, circle_image_view_avatar, mxSession.myUser);
         homeRoomViewModel = HomeRoomsViewModel(mxSession);
         addMxEventListener();
+        search_view.setOnSearchClickListener { v -> kotlin.run { Log.d("Click: ", v.toString()) } }
+        search_view.setOnQueryTextFocusChangeListener(View.OnFocusChangeListener { v, hasFocus -> kotlin.run { Log.d("Focus: ", hasFocus.toString()) } })
+        search_view.queryHint = getString(R.string.search);
+        search_view.setIconifiedByDefault(false);
+        switchFragment(HomeScreenFragment.newInstance(directMessages, rooms));
     }
 
     private fun switchFragment(fragment: Fragment) {
