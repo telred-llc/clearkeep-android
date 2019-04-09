@@ -30,8 +30,6 @@ private const val LIST_CONTACT = "LIST_CONTACT"
  *
  */
 class ContactsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var listContact: Array<Room>? = null
     private var listener: OnFragmentInteractionListener? = null
 
     private lateinit var recyclerView: RecyclerView;
@@ -39,7 +37,6 @@ class ContactsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            listContact = it.getSerializable(LIST_CONTACT) as Array<Room>;
         }
     }
 
@@ -52,7 +49,8 @@ class ContactsFragment : Fragment() {
         val dividerItemDecoration = DividerItemDecoration(this.context, layoutManager.orientation);
         recyclerView.layoutManager = layoutManager;
         recyclerView.addItemDecoration(dividerItemDecoration);
-        val directMessageRecyclerViewAdapter = DirectMessageRecyclerViewAdapter(this!!.listContact!!, onGetMXSession());
+        val directMessageRecyclerViewAdapter = DirectMessageRecyclerViewAdapter(this!!.onGetListContact(), onGetMXSession());
+        directMessageRecyclerViewAdapter.publishSubject.subscribe { r ->kotlin.run { onClickItem(r) } };
         recyclerView.adapter = directMessageRecyclerViewAdapter;
         return view;
     }
@@ -60,6 +58,12 @@ class ContactsFragment : Fragment() {
     // TODO: Rename method, update argument and hook method into UI event
     fun onGetMXSession() : MXSession {
         return listener?.onGetMXSession()!!;
+    }
+    fun onGetListContact() : List<Room>{
+        return listener?.onGetListContact()!!;
+    }
+    fun onClickItem(room : Room){
+        listener?.onClickItem(room);
     }
 
     override fun onAttach(context: Context) {
@@ -90,6 +94,8 @@ class ContactsFragment : Fragment() {
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         fun onGetMXSession() : MXSession;
+        fun onGetListContact() : List<Room>;
+        fun onClickItem(room : Room);
     }
 
     companion object {
@@ -103,10 +109,9 @@ class ContactsFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(listContact: Array<Room>) =
+        fun newInstance() =
                 ContactsFragment().apply {
                     arguments = Bundle().apply {
-                        putSerializable(LIST_CONTACT, listContact)
                     }
                 }
     }

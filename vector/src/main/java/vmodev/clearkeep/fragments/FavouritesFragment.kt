@@ -1,7 +1,6 @@
 package vmodev.clearkeep.fragments
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
@@ -31,7 +30,8 @@ private const val LIST_FAVOURITES = "LIST_FAVOURITES"
  */
 class FavouritesFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private var listFavourites: Array<Room>? = null
+    // You can declare variable to pass from activity is here
+
     private var listener: OnFragmentInteractionListener? = null
 
     private lateinit var recyclerView: RecyclerView;
@@ -39,7 +39,7 @@ class FavouritesFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            listFavourites = it.getSerializable(LIST_FAVOURITES) as Array<Room>;
+            // Deserialize is here
         }
     }
 
@@ -52,7 +52,8 @@ class FavouritesFragment : Fragment() {
         val dividerItemDecoration = DividerItemDecoration(this.context, layoutManager.orientation);
         recyclerView.layoutManager = layoutManager;
         recyclerView.addItemDecoration(dividerItemDecoration);
-        val directMessageRecyclerViewAdapter = DirectMessageRecyclerViewAdapter(this!!.listFavourites!!, onGetMXSession());
+        val directMessageRecyclerViewAdapter = DirectMessageRecyclerViewAdapter(onGetRooms(), onGetMXSession());
+        directMessageRecyclerViewAdapter.publishSubject.subscribe { r ->kotlin.run { onClickItem(r) } };
         recyclerView.adapter = directMessageRecyclerViewAdapter;
         return view;
     }
@@ -60,6 +61,12 @@ class FavouritesFragment : Fragment() {
     // TODO: Rename method, update argument and hook method into UI event
     fun onGetMXSession(): MXSession {
         return listener?.onGetMXSession()!!;
+    }
+    fun onGetRooms() : List<Room>{
+        return listener?.onGetListFavourites()!!;
+    }
+    fun onClickItem(room : Room){
+        listener?.onClickItem(room);
     }
 
     override fun onAttach(context: Context) {
@@ -90,6 +97,8 @@ class FavouritesFragment : Fragment() {
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         fun onGetMXSession(): MXSession;
+        fun onGetListFavourites() : List<Room>;
+        fun onClickItem(room : Room);
     }
 
     companion object {
@@ -103,10 +112,10 @@ class FavouritesFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(listFavourites: Array<Room>) =
+        fun newInstance() =
                 FavouritesFragment().apply {
                     arguments = Bundle().apply {
-                        putSerializable(LIST_FAVOURITES, listFavourites)
+                        // Put data is here
                     }
                 }
     }

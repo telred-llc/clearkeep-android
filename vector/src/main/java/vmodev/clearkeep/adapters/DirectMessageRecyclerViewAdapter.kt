@@ -9,14 +9,16 @@ import android.widget.TextView
 import de.hdodenhof.circleimageview.CircleImageView
 import im.vector.R
 import im.vector.util.VectorUtils
+import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
 
-class DirectMessageRecyclerViewAdapter (rooms : Array<Room>, mxSession: MXSession) : RecyclerView.Adapter<DirectMessageRecyclerViewAdapter.ViewHolder>() {
+class DirectMessageRecyclerViewAdapter (rooms : List<Room>, mxSession: MXSession) : RecyclerView.Adapter<DirectMessageRecyclerViewAdapter.ViewHolder>() {
 
-    private var rooms : Array<Room> = rooms;
+    private var rooms : List<Room> = rooms;
     private var mxSession : MXSession = mxSession;
     private lateinit var context : Context;
+    public val publishSubject : PublishSubject<Room> = PublishSubject.create();
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
         context = p0.context;
@@ -30,6 +32,7 @@ class DirectMessageRecyclerViewAdapter (rooms : Array<Room>, mxSession: MXSessio
 
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
         VectorUtils.loadRoomAvatar(context, mxSession, p0.imageViewAvatar, rooms[p1]);
+        p0.itemView.setOnClickListener { v -> kotlin.run { publishSubject.onNext(rooms[p1]) } };
         p0.name.text = rooms[p1].getRoomDisplayName(context);
     }
 
@@ -37,5 +40,10 @@ class DirectMessageRecyclerViewAdapter (rooms : Array<Room>, mxSession: MXSessio
         var imageViewAvatar : CircleImageView = view.findViewById(R.id.circle_image_view_avatar);
         var name : TextView = view.findViewById(R.id.text_view_name);
 
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        publishSubject.onComplete();
     }
 }

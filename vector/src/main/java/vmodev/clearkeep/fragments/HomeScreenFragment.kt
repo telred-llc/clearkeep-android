@@ -29,9 +29,6 @@ private const val ROOMS = "ROOMS"
  *
  */
 class HomeScreenFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var directMessages: Array<Room>? = null;
-    private var rooms : Array<Room>? = null;
     private var listener: OnFragmentInteractionListener? = null;
 
     private lateinit var viewPager : ViewPager;
@@ -40,8 +37,6 @@ class HomeScreenFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            directMessages = it.getSerializable(DIRECT_MESSAGE) as Array<Room>;
-            rooms = it.getSerializable(ROOMS) as Array<Room>;
         }
     }
 
@@ -51,15 +46,19 @@ class HomeScreenFragment : Fragment() {
         val view =  inflater.inflate(R.layout.fragment_home_screen, container, false)
         viewPager = view.findViewById<ViewPager>(R.id.view_pager_home_screen);
         tabLayout = view.findViewById(R.id.tab_layout_home_screen);
-        val fragments : Array<Fragment> = arrayOf(DirectMessageFragment.newInstance(this!!.directMessages!!), RoomFragment.newInstance(this!!.rooms!!));
-        viewPager.adapter = HomeScreenPagerAdapter(activity!!.supportFragmentManager, fragments);
-        tabLayout.setupWithViewPager(viewPager);
+        setUpViewPage();
         return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     fun onButtonPressed(uri: Uri) {
         listener?.onFragmentInteraction(uri)
+    }
+
+    private fun setUpViewPage(){
+        val fragments : Array<Fragment> = arrayOf(DirectMessageFragment.newInstance(), RoomFragment.newInstance());
+        viewPager.adapter = HomeScreenPagerAdapter(childFragmentManager, fragments);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     override fun onAttach(context: Context) {
@@ -103,11 +102,9 @@ class HomeScreenFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(directMessages : Array<Room>,rooms: Array<Room>) =
+        fun newInstance() =
                 HomeScreenFragment().apply {
                     arguments = Bundle().apply {
-                        putSerializable(DIRECT_MESSAGE, directMessages);
-                        putSerializable(vmodev.clearkeep.fragments.ROOMS, rooms);
                     }
                 }
     }

@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import im.vector.R
+import io.reactivex.functions.Consumer
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
@@ -30,7 +31,6 @@ private const val ROOMS = "ROOMS"
  */
 class RoomFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private var rooms: Array<Room>? = null
     private var listener: OnFragmentInteractionListener? = null
 
     private lateinit var recyclerView: RecyclerView;
@@ -38,7 +38,6 @@ class RoomFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            rooms = it.getSerializable(ROOMS) as Array<Room>;
         }
     }
 
@@ -51,14 +50,21 @@ class RoomFragment : Fragment() {
         val dividerItemDecoration = DividerItemDecoration(this.context, layoutManager.orientation);
         recyclerView.layoutManager = layoutManager;
         recyclerView.addItemDecoration(dividerItemDecoration);
-        val directMessageRecyclerViewAdapter = DirectMessageRecyclerViewAdapter(this!!.rooms!!, onGetMXSession());
+        val directMessageRecyclerViewAdapter = DirectMessageRecyclerViewAdapter(onGetListRooms(), onGetMXSession());
         recyclerView.adapter = directMessageRecyclerViewAdapter;
+        directMessageRecyclerViewAdapter.publishSubject.subscribe { r ->kotlin.run { onClickItem(r) } };
         return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     fun onGetMXSession() : MXSession {
         return listener?.onGetMXSession()!!;
+    }
+    fun onGetListRooms() : List<Room>{
+        return listener?.onGetListRooms()!!;
+    }
+    fun onClickItem(room : Room){
+        listener?.onClickItem(room);
     }
 
     override fun onAttach(context: Context) {
@@ -89,6 +95,8 @@ class RoomFragment : Fragment() {
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         fun onGetMXSession() : MXSession;
+        fun onGetListRooms() : List<Room>;
+        fun onClickItem(room : Room);
     }
 
     companion object {
@@ -102,10 +110,9 @@ class RoomFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(rooms : Array<Room>) =
+        fun newInstance() =
                 RoomFragment().apply {
                     arguments = Bundle().apply {
-                        putSerializable(ROOMS, rooms);
                     }
                 }
     }

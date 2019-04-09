@@ -1,84 +1,68 @@
 package vmodev.clearkeep.fragments
 
 import android.content.Context
-import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import im.vector.R
-import im.vector.activity.CommonActivityUtils
-import im.vector.activity.VectorHomeActivity
-import im.vector.activity.VectorRoomActivity
-import im.vector.ui.badge.BadgeProxy
-import io.reactivex.functions.Consumer
-import org.matrix.androidsdk.MXSession
-import org.matrix.androidsdk.data.Room
-import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
-import java.util.HashMap
+import vmodev.clearkeep.adapters.SearchViewPagerAdapter
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val MX_SESSION = "MX_SESSION"
-private const val ROOMS = "ROOMS"
+private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [DirectMessageFragment.OnFragmentInteractionListener] interface
+ * [SearchFragment.OnFragmentInteractionListener] interface
  * to handle interaction events.
- * Use the [DirectMessageFragment.newInstance] factory method to
+ * Use the [SearchFragment.newInstance] factory method to
  * create an instance of this fragment.
  *
  */
-class DirectMessageFragment : Fragment() {
+class SearchFragment : Fragment() {
+    // TODO: Rename and change types of parameters
+    private var param1: String? = null
+    private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
 
-    private lateinit var recyclerView: RecyclerView;
-    private lateinit var session : MXSession;
+    private lateinit var viewPager: ViewPager;
+    private lateinit var tabLayout: TabLayout;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-
+            param1 = it.getString(ARG_PARAM1)
+            param2 = it.getString(ARG_PARAM2)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_direct_message, container, false)
-        recyclerView = view.findViewById(R.id.recycler_view_list_conversation);
-        val layoutManager = LinearLayoutManager(this.context);
-        val dividerItemDecoration = DividerItemDecoration(this.context, layoutManager.orientation);
-        recyclerView.layoutManager = layoutManager;
-        recyclerView.addItemDecoration(dividerItemDecoration);
-        setUpData();
-        session = this!!.onGetMxSession()!!;
+        val view = inflater.inflate(R.layout.fragment_search, container, false)
+        viewPager = view.findViewById(R.id.view_pager);
+        tabLayout = view.findViewById(R.id.tab_layout);
+        setupViewPager();
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    fun onGetMxSession() : MXSession? {
-        return listener?.onGetMXSession();
-    }
-    fun onGetListDirectMessage() : List<Room>{
-        return listener?.onGetListDirectMessage()!!;
-    }
-    fun onClickItem(room : Room){
-        listener?.onClickItem(room);
+    private fun setupViewPager() {
+        val pagerAdapter = SearchViewPagerAdapter(childFragmentManager, arrayOf(SearchRoomsFragment.newInstance("", ""), SearchMessagesFragment.newInstance("", ""),
+                SearchPeopleFragment.newInstance("", ""), SearchFilesFragment.newInstance("", "")));
+        tabLayout.setupWithViewPager(viewPager);
+        viewPager.adapter = pagerAdapter;
     }
 
-    private fun setUpData(){
-        val adapter = DirectMessageRecyclerViewAdapter(onGetListDirectMessage(), onGetMxSession()!!);
-        recyclerView.adapter = adapter;
-        adapter.publishSubject.subscribe { t -> kotlin.run {
-            onClickItem(t)
-        } };
+    // TODO: Rename method, update argument and hook method into UI event
+    fun onButtonPressed(uri: Uri) {
+        listener?.onFragmentInteraction(uri)
     }
 
     override fun onAttach(context: Context) {
@@ -108,9 +92,7 @@ class DirectMessageFragment : Fragment() {
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onGetMXSession() : MXSession
-        fun onGetListDirectMessage() : List<Room>;
-        fun onClickItem(room : Room);
+        fun onFragmentInteraction(uri: Uri)
     }
 
     companion object {
@@ -120,17 +102,16 @@ class DirectMessageFragment : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment DirectMessageFragment.
+         * @return A new instance of fragment SearchFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance() =
-                DirectMessageFragment().apply {
+        fun newInstance(param1: String, param2: String) =
+                SearchFragment().apply {
                     arguments = Bundle().apply {
-
+                        putString(ARG_PARAM1, param1)
+                        putString(ARG_PARAM2, param2)
                     }
                 }
     }
-
-
 }
