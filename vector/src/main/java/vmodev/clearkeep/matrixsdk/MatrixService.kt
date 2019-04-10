@@ -1,0 +1,11 @@
+package vmodev.clearkeep.matrixsdk
+
+import android.arch.lifecycle.LiveData
+import org.matrix.androidsdk.data.Room
+
+public interface MatrixService {
+    fun getListDirectMessageConversation() : LiveData<List<Room>>;
+    fun getListRoomConversation() : LiveData<List<Room>>;
+    fun getListFavouriteConversation() : LiveData<List<Room>>;
+    fun getListContact() : LiveData<List<Room>>;
+}

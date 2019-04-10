@@ -21,6 +21,9 @@ import im.vector.activity.VectorRoomActivity
 import im.vector.ui.badge.BadgeProxy
 import im.vector.util.HomeRoomsViewModel
 import im.vector.util.VectorUtils
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_home_screen.*
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
@@ -139,6 +142,20 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
                 rooms = result.otherRooms;
                 listFavourites = result.favourites;
                 listContacts = result.getDirectChatsWithFavorites();
+
+                Observable.create<List<Room>> { emitter -> kotlin.run {
+                    val homeRoomVM = HomeRoomsViewModel(mxSession);
+                    homeRoomVM.update();
+                    val result = homeRoomVM.result;
+                    if (result != null){
+                        emitter.onNext(result.directChats);
+                        emitter.onComplete();
+                    }
+                    else{
+                        emitter.onError(NullPointerException());
+                        emitter.onComplete();
+                    }
+                } }.subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread()).subscribe{t: List<Room>? -> kotlin.run { Log.d("Data: ", t!!.size.toString()) } };
             }
         };
         mxSession.dataHandler.addListener(mxEventListener);
