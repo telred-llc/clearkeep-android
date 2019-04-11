@@ -1415,5 +1415,7 @@ Why choose Riot.im?
     <string name="home">Home</string>
     <string name="contacts">Contacts</string>
     <string name="date_default">Mar 27</string>
+    <string name="decline">Decline</string>
+    <string name="invite_content">You have been invited you to this room, join to chat?</string>
 
 </resources>

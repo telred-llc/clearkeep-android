@@ -1,49 +1,59 @@
 package vmodev.clearkeep.activities
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
-import android.inputmethodservice.Keyboard
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.View
-import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
-import im.vector.activity.VectorHomeActivity
 import im.vector.activity.VectorRoomActivity
+import im.vector.services.EventStreamService
 import im.vector.ui.badge.BadgeProxy
 import im.vector.util.HomeRoomsViewModel
+import im.vector.util.RoomUtils
 import im.vector.util.VectorUtils
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_home_screen.*
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.data.MyUser
 import org.matrix.androidsdk.data.Room
+import org.matrix.androidsdk.data.RoomPreviewData
+import org.matrix.androidsdk.data.RoomState
 import org.matrix.androidsdk.listeners.MXEventListener
+import org.matrix.androidsdk.rest.callback.ApiCallback
+import org.matrix.androidsdk.rest.model.Event
+import org.matrix.androidsdk.rest.model.MatrixError
 import vmodev.clearkeep.fragments.*
-import java.util.HashMap
+import vmodev.clearkeep.viewmodelobjects.Status
+import java.util.*
+import kotlin.collections.ArrayList
 
 class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInteractionListener,
         FavouritesFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener,
         DirectMessageFragment.OnFragmentInteractionListener, RoomFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener,
         SearchRoomsFragment.OnFragmentInteractionListener, SearchMessagesFragment.OnFragmentInteractionListener, SearchPeopleFragment.OnFragmentInteractionListener,
-        SearchFilesFragment.OnFragmentInteractionListener {
+        SearchFilesFragment.OnFragmentInteractionListener, PreviewFragment.OnFragmentInteractionListener {
 
     private lateinit var mxSession: MXSession;
     private lateinit var mxEventListener: MXEventListener;
     private lateinit var homeRoomViewModel: HomeRoomsViewModel;
-    private lateinit var directMessages: List<Room>;
-    private lateinit var rooms: List<Room>;
-    private lateinit var listFavourites: List<Room>;
-    private lateinit var listContacts: List<Room>;
+    private var directMessages: List<Room> = ArrayList();
+    private var rooms: List<Room> = ArrayList();
+    private var listFavourites: List<Room> = ArrayList();
+    private var listContacts: List<Room> = ArrayList();
+    private var roomInvites : ArrayList<Room> = ArrayList();
+    private var directMessageInvite : ArrayList<Room> = ArrayList();
+
+    private val publishSubjectListRoomChanged: PublishSubject<Status> = PublishSubject.create();
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +78,11 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
         };
         VectorUtils.loadUserAvatar(this, mxSession, circle_image_view_avatar, mxSession.myUser);
         homeRoomViewModel = HomeRoomsViewModel(mxSession);
+
+
+        switchFragment(HomeScreenFragment.newInstance());
         addMxEventListener();
+
         search_view.setOnSearchClickListener { v -> kotlin.run { Log.d("Click: ", v.toString()) } }
         search_view.setOnQueryTextFocusChangeListener { v, hasFocus ->
             kotlin.run {
@@ -95,7 +109,6 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
         };
         search_view.queryHint = getString(R.string.search);
         search_view.setIconifiedByDefault(false);
-        switchFragment(HomeScreenFragment.newInstance());
     }
 
     override fun onBackPressed() {
@@ -137,28 +150,58 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
         mxEventListener = object : MXEventListener() {
             override fun onInitialSyncComplete(toToken: String?) {
                 super.onInitialSyncComplete(toToken)
-                val result = homeRoomViewModel.update();
-                directMessages = result.directChats;
-                rooms = result.otherRooms;
-                listFavourites = result.favourites;
-                listContacts = result.getDirectChatsWithFavorites();
-
-                Observable.create<List<Room>> { emitter -> kotlin.run {
-                    val homeRoomVM = HomeRoomsViewModel(mxSession);
-                    homeRoomVM.update();
-                    val result = homeRoomVM.result;
-                    if (result != null){
-                        emitter.onNext(result.directChats);
-                        emitter.onComplete();
-                    }
-                    else{
-                        emitter.onError(NullPointerException());
-                        emitter.onComplete();
-                    }
-                } }.subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread()).subscribe{t: List<Room>? -> kotlin.run { Log.d("Data: ", t!!.size.toString()) } };
+                needUpdateData();
             }
+
+            override fun onAccountInfoUpdate(myUser: MyUser?) {
+                super.onAccountInfoUpdate(myUser)
+                VectorUtils.loadUserAvatar(this@HomeScreenActivity, mxSession, circle_image_view_avatar, mxSession.myUser);
+            }
+
+            override fun onLiveEvent(event: Event?, roomState: RoomState?) {
+                super.onLiveEvent(event, roomState);
+                needUpdateData();
+//                if (event!!.type == Event.EVENT_TYPE_STATE_ROOM_MEMBER) {
+                    needUpdateData();
+//                }
+            }
+
+            override fun onLiveEventsChunkProcessed(fromToken: String?, toToken: String?) {
+                super.onLiveEventsChunkProcessed(fromToken, toToken)
+                needUpdateData();
+            }
+
         };
         mxSession.dataHandler.addListener(mxEventListener);
+    }
+
+    @SuppressLint("CheckResult")
+    private fun needUpdateData() {
+        Observable.create<Status> { emitter ->
+            kotlin.run {
+                val result = homeRoomViewModel.update();
+                if (result != null) {
+                    directMessages = result.directChats;
+                    rooms = result.otherRooms;
+                    listFavourites = result.favourites;
+                    listContacts = result.getDirectChatsWithFavorites();
+                    emitter.onNext(Status.SUCCESS);
+                    emitter.onComplete();
+                } else {
+                    emitter.onError(NullPointerException());
+                    emitter.onComplete();
+                }
+            }
+        }.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe { t: Status? ->
+            kotlin.run {
+                getRoomInvitations();
+                publishSubjectListRoomChanged.onNext(t!!);
+            }
+        };
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
     override fun onPause() {
@@ -184,6 +227,52 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
 
     override fun onClickItem(room: Room) {
         openRoom(room);
+    }
+
+    override fun handleDataChange(): PublishSubject<Status> {
+        return publishSubjectListRoomChanged;
+    }
+
+    override fun onGetListDirectMessageInvitation(): List<Room> {
+        return directMessageInvite;
+    }
+
+    override fun onClickItemJoin(room: Room) {
+        joinRoom(room)
+    }
+
+    override fun onClickItemDecline(room: Room) {
+        onRejectInvitation(room.roomId, null)
+    }
+
+    override fun onClickItemPreview(room: Room) {
+        toolbar.visibility = View.GONE;
+        bottom_navigation_view_home_screen.visibility = View.GONE;
+        switchFragment(PreviewFragment.newInstance(room.roomId));
+    }
+
+    override fun onJoinClick(room: Room) {
+        onBackPressed();
+        joinRoom(room)
+        toolbar.visibility = View.VISIBLE;
+        bottom_navigation_view_home_screen.visibility = View.VISIBLE;
+    }
+
+    override fun onDeclineClick(room: Room) {
+        onBackPressed();
+        onRejectInvitation(room.roomId, null)
+        toolbar.visibility = View.VISIBLE;
+        bottom_navigation_view_home_screen.visibility = View.VISIBLE;
+    }
+
+    override fun onNavigationOnClick() {
+        toolbar.visibility = View.VISIBLE;
+        bottom_navigation_view_home_screen.visibility = View.VISIBLE;
+        onBackPressed();
+    }
+
+    override fun onGetListRoomInvitation(): List<Room> {
+        return roomInvites;
     }
 
     protected fun openRoom(room: Room?) {
@@ -219,4 +308,144 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
             CommonActivityUtils.goToRoomPage(this, mxSession, params)
         }
     }
+
+    fun getRoomInvitations() {
+        val directChatInvitations = ArrayList<Room>()
+        val roomInvitations = ArrayList<Room>()
+
+        if (null == mxSession.getDataHandler().getStore()) {
+//            return ArrayList()
+        }
+
+        val roomSummaries = mxSession.getDataHandler().getStore().getSummaries()
+        for (roomSummary in roomSummaries) {
+            // reported by rageshake
+            // i don't see how it is possible to have a null roomSummary
+            if (null != roomSummary) {
+                val roomSummaryId = roomSummary!!.getRoomId()
+                val room = mxSession.getDataHandler().getStore().getRoom(roomSummaryId)
+
+                // check if the room exists
+                // the user conference rooms are not displayed.
+                if (room != null && !room!!.isConferenceUserRoom() && room!!.isInvited()) {
+                    if (room!!.isDirectChatInvitation()) {
+                        directChatInvitations.add(room)
+                    } else {
+                        roomInvitations.add(room)
+                    }
+                }
+            }
+        }
+
+        // the invitations are sorted from the oldest to the more recent one
+        val invitationComparator = RoomUtils.getRoomsDateComparator(mxSession, true)
+        Collections.sort(directChatInvitations, invitationComparator)
+        Collections.sort(roomInvitations, invitationComparator)
+
+//        val roomInvites = ArrayList<Room>()
+//        when (mCurrentMenuId) {
+//            R.id.bottom_action_people -> roomInvites.addAll(directChatInvitations)
+//            R.id.bottom_action_rooms -> roomInvites.addAll(roomInvitations)
+//            else -> {
+        directChatInvitations.clear();
+        roomInvites.clear();
+        directMessageInvite.addAll(directChatInvitations)
+        roomInvites.addAll(roomInvitations)
+//        Collections.sort(roomInvites, invitationComparator)
+//            }
+//        }
+
+//        return roomInvites
+    }
+
+    fun onPreviewRoom(session: MXSession, roomId: String) {
+        var roomAlias: String? = null
+        var roomName: String? = null
+
+        val room = session.dataHandler.getRoom(roomId)
+        if (null != room && null != room.state) {
+            roomAlias = room.state.canonicalAlias
+            roomName = room.getRoomDisplayName(this)
+        }
+
+        val roomPreviewData = RoomPreviewData(mxSession, roomId, null, roomAlias, null)
+        roomPreviewData.roomName = roomName
+        CommonActivityUtils.previewRoom(this, roomPreviewData)
+    }
+
+    fun onRejectInvitation(roomId: String, onSuccessCallback: ApiCallback<Void>?) {
+        val room = mxSession.getDataHandler().getRoom(roomId)
+
+        if (null != room) {
+            room!!.leave(createForgetLeaveCallback(roomId, onSuccessCallback))
+        }
+    }
+
+    private fun createForgetLeaveCallback(roomId: String, onSuccessCallback: ApiCallback<Void>?): ApiCallback<Void> {
+        return object : ApiCallback<Void> {
+            override fun onSuccess(info: Void) {
+                // clear any pending notification for this room
+                EventStreamService.cancelNotificationsForRoomId(mxSession.getMyUserId(), roomId)
+
+                onSuccessCallback?.onSuccess(null)
+            }
+
+            private fun onError(message: String) {
+                Toast.makeText(this@HomeScreenActivity, message, Toast.LENGTH_LONG).show()
+            }
+
+            override fun onNetworkError(e: Exception) {
+                onError(e.localizedMessage)
+            }
+
+            override fun onMatrixError(e: MatrixError) {
+                if (MatrixError.M_CONSENT_NOT_GIVEN == e.errcode) {
+//                    consentNotGivenHelper.displayDialog(e)
+                } else {
+                    onError(e.localizedMessage)
+                }
+            }
+
+            override fun onUnexpectedError(e: Exception) {
+                onError(e.localizedMessage)
+            }
+        }
+    }
+
+    private fun joinRoom(room: Room) {
+        mxSession.joinRoom(room!!.getRoomId(), object : ApiCallback<String> {
+            override fun onSuccess(roomId: String) {
+                val params = HashMap<String, Any>()
+
+                params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession.getMyUserId()
+                params[VectorRoomActivity.EXTRA_ROOM_ID] = room!!.getRoomId()
+
+                CommonActivityUtils.goToRoomPage(this@HomeScreenActivity, mxSession, params)
+            }
+
+            private fun onError(errorMessage: String) {
+                Toast.makeText(this@HomeScreenActivity, errorMessage, Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onNetworkError(e: Exception) {
+                onError(e.localizedMessage)
+            }
+
+            override fun onMatrixError(e: MatrixError) {
+                if (MatrixError.M_CONSENT_NOT_GIVEN == e.errcode) {
+
+                } else {
+                    onError(e.localizedMessage)
+                }
+            }
+
+            override fun onUnexpectedError(e: Exception) {
+                onError(e.localizedMessage)
+            }
+        })
+    }
+//    val consentNotGivenHelper by lazy {
+//        ConsentNotGivenHelper(this, savedInstanceState)
+//                .apply { addToRestorables(this) }
+//    }
 }

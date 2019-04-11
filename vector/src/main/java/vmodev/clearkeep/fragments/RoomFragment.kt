@@ -12,9 +12,11 @@ import android.view.View
 import android.view.ViewGroup
 import im.vector.R
 import io.reactivex.functions.Consumer
+import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
+import vmodev.clearkeep.viewmodelobjects.Status
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,6 +36,7 @@ class RoomFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
 
     private lateinit var recyclerView: RecyclerView;
+    private lateinit var session: MXSession;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,21 +53,70 @@ class RoomFragment : Fragment() {
         val dividerItemDecoration = DividerItemDecoration(this.context, layoutManager.orientation);
         recyclerView.layoutManager = layoutManager;
         recyclerView.addItemDecoration(dividerItemDecoration);
-        val directMessageRecyclerViewAdapter = DirectMessageRecyclerViewAdapter(onGetListRooms(), onGetMXSession());
-        recyclerView.adapter = directMessageRecyclerViewAdapter;
-        directMessageRecyclerViewAdapter.publishSubject.subscribe { r ->kotlin.run { onClickItem(r) } };
+        setUpData();
+        session = this!!.onGetMXSession()!!;
         return view;
     }
 
+    private fun setUpData() {
+        val adapter = DirectMessageRecyclerViewAdapter(onGetListRooms(), onGetListRoomInvitation(), onGetMXSession()!!);
+        recyclerView.adapter = adapter;
+        adapter.updateData();
+        handleDataChange().subscribe { t: Status? ->
+            kotlin.run {
+                if (t == Status.SUCCESS) {
+                    adapter.rooms = onGetListRooms();
+                    adapter.invitations = onGetListRoomInvitation();
+                    adapter.updateData();
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        };
+
+        adapter.publishSubject.subscribe { t ->
+            kotlin.run {
+                when (t.clickType) {
+                    0 -> onClickItem(t.room!!);
+                    1 -> onClickItemDecline(t.room!!)
+                    2 -> onClickJoinRoom(t.room!!)
+                    3 -> onClickItemPreview(t.room!!);
+                    else -> onClickItem(t.room!!);
+                }
+            }
+        };
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
-    fun onGetMXSession() : MXSession {
+    fun onGetMXSession(): MXSession {
         return listener?.onGetMXSession()!!;
     }
-    fun onGetListRooms() : List<Room>{
+
+    fun onGetListRooms(): List<Room> {
         return listener?.onGetListRooms()!!;
     }
-    fun onClickItem(room : Room){
+
+    fun onClickItem(room: Room) {
         listener?.onClickItem(room);
+    }
+
+    fun onGetListRoomInvitation(): List<Room> {
+        return listener?.onGetListRoomInvitation()!!;
+    }
+
+    fun handleDataChange(): PublishSubject<Status> {
+        return listener?.handleDataChange()!!;
+    }
+
+    fun onClickJoinRoom(room: Room) {
+        listener?.onClickItemJoin(room);
+    }
+
+    fun onClickItemDecline(room: Room) {
+        listener?.onClickItemDecline(room);
+    }
+
+    fun onClickItemPreview(room: Room) {
+        listener?.onClickItemPreview(room);
     }
 
     override fun onAttach(context: Context) {
@@ -94,9 +146,15 @@ class RoomFragment : Fragment() {
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onGetMXSession() : MXSession;
-        fun onGetListRooms() : List<Room>;
-        fun onClickItem(room : Room);
+        fun onGetMXSession(): MXSession;
+
+        fun onGetListRooms(): List<Room>;
+        fun onGetListRoomInvitation(): List<Room>;
+        fun onClickItem(room: Room);
+        fun handleDataChange(): PublishSubject<Status>;
+        fun onClickItemJoin(room: Room);
+        fun onClickItemDecline(room: Room);
+        fun onClickItemPreview(room: Room);
     }
 
     companion object {

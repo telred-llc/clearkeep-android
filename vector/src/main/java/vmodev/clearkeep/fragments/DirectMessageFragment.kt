@@ -1,7 +1,6 @@
 package vmodev.clearkeep.fragments
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
@@ -11,15 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import im.vector.R
-import im.vector.activity.CommonActivityUtils
-import im.vector.activity.VectorHomeActivity
-import im.vector.activity.VectorRoomActivity
-import im.vector.ui.badge.BadgeProxy
-import io.reactivex.functions.Consumer
+import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
-import java.util.HashMap
+import vmodev.clearkeep.viewmodelobjects.Status
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -39,7 +34,7 @@ class DirectMessageFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null
 
     private lateinit var recyclerView: RecyclerView;
-    private lateinit var session : MXSession;
+    private lateinit var session: MXSession;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,22 +58,61 @@ class DirectMessageFragment : Fragment() {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    fun onGetMxSession() : MXSession? {
+    fun onGetMxSession(): MXSession? {
         return listener?.onGetMXSession();
     }
-    fun onGetListDirectMessage() : List<Room>{
+
+    fun onGetListDirectMessage(): List<Room> {
         return listener?.onGetListDirectMessage()!!;
     }
-    fun onClickItem(room : Room){
+
+    fun onGetListDirectMessageInvitation(): List<Room> {
+        return listener?.onGetListDirectMessageInvitation()!!;
+    }
+
+    fun onClickItem(room: Room) {
         listener?.onClickItem(room);
     }
 
-    private fun setUpData(){
-        val adapter = DirectMessageRecyclerViewAdapter(onGetListDirectMessage(), onGetMxSession()!!);
+    fun handleDataChange(): PublishSubject<Status> {
+        return listener?.handleDataChange()!!;
+    }
+    fun onClickJoinRoom(room: Room){
+        listener?.onClickItemJoin(room);
+    }
+    fun onClickItemDecline(room: Room){
+        listener?.onClickItemDecline(room);
+    }
+    fun onClickItemPreview(room: Room){
+        listener?.onClickItemPreview(room);
+    }
+
+    private fun setUpData() {
+        val adapter = DirectMessageRecyclerViewAdapter(onGetListDirectMessage(), onGetListDirectMessageInvitation(), onGetMxSession()!!);
         recyclerView.adapter = adapter;
-        adapter.publishSubject.subscribe { t -> kotlin.run {
-            onClickItem(t)
-        } };
+        adapter.updateData();
+        handleDataChange().subscribe { t: Status? ->
+            kotlin.run {
+                if (t == Status.SUCCESS) {
+                    adapter.rooms = onGetListDirectMessage();
+                    adapter.invitations = onGetListDirectMessageInvitation();
+                    adapter.updateData();
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        };
+
+        adapter.publishSubject.subscribe { t ->
+            kotlin.run {
+                when (t.clickType){
+                    0 -> onClickItem(t.room!!);
+                    1-> onClickItemDecline(t.room!!)
+                    2-> onClickJoinRoom(t.room!!)
+                    3-> onClickItemPreview(t.room!!);
+                    else -> onClickItem(t.room!!);
+                }
+            }
+        };
     }
 
     override fun onAttach(context: Context) {
@@ -108,9 +142,15 @@ class DirectMessageFragment : Fragment() {
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onGetMXSession() : MXSession
-        fun onGetListDirectMessage() : List<Room>;
-        fun onClickItem(room : Room);
+        fun onGetMXSession(): MXSession
+
+        fun onGetListDirectMessage(): List<Room>;
+        fun onGetListDirectMessageInvitation(): List<Room>;
+        fun onClickItem(room: Room);
+        fun handleDataChange(): PublishSubject<Status>;
+        fun onClickItemJoin(room : Room);
+        fun onClickItemDecline(room: Room);
+        fun onClickItemPreview(room: Room);
     }
 
     companion object {

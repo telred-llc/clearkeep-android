@@ -1,69 +1,75 @@
 package vmodev.clearkeep.fragments
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import de.hdodenhof.circleimageview.CircleImageView
 import im.vector.R
+import im.vector.util.VectorUtils
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
-import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
-
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val LIST_CONTACT = "LIST_CONTACT"
+private const val ROOM_ID = "ROOM_ID"
 
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [ContactsFragment.OnFragmentInteractionListener] interface
+ * [PreviewFragment.OnFragmentInteractionListener] interface
  * to handle interaction events.
- * Use the [ContactsFragment.newInstance] factory method to
+ * Use the [PreviewFragment.newInstance] factory method to
  * create an instance of this fragment.
  *
  */
-class ContactsFragment : Fragment() {
+class PreviewFragment : Fragment() {
+    // TODO: Rename and change types of parameters
+    private var roomId: String? = null
     private var listener: OnFragmentInteractionListener? = null
-
-    private lateinit var recyclerView: RecyclerView;
+    private lateinit var room: Room;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+            roomId = it.getString(ROOM_ID)
         }
+        room = onGetMXSession().dataHandler.getRoom(roomId);
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_contacts, container, false)
-        recyclerView = view.findViewById(R.id.recycler_view_list_contact);
-        val layoutManager = LinearLayoutManager(this.context);
-        val dividerItemDecoration = DividerItemDecoration(this.context, layoutManager.orientation);
-        recyclerView.layoutManager = layoutManager;
-        recyclerView.addItemDecoration(dividerItemDecoration);
-        val directMessageRecyclerViewAdapter = DirectMessageRecyclerViewAdapter(this!!.onGetListContact(),ArrayList(), onGetMXSession());
-        directMessageRecyclerViewAdapter.publishSubject.subscribe { r ->kotlin.run { onClickItem(r.room!!) } };
-        recyclerView.adapter = directMessageRecyclerViewAdapter;
+        val view = inflater.inflate(R.layout.fragment_preview, container, false)
+        VectorUtils.loadRoomAvatar(activity, onGetMXSession(), view.findViewById<CircleImageView>(R.id.circle_image_view_avatar), room);
+        view.findViewById<Button>(R.id.button_join).setOnClickListener { v ->
+            onJoinClick(room);
+        };
+        view.findViewById<Button>(R.id.button_decline).setOnClickListener { v -> onDeclineClick(room) }
+        view.findViewById<Toolbar>(R.id.toolbar).setTitle(room.getRoomDisplayName(activity));
+        view.findViewById<Toolbar>(R.id.toolbar).setNavigationIcon(R.drawable.ic_keyboard_arrow_left_greem_app_24dp);
+        view.findViewById<Toolbar>(R.id.toolbar).setNavigationOnClickListener { v -> kotlin.run { onNavigationOnClick() } };
         return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    fun onGetMXSession() : MXSession {
+    fun onJoinClick(room: Room) {
+        listener?.onJoinClick(room)
+    }
+
+    fun onDeclineClick(room: Room) {
+        listener?.onDeclineClick(room);
+    }
+
+    fun onGetMXSession(): MXSession {
         return listener?.onGetMXSession()!!;
     }
-    fun onGetListContact() : List<Room>{
-        return listener?.onGetListContact()!!;
-    }
-    fun onClickItem(room : Room){
-        listener?.onClickItem(room);
+    fun onNavigationOnClick(){
+        listener?.onNavigationOnClick();
     }
 
     override fun onAttach(context: Context) {
@@ -93,9 +99,11 @@ class ContactsFragment : Fragment() {
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onGetMXSession() : MXSession;
-        fun onGetListContact() : List<Room>;
-        fun onClickItem(room : Room);
+        fun onJoinClick(room: Room);
+
+        fun onDeclineClick(room: Room);
+        fun onGetMXSession(): MXSession;
+        fun onNavigationOnClick();
     }
 
     companion object {
@@ -105,13 +113,14 @@ class ContactsFragment : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment ContactsFragment.
+         * @return A new instance of fragment PreviewFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance() =
-                ContactsFragment().apply {
+        fun newInstance(roomId: String) =
+                PreviewFragment().apply {
                     arguments = Bundle().apply {
+                        putString(ROOM_ID, roomId)
                     }
                 }
     }

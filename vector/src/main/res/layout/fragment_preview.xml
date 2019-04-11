@@ -1,0 +1,54 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="vmodev.clearkeep.fragments.PreviewFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/circle_image_view_avatar"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="100dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="50dp"
+            android:text="@string/invite_content"
+            android:textAlignment="center"
+            android:textColor="@android:color/darker_gray" />
+
+        <Button
+            android:id="@+id/button_join"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="50dp"
+            android:background="@drawable/button_background_gradient"
+            android:text="@string/join"
+            android:textColor="@color/main_text_color"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/button_decline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="50dp"
+            android:background="@drawable/button_border_background_green_app_color"
+            android:layout_marginTop="10dp"
+            android:text="@string/decline"
+            android:textColor="@color/app_green"/>
+    </LinearLayout>
+</layout>

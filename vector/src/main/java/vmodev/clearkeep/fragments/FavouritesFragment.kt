@@ -52,8 +52,8 @@ class FavouritesFragment : Fragment() {
         val dividerItemDecoration = DividerItemDecoration(this.context, layoutManager.orientation);
         recyclerView.layoutManager = layoutManager;
         recyclerView.addItemDecoration(dividerItemDecoration);
-        val directMessageRecyclerViewAdapter = DirectMessageRecyclerViewAdapter(onGetRooms(), onGetMXSession());
-        directMessageRecyclerViewAdapter.publishSubject.subscribe { r ->kotlin.run { onClickItem(r) } };
+        val directMessageRecyclerViewAdapter = DirectMessageRecyclerViewAdapter(onGetRooms(),ArrayList(), onGetMXSession());
+        directMessageRecyclerViewAdapter.publishSubject.subscribe { r ->kotlin.run { onClickItem(r.room!!) } };
         recyclerView.adapter = directMessageRecyclerViewAdapter;
         return view;
     }
