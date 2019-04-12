@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.TextView
 import de.hdodenhof.circleimageview.CircleImageView
 import im.vector.R
+import im.vector.util.RoomUtils
 import im.vector.util.VectorUtils
 import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.MXSession
@@ -61,16 +62,32 @@ class DirectMessageRecyclerViewAdapter(rooms: List<Room>, invitation: List<Room>
     }
 
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
+        if (listItem[p1].isDirect) {
+            p0.imageViewStatus.visibility = View.VISIBLE;
+        } else {
+            p0.imageViewStatus.visibility = View.GONE;
+        }
+
         VectorUtils.loadRoomAvatar(context, mxSession, p0.imageViewAvatar, listItem[p1]);
         p0.name.text = listItem[p1].getRoomDisplayName(context);
         p0.room = listItem[p1];
+        if (listItem[p1].notificationCount > 0){
+            p0.notify.visibility = View.VISIBLE;
+            p0.notify.text = listItem[p1].notificationCount.toString();
+        }
+        else{
+            p0.notify.visibility = View.GONE;
+        }
         getRoomMember(listItem[p1], p0.imageViewStatus);
+        p0.textViewTime.text = RoomUtils.getRoomTimestamp(context, listItem[p1].roomSummary!!.getLatestReceivedEvent());
     }
 
     open class ViewHolder(view: View, publishSubject: PublishSubject<OnClickObject>) : RecyclerView.ViewHolder(view) {
         var imageViewAvatar: CircleImageView = view.findViewById(R.id.circle_image_view_avatar);
-        var imageViewStatus : CircleImageView = view.findViewById(R.id.circle_image_view_status);
+        var imageViewStatus: CircleImageView = view.findViewById(R.id.circle_image_view_status);
         var name: TextView = view.findViewById(R.id.text_view_name);
+        var notify: TextView = view.findViewById(R.id.text_view_notify);
+        var textViewTime : TextView = view.findViewById(R.id.text_view_time);
         lateinit var room: Room;
         protected var publishSubject = publishSubject;
     }

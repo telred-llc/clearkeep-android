@@ -1417,5 +1417,6 @@ Why choose Riot.im?
     <string name="date_default">Mar 27</string>
     <string name="decline">Decline</string>
     <string name="invite_content">You have been invited you to this room, join to chat?</string>
+    <string name="zero">0</string>
 
 </resources>

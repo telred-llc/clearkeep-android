@@ -9,10 +9,14 @@ import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 
 import im.vector.R
+import io.reactivex.functions.Consumer
+import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.adapters.HomeScreenPagerAdapter
+import vmodev.clearkeep.viewmodelobjects.Status
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -31,8 +35,10 @@ private const val ROOMS = "ROOMS"
 class HomeScreenFragment : Fragment() {
     private var listener: OnFragmentInteractionListener? = null;
 
-    private lateinit var viewPager : ViewPager;
-    private lateinit var tabLayout : TabLayout;
+    private lateinit var viewPager: ViewPager;
+    private lateinit var tabLayout: TabLayout;
+    private lateinit var textViewNotifyRoom: TextView;
+    private lateinit var textViewNotifyDirect: TextView;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,9 +49,11 @@ class HomeScreenFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view =  inflater.inflate(R.layout.fragment_home_screen, container, false)
+        val view = inflater.inflate(R.layout.fragment_home_screen, container, false)
         viewPager = view.findViewById<ViewPager>(R.id.view_pager_home_screen);
         tabLayout = view.findViewById(R.id.tab_layout_home_screen);
+        textViewNotifyRoom = view.findViewById(R.id.text_view_notify_room);
+        textViewNotifyDirect = view.findViewById(R.id.text_view_notify_direct);
         setUpViewPage();
         return view;
     }
@@ -55,10 +63,46 @@ class HomeScreenFragment : Fragment() {
         listener?.onFragmentInteraction(uri)
     }
 
-    private fun setUpViewPage(){
-        val fragments : Array<Fragment> = arrayOf(DirectMessageFragment.newInstance(), RoomFragment.newInstance());
+    fun getRoomNotifyCount(): Int {
+        return listener?.getRoomNotifyCount()!!;
+    }
+
+    fun getDirectNotifyCount(): Int {
+        return listener?.getDirectNotifyCount()!!;
+    }
+    fun handleDataChange(): PublishSubject<Status> {
+        return listener?.handleDataChange()!!;
+    }
+    fun upData() {
+        return listener?.updateData()!!;
+    }
+
+    private fun setUpViewPage() {
+        val fragments: Array<Fragment> = arrayOf(DirectMessageFragment.newInstance(), RoomFragment.newInstance());
         viewPager.adapter = HomeScreenPagerAdapter(childFragmentManager, fragments);
         tabLayout.setupWithViewPager(viewPager);
+        handleDataChange().subscribe { t -> kotlin.run {
+            if (getRoomNotifyCount() > 0){
+                textViewNotifyRoom.visibility = View.VISIBLE;
+                textViewNotifyRoom.text = getRoomNotifyCount().toString();
+            }
+            else{
+                textViewNotifyRoom.visibility = View.INVISIBLE;
+            }
+            if (getDirectNotifyCount() > 0){
+                textViewNotifyDirect.visibility = View.VISIBLE;
+                textViewNotifyDirect.text = getDirectNotifyCount().toString();
+            }
+            else{
+                textViewNotifyDirect.visibility = View.INVISIBLE;
+            }
+        } };
+        upData();
+    }
+
+    override fun onResume() {
+        super.onResume()
+        upData();
     }
 
     override fun onAttach(context: Context) {
@@ -89,6 +133,10 @@ class HomeScreenFragment : Fragment() {
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         fun onFragmentInteraction(uri: Uri)
+        fun updateData();
+        fun getRoomNotifyCount(): Int;
+        fun getDirectNotifyCount(): Int;
+        fun handleDataChange(): PublishSubject<Status>;
     }
 
     companion object {

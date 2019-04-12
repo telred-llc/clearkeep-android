@@ -38,6 +38,7 @@ import org.matrix.androidsdk.rest.model.RoomMember
 import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.viewmodelobjects.Status
 import java.util.*
+import java.util.function.Consumer
 import kotlin.collections.ArrayList
 
 class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInteractionListener,
@@ -55,6 +56,9 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
     private var listContacts: List<Room> = ArrayList();
     private var roomInvites: ArrayList<Room> = ArrayList();
     private var directMessageInvite: ArrayList<Room> = ArrayList();
+
+    private var roomsNotifyCount: Int = 0;
+    private var directNotifyCount: Int = 0;
 
     private val publishSubjectListRoomChanged: PublishSubject<Status> = PublishSubject.create();
 
@@ -201,6 +205,7 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
             kotlin.run {
                 getRoomInvitations();
                 publishSubjectListRoomChanged.onNext(t!!);
+                updateNotifyOnBottomNavigation();
             }
         };
     }
@@ -247,7 +252,11 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
     }
 
     override fun onClickItemDecline(room: Room) {
-        onRejectInvitation(room.roomId, null)
+        onRejectInvitation(room.roomId, object : SimpleApiCallback<Void>(this) {
+            override fun onSuccess(p0: Void?) {
+                needUpdateData();
+            }
+        })
     }
 
     override fun onClickItemPreview(room: Room) {
@@ -265,7 +274,11 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
 
     override fun onDeclineClick(room: Room) {
         onBackPressed();
-        onRejectInvitation(room.roomId, null)
+        onRejectInvitation(room.roomId, object : SimpleApiCallback<Void>(this) {
+            override fun onSuccess(p0: Void?) {
+                needUpdateData();
+            }
+        })
         toolbar.visibility = View.VISIBLE;
         bottom_navigation_view_home_screen.visibility = View.VISIBLE;
     }
@@ -427,6 +440,7 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
                 params[VectorRoomActivity.EXTRA_ROOM_ID] = room!!.getRoomId()
 
                 CommonActivityUtils.goToRoomPage(this@HomeScreenActivity, mxSession, params)
+                needUpdateData();
             }
 
             private fun onError(errorMessage: String) {
@@ -451,6 +465,48 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
         })
     }
 
+    private fun updateNotifyOnBottomNavigation() {
+        roomsNotifyCount = 0;
+        directNotifyCount = 0;
+        roomsNotifyCount = roomInvites.size;
+        directNotifyCount = directMessageInvite.size;
+        var notifyCount = roomInvites.size + directMessageInvite.size;
+        for (room in rooms) {
+            if (room.notificationCount > 0) {
+                notifyCount++;
+                roomsNotifyCount++;
+            }
+        }
+        for (direct in directMessages) {
+            if (direct.notificationCount > 0) {
+                notifyCount++;
+                directNotifyCount++;
+            }
+        }
+        if (notifyCount > 0) {
+            text_view_notify_home.text = notifyCount.toString();
+            text_view_notify_home.visibility = View.VISIBLE;
+        } else {
+            text_view_notify_home.visibility = View.GONE;
+        }
+    }
+
+    override fun getRoomNotifyCount(): Int {
+        return roomsNotifyCount;
+    }
+
+    override fun getDirectNotifyCount(): Int {
+        return directNotifyCount;
+    }
+
+    override fun updateData() {
+        needUpdateData();
+    }
+
+    override fun onResume() {
+        super.onResume()
+        needUpdateData();
+    }
     //    val consentNotGivenHelper by lazy {
 //        ConsentNotGivenHelper(this, savedInstanceState)
 //                .apply { addToRestorables(this) }

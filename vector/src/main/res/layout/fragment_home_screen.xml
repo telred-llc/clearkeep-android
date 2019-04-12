@@ -1,20 +1,53 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="vmodev.clearkeep.fragments.HomeScreenFragment"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tab_layout_home_screen"
+    tools:context="vmodev.clearkeep.fragments.HomeScreenFragment">
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabSelectedTextColor="@color/app_green"
-        android:background="@color/home_screen_bottom_navigation_view_background"/>
-    <android.support.v4.view.ViewPager
-        android:id="@+id/view_pager_home_screen"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tab_layout_home_screen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/home_screen_bottom_navigation_view_background"
+                app:tabSelectedTextColor="@color/app_green" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_view_notify_direct"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:layout_weight="1"
+                    android:text="@string/zero"
+                    android:textAlignment="textEnd" />
+
+                <TextView
+                    android:id="@+id/text_view_notify_room"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:layout_weight="1"
+                    android:text="@string/zero"
+                    android:textAlignment="textEnd" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager_home_screen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 </layout>
