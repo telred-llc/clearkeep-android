@@ -19,8 +19,9 @@
                 android:src="@color/app_green" />
 
             <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/circle_image_view_status"
                 android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_height="23dp"
                 android:layout_gravity="end|bottom"
                 android:src="@color/lock_background"
                 app:civ_border_color="@android:color/white"

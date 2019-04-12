@@ -49,7 +49,7 @@ class ContactsFragment : Fragment() {
         val dividerItemDecoration = DividerItemDecoration(this.context, layoutManager.orientation);
         recyclerView.layoutManager = layoutManager;
         recyclerView.addItemDecoration(dividerItemDecoration);
-        val directMessageRecyclerViewAdapter = DirectMessageRecyclerViewAdapter(this!!.onGetListContact(),ArrayList(), onGetMXSession());
+        val directMessageRecyclerViewAdapter = DirectMessageRecyclerViewAdapter(this!!.onGetListContact(),ArrayList(), onGetMXSession(), activity!!);
         directMessageRecyclerViewAdapter.publishSubject.subscribe { r ->kotlin.run { onClickItem(r.room!!) } };
         recyclerView.adapter = directMessageRecyclerViewAdapter;
         return view;

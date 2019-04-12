@@ -92,7 +92,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         tools:replace="allowBackup,label">
-        <activity android:name="vmodev.clearkeep.activities.HomeScreenActivity" />
+        <activity android:name="vmodev.clearkeep.activities.HomeScreenActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name="vmodev.clearkeep.activities.LoginActivity" />
         <activity android:name="vmodev.clearkeep.activities.SplashActivity">
             <intent-filter>

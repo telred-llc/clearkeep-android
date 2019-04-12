@@ -59,7 +59,7 @@ class RoomFragment : Fragment() {
     }
 
     private fun setUpData() {
-        val adapter = DirectMessageRecyclerViewAdapter(onGetListRooms(), onGetListRoomInvitation(), onGetMXSession()!!);
+        val adapter = DirectMessageRecyclerViewAdapter(onGetListRooms(), onGetListRoomInvitation(), onGetMXSession()!!, activity!!);
         recyclerView.adapter = adapter;
         adapter.updateData();
         handleDataChange().subscribe { t: Status? ->

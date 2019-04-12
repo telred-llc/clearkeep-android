@@ -88,7 +88,7 @@ class DirectMessageFragment : Fragment() {
     }
 
     private fun setUpData() {
-        val adapter = DirectMessageRecyclerViewAdapter(onGetListDirectMessage(), onGetListDirectMessageInvitation(), onGetMxSession()!!);
+        val adapter = DirectMessageRecyclerViewAdapter(onGetListDirectMessage(), onGetListDirectMessageInvitation(), onGetMxSession()!!, activity!!);
         recyclerView.adapter = adapter;
         adapter.updateData();
         handleDataChange().subscribe { t: Status? ->

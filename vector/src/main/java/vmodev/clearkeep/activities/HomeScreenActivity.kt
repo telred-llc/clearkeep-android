@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Debug
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.View
@@ -30,8 +31,10 @@ import org.matrix.androidsdk.data.RoomPreviewData
 import org.matrix.androidsdk.data.RoomState
 import org.matrix.androidsdk.listeners.MXEventListener
 import org.matrix.androidsdk.rest.callback.ApiCallback
+import org.matrix.androidsdk.rest.callback.SimpleApiCallback
 import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.MatrixError
+import org.matrix.androidsdk.rest.model.RoomMember
 import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.viewmodelobjects.Status
 import java.util.*
@@ -50,8 +53,8 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
     private var rooms: List<Room> = ArrayList();
     private var listFavourites: List<Room> = ArrayList();
     private var listContacts: List<Room> = ArrayList();
-    private var roomInvites : ArrayList<Room> = ArrayList();
-    private var directMessageInvite : ArrayList<Room> = ArrayList();
+    private var roomInvites: ArrayList<Room> = ArrayList();
+    private var directMessageInvite: ArrayList<Room> = ArrayList();
 
     private val publishSubjectListRoomChanged: PublishSubject<Status> = PublishSubject.create();
 
@@ -79,11 +82,14 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
         VectorUtils.loadUserAvatar(this, mxSession, circle_image_view_avatar, mxSession.myUser);
         homeRoomViewModel = HomeRoomsViewModel(mxSession);
 
+//        search_view.queryHint = getString(R.string.search);
+        search_view.setIconifiedByDefault(false);
+
 
         switchFragment(HomeScreenFragment.newInstance());
         addMxEventListener();
 
-        search_view.setOnSearchClickListener { v -> kotlin.run { Log.d("Click: ", v.toString()) } }
+//        search_view.setOnSearchClickListener { v -> kotlin.run { Log.d("Click: ", v.toString()) } }
         search_view.setOnQueryTextFocusChangeListener { v, hasFocus ->
             kotlin.run {
                 if (hasFocus) {
@@ -107,8 +113,7 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
                 onBackPressed();
             }
         };
-        search_view.queryHint = getString(R.string.search);
-        search_view.setIconifiedByDefault(false);
+
     }
 
     override fun onBackPressed() {
@@ -162,7 +167,7 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
                 super.onLiveEvent(event, roomState);
                 needUpdateData();
 //                if (event!!.type == Event.EVENT_TYPE_STATE_ROOM_MEMBER) {
-                    needUpdateData();
+                needUpdateData();
 //                }
             }
 
@@ -315,6 +320,7 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
 
         if (null == mxSession.getDataHandler().getStore()) {
 //            return ArrayList()
+            return;
         }
 
         val roomSummaries = mxSession.getDataHandler().getStore().getSummaries()
@@ -347,7 +353,7 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
 //            R.id.bottom_action_people -> roomInvites.addAll(directChatInvitations)
 //            R.id.bottom_action_rooms -> roomInvites.addAll(roomInvitations)
 //            else -> {
-        directChatInvitations.clear();
+        directMessageInvite.clear();
         roomInvites.clear();
         directMessageInvite.addAll(directChatInvitations)
         roomInvites.addAll(roomInvitations)
@@ -444,7 +450,8 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
             }
         })
     }
-//    val consentNotGivenHelper by lazy {
+
+    //    val consentNotGivenHelper by lazy {
 //        ConsentNotGivenHelper(this, savedInstanceState)
 //                .apply { addToRestorables(this) }
 //    }

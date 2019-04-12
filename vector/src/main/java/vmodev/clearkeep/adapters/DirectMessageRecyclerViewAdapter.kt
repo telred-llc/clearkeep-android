@@ -1,7 +1,9 @@
 package vmodev.clearkeep.adapters
 
+import android.app.Activity
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,9 +15,12 @@ import im.vector.util.VectorUtils
 import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
+import org.matrix.androidsdk.rest.callback.ApiCallback
+import org.matrix.androidsdk.rest.callback.SimpleApiCallback
+import org.matrix.androidsdk.rest.model.RoomMember
 import kotlin.collections.ArrayList
 
-class DirectMessageRecyclerViewAdapter(rooms: List<Room>, invitation: List<Room>, mxSession: MXSession) : RecyclerView.Adapter<DirectMessageRecyclerViewAdapter.ViewHolder>() {
+class DirectMessageRecyclerViewAdapter(rooms: List<Room>, invitation: List<Room>, mxSession: MXSession, activity: Activity) : RecyclerView.Adapter<DirectMessageRecyclerViewAdapter.ViewHolder>() {
 
     public var rooms: List<Room> = rooms;
     public var invitations: List<Room> = invitation;
@@ -23,6 +28,7 @@ class DirectMessageRecyclerViewAdapter(rooms: List<Room>, invitation: List<Room>
     private lateinit var context: Context;
     public val publishSubject: PublishSubject<OnClickObject> = PublishSubject.create();
     private var arrayLayout: Array<Int> = arrayOf(R.layout.invite_message_item, R.layout.direct_message_item);
+    private val activity = activity;
 
     private var listItem = ArrayList<Room>();
 
@@ -58,10 +64,12 @@ class DirectMessageRecyclerViewAdapter(rooms: List<Room>, invitation: List<Room>
         VectorUtils.loadRoomAvatar(context, mxSession, p0.imageViewAvatar, listItem[p1]);
         p0.name.text = listItem[p1].getRoomDisplayName(context);
         p0.room = listItem[p1];
+        getRoomMember(listItem[p1], p0.imageViewStatus);
     }
 
     open class ViewHolder(view: View, publishSubject: PublishSubject<OnClickObject>) : RecyclerView.ViewHolder(view) {
         var imageViewAvatar: CircleImageView = view.findViewById(R.id.circle_image_view_avatar);
+        var imageViewStatus : CircleImageView = view.findViewById(R.id.circle_image_view_status);
         var name: TextView = view.findViewById(R.id.text_view_name);
         lateinit var room: Room;
         protected var publishSubject = publishSubject;
@@ -96,5 +104,33 @@ class DirectMessageRecyclerViewAdapter(rooms: List<Room>, invitation: List<Room>
     class OnClickObject(clickType: Int, room: Room?) {
         var clickType = clickType;
         var room = room;
+    }
+
+    fun getRoomMember(room: Room, imageView: CircleImageView) {
+        room.getJoinedMembersAsync(object : SimpleApiCallback<List<RoomMember>>(activity) {
+            override fun onSuccess(p0: List<RoomMember>?) {
+                p0!!.forEach { t: RoomMember? ->
+                    if (t!!.userId.compareTo(mxSession.myUserId) == 0)
+                        return;
+                    kotlin.run {
+                        val status = VectorUtils.getUserOnlineStatus(activity, mxSession, t!!.userId, object : SimpleApiCallback<Void>(activity) {
+                            override fun onSuccess(p0: Void?) {
+                                val statusRecheck = VectorUtils.getUserOnlineStatus(activity, mxSession, t!!.userId, null);
+                                Log.d("Status: ", statusRecheck);
+                                if (statusRecheck.compareTo("Online now") == 0)
+                                    imageView.setImageResource(R.color.app_green);
+                                else
+                                    imageView.setImageResource(android.R.color.darker_gray);
+                            }
+                        });
+                        Log.d("Status: ", status);
+                        if (status.compareTo("Online now") == 0)
+                            imageView.setImageResource(R.color.app_green);
+                        else
+                            imageView.setImageResource(android.R.color.darker_gray);
+                    }
+                }
+            }
+        });
     }
 }
