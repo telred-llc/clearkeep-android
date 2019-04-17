@@ -10,6 +10,7 @@ import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
+import vmodev.clearkeep.viewmodelobjects.User
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -105,5 +106,23 @@ internal class MatrixServiceImplmenmt @Inject constructor(session: MXSession) : 
             }
         }.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe { t: List<Room>? -> kotlin.run { liveData.value = t; } };
         return liveData;
+    }
+
+    @SuppressLint("CheckResult")
+    override fun getUser(): Observable<User> {
+        return Observable.create<User> { emitter ->
+            kotlin.run {
+                val myUser = session.myUser;
+
+                if (myUser != null) {
+                    val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = myUser.avatarUrl);
+                    emitter.onNext(user);
+                    emitter.onComplete();
+                } else {
+                    emitter.onError(NullPointerException());
+                    emitter.onComplete();
+                }
+            }
+        }
     }
 }
