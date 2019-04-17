@@ -81,7 +81,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
-        android:name=".VectorApp"
+        android:name="vmodev.clearkeep.applications.ClearKeepApplication"
         android:allowBackup="false"
         android:description="@string/store_short_description"
         android:icon="@mipmap/ic_launcher_app_second_icon"

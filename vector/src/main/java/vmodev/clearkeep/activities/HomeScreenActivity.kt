@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import dagger.android.support.DaggerAppCompatActivity
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
@@ -36,18 +37,22 @@ import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.rest.model.RoomMember
 import vmodev.clearkeep.fragments.*
+import vmodev.clearkeep.matrixsdk.MatrixService
 import vmodev.clearkeep.viewmodelobjects.Status
 import java.util.*
 import java.util.function.Consumer
+import javax.inject.Inject
 import kotlin.collections.ArrayList
 
-class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInteractionListener,
+class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragmentInteractionListener,
         FavouritesFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener,
         DirectMessageFragment.OnFragmentInteractionListener, RoomFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener,
         SearchRoomsFragment.OnFragmentInteractionListener, SearchMessagesFragment.OnFragmentInteractionListener, SearchPeopleFragment.OnFragmentInteractionListener,
         SearchFilesFragment.OnFragmentInteractionListener, PreviewFragment.OnFragmentInteractionListener {
 
-    private lateinit var mxSession: MXSession;
+    @Inject lateinit var matrixService : MatrixService;
+
+    @Inject lateinit var mxSession: MXSession;
     private lateinit var mxEventListener: MXEventListener;
     private lateinit var homeRoomViewModel: HomeRoomsViewModel;
     private var directMessages: List<Room> = ArrayList();
@@ -65,7 +70,7 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home_screen)
-        mxSession = Matrix.getInstance(this).defaultSession;
+//        mxSession = Matrix.getInstance(this).defaultSession;
 
         bottom_navigation_view_home_screen.setOnNavigationItemSelectedListener { menuItem ->
             kotlin.run {
@@ -117,7 +122,7 @@ class HomeScreenActivity : AppCompatActivity(), HomeScreenFragment.OnFragmentInt
                 onBackPressed();
             }
         };
-
+        Log.d("Matrix Service: ", matrixService.toString());
     }
 
     override fun onBackPressed() {
