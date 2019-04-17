@@ -1398,4 +1398,25 @@ Why choose Riot.im?
     <string name="autodiscover_well_known_autofill_dialog_message">Riot detected a custom server configuration for your userId domain \"%s\":\n%s</string>
     <string name="autodiscover_well_known_autofill_confirm">Use Config</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="username_or_email">Username or Email</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="register">Register</string>
+    <string name="have_an_account">Have an account? </string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="verify_email_content">We sent you an email verification. Please verify it to complete the registration</string>
+    <string name="error_empty_field_your_password_confirm">Please enter your confirm password.</string>
+    <string name="error_empty_field_enter_user_name_or_email">Please enter a username or email.</string>
+    <string name="password_too_short">Password too short (min 6)</string>
+    <string name="password_too_long">Password too long (max 15)</string>
+    <string name="password_contain_space">Password cannot contain space character</string>
+    <string name="home">Home</string>
+    <string name="contacts">Contacts</string>
+    <string name="date_default">Mar 27</string>
+    <string name="decline">Decline</string>
+    <string name="invite_content">You have been invited you to this room, join to chat?</string>
+    <string name="zero">0</string>
+
 </resources>

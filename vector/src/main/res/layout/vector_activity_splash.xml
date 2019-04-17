@@ -4,11 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
+    <pl.droidsonroids.gif.GifImageView
         android:id="@+id/animated_logo_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/riot_animated_logo"
+        android:background="@drawable/ic_launcher_app"
         android:contentDescription="@string/loading"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

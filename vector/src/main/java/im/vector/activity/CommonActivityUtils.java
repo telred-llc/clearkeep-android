@@ -87,6 +87,7 @@ import im.vector.push.PushManager;
 import im.vector.services.EventStreamService;
 import im.vector.ui.badge.BadgeProxy;
 import im.vector.util.PreferencesManager;
+import vmodev.clearkeep.activities.HomeScreenActivity;
 
 /**
  * Contains useful functions which are called in multiple activities.
@@ -361,7 +362,8 @@ public class CommonActivityUtils {
                     Activity activeActivity = VectorApp.getCurrentActivity();
 
                     // go to login page
-                    Intent intent = new Intent(activeActivity, LoginActivity.class);
+//                    Intent intent = new Intent(activeActivity, LoginActivity.class);
+                    Intent intent = new Intent(activeActivity, vmodev.clearkeep.activities.LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
                     if (null != activeActivity) {
@@ -790,7 +792,7 @@ public class CommonActivityUtils {
                     @Override
                     public void run() {
                         // if the activity is not the home activity
-                        if (!(fromActivity instanceof VectorHomeActivity)) {
+                        if (!(fromActivity instanceof HomeScreenActivity)) {
                             // pop to the home activity
                             Log.d(LOG_TAG, "## goToRoomPage(): start VectorHomeActivity..");
                             Intent intent = new Intent(fromActivity, VectorHomeActivity.class);

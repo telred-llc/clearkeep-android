@@ -1,0 +1,10 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="vmodev.clearkeep.fragments.DirectMessageFragment">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_list_conversation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</layout>
