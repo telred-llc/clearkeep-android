@@ -78,6 +78,8 @@ abstract class MatrixBoundSource<T, V> @MainThread constructor(private val execu
             result.value = newValue;
     }
 
+    fun asLiveData() = result as LiveData<Resource<T>>
+
     @WorkerThread
     protected abstract fun saveCallResult(item: V)
 
