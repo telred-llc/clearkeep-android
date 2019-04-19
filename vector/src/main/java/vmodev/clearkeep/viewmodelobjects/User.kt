@@ -4,8 +4,7 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-@Entity
-data class User(@field:SerializedName("name") val name: String,
-                @PrimaryKey @field:SerializedName("id") val id: String,
-                @field:SerializedName("avatar_url") val avatarUrl: String) {
-}
+@Entity(primaryKeys = ["id"])
+data class User(@field:SerializedName("name") val name: String?,
+                @field:SerializedName("id") val id: String,
+                @field:SerializedName("avatarUrl") val avatarUrl: String?)

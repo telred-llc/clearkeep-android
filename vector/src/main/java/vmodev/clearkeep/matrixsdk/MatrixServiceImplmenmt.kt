@@ -1,8 +1,10 @@
 package vmodev.clearkeep.matrixsdk
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import im.vector.Matrix
 import im.vector.util.HomeRoomsViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -15,18 +17,27 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-internal class MatrixServiceImplmenmt @Inject constructor(session: MXSession) : MatrixService {
+class MatrixServiceImplmenmt @Inject constructor(private val application: Application) : MatrixService {
 
-    private var session = session;
-    private var homeRoomsViewModel = HomeRoomsViewModel(session);
+    //    @Inject
+    private var session: MXSession? = null;
+    private var homeRoomsViewModel: HomeRoomsViewModel? = null;
+
+    private fun setMXSession() {
+        if (session != null)
+            return;
+        session = Matrix.getInstance(application).defaultSession;
+        homeRoomsViewModel = HomeRoomsViewModel(session!!);
+    }
 
     @SuppressLint("CheckResult")
     override fun getListDirectMessageConversation(): LiveData<List<Room>> {
+        setMXSession();
         val liveData = MutableLiveData<List<Room>>();
         Observable.create<List<Room>> { emitter ->
             kotlin.run {
-                homeRoomsViewModel.update();
-                val result = homeRoomsViewModel.result;
+                homeRoomsViewModel!!.update();
+                val result = homeRoomsViewModel!!.result;
                 if (result != null) {
                     emitter.onNext(result.directChats);
                     emitter.onComplete();
@@ -45,11 +56,12 @@ internal class MatrixServiceImplmenmt @Inject constructor(session: MXSession) : 
 
     @SuppressLint("CheckResult")
     override fun getListRoomConversation(): LiveData<List<Room>> {
+        setMXSession();
         val liveData = MutableLiveData<List<Room>>();
         Observable.create<List<Room>> { emitter ->
             kotlin.run {
-                homeRoomsViewModel.update();
-                val result = homeRoomsViewModel.result;
+                homeRoomsViewModel!!.update();
+                val result = homeRoomsViewModel!!.result;
                 if (result != null) {
                     emitter.onNext(result.otherRooms);
                     emitter.onComplete();
@@ -68,11 +80,12 @@ internal class MatrixServiceImplmenmt @Inject constructor(session: MXSession) : 
 
     @SuppressLint("CheckResult")
     override fun getListFavouriteConversation(): LiveData<List<Room>> {
+        setMXSession();
         val liveData = MutableLiveData<List<Room>>();
         Observable.create<List<Room>> { emitter ->
             kotlin.run {
-                homeRoomsViewModel.update();
-                val result = homeRoomsViewModel.result;
+                homeRoomsViewModel!!.update();
+                val result = homeRoomsViewModel!!.result;
                 if (result != null) {
                     emitter.onNext(result.favourites);
                     emitter.onComplete();
@@ -91,11 +104,12 @@ internal class MatrixServiceImplmenmt @Inject constructor(session: MXSession) : 
 
     @SuppressLint("CheckResult")
     override fun getListContact(): LiveData<List<Room>> {
+        setMXSession();
         val liveData = MutableLiveData<List<Room>>();
         Observable.create<List<Room>> { emitter ->
             kotlin.run {
-                homeRoomsViewModel.update();
-                val result = homeRoomsViewModel.result;
+                homeRoomsViewModel!!.update();
+                val result = homeRoomsViewModel!!.result;
                 if (result != null) {
                     emitter.onNext(result.getDirectChatsWithFavorites());
                     emitter.onComplete();
@@ -110,9 +124,10 @@ internal class MatrixServiceImplmenmt @Inject constructor(session: MXSession) : 
 
     @SuppressLint("CheckResult")
     override fun getUser(): Observable<User> {
+        setMXSession();
         return Observable.create<User> { emitter ->
             kotlin.run {
-                val myUser = session.myUser;
+                val myUser = session!!.myUser;
 
                 if (myUser != null) {
                     val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = myUser.avatarUrl);

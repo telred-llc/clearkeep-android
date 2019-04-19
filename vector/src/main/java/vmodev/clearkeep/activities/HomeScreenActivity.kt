@@ -2,11 +2,18 @@ package vmodev.clearkeep.activities
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
+import android.content.Intent
+import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Debug
 import android.support.v4.app.Fragment
+import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -15,6 +22,7 @@ import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorRoomActivity
+import im.vector.databinding.ActivityHomeScreenBinding
 import im.vector.services.EventStreamService
 import im.vector.ui.badge.BadgeProxy
 import im.vector.util.HomeRoomsViewModel
@@ -39,7 +47,9 @@ import org.matrix.androidsdk.rest.model.RoomMember
 import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.matrixsdk.MatrixService
 import vmodev.clearkeep.viewmodelobjects.Status
+import vmodev.clearkeep.viewmodels.UserViewModel
 import java.util.*
+import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 import javax.inject.Inject
 import kotlin.collections.ArrayList
@@ -48,11 +58,12 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
         FavouritesFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener,
         DirectMessageFragment.OnFragmentInteractionListener, RoomFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener,
         SearchRoomsFragment.OnFragmentInteractionListener, SearchMessagesFragment.OnFragmentInteractionListener, SearchPeopleFragment.OnFragmentInteractionListener,
-        SearchFilesFragment.OnFragmentInteractionListener, PreviewFragment.OnFragmentInteractionListener {
+        SearchFilesFragment.OnFragmentInteractionListener, PreviewFragment.OnFragmentInteractionListener, LifecycleOwner {
 
-    @Inject lateinit var matrixService : MatrixService;
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory;
 
-    @Inject lateinit var mxSession: MXSession;
+    lateinit var mxSession: MXSession;
     private lateinit var mxEventListener: MXEventListener;
     private lateinit var homeRoomViewModel: HomeRoomsViewModel;
     private var directMessages: List<Room> = ArrayList();
@@ -69,8 +80,9 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home_screen)
-//        mxSession = Matrix.getInstance(this).defaultSession;
+        val dataBinding: ActivityHomeScreenBinding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen);
+//        setContentView(R.layout.activity_home_screen)
+        mxSession = Matrix.getInstance(this.applicationContext).defaultSession;
 
         bottom_navigation_view_home_screen.setOnNavigationItemSelectedListener { menuItem ->
             kotlin.run {
@@ -89,6 +101,12 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
             }
         };
         VectorUtils.loadUserAvatar(this, mxSession, circle_image_view_avatar, mxSession.myUser);
+        dataBinding.circleImageViewAvatar.setOnClickListener { v ->
+            kotlin.run {
+                val intent = Intent(this, ProfileActivity::class.java);
+                startActivity(intent);
+            }
+        }
         homeRoomViewModel = HomeRoomsViewModel(mxSession);
 
 //        search_view.queryHint = getString(R.string.search);
@@ -122,7 +140,16 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
                 onBackPressed();
             }
         };
-        Log.d("Matrix Service: ", matrixService.toString());
+        Log.d("Matrix Service: ", viewModelFactory.toString());
+        val userViewModel: UserViewModel = ViewModelProviders.of(this, viewModelFactory).get(UserViewModel::class.java);
+        userViewModel.setUserId(mxSession.myUserId);
+        dataBinding.user = userViewModel.user;
+        dataBinding.setLifecycleOwner(this);
+//        Observable.interval(5, TimeUnit.SECONDS).subscribeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread()).subscribe { t: Long? ->
+//            kotlin.run {
+//                userViewModel.setUserId(t.toString());
+//            }
+//        };
     }
 
     override fun onBackPressed() {

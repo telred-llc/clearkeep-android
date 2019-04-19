@@ -2,6 +2,7 @@ package vmodev.clearkeep.matrixsdk
 
 import android.arch.lifecycle.LiveData
 import io.reactivex.Observable
+import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.viewmodelobjects.User
 

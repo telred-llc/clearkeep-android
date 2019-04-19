@@ -1418,5 +1418,10 @@ Why choose Riot.im?
     <string name="decline">Decline</string>
     <string name="invite_content">You have been invited you to this room, join to chat?</string>
     <string name="zero">0</string>
+    <string name="setting">Setting</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="display_name">Display name</string>
+    <string name="user_id">User ID</string>
+    <string name="profile">Profile</string>
 
 </resources>
