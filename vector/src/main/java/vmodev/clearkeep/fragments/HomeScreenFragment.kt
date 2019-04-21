@@ -1,5 +1,6 @@
 package vmodev.clearkeep.fragments
 
+import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import dagger.android.support.DaggerFragment
 
 import im.vector.R
 import io.reactivex.functions.Consumer
@@ -17,6 +19,8 @@ import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.adapters.HomeScreenPagerAdapter
 import vmodev.clearkeep.viewmodelobjects.Status
+import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
+import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -32,13 +36,20 @@ private const val ROOMS = "ROOMS"
  * create an instance of this fragment.
  *
  */
-class HomeScreenFragment : Fragment() {
+class HomeScreenFragment : DaggerFragment() {
     private var listener: OnFragmentInteractionListener? = null;
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory;
 
     private lateinit var viewPager: ViewPager;
     private lateinit var tabLayout: TabLayout;
     private lateinit var textViewNotifyRoom: TextView;
     private lateinit var textViewNotifyDirect: TextView;
+
+//    private val dataBindingComponent : FragmentData
+
+    private lateinit var userViewModel : AbstractUserViewModel;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +66,9 @@ class HomeScreenFragment : Fragment() {
         textViewNotifyRoom = view.findViewById(R.id.text_view_notify_room);
         textViewNotifyDirect = view.findViewById(R.id.text_view_notify_direct);
         setUpViewPage();
+
+
+
         return view;
     }
 
@@ -70,9 +84,11 @@ class HomeScreenFragment : Fragment() {
     fun getDirectNotifyCount(): Int {
         return listener?.getDirectNotifyCount()!!;
     }
+
     fun handleDataChange(): PublishSubject<Status> {
         return listener?.handleDataChange()!!;
     }
+
     fun upData() {
         return listener?.updateData()!!;
     }
@@ -81,22 +97,22 @@ class HomeScreenFragment : Fragment() {
         val fragments: Array<Fragment> = arrayOf(DirectMessageFragment.newInstance(), RoomFragment.newInstance());
         viewPager.adapter = HomeScreenPagerAdapter(childFragmentManager, fragments);
         tabLayout.setupWithViewPager(viewPager);
-        handleDataChange().subscribe { t -> kotlin.run {
-            if (getRoomNotifyCount() > 0){
-                textViewNotifyRoom.visibility = View.VISIBLE;
-                textViewNotifyRoom.text = getRoomNotifyCount().toString();
+        handleDataChange().subscribe { t ->
+            kotlin.run {
+                if (getRoomNotifyCount() > 0) {
+                    textViewNotifyRoom.visibility = View.VISIBLE;
+                    textViewNotifyRoom.text = getRoomNotifyCount().toString();
+                } else {
+                    textViewNotifyRoom.visibility = View.INVISIBLE;
+                }
+                if (getDirectNotifyCount() > 0) {
+                    textViewNotifyDirect.visibility = View.VISIBLE;
+                    textViewNotifyDirect.text = getDirectNotifyCount().toString();
+                } else {
+                    textViewNotifyDirect.visibility = View.INVISIBLE;
+                }
             }
-            else{
-                textViewNotifyRoom.visibility = View.INVISIBLE;
-            }
-            if (getDirectNotifyCount() > 0){
-                textViewNotifyDirect.visibility = View.VISIBLE;
-                textViewNotifyDirect.text = getDirectNotifyCount().toString();
-            }
-            else{
-                textViewNotifyDirect.visibility = View.INVISIBLE;
-            }
-        } };
+        };
         upData();
     }
 
@@ -133,6 +149,7 @@ class HomeScreenFragment : Fragment() {
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         fun onFragmentInteraction(uri: Uri)
+
         fun updateData();
         fun getRoomNotifyCount(): Int;
         fun getDirectNotifyCount(): Int;
@@ -151,9 +168,9 @@ class HomeScreenFragment : Fragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance() =
-                HomeScreenFragment().apply {
-                    arguments = Bundle().apply {
-                    }
+            HomeScreenFragment().apply {
+                arguments = Bundle().apply {
                 }
+            }
     }
 }

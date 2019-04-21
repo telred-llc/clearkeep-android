@@ -19,6 +19,7 @@ import im.vector.fragments.signout.SignOutViewModel
 import im.vector.util.VectorUtils
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.viewmodels.UserViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import javax.inject.Inject
 
 class ProfileActivity : DaggerAppCompatActivity(), LifecycleOwner {
@@ -27,6 +28,8 @@ class ProfileActivity : DaggerAppCompatActivity(), LifecycleOwner {
     lateinit var viewModelFactory: ViewModelProvider.Factory;
 
     lateinit var mxSession: MXSession;
+
+    private lateinit var userViewModel : AbstractUserViewModel;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,9 +44,9 @@ class ProfileActivity : DaggerAppCompatActivity(), LifecycleOwner {
                 onBackPressed();
             }
         }
-        val userViewModel = ViewModelProviders.of(this, viewModelFactory).get(UserViewModel::class.java);
+        userViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractUserViewModel::class.java);
         userViewModel.setUserId(mxSession.myUserId);
-        dataBinding.user = userViewModel.user;
+        dataBinding.user = userViewModel.getUserData();
         dataBinding.lifecycleOwner = this;
         VectorUtils.loadUserAvatar(this, mxSession, dataBinding.imageViewAvatar, mxSession.myUser);
         dataBinding.buttonSignOut.setOnClickListener{v -> kotlin.run { signOut() } }

@@ -48,6 +48,7 @@ import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.matrixsdk.MatrixService
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.UserViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
@@ -141,9 +142,9 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
             }
         };
         Log.d("Matrix Service: ", viewModelFactory.toString());
-        val userViewModel: UserViewModel = ViewModelProviders.of(this, viewModelFactory).get(UserViewModel::class.java);
+        val userViewModel: AbstractUserViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractUserViewModel::class.java);
         userViewModel.setUserId(mxSession.myUserId);
-        dataBinding.user = userViewModel.user;
+        dataBinding.user = userViewModel.getUserData();
         dataBinding.setLifecycleOwner(this);
 //        Observable.interval(5, TimeUnit.SECONDS).subscribeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread()).subscribe { t: Long? ->
 //            kotlin.run {

@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import vmodev.clearkeep.viewmodelproviderfactories.ClearKeepViewModelProviderFactory
 import vmodev.clearkeep.viewmodels.UserViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 
 @Suppress("unused")
 @Module
@@ -14,7 +15,7 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(UserViewModel::class)
+    @ViewModelKey(AbstractUserViewModel::class)
     abstract fun bindUserViewModel(userViewModel: UserViewModel): ViewModel;
 
     @Binds

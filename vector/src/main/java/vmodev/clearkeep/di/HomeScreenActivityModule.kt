@@ -8,7 +8,7 @@ import vmodev.clearkeep.activities.HomeScreenActivity
 @Module
 abstract class HomeScreenActivityModule {
 
-    @ContributesAndroidInjector(modules = [])
+    @ContributesAndroidInjector(modules = [HomeScreenActivityFragmentBuilderModule::class])
     abstract fun contributeHomeScreenActivityModule() : HomeScreenActivity
 
 }
