@@ -24,7 +24,8 @@ class MatrixEventHandler @Inject constructor(private val application: Applicatio
 
     override fun onAccountInfoUpdate(myUser: MyUser?) {
         super.onAccountInfoUpdate(myUser)
-        userRepository.updateUser(myUser!!.user_id, myUser.displayname, myUser.avatarUrl);
+        val avatarUrl = mxSession!!.contentManager.getDownloadableUrl(myUser!!.avatarUrl);
+        userRepository.updateUser(myUser!!.user_id, myUser.displayname, avatarUrl!!);
     }
 
     override fun getMXEventListener(mxSession: MXSession): MXEventListener {

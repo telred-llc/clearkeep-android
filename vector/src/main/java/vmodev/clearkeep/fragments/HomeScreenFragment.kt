@@ -66,10 +66,12 @@ class HomeScreenFragment : DaggerFragment() {
         textViewNotifyRoom = view.findViewById(R.id.text_view_notify_room);
         textViewNotifyDirect = view.findViewById(R.id.text_view_notify_direct);
         setUpViewPage();
-
-
-
         return view;
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -1,5 +1,6 @@
 package vmodev.clearkeep.fragments
 
+import android.arch.lifecycle.ViewModelProvider
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import dagger.android.DaggerFragment
 import im.vector.R
 import io.reactivex.functions.Consumer
 import io.reactivex.subjects.PublishSubject
@@ -17,6 +19,7 @@ import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
 import vmodev.clearkeep.viewmodelobjects.Status
+import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -31,12 +34,15 @@ private const val ROOMS = "ROOMS"
  * create an instance of this fragment.
  *
  */
-class RoomFragment : Fragment() {
+class RoomFragment : dagger.android.support.DaggerFragment() {
     // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
 
     private lateinit var recyclerView: RecyclerView;
     private lateinit var session: MXSession;
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

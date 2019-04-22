@@ -9,6 +9,7 @@ import im.vector.util.HomeRoomsViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
+import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
@@ -22,12 +23,16 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
     //    @Inject
     private var session: MXSession? = null;
     private var homeRoomsViewModel: HomeRoomsViewModel? = null;
-
+    private val funcs: Array<Function<HomeRoomsViewModel.Result, List<Room>>> = Array(255, init = { Function { t: HomeRoomsViewModel.Result -> t.directChats } })
     private fun setMXSession() {
         if (session != null)
             return;
         session = Matrix.getInstance(application).defaultSession;
         homeRoomsViewModel = HomeRoomsViewModel(session!!);
+        funcs[1] = Function { t: HomeRoomsViewModel.Result -> t.directChats };
+        funcs[2] = Function { t: HomeRoomsViewModel.Result -> t.otherRooms };
+        funcs[129] = Function { t: HomeRoomsViewModel.Result -> t.getDirectChatsWithFavorites() };
+        funcs[130] = Function { t: HomeRoomsViewModel.Result -> t.getOtherRoomsWithFavorites() };
     }
 
     @SuppressLint("CheckResult")
@@ -130,12 +135,30 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                 val myUser = session!!.myUser;
 
                 if (myUser != null) {
-                    val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = myUser.avatarUrl);
+                    val avatarUrl = session!!.contentManager.getDownloadableUrl(myUser.avatarUrl);
+                    val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = avatarUrl);
                     emitter.onNext(user);
                     emitter.onComplete();
                 } else {
                     emitter.onError(NullPointerException());
                     emitter.onComplete();
+                }
+            }
+        }
+    }
+
+    override fun getListRoom(filter: Int): Observable<List<vmodev.clearkeep.viewmodelobjects.Room>> {
+        setMXSession();
+        return Observable.create<List<vmodev.clearkeep.viewmodelobjects.Room>> { emitter ->
+            kotlin.run {
+                val listRoom = ArrayList<vmodev.clearkeep.viewmodelobjects.Room>();
+                if (homeRoomsViewModel != null && homeRoomsViewModel!!.result != null) {
+                    val rooms = funcs[filter].apply(homeRoomsViewModel!!.result);
+                    rooms.forEach { t: Room? ->
+                        listRoom.add(vmodev.clearkeep.viewmodelobjects.Room(id = t!!.roomId
+                                , name = t!!.getRoomDisplayName(application)
+                                , type = filter, avatarUrl = t!!.avatarUrl!!, updatedDate = 0))
+                    }
                 }
             }
         }

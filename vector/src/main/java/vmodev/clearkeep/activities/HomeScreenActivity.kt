@@ -44,10 +44,12 @@ import org.matrix.androidsdk.rest.callback.SimpleApiCallback
 import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.rest.model.RoomMember
+import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.matrixsdk.MatrixService
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.UserViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -79,9 +81,11 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
 
     private val publishSubjectListRoomChanged: PublishSubject<Status> = PublishSubject.create();
 
+    var dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val dataBinding: ActivityHomeScreenBinding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen);
+        val dataBinding: ActivityHomeScreenBinding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen, dataBindingComponent);
 //        setContentView(R.layout.activity_home_screen)
         mxSession = Matrix.getInstance(this.applicationContext).defaultSession;
 
@@ -101,7 +105,6 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
                 return@run true;
             }
         };
-        VectorUtils.loadUserAvatar(this, mxSession, circle_image_view_avatar, mxSession.myUser);
         dataBinding.circleImageViewAvatar.setOnClickListener { v ->
             kotlin.run {
                 val intent = Intent(this, ProfileActivity::class.java);
@@ -110,14 +113,12 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
         }
         homeRoomViewModel = HomeRoomsViewModel(mxSession);
 
-//        search_view.queryHint = getString(R.string.search);
         search_view.setIconifiedByDefault(false);
 
 
         switchFragment(HomeScreenFragment.newInstance());
         addMxEventListener();
 
-//        search_view.setOnSearchClickListener { v -> kotlin.run { Log.d("Click: ", v.toString()) } }
         search_view.setOnQueryTextFocusChangeListener { v, hasFocus ->
             kotlin.run {
                 if (hasFocus) {
@@ -141,26 +142,10 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
                 onBackPressed();
             }
         };
-        Log.d("Matrix Service: ", viewModelFactory.toString());
         val userViewModel: AbstractUserViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractUserViewModel::class.java);
         userViewModel.setUserId(mxSession.myUserId);
         dataBinding.user = userViewModel.getUserData();
         dataBinding.setLifecycleOwner(this);
-//        Observable.interval(5, TimeUnit.SECONDS).subscribeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread()).subscribe { t: Long? ->
-//            kotlin.run {
-//                userViewModel.setUserId(t.toString());
-//            }
-//        };
-    }
-
-    override fun onBackPressed() {
-//        if (supportFragmentManager.fragments.size == 1){
-//            showAlertDiaglong("Quit application", "You are sure quit this application?");
-//            return;
-//        }
-        super.onBackPressed()
-//        val intent = Intent(this, VectorHomeActivity::class.java)
-//        startActivity(intent);
     }
 
     private fun showAlertDiaglong(title: String, message: String) {
@@ -197,7 +182,7 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
 
             override fun onAccountInfoUpdate(myUser: MyUser?) {
                 super.onAccountInfoUpdate(myUser)
-                VectorUtils.loadUserAvatar(this@HomeScreenActivity, mxSession, circle_image_view_avatar, mxSession.myUser);
+//                VectorUtils.loadUserAvatar(this@HomeScreenActivity, mxSession, circle_image_view_avatar, mxSession.myUser);
             }
 
             override fun onLiveEvent(event: Event?, roomState: RoomState?) {
@@ -221,12 +206,17 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
     private fun needUpdateData() {
         Observable.create<Status> { emitter ->
             kotlin.run {
+                val invitationComparator = RoomUtils.getRoomsDateComparator(mxSession, false)
                 val result = homeRoomViewModel.update();
                 if (result != null) {
                     directMessages = result.directChats;
                     rooms = result.otherRooms;
                     listFavourites = result.favourites;
                     listContacts = result.getDirectChatsWithFavorites();
+                    Collections.sort(directMessages, invitationComparator)
+                    Collections.sort(rooms, invitationComparator)
+                    Collections.sort(listFavourites, invitationComparator)
+                    Collections.sort(listContacts, invitationComparator)
                     emitter.onNext(Status.SUCCESS);
                     emitter.onComplete();
                 } else {

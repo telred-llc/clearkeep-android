@@ -1,6 +1,9 @@
 package vmodev.clearkeep.fragments
 
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
@@ -9,12 +12,21 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import dagger.android.support.DaggerFragment
 import im.vector.R
+import im.vector.databinding.FragmentDirectMessageBinding
 import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
+import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
+import vmodev.clearkeep.binding.FragmentBindingAdapters
+import vmodev.clearkeep.binding.FragmentDataBindingComponent
+import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.viewmodelobjects.Status
+import vmodev.clearkeep.viewmodels.RoomViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
+import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,11 +42,23 @@ private const val ROOMS = "ROOMS"
  * create an instance of this fragment.
  *
  */
-class DirectMessageFragment : Fragment() {
+class DirectMessageFragment : DaggerFragment() {
     private var listener: OnFragmentInteractionListener? = null
 
     private lateinit var recyclerView: RecyclerView;
     private lateinit var session: MXSession;
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory;
+    @Inject
+    lateinit var appExecutors: AppExecutors;
+
+    var dataBindingComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
+
+    var binding: FragmentDirectMessageBinding? = null;
+
+    var roomViewModel: AbstractRoomViewModel? = null;
+    var listRoomAdapter : ListRoomRecyclerViewAdapter?=null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,15 +70,24 @@ class DirectMessageFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_direct_message, container, false)
-        recyclerView = view.findViewById(R.id.recycler_view_list_conversation);
-        val layoutManager = LinearLayoutManager(this.context);
-        val dividerItemDecoration = DividerItemDecoration(this.context, layoutManager.orientation);
-        recyclerView.layoutManager = layoutManager;
-        recyclerView.addItemDecoration(dividerItemDecoration);
-        setUpData();
-        session = this!!.onGetMxSession()!!;
-        return view;
+//        val view = inflater.inflate(R.layout.fragment_direct_message, container, false)
+//        recyclerView = view.findViewById(R.id.recycler_view_list_conversation);
+//        val layoutManager = LinearLayoutManager(this.context);
+//        val dividerItemDecoration = DividerItemDecoration(this.context, layoutManager.orientation);
+//        recyclerView.layoutManager = layoutManager;
+//        recyclerView.addItemDecoration(dividerItemDecoration);
+//        setUpData();
+//        session = this!!.onGetMxSession()!!;
+//        return view;
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_direct_message, container, false, dataBindingComponent);
+        return binding!!.root;
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
+        binding!!.setLifecycleOwner(viewLifecycleOwner);
+//        listRoomAdapter = ListRoomRecyclerViewAdapter(appExecutors = appExecutors, dataBindingComponent = dataBindingComponent, diffCallback = ){}
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -77,16 +110,25 @@ class DirectMessageFragment : Fragment() {
     fun handleDataChange(): PublishSubject<Status> {
         return listener?.handleDataChange()!!;
     }
-    fun onClickJoinRoom(room: Room){
+
+    fun onClickJoinRoom(room: Room) {
         listener?.onClickItemJoin(room);
     }
-    fun onClickItemDecline(room: Room){
+
+    fun onClickItemDecline(room: Room) {
         listener?.onClickItemDecline(room);
     }
-    fun onClickItemPreview(room: Room){
+
+    fun onClickItemPreview(room: Room) {
         listener?.onClickItemPreview(room);
     }
-
+//    private fun initRecyclerView() {
+//
+//        binding.searchResult = roomViewModel.results()
+//        searchViewModel.results().observe(viewLifecycleOwner, Observer { result ->
+//            adapter.submitList(result?.data)
+//        })
+//    }
     private fun setUpData() {
         val adapter = DirectMessageRecyclerViewAdapter(onGetListDirectMessage(), onGetListDirectMessageInvitation(), onGetMxSession()!!, activity!!);
         recyclerView.adapter = adapter;
@@ -104,11 +146,11 @@ class DirectMessageFragment : Fragment() {
 
         adapter.publishSubject.subscribe { t ->
             kotlin.run {
-                when (t.clickType){
+                when (t.clickType) {
                     0 -> onClickItem(t.room!!);
-                    1-> onClickItemDecline(t.room!!)
-                    2-> onClickJoinRoom(t.room!!)
-                    3-> onClickItemPreview(t.room!!);
+                    1 -> onClickItemDecline(t.room!!)
+                    2 -> onClickJoinRoom(t.room!!)
+                    3 -> onClickItemPreview(t.room!!);
                     else -> onClickItem(t.room!!);
                 }
             }
@@ -148,7 +190,7 @@ class DirectMessageFragment : Fragment() {
         fun onGetListDirectMessageInvitation(): List<Room>;
         fun onClickItem(room: Room);
         fun handleDataChange(): PublishSubject<Status>;
-        fun onClickItemJoin(room : Room);
+        fun onClickItemJoin(room: Room);
         fun onClickItemDecline(room: Room);
         fun onClickItemPreview(room: Room);
     }

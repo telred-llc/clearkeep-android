@@ -18,6 +18,7 @@ import im.vector.fragments.signout.SignOutBottomSheetDialogFragment
 import im.vector.fragments.signout.SignOutViewModel
 import im.vector.util.VectorUtils
 import org.matrix.androidsdk.MXSession
+import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.viewmodels.UserViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import javax.inject.Inject
@@ -29,11 +30,12 @@ class ProfileActivity : DaggerAppCompatActivity(), LifecycleOwner {
 
     lateinit var mxSession: MXSession;
 
-    private lateinit var userViewModel : AbstractUserViewModel;
+    private lateinit var userViewModel: AbstractUserViewModel;
+    private var dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val dataBinding = DataBindingUtil.setContentView<ActivityProfileBinding>(this, R.layout.activity_profile);
+        val dataBinding = DataBindingUtil.setContentView<ActivityProfileBinding>(this, R.layout.activity_profile, dataBindingComponent);
         mxSession = Matrix.getInstance(this.applicationContext).defaultSession;
         setSupportActionBar(dataBinding.toolbar);
         supportActionBar!!.setTitle(R.string.profile);
@@ -48,9 +50,9 @@ class ProfileActivity : DaggerAppCompatActivity(), LifecycleOwner {
         userViewModel.setUserId(mxSession.myUserId);
         dataBinding.user = userViewModel.getUserData();
         dataBinding.lifecycleOwner = this;
-        VectorUtils.loadUserAvatar(this, mxSession, dataBinding.imageViewAvatar, mxSession.myUser);
-        dataBinding.buttonSignOut.setOnClickListener{v -> kotlin.run { signOut() } }
+        dataBinding.buttonSignOut.setOnClickListener { v -> kotlin.run { signOut() } }
     }
+
     private fun signOut() {
 
         if (SignOutViewModel.doYouNeedToBeDisplayed(mxSession)) {
