@@ -1,11 +1,13 @@
 package vmodev.clearkeep.fragments
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -58,7 +60,7 @@ class DirectMessageFragment : DaggerFragment() {
     var binding: FragmentDirectMessageBinding? = null;
 
     var roomViewModel: AbstractRoomViewModel? = null;
-    var listRoomAdapter : ListRoomRecyclerViewAdapter?=null;
+    var listRoomAdapter: ListRoomRecyclerViewAdapter? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +89,27 @@ class DirectMessageFragment : DaggerFragment() {
         super.onViewCreated(view, savedInstanceState)
         roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
         binding!!.setLifecycleOwner(viewLifecycleOwner);
-//        listRoomAdapter = ListRoomRecyclerViewAdapter(appExecutors = appExecutors, dataBindingComponent = dataBindingComponent, diffCallback = ){}
+        listRoomAdapter = ListRoomRecyclerViewAdapter(appExecutors = appExecutors, dataBindingComponent = dataBindingComponent, diffCallback = object : DiffUtil.ItemCallback<vmodev.clearkeep.viewmodelobjects.Room>() {
+            override fun areItemsTheSame(p0: vmodev.clearkeep.viewmodelobjects.Room, p1: vmodev.clearkeep.viewmodelobjects.Room): Boolean {
+                return p0.id == p1.id;
+            }
+
+            override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.Room, p1: vmodev.clearkeep.viewmodelobjects.Room): Boolean {
+                return p0.id == p1.id;
+            }
+        })
+
+        binding!!.recyclerViewListConversation.adapter = listRoomAdapter;
+
+        binding!!.rooms = roomViewModel!!.getRoomsData();
+
+        roomViewModel!!.getRoomsData().observe(viewLifecycleOwner, Observer { t ->
+            kotlin.run {
+                listRoomAdapter!!.submitList(t?.data);
+            }
+        })
+
+        roomViewModel!!.setFilter(1);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -122,7 +144,8 @@ class DirectMessageFragment : DaggerFragment() {
     fun onClickItemPreview(room: Room) {
         listener?.onClickItemPreview(room);
     }
-//    private fun initRecyclerView() {
+
+    //    private fun initRecyclerView() {
 //
 //        binding.searchResult = roomViewModel.results()
 //        searchViewModel.results().observe(viewLifecycleOwner, Observer { result ->
@@ -207,12 +230,10 @@ class DirectMessageFragment : DaggerFragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance() =
-                DirectMessageFragment().apply {
-                    arguments = Bundle().apply {
+            DirectMessageFragment().apply {
+                arguments = Bundle().apply {
 
-                    }
                 }
+            }
     }
-
-
 }

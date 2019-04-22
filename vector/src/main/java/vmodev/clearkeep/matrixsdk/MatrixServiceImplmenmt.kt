@@ -153,12 +153,19 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
             kotlin.run {
                 val listRoom = ArrayList<vmodev.clearkeep.viewmodelobjects.Room>();
                 if (homeRoomsViewModel != null && homeRoomsViewModel!!.result != null) {
+                    homeRoomsViewModel!!.update();
                     val rooms = funcs[filter].apply(homeRoomsViewModel!!.result);
                     rooms.forEach { t: Room? ->
                         listRoom.add(vmodev.clearkeep.viewmodelobjects.Room(id = t!!.roomId
                                 , name = t!!.getRoomDisplayName(application)
-                                , type = filter, avatarUrl = t!!.avatarUrl!!, updatedDate = 0))
+                                , type = filter, avatarUrl = session!!.contentManager.getDownloadableUrl(t!!.avatarUrl!!)!!, updatedDate = 0))
                     }
+                    emitter.onNext(listRoom);
+                    emitter.onComplete()
+                }
+                else{
+                    emitter.onError(NullPointerException());
+                    emitter.onComplete();
                 }
             }
         }

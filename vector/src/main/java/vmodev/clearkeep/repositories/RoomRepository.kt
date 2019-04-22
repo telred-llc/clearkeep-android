@@ -26,7 +26,7 @@ class RoomRepository @Inject constructor(
             }
 
             override fun shouldFetch(data: List<Room>?): Boolean {
-                return data == null;
+                return data == null || data.isEmpty();
             }
 
             override fun loadFromDb(): LiveData<List<Room>> {
