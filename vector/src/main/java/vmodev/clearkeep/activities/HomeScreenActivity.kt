@@ -204,33 +204,33 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
 
     @SuppressLint("CheckResult")
     private fun needUpdateData() {
-        Observable.create<Status> { emitter ->
-            kotlin.run {
-                val invitationComparator = RoomUtils.getRoomsDateComparator(mxSession, false)
-                val result = homeRoomViewModel.update();
-                if (result != null) {
-                    directMessages = result.directChats;
-                    rooms = result.otherRooms;
-                    listFavourites = result.favourites;
-                    listContacts = result.getDirectChatsWithFavorites();
-                    Collections.sort(directMessages, invitationComparator)
-                    Collections.sort(rooms, invitationComparator)
-                    Collections.sort(listFavourites, invitationComparator)
-                    Collections.sort(listContacts, invitationComparator)
-                    emitter.onNext(Status.SUCCESS);
-                    emitter.onComplete();
-                } else {
-                    emitter.onError(NullPointerException());
-                    emitter.onComplete();
-                }
-            }
-        }.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe { t: Status? ->
-            kotlin.run {
-                getRoomInvitations();
-                publishSubjectListRoomChanged.onNext(t!!);
-                updateNotifyOnBottomNavigation();
-            }
-        };
+//        Observable.create<Status> { emitter ->
+//            kotlin.run {
+//                val invitationComparator = RoomUtils.getRoomsDateComparator(mxSession, false)
+//                val result = homeRoomViewModel.update();
+//                if (result != null) {
+//                    directMessages = result.directChats;
+//                    rooms = result.otherRooms;
+//                    listFavourites = result.favourites;
+//                    listContacts = result.getDirectChatsWithFavorites();
+//                    Collections.sort(directMessages, invitationComparator)
+//                    Collections.sort(rooms, invitationComparator)
+//                    Collections.sort(listFavourites, invitationComparator)
+//                    Collections.sort(listContacts, invitationComparator)
+//                    emitter.onNext(Status.SUCCESS);
+//                    emitter.onComplete();
+//                } else {
+//                    emitter.onError(NullPointerException());
+//                    emitter.onComplete();
+//                }
+//            }
+//        }.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe { t: Status? ->
+//            kotlin.run {
+//                getRoomInvitations();
+//                publishSubjectListRoomChanged.onNext(t!!);
+//                updateNotifyOnBottomNavigation();
+//            }
+//        };
     }
 
     override fun onDestroy() {
@@ -524,6 +524,11 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
 
     override fun updateData() {
         needUpdateData();
+    }
+
+    override fun onClickGoRoom(roomId: String) {
+        val room = mxSession.dataHandler.getRoom(roomId);
+        openRoom(room);
     }
 
     override fun onResume() {

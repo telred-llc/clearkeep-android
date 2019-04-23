@@ -18,5 +18,6 @@ data class Room(
         @field:SerializedName("name") val name: String,
         @field:SerializedName("type") val type: Int,
         @field:SerializedName("updatedDate") val updatedDate: Long,
-        @field:SerializedName("avatarUrl") val avatarUrl: String
+        @field:SerializedName("avatarUrl") val avatarUrl: String,
+        @field:SerializedName("notifyCount") val notifyCount: Int
 )

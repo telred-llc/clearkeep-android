@@ -1,11 +1,13 @@
 package vmodev.clearkeep.fragments
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -15,6 +17,8 @@ import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import im.vector.R
 import im.vector.databinding.FragmentDirectMessageBinding
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
@@ -23,9 +27,11 @@ import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentBindingAdapters
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.ultis.RoomType
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.RoomViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
@@ -58,7 +64,7 @@ class DirectMessageFragment : DaggerFragment() {
     var binding: FragmentDirectMessageBinding? = null;
 
     var roomViewModel: AbstractRoomViewModel? = null;
-    var listRoomAdapter : ListRoomRecyclerViewAdapter?=null;
+    var listRoomAdapter: ListRoomRecyclerViewAdapter? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +93,27 @@ class DirectMessageFragment : DaggerFragment() {
         super.onViewCreated(view, savedInstanceState)
         roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
         binding!!.setLifecycleOwner(viewLifecycleOwner);
-//        listRoomAdapter = ListRoomRecyclerViewAdapter(appExecutors = appExecutors, dataBindingComponent = dataBindingComponent, diffCallback = ){}
+        listRoomAdapter = ListRoomRecyclerViewAdapter(appExecutors = appExecutors, dataBindingComponent = dataBindingComponent, diffCallback = object : DiffUtil.ItemCallback<vmodev.clearkeep.viewmodelobjects.Room>() {
+            override fun areItemsTheSame(p0: vmodev.clearkeep.viewmodelobjects.Room, p1: vmodev.clearkeep.viewmodelobjects.Room): Boolean {
+                return p0.id == p1.id;
+            }
+
+            override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.Room, p1: vmodev.clearkeep.viewmodelobjects.Room): Boolean {
+                return p0.name == p1.name && p0.updatedDate == p1.updatedDate && p0.avatarUrl == p1.avatarUrl
+                        && p0.notifyCount == p1.notifyCount;
+            }
+        }) { room ->
+            kotlin.run { onClickGoRoom(room.id); }
+        };
+        binding!!.rooms = roomViewModel!!.getRoomsData();
+        binding!!.recyclerViewListConversation.adapter = listRoomAdapter;
+        roomViewModel!!.getRoomsData().observe(viewLifecycleOwner, Observer { t ->
+            kotlin.run {
+                listRoomAdapter!!.submitList(t?.data);
+            }
+        });
+        roomViewModel!!.setFilter(1)
+//        Observable.timer(10, TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe{ t: Long? -> roomViewModel!!.setFilter(2); }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -122,7 +148,12 @@ class DirectMessageFragment : DaggerFragment() {
     fun onClickItemPreview(room: Room) {
         listener?.onClickItemPreview(room);
     }
-//    private fun initRecyclerView() {
+
+    fun onClickGoRoom(roomId: String) {
+        listener?.onClickGoRoom(roomId);
+    }
+
+    //    private fun initRecyclerView() {
 //
 //        binding.searchResult = roomViewModel.results()
 //        searchViewModel.results().observe(viewLifecycleOwner, Observer { result ->
@@ -193,6 +224,7 @@ class DirectMessageFragment : DaggerFragment() {
         fun onClickItemJoin(room: Room);
         fun onClickItemDecline(room: Room);
         fun onClickItemPreview(room: Room);
+        fun onClickGoRoom(roomId: String);
     }
 
     companion object {
