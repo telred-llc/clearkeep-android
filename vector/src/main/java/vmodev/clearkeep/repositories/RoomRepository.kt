@@ -2,8 +2,10 @@ package vmodev.clearkeep.repositories
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
+import android.util.Log
 import io.reactivex.BackpressureStrategy
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.RoomDao
 import vmodev.clearkeep.executors.AppExecutors
@@ -19,7 +21,7 @@ class RoomRepository @Inject constructor(
         private val roomDao: RoomDao,
         private val matrixService: MatrixService
 ) {
-    fun loadListRoom(filer: Int): LiveData<Resource<List<Room>>> {
+    fun loadListRoom(filters: Array<Int>): LiveData<Resource<List<Room>>> {
         return object : MatrixBoundSource<List<Room>, List<Room>>(appExecutors) {
             override fun saveCallResult(item: List<Room>) {
                 roomDao.insertRooms(item);
@@ -30,11 +32,11 @@ class RoomRepository @Inject constructor(
             }
 
             override fun loadFromDb(): LiveData<List<Room>> {
-                return roomDao.loadWithTwoType(filer,2);
+                return roomDao.loadWithType(filters);
             }
 
             override fun createCall(): LiveData<List<Room>> {
-                return LiveDataReactiveStreams.fromPublisher(matrixService.getListRoom(filer)
+                return LiveDataReactiveStreams.fromPublisher(matrixService.getListRoom(filters)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(Schedulers.newThread())
                         .toFlowable(BackpressureStrategy.LATEST));
@@ -70,5 +72,11 @@ class RoomRepository @Inject constructor(
                         , notifyCount = t!!.notifyCount, avatarUrl = t!!.avatarUrl, type = t!!.type, name = t!!.name);
             }
         };
+    }
+
+    fun insertRoom(id: String) {
+        matrixService.getRoomWithId(id).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread()).subscribe(Consumer { t ->
+            t?.let { roomDao.insert(it) }
+        }, Consumer { t -> Log.d("Erro: ", t.message) });
     }
 }

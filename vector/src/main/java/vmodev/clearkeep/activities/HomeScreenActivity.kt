@@ -270,27 +270,30 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
         return directMessageInvite;
     }
 
-    override fun onClickItemJoin(room: Room) {
-        joinRoom(room)
+    override fun onClickItemJoin(roomId: String) {
+        joinRoom(roomId)
     }
 
-    override fun onClickItemDecline(room: Room) {
-        onRejectInvitation(room.roomId, object : SimpleApiCallback<Void>(this) {
+    override fun onClickItemDecline(roomId: String) {
+        onRejectInvitation(roomId, object : SimpleApiCallback<Void>(this) {
             override fun onSuccess(p0: Void?) {
                 needUpdateData();
             }
         })
     }
 
-    override fun onClickItemPreview(room: Room) {
-        toolbar.visibility = View.GONE;
-        bottom_navigation_view_home_screen.visibility = View.GONE;
-        switchFragment(PreviewFragment.newInstance(room.roomId));
+    override fun onClickItemPreview(roomId: String) {
+//        toolbar.visibility = View.GONE;
+//        bottom_navigation_view_home_screen.visibility = View.GONE;
+//        switchFragment(PreviewFragment.newInstance(roomId));
+        val intent: Intent = Intent(this, PreviewInviteRoomActivity::class.java);
+        intent.putExtra("ROOM_ID", roomId);
+        startActivity(intent);
     }
 
     override fun onJoinClick(room: Room) {
         onBackPressed();
-        joinRoom(room)
+        joinRoom(room.roomId)
         toolbar.visibility = View.VISIBLE;
         bottom_navigation_view_home_screen.visibility = View.VISIBLE;
     }
@@ -454,7 +457,8 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
         }
     }
 
-    private fun joinRoom(room: Room) {
+    private fun joinRoom(roomId: String) {
+        val room = mxSession.dataHandler.store.getRoom(roomId);
         mxSession.joinRoom(room!!.getRoomId(), object : ApiCallback<String> {
             override fun onSuccess(roomId: String) {
                 val params = HashMap<String, Any>()
@@ -535,8 +539,26 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
         super.onResume()
         needUpdateData();
     }
+
     //    val consentNotGivenHelper by lazy {
 //        ConsentNotGivenHelper(this, savedInstanceState)
 //                .apply { addToRestorables(this) }
 //    }
+    override fun onClickItemJoin(room: Room) {
+        joinRoom(room.roomId);
+    }
+
+    override fun onClickItemDecline(room: Room) {
+        onRejectInvitation(room.roomId, object : SimpleApiCallback<Void>(this) {
+            override fun onSuccess(p0: Void?) {
+                needUpdateData();
+            }
+        })
+    }
+
+    override fun onClickItemPreview(room: Room) {
+        toolbar.visibility = View.GONE;
+        bottom_navigation_view_home_screen.visibility = View.GONE;
+        switchFragment(PreviewFragment.newInstance(room.roomId));
+    }
 }

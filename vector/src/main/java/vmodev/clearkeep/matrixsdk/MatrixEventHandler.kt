@@ -1,9 +1,13 @@
 package vmodev.clearkeep.matrixsdk
 
 import android.app.Application
+import android.arch.lifecycle.LiveData
 import android.util.Log
 import im.vector.Matrix
 import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.MyUser
 import org.matrix.androidsdk.data.RoomState
@@ -11,6 +15,7 @@ import org.matrix.androidsdk.listeners.MXEventListener
 import org.matrix.androidsdk.rest.model.Event
 import vmodev.clearkeep.repositories.RoomRepository
 import vmodev.clearkeep.repositories.UserRepository
+import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import java.util.*
 import javax.inject.Inject
@@ -42,6 +47,19 @@ class MatrixEventHandler @Inject constructor(private val application: Applicatio
 
     override fun onLiveEvent(event: Event?, roomState: RoomState?) {
         super.onLiveEvent(event, roomState)
+        if (event?.type?.compareTo("m.room.join_rules") == 0) {
+            if (event?.roomId != null) {
+                roomRepository.insertRoom(event?.roomId);
+            }
+        }
+        if (event?.type?.compareTo("m.room.name") == 0) {
+            if (event?.roomId != null)
+                roomRepository.insertRoom(event?.roomId);
+        }
+        if (event?.type?.compareTo("m.room.member") == 0) {
+            if (event?.roomId != null)
+                roomRepository.insertRoom(event?.roomId);
+        }
         if (event?.type?.compareTo("m.room.message") == 0) {
             if (event?.roomId != null) {
                 roomRepository.updateRoomFromRemote(event?.roomId);

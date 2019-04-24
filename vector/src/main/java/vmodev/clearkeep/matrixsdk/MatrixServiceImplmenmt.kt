@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.util.Log
 import im.vector.Matrix
 import im.vector.util.HomeRoomsViewModel
 import io.reactivex.Observable
@@ -14,6 +15,8 @@ import io.reactivex.internal.operators.observable.ObservableAll
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
+import org.matrix.androidsdk.data.RoomSummary
+import org.matrix.androidsdk.data.RoomTag
 import vmodev.clearkeep.viewmodelobjects.User
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,6 +35,8 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         homeRoomsViewModel = HomeRoomsViewModel(session!!);
         funcs[1] = Function { t: HomeRoomsViewModel.Result -> t.directChats };
         funcs[2] = Function { t: HomeRoomsViewModel.Result -> t.otherRooms };
+        funcs[65] = Function { t: HomeRoomsViewModel.Result -> getListDirectMessageInvite() };
+        funcs[66] = Function { t: HomeRoomsViewModel.Result -> getListRoomMessageInvite() };
         funcs[129] = Function { t: HomeRoomsViewModel.Result -> t.getDirectChatsWithFavorites() };
         funcs[130] = Function { t: HomeRoomsViewModel.Result -> t.getOtherRoomsWithFavorites() };
     }
@@ -148,18 +153,26 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         }
     }
 
-    override fun getListRoom(filter: Int): Observable<List<vmodev.clearkeep.viewmodelobjects.Room>> {
+    override fun getListRoom(filters: Array<Int>): Observable<List<vmodev.clearkeep.viewmodelobjects.Room>> {
         setMXSession();
         return Observable.create<List<vmodev.clearkeep.viewmodelobjects.Room>> { emitter ->
             kotlin.run {
                 val listRoom = ArrayList<vmodev.clearkeep.viewmodelobjects.Room>();
                 if (homeRoomsViewModel != null && homeRoomsViewModel!!.result != null) {
                     homeRoomsViewModel!!.update();
-                    val rooms = funcs[filter].apply(homeRoomsViewModel!!.result);
+                    val rooms = ArrayList<Room>();
+                    for (filter in filters) {
+                        rooms.addAll(funcs[filter].apply(homeRoomsViewModel!!.result))
+                    }
                     rooms.forEach { t: Room? ->
+                        val sourcePrimary = if (t!!.isDirect) 0b00000001 else 0b00000010;
+                        val sourceSecondary = if (t.isInvited) 0b01000000 else 0b00000000;
+                        val sourceThird = if ((t.accountData?.keys
+                                        ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
+                        val avatar: String? = if (t.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(t.avatarUrl);
                         listRoom.add(vmodev.clearkeep.viewmodelobjects.Room(id = t!!.roomId
                                 , name = t!!.getRoomDisplayName(application)
-                                , type = filter, avatarUrl = session!!.contentManager.getDownloadableUrl(t!!.avatarUrl!!)!!, updatedDate = 0, notifyCount = t!!.notificationCount))
+                                , type = sourcePrimary or sourceSecondary or sourceThird, avatarUrl = avatar!!, updatedDate = 0, notifyCount = t!!.notificationCount))
                     }
                     emitter.onNext(listRoom);
                     emitter.onComplete();
@@ -177,9 +190,17 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
             kotlin.run {
                 val room = session!!.dataHandler!!.getRoom(id);
                 if (room != null) {
-                    emitter.onNext(vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
-                            , type = 2, avatarUrl = session!!.contentManager.getDownloadableUrl(room.avatarUrl)!!, notifyCount = room.notificationCount
-                            , updatedDate = 0));
+
+                    val sourcePrimary = if (room.isDirect) 0b00000001 else 0b00000010;
+                    val sourceSecondary = if (room.isInvited) 0b01000000 else 0b00000000;
+                    val sourceThird = if ((room.accountData?.keys
+                                    ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
+                    val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
+                    Log.d("Room Type: ", (sourcePrimary or sourceSecondary or sourceThird).toString())
+                    val roomObj: vmodev.clearkeep.viewmodelobjects.Room = vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
+                            , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
+                            , updatedDate = 0);
+                    emitter.onNext(roomObj);
                     emitter.onComplete();
                 } else {
                     emitter.onError(NullPointerException());
@@ -196,5 +217,32 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
 
             }
         }
+    }
+
+    private fun getListDirectMessageInvite(): List<Room> {
+        val roomSummaries = session!!.dataHandler.store.summaries;
+        val rooms = ArrayList<Room>();
+        roomSummaries.forEach { t: RoomSummary? ->
+            kotlin.run {
+                val room = session!!.dataHandler.store.getRoom(t?.roomId);
+                if (room != null && !room!!.isConferenceUserRoom && room!!.isInvited && room.isDirectChatInvitation){
+                    rooms.add(room);
+                }
+            }
+        }
+        return rooms;
+    }
+    private fun getListRoomMessageInvite(): List<Room> {
+        val roomSummaries = session!!.dataHandler.store.summaries;
+        val rooms = ArrayList<Room>();
+        roomSummaries.forEach { t: RoomSummary? ->
+            kotlin.run {
+                val room = session!!.dataHandler.store.getRoom(t?.roomId);
+                if (room != null && !room!!.isConferenceUserRoom && room!!.isInvited && !room.isDirectChatInvitation){
+                    rooms.add(room);
+                }
+            }
+        }
+        return rooms;
     }
 }

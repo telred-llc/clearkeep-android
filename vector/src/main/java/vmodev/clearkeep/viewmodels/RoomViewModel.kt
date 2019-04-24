@@ -10,21 +10,31 @@ import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
 
 class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : AbstractRoomViewModel() {
-    private val _filter = MutableLiveData<Int>();
-    private val rooms: LiveData<Resource<List<Room>>> = Transformations.switchMap(_filter) { input ->
+    private val _filters = MutableLiveData<Array<Int>>();
+    private val _id = MutableLiveData<String>();
+    private val rooms: LiveData<Resource<List<Room>>> = Transformations.switchMap(_filters) { input ->
         roomRepository.loadListRoom(input);
     }
+    private val room: LiveData<Resource<Room>> = Transformations.switchMap(_id) { input -> roomRepository.loadRoom(input) };
 
-    override fun setFilter(filter: Int) {
-        if (_filter.value != filter)
-            _filter.value = filter;
+    override fun setFilter(filters: Array<Int>) {
+        _filters.value = filters;
     }
 
     override fun getRoomsData(): LiveData<Resource<List<Room>>> {
         return rooms;
     }
 
-    override fun getFilterData(): LiveData<Int> {
-        return _filter;
+    override fun getFilterData(): LiveData<Array<Int>> {
+        return _filters;
+    }
+
+    override fun getRoom(): LiveData<Resource<Room>> {
+        return room;
+    }
+
+    override fun setRoomId(id: String) {
+        if (_id.value != id)
+            _id.value = id;
     }
 }
