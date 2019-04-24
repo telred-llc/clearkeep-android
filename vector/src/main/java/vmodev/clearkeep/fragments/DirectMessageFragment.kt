@@ -102,8 +102,15 @@ class DirectMessageFragment : DaggerFragment() {
                 return p0.name == p1.name && p0.updatedDate == p1.updatedDate && p0.avatarUrl == p1.avatarUrl
                         && p0.notifyCount == p1.notifyCount;
             }
-        }) { room ->
-            kotlin.run { onClickGoRoom(room.id); }
+        }) { room, i ->
+            kotlin.run {
+                when (i) {
+                    3 -> onClickGoRoom(room.id);
+                    0 -> onClickItemPreview(room.id);
+                    1 -> onClickJoinRoom(room.id);
+                    2 -> onClickItemDecline(room.id);
+                }
+            }
         };
         binding!!.rooms = roomViewModel!!.getRoomsData();
         binding!!.recyclerViewListConversation.adapter = listRoomAdapter;
@@ -112,7 +119,7 @@ class DirectMessageFragment : DaggerFragment() {
                 listRoomAdapter!!.submitList(t?.data);
             }
         });
-        roomViewModel!!.setFilter(1)
+        roomViewModel!!.setFilter(arrayOf(1, 66, 65))
 //        Observable.timer(10, TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe{ t: Long? -> roomViewModel!!.setFilter(2); }
     }
 
@@ -137,16 +144,16 @@ class DirectMessageFragment : DaggerFragment() {
         return listener?.handleDataChange()!!;
     }
 
-    fun onClickJoinRoom(room: Room) {
-        listener?.onClickItemJoin(room);
+    fun onClickJoinRoom(roomId: String) {
+        listener?.onClickItemJoin(roomId);
     }
 
-    fun onClickItemDecline(room: Room) {
-        listener?.onClickItemDecline(room);
+    fun onClickItemDecline(roomId: String) {
+        listener?.onClickItemDecline(roomId);
     }
 
-    fun onClickItemPreview(room: Room) {
-        listener?.onClickItemPreview(room);
+    fun onClickItemPreview(roomId: String) {
+        listener?.onClickItemPreview(roomId);
     }
 
     fun onClickGoRoom(roomId: String) {
@@ -175,17 +182,17 @@ class DirectMessageFragment : DaggerFragment() {
             }
         };
 
-        adapter.publishSubject.subscribe { t ->
-            kotlin.run {
-                when (t.clickType) {
-                    0 -> onClickItem(t.room!!);
-                    1 -> onClickItemDecline(t.room!!)
-                    2 -> onClickJoinRoom(t.room!!)
-                    3 -> onClickItemPreview(t.room!!);
-                    else -> onClickItem(t.room!!);
-                }
-            }
-        };
+//        adapter.publishSubject.subscribe { t ->
+//            kotlin.run {
+//                when (t.clickType) {
+//                    0 -> onClickItem(t.room!!);
+//                    1 -> onClickItemDecline(t.room!!)
+//                    2 -> onClickJoinRoom(t.room!!)
+//                    3 -> onClickItemPreview(t.room!!);
+//                    else -> onClickItem(t.room!!);
+//                }
+//            }
+//        };
     }
 
     override fun onAttach(context: Context) {
@@ -221,9 +228,9 @@ class DirectMessageFragment : DaggerFragment() {
         fun onGetListDirectMessageInvitation(): List<Room>;
         fun onClickItem(room: Room);
         fun handleDataChange(): PublishSubject<Status>;
-        fun onClickItemJoin(room: Room);
-        fun onClickItemDecline(room: Room);
-        fun onClickItemPreview(room: Room);
+        fun onClickItemJoin(roomId: String);
+        fun onClickItemDecline(roomId: String);
+        fun onClickItemPreview(roomId: String);
         fun onClickGoRoom(roomId: String);
     }
 
