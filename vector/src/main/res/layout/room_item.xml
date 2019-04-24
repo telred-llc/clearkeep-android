@@ -2,6 +2,9 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
+
+        <import type="java.util.List" />
+
         <variable
             name="Room"
             type="vmodev.clearkeep.viewmodelobjects.Room" />
@@ -45,14 +48,15 @@
             android:text="@{Room.name}"/>
 
         <TextView
-            android:id="@+id/text_view_notify"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="10dp"
             android:background="@drawable/circle_background"
             android:textAlignment="center"
-            android:textColor="@color/main_text_color" />
+            android:textColor="@color/main_text_color"
+            app:visibleGone="@{Room.notifyCount > 0}"
+            android:text="@{``+Room.notifyCount}"/>
 
         <LinearLayout
             android:layout_width="wrap_content"

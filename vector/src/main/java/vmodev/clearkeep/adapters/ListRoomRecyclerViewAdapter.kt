@@ -13,12 +13,15 @@ import im.vector.databinding.RoomItemBinding
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.viewmodelobjects.Room
 
-class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<Room>, private val dataBindingComponent: DataBindingComponent)
+class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<Room>
+                                              , private val dataBindingComponent: DataBindingComponent
+                                              , private val itemClick: (Room) -> Unit?)
     : ListAdapter<Room, DataBoundViewHolder<RoomItemBinding>>(AsyncDifferConfig.Builder<Room>(diffCallback)
         .setBackgroundThreadExecutor(appExecutors.diskIO())
         .build()) {
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DataBoundViewHolder<RoomItemBinding> {
         val binding = DataBindingUtil.inflate<RoomItemBinding>(LayoutInflater.from(p0.context), R.layout.room_item, p0, false, dataBindingComponent);
+        binding.root.setOnClickListener { binding.room?.let { itemClick?.invoke(it) } }
         return DataBoundViewHolder(binding);
     }
 

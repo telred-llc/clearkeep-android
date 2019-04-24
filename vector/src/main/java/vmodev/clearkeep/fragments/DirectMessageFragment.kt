@@ -17,6 +17,8 @@ import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 import im.vector.R
 import im.vector.databinding.FragmentDirectMessageBinding
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
@@ -25,9 +27,11 @@ import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentBindingAdapters
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.ultis.RoomType
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.RoomViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
@@ -95,21 +99,21 @@ class DirectMessageFragment : DaggerFragment() {
             }
 
             override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.Room, p1: vmodev.clearkeep.viewmodelobjects.Room): Boolean {
-                return p0.id == p1.id;
+                return p0.name == p1.name && p0.updatedDate == p1.updatedDate && p0.avatarUrl == p1.avatarUrl
+                        && p0.notifyCount == p1.notifyCount;
             }
-        })
-
-        binding!!.recyclerViewListConversation.adapter = listRoomAdapter;
-
+        }) { room ->
+            kotlin.run { onClickGoRoom(room.id); }
+        };
         binding!!.rooms = roomViewModel!!.getRoomsData();
-
+        binding!!.recyclerViewListConversation.adapter = listRoomAdapter;
         roomViewModel!!.getRoomsData().observe(viewLifecycleOwner, Observer { t ->
             kotlin.run {
                 listRoomAdapter!!.submitList(t?.data);
             }
-        })
-
-        roomViewModel!!.setFilter(1);
+        });
+        roomViewModel!!.setFilter(1)
+//        Observable.timer(10, TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe{ t: Long? -> roomViewModel!!.setFilter(2); }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -143,6 +147,10 @@ class DirectMessageFragment : DaggerFragment() {
 
     fun onClickItemPreview(room: Room) {
         listener?.onClickItemPreview(room);
+    }
+
+    fun onClickGoRoom(roomId: String) {
+        listener?.onClickGoRoom(roomId);
     }
 
     //    private fun initRecyclerView() {
@@ -216,6 +224,7 @@ class DirectMessageFragment : DaggerFragment() {
         fun onClickItemJoin(room: Room);
         fun onClickItemDecline(room: Room);
         fun onClickItemPreview(room: Room);
+        fun onClickGoRoom(roomId: String);
     }
 
     companion object {
@@ -230,10 +239,12 @@ class DirectMessageFragment : DaggerFragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance() =
-            DirectMessageFragment().apply {
-                arguments = Bundle().apply {
+                DirectMessageFragment().apply {
+                    arguments = Bundle().apply {
 
+                    }
                 }
-            }
     }
+
+
 }

@@ -28,7 +28,7 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
             }
 
             override fun shouldFetch(data: User?): Boolean {
-                return data == null;
+            return data == null;
             }
 
             override fun loadFromDb(): LiveData<User> {

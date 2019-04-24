@@ -10,6 +10,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
 import io.reactivex.functions.Function
+import io.reactivex.internal.operators.observable.ObservableAll
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
@@ -158,15 +159,41 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                     rooms.forEach { t: Room? ->
                         listRoom.add(vmodev.clearkeep.viewmodelobjects.Room(id = t!!.roomId
                                 , name = t!!.getRoomDisplayName(application)
-                                , type = filter, avatarUrl = session!!.contentManager.getDownloadableUrl(t!!.avatarUrl!!)!!, updatedDate = 0))
+                                , type = filter, avatarUrl = session!!.contentManager.getDownloadableUrl(t!!.avatarUrl!!)!!, updatedDate = 0, notifyCount = t!!.notificationCount))
                     }
                     emitter.onNext(listRoom);
-                    emitter.onComplete()
-                }
-                else{
+                    emitter.onComplete();
+                } else {
                     emitter.onError(NullPointerException());
                     emitter.onComplete();
                 }
+            }
+        }
+    }
+
+    override fun getRoomWithId(id: String): Observable<vmodev.clearkeep.viewmodelobjects.Room> {
+        setMXSession();
+        return ObservableAll.create<vmodev.clearkeep.viewmodelobjects.Room> { emitter ->
+            kotlin.run {
+                val room = session!!.dataHandler!!.getRoom(id);
+                if (room != null) {
+                    emitter.onNext(vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
+                            , type = 2, avatarUrl = session!!.contentManager.getDownloadableUrl(room.avatarUrl)!!, notifyCount = room.notificationCount
+                            , updatedDate = 0));
+                    emitter.onComplete();
+                } else {
+                    emitter.onError(NullPointerException());
+                    emitter.onComplete();
+                }
+            }
+        }
+    }
+
+    override fun getListRoomWithTwoFilter(filterOne: Int, filterTwo: Int): Observable<List<vmodev.clearkeep.viewmodelobjects.Room>> {
+        setMXSession();
+        return Observable.create<List<vmodev.clearkeep.viewmodelobjects.Room>> { emitter ->
+            kotlin.run {
+
             }
         }
     }
