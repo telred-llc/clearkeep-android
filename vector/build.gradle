@@ -369,6 +369,11 @@ dependencies {
     //=============== Glide - Library for load image from network =============//
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     //==========================================================================//
+
+    //================ RxBinding =========================================//
+    implementation 'com.jakewharton.rxbinding3:rxbinding:3.0.0-alpha2'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.2.0'
+    //======================================================================//
 }
 
 

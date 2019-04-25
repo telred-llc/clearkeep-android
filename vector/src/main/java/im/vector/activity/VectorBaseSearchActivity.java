@@ -60,7 +60,7 @@ public abstract class VectorBaseSearchActivity extends MXCActionBarActivity {
     private static final int SPEECH_REQUEST_CODE = 1234;
 
     private ActionBar mActionBar;
-    EditText mPatternToSearchEditText;
+    protected EditText mPatternToSearchEditText;
 
     private MenuItem mMicroMenuItem;
     private MenuItem mClearEditTextMenuItem;
@@ -190,7 +190,7 @@ public abstract class VectorBaseSearchActivity extends MXCActionBarActivity {
      *
      * @param isTypingUpdate true when the pattern has been updated while typing.
      */
-    void onPatternUpdate(boolean isTypingUpdate) {
+    protected void onPatternUpdate(boolean isTypingUpdate) {
         // do something here
     }
 

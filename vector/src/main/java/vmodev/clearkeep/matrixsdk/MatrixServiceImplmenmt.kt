@@ -20,6 +20,7 @@ import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.data.RoomTag
 import org.matrix.androidsdk.rest.callback.ApiCallback
 import org.matrix.androidsdk.rest.model.MatrixError
+import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
 import vmodev.clearkeep.viewmodelobjects.User
 import java.lang.Exception
 import javax.inject.Inject
@@ -273,12 +274,55 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         val sourcePrimary = if (room.isDirect) 0b00000001 else 0b00000010;
         val sourceSecondary = if (room.isInvited) 0b01000000 else 0b00000000;
         val sourceThird = if ((room.accountData?.keys
-                ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
+                        ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
         val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
         Log.d("Room Type: ", (sourcePrimary or sourceSecondary or sourceThird).toString())
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
-            , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
-            , updatedDate = 0);
+                , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
+                , updatedDate = 0);
         return roomObj;
+    }
+
+    override fun findListUser(keyword: String): Observable<List<User>> {
+        setMXSession();
+        val filter: Set<String> = HashSet<String>();
+
+        return Observable.create<List<User>> { emitter ->
+            kotlin.run {
+                session!!.searchUsers(keyword, 100, filter, object : ApiCallback<SearchUsersResponse> {
+                    override fun onSuccess(p0: SearchUsersResponse?) {
+                        if (p0 != null) {
+                            val users = ArrayList<User>();
+                            p0?.results?.forEach { t: org.matrix.androidsdk.rest.model.User? ->
+                                kotlin.run {
+                                    val avatar = if (t?.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(t?.avatarUrl);
+                                    t?.let { user -> users.add(User(id = user.user_id, name = user.displayname, avatarUrl = avatar)) }
+                                }
+                            }
+                            emitter.onNext(users);
+                            emitter.onComplete();
+                        } else {
+                            emitter.onError(NullPointerException());
+                            emitter.onComplete();
+                        }
+                    }
+
+                    override fun onUnexpectedError(p0: Exception?) {
+                        emitter.onError(Throwable(message = p0?.message));
+                        emitter.onComplete();
+                    }
+
+                    override fun onMatrixError(p0: MatrixError?) {
+                        emitter.onError(Throwable(message = p0?.message));
+                        emitter.onComplete();
+                    }
+
+                    override fun onNetworkError(p0: Exception?) {
+                        emitter.onError(Throwable(message = p0?.message));
+                        emitter.onComplete();
+                    }
+                });
+            }
+        }
     }
 }

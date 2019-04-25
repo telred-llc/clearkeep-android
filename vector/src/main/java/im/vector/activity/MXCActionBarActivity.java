@@ -46,7 +46,7 @@ public abstract class MXCActionBarActivity extends VectorAppCompatActivity {
     public static final String EXTRA_MATRIX_ID = "MXCActionBarActivity.EXTRA_MATRIX_ID";
 
     protected MXSession mSession = null;
-    Room mRoom = null;
+    protected Room mRoom = null;
 
     @Override
     public void onLowMemory() {

@@ -2,6 +2,7 @@ package vmodev.clearkeep.repositories
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
+import android.arch.lifecycle.MutableLiveData
 import android.util.Log
 import io.reactivex.BackpressureStrategy
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -17,9 +18,9 @@ import javax.inject.Singleton
 
 @Singleton
 class RoomRepository @Inject constructor(
-    private val appExecutors: AppExecutors,
-    private val roomDao: RoomDao,
-    private val matrixService: MatrixService
+        private val appExecutors: AppExecutors,
+        private val roomDao: RoomDao,
+        private val matrixService: MatrixService
 ) {
     fun loadListRoom(filters: Array<Int>): LiveData<Resource<List<Room>>> {
         return object : MatrixBoundSource<List<Room>, List<Room>>(appExecutors) {
@@ -29,17 +30,26 @@ class RoomRepository @Inject constructor(
 
             override fun shouldFetch(data: List<Room>?): Boolean {
                 return data == null || data.isEmpty();
+                return true;
             }
 
             override fun loadFromDb(): LiveData<List<Room>> {
                 return roomDao.loadWithType(filters);
+                return MutableLiveData<List<Room>>();
             }
 
             override fun createCall(): LiveData<List<Room>> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.getListRoom(filters)
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.newThread())
-                    .toFlowable(BackpressureStrategy.LATEST));
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.newThread())
+                        .toFlowable(BackpressureStrategy.LATEST));
+            }
+
+            override fun createCallAsReesult(): LiveData<List<Room>> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.getListRoom(filters)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.newThread())
+                        .toFlowable(BackpressureStrategy.LATEST));
             }
         }.asLiveData();
     }
@@ -60,7 +70,12 @@ class RoomRepository @Inject constructor(
 
             override fun createCall(): LiveData<Room> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.getRoomWithId(id).subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST));
+                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST));
+            }
+
+            override fun createCallAsReesult(): LiveData<Room> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.getRoomWithId(id).subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST));
             }
         }.asLiveData();
     }
@@ -69,7 +84,7 @@ class RoomRepository @Inject constructor(
         matrixService.getRoomWithId(id).subscribeOn(AndroidSchedulers.mainThread()).observeOn(Schedulers.newThread()).subscribe { t: Room? ->
             run {
                 roomDao.updateRoom(id = t!!.id, updatedDate = t!!.updatedDate
-                    , notifyCount = t!!.notifyCount, avatarUrl = t!!.avatarUrl, type = t!!.type, name = t!!.name);
+                        , notifyCount = t!!.notifyCount, avatarUrl = t!!.avatarUrl, type = t!!.type, name = t!!.name);
             }
         };
     }

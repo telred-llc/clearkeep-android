@@ -92,7 +92,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         tools:replace="allowBackup,label">
-        <activity android:name="vmodev.clearkeep.activities.PreviewInviteRoomActivity"></activity>
+        <activity android:name="vmodev.clearkeep.activities.FindAndCreateNewConversationActivity"></activity>
+        <activity android:name="vmodev.clearkeep.activities.RoomInviteMembersActivity" />
+        <activity android:name="vmodev.clearkeep.activities.CreateNewConversationActivity" />
+        <activity android:name="vmodev.clearkeep.activities.PreviewInviteRoomActivity" />
         <activity android:name="vmodev.clearkeep.activities.ProfileActivity" />
         <activity
             android:name="vmodev.clearkeep.activities.HomeScreenActivity"

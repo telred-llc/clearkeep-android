@@ -21,7 +21,9 @@ import dagger.android.support.DaggerAppCompatActivity
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
+import im.vector.activity.MXCActionBarActivity
 import im.vector.activity.VectorRoomActivity
+import im.vector.activity.VectorRoomCreationActivity
 import im.vector.databinding.ActivityHomeScreenBinding
 import im.vector.services.EventStreamService
 import im.vector.ui.badge.BadgeProxy
@@ -146,6 +148,15 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
         userViewModel.setUserId(mxSession.myUserId);
         dataBinding.user = userViewModel.getUserData();
         dataBinding.setLifecycleOwner(this);
+        dataBinding.buttonCreateConvention.setOnClickListener { v ->
+            kotlin.run {
+                //                val settingsIntent = Intent(this@HomeScreenActivity, CreateNewConversationActivity::class.java)
+//                settingsIntent.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, mxSession.myUserId)
+//                startActivity(settingsIntent)
+                val intent = Intent(this, FindAndCreateNewConversationActivity::class.java)
+                startActivity(intent);
+            }
+        }
     }
 
     private fun showAlertDiaglong(title: String, message: String) {

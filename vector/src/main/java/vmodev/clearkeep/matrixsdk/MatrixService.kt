@@ -16,4 +16,5 @@ public interface MatrixService {
     fun getListRoomWithTwoFilter(filterOne: Int, filterTwo: Int): Observable<List<vmodev.clearkeep.viewmodelobjects.Room>>;
     fun getRoomWithId(id: String): Observable<vmodev.clearkeep.viewmodelobjects.Room>;
     fun joinRoom(id: String) : Observable<vmodev.clearkeep.viewmodelobjects.Room>;
+    fun findListUser(keyword : String) : Observable<List<User>>;
 }

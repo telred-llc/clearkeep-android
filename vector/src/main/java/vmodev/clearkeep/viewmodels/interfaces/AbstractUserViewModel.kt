@@ -11,7 +11,10 @@ import vmodev.clearkeep.viewmodelobjects.User
  * So, I using a Abstract Class to declare abstract for ViewModel
  */
 abstract class AbstractUserViewModel : ViewModel() {
-    abstract fun setUserId(userId : String);
-    abstract fun getUserData() : LiveData<Resource<User>>;
-    abstract fun getUserIdData() : LiveData<String>;
+    abstract fun setUserId(userId: String);
+    abstract fun getUserData(): LiveData<Resource<User>>;
+    abstract fun getUserIdData(): LiveData<String>;
+    abstract fun getUsers(): LiveData<Resource<List<User>>>;
+    abstract fun getUsersKeywordData() : LiveData<String>;
+    abstract fun setQuery(query : String);
 }

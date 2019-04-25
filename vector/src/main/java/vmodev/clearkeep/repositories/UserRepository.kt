@@ -2,6 +2,7 @@ package vmodev.clearkeep.repositories
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
+import android.arch.lifecycle.MutableLiveData
 import io.reactivex.BackpressureStrategy
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -28,7 +29,7 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
             }
 
             override fun shouldFetch(data: User?): Boolean {
-            return data == null;
+                return data == null;
             }
 
             override fun loadFromDb(): LiveData<User> {
@@ -36,6 +37,13 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
             }
 
             override fun createCall(): LiveData<User> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.getUser()
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .toFlowable(BackpressureStrategy.LATEST));
+            }
+
+            override fun createCallAsReesult(): LiveData<User> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.getUser()
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -59,6 +67,33 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
 
     protected fun finalize() {
         handleUpdateUser.onComplete();
+    }
+
+    fun findUserFromNetwork(keyword: String): LiveData<Resource<List<User>>> {
+        return object : MatrixBoundSource<List<User>, List<User>>(executors, 1) {
+            override fun saveCallResult(item: List<User>) {
+                // Do not save to db
+            }
+
+            override fun shouldFetch(data: List<User>?): Boolean {
+                // Always return true to get from network
+                return true;
+            }
+
+            override fun loadFromDb(): LiveData<List<User>> {
+                return userDao.findUsers("---")
+            }
+
+            override fun createCall(): LiveData<List<User>> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.findListUser(keyword).subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST));
+            }
+
+            override fun createCallAsReesult(): LiveData<List<User>> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.findListUser(keyword).subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST));
+            }
+        }.asLiveData();
     }
 
     class UserHandleObject constructor(val userId: String, val name: String, val avatarUrl: String);

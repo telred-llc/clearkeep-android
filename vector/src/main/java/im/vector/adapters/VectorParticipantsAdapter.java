@@ -446,7 +446,7 @@ public class VectorParticipantsAdapter extends BaseExpandableListAdapter {
                 @Override
                 public void onSuccess(Void info) {
                     final String fPattern = mPattern;
-
+                    mUsedMemberUserIds.clear();
                     mSession.searchUsers(mPattern, MAX_USERS_SEARCH_COUNT, mUsedMemberUserIds, new ApiCallback<SearchUsersResponse>() {
                         @Override
                         public void onSuccess(SearchUsersResponse searchUsersResponse) {
