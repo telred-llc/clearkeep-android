@@ -1,5 +1,6 @@
 package vmodev.clearkeep.repositories
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
@@ -80,6 +81,7 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
+    @SuppressLint("CheckResult")
     fun updateRoomFromRemote(id: String) {
         matrixService.getRoomWithId(id).subscribeOn(AndroidSchedulers.mainThread()).observeOn(Schedulers.newThread()).subscribe { t: Room? ->
             run {
@@ -89,12 +91,14 @@ class RoomRepository @Inject constructor(
         };
     }
 
+    @SuppressLint("CheckResult")
     fun insertRoom(id: String) {
-        matrixService.getRoomWithId(id).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread()).subscribe(Consumer { t ->
+        matrixService.getRoomWithId(id).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread()).subscribe({ t ->
             t?.let { roomDao.insert(it) }
-        }, Consumer { t -> Log.d("Error: ", t.message) });
+        }, { t -> Log.d("Error: ", t.message) });
     }
 
+    @SuppressLint("CheckResult")
     fun joinRoom(id: String): LiveData<Resource<Room>> {
         matrixService.joinRoom(id).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread()).subscribe { t: Room? ->
             run {
@@ -103,4 +107,63 @@ class RoomRepository @Inject constructor(
         };
         return loadRoom(id);
     }
+
+    fun createDirectChatRoom(userId: String): LiveData<Resource<Room>> {
+        return object : MatrixBoundSource<Room, Room>(appExecutors, 1) {
+            override fun saveCallResult(item: Room) {
+                roomDao.insert(item);
+            }
+
+            override fun shouldFetch(data: Room?): Boolean {
+                return true;
+            }
+
+            override fun loadFromDb(): LiveData<Room> {
+                return roomDao.findById("--");
+            }
+
+            override fun createCall(): LiveData<Room> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.createNewDirectMessage(userId)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST))
+            }
+
+            override fun createCallAsReesult(): LiveData<Room> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.createNewDirectMessage(userId)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST))
+            }
+        }.asLiveData();
+    }
+
+    fun createNewRoom(data : CreateNewRoomObject): LiveData<Resource<Room>> {
+        return object : MatrixBoundSource<Room, Room>(appExecutors, 1) {
+            override fun saveCallResult(item: Room) {
+                roomDao.insert(item);
+            }
+
+            override fun shouldFetch(data: Room?): Boolean {
+                return true;
+            }
+
+            override fun loadFromDb(): LiveData<Room> {
+                return roomDao.findById("--");
+            }
+
+            override fun createCall(): LiveData<Room> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.createNewRoom(data.name, data.topic, data.visibility)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.newThread())
+                        .toFlowable(BackpressureStrategy.LATEST))
+            }
+
+            override fun createCallAsReesult(): LiveData<Room> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.createNewRoom(data.name, data.topic, data.visibility)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.newThread())
+                        .toFlowable(BackpressureStrategy.LATEST))
+            }
+        }.asLiveData();
+    }
+    class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);
 }

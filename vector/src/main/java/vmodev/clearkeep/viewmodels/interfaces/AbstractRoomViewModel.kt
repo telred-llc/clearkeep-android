@@ -12,4 +12,8 @@ abstract class AbstractRoomViewModel : ViewModel() {
     abstract fun getFilterData() : LiveData<Array<Int>>;
     abstract fun getRoom() : LiveData<Resource<Room>>;
     abstract fun joinRoom(id : String);
+    abstract fun setInviteUserToDirectChat(id : String);
+    abstract fun getInviteUserToDirectChat() : LiveData<Resource<Room>>;
+    abstract fun createNewRoom() : LiveData<Resource<Room>>;
+    abstract fun setCreateNewRoom(name : String, topic : String, visibility : String);
 }

@@ -8,102 +8,128 @@
 
         <import type="java.util.List" />
 
+        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Status" />
+
+        <import type="android.arch.lifecycle.LiveData" />
+
         <import type="vmodev.clearkeep.viewmodelobjects.User" />
+        <import type="vmodev.clearkeep.viewmodelobjects.Room" />
+
+        <variable
+            name="users"
+            type="LiveData&lt;Resource&lt;List&lt;User>>>" />
+
+        <variable
+            name="inviteUser"
+            type="LiveData&lt;Resource&lt;Room>>" />
 
     </data>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <EditText
-            android:id="@+id/edit_query"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:layout_width="match_parent"
+        <ProgressBar
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="@string/probably_you_want"
-            android:textAllCaps="true"
-            android:textColor="@android:color/darker_gray" />
+            android:layout_gravity="center"
+            app:visibleGone="@{users.status == Status.LOADING || inviteUser.status == Status.LOADING}" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/edit_query"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/probably_you_want"
+                android:textAllCaps="true"
+                android:textColor="@android:color/darker_gray" />
 
             <LinearLayout
-                android:id="@+id/new_room"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:orientation="vertical">
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/ic_group_add_gray_24dp"
-                    app:civ_border_color="@color/vector_dark_grey_color"
-                    app:civ_border_width="2dp" />
-
-                <TextView
+                <LinearLayout
+                    android:id="@+id/new_room"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/new_room"
-                    android:textAlignment="center"
-                    android:textColor="@color/vector_dark_grey_color" />
-            </LinearLayout>
+                    android:layout_marginHorizontal="10dp"
+                    android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/new_call"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:orientation="vertical">
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_group_add_gray_24dp"
+                        app:civ_border_color="@color/vector_dark_grey_color"
+                        app:civ_border_width="2dp" />
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/ic_phone_gray_24dp"
-                    app:civ_border_color="@color/vector_dark_grey_color"
-                    app:civ_border_width="2dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/new_room"
+                        android:textAlignment="center"
+                        android:textColor="@color/vector_dark_grey_color" />
+                </LinearLayout>
 
-                <TextView
+                <LinearLayout
+                    android:id="@+id/new_call"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/new_call"
-                    android:textAlignment="center"
-                    android:textColor="@color/vector_dark_grey_color" />
+                    android:layout_marginHorizontal="10dp"
+                    android:orientation="vertical">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_phone_gray_24dp"
+                        app:civ_border_color="@color/vector_dark_grey_color"
+                        app:civ_border_width="2dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/new_call"
+                        android:textAlignment="center"
+                        android:textColor="@color/vector_dark_grey_color" />
+                </LinearLayout>
             </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/suggested"
+                android:textAllCaps="true"
+                android:textColor="@android:color/darker_gray" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view_users"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_user" />
         </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="@string/suggested"
-            android:textAllCaps="true"
-            android:textColor="@android:color/darker_gray" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view_users"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_user" />
-    </LinearLayout>
-
+    </FrameLayout>
 </layout>

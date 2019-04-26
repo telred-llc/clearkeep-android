@@ -7,10 +7,12 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
+import vmodev.clearkeep.databases.RoomDao
 import vmodev.clearkeep.databases.UserDao
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.MatrixService
 import vmodev.clearkeep.viewmodelobjects.Resource
+import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
 import javax.inject.Inject
 import javax.inject.Singleton

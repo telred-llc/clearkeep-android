@@ -14,11 +14,21 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : Abstra
     private val _filters = MutableLiveData<Array<Int>>();
     private val _id = MutableLiveData<String>();
     private val _joinRoom = MutableLiveData<String>();
+    private val _otherUserId = MutableLiveData<String>();
+    private val _createNewRoom = MutableLiveData<RoomRepository.CreateNewRoomObject>();
+
     private val rooms: LiveData<Resource<List<Room>>> = Transformations.switchMap(_filters) { input ->
         roomRepository.loadListRoom(input);
     }
     private val roomFind: LiveData<Resource<Room>> = Transformations.switchMap(_id) { input -> roomRepository.loadRoom(input) }
     private val roomJoin: LiveData<Resource<Room>> = Transformations.switchMap(_joinRoom) { input -> roomRepository.joinRoom(input) }
+    private val inviteUser: LiveData<Resource<Room>> = Transformations.switchMap(_otherUserId) { input ->
+        roomRepository.createDirectChatRoom(input);
+    }
+    private val createNewRoom: LiveData<Resource<Room>> = Transformations.switchMap(_createNewRoom) { input ->
+        roomRepository.createNewRoom(input)
+    }
+
     private val roomMerge = MediatorLiveData<Resource<Room>>();
 
     init {
@@ -51,4 +61,23 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : Abstra
         if (_joinRoom.value != id)
             _joinRoom.value = id;
     }
+
+    override fun getInviteUserToDirectChat(): LiveData<Resource<Room>> {
+        return inviteUser;
+    }
+
+    override fun setInviteUserToDirectChat(id: String) {
+        if (_otherUserId.value != id)
+            _otherUserId.value = id;
+    }
+
+    override fun createNewRoom(): LiveData<Resource<Room>> {
+        return createNewRoom;
+    }
+
+    override fun setCreateNewRoom(name: String, topic: String, visibility: String) {
+        _createNewRoom.value = RoomRepository.CreateNewRoomObject(name, topic, visibility);
+    }
+
+
 }

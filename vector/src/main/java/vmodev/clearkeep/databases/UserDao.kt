@@ -20,4 +20,7 @@ interface UserDao {
 
     @Query("SELECT * FROM user WHERE name =:name")
     fun findUsers(name: String): LiveData<List<User>>
+
+    @Query("SELECT name FROM user WHERE id =:id")
+    fun getUserNameById(id: String): LiveData<String>
 }

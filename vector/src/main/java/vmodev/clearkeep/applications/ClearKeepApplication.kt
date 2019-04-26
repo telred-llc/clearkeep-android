@@ -18,6 +18,9 @@ import vmodev.clearkeep.di.AppInjector
 import vmodev.clearkeep.di.DaggerAppComponent
 import vmodev.clearkeep.matrixsdk.IMatrixEventHandler
 import javax.inject.Inject
+import io.reactivex.plugins.RxJavaPlugins
+
+
 
 class ClearKeepApplication : DaggerVectorApp() {
 
@@ -28,6 +31,7 @@ class ClearKeepApplication : DaggerVectorApp() {
 
     override fun onCreate() {
         super.onCreate()
+        RxJavaPlugins.setErrorHandler { throwable -> Log.d("RX Throw: ", throwable.message) }
         val mxSession = Matrix.getInstance(this).defaultSession;
         mxSession?.dataHandler?.addListener(matrixEventHandler.getMXEventListener(mxSession))
         Observable.create<Unit> { emitter ->

@@ -1428,5 +1428,9 @@ Why choose Riot.im?
     <string name="new_call">New Call</string>
     <string name="suggested">Suggested (direct messages)</string>
     <string name="new_conversation">New Conversation</string>
+    <string name="room_name_required">Room name (Required)</string>
+    <string name="room_topic_optional">Room topic (Optional)</string>
+    <string name="room_public">Public</string>
+    <string name="room_public_content">Anyone in the Directory can join</string>
 
 </resources>

@@ -22,7 +22,11 @@ class ListUserRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
         .build()) {
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DataBoundViewHolder<ItemUserBinding> {
         val binding = DataBindingUtil.inflate<ItemUserBinding>(LayoutInflater.from(p0.context), R.layout.item_user, p0, false, dataBindingComponent);
-        binding.root.setOnClickListener { v -> binding.user?.let { itemClick?.invoke(it) } }
+        binding.root.setOnClickListener { v ->
+            binding.user?.let {
+                itemClick?.invoke(it)
+            }
+        }
         return DataBoundViewHolder(binding);
     }
 

@@ -4,13 +4,12 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.text.TextUtils
 import android.util.Log
-import android.widget.Toast
 import im.vector.Matrix
 import im.vector.util.HomeRoomsViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
 import io.reactivex.functions.Function
 import io.reactivex.internal.operators.observable.ObservableAll
 import io.reactivex.schedulers.Schedulers
@@ -19,7 +18,9 @@ import org.matrix.androidsdk.data.Room
 import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.data.RoomTag
 import org.matrix.androidsdk.rest.callback.ApiCallback
+import org.matrix.androidsdk.rest.callback.SimpleApiCallback
 import org.matrix.androidsdk.rest.model.MatrixError
+import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
 import vmodev.clearkeep.viewmodelobjects.User
 import java.lang.Exception
@@ -323,6 +324,169 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                     }
                 });
             }
+        }
+
+    }
+
+    override fun createNewDirectMessage(userId: String): Observable<vmodev.clearkeep.viewmodelobjects.Room> {
+        setMXSession();
+        return Observable.create<vmodev.clearkeep.viewmodelobjects.Room> { emitter ->
+            directChatRoomExist(userId).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread()).subscribe({ t ->
+                kotlin.run {
+                    t?.let { s ->
+                        val room = session!!.dataHandler.getRoom(s);
+                        emitter.onNext(matrixRoomToRoom(room));
+                        emitter.onComplete();
+                    }
+                }
+            }, { t ->
+                kotlin.run {
+                    session!!.createDirectMessageRoom(userId, object : ApiCallback<String> {
+                        override fun onSuccess(p0: String?) {
+                            p0?.let { s ->
+                                val room = session!!.dataHandler.getRoom(s);
+                                emitter.onNext(matrixRoomToRoom(room));
+                                emitter.onComplete();
+                            }
+                        }
+
+                        override fun onUnexpectedError(p0: Exception?) {
+                            emitter.onError(Throwable(p0?.message));
+                            emitter.onComplete();
+                        }
+
+                        override fun onMatrixError(p0: MatrixError?) {
+                            emitter.onError(Throwable(p0?.message));
+                            emitter.onComplete();
+                        }
+
+                        override fun onNetworkError(p0: Exception?) {
+                            emitter.onError(Throwable(p0?.message));
+                            emitter.onComplete();
+                        }
+                    })
+                }
+            })
+        }
+    }
+
+    private fun directChatRoomExist(userId: String): Observable<String> {
+        return Observable.create<String> { emitter ->
+            kotlin.run {
+                val store = session!!.dataHandler.store;
+                val directChatRoomDict: Map<String, List<String>>;
+                if (store.directChatRoomsDict != null) {
+                    store.directChatRoomsDict?.let { mutableMap ->
+                        kotlin.run {
+                            directChatRoomDict = HashMap(mutableMap);
+                            if (directChatRoomDict.containsKey(userId)) {
+                                val roomsList = ArrayList(directChatRoomDict[userId]);
+                                var findedRoom = false;
+                                roomsList.forEach { rl: String? ->
+                                    kotlin.run {
+                                        rl?.let { s ->
+                                            val room = session!!.dataHandler.getRoom(rl, false);
+                                            if (room != null) {
+                                                room?.let { r ->
+                                                    kotlin.run {
+                                                        if (r.isReady && !r.isInvited && !r.isLeaving) {
+                                                            findedRoom = true;
+                                                            room.getActiveMembersAsync(object : SimpleApiCallback<List<RoomMember>>() {
+                                                                override fun onSuccess(p0: List<RoomMember>?) {
+                                                                    p0?.let { list ->
+                                                                        list.forEach { t: RoomMember? ->
+                                                                            t?.let { roomMember ->
+                                                                                if (TextUtils.equals(roomMember.userId, userId)) {
+                                                                                    emitter.onNext(s);
+                                                                                    emitter.onComplete();
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    emitter.onError(Throwable("Room is not exist"))
+                                                                    emitter.onComplete();
+                                                                }
+                                                            })
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                if (!findedRoom) {
+                                    emitter.onError(Throwable("Room is not exist"))
+                                    emitter.onComplete();
+                                }
+                            } else {
+                                emitter.onError(Throwable("Room is not exist"))
+                                emitter.onComplete();
+                            }
+                        }
+                    }
+                } else {
+                    emitter.onError(Throwable("Room don't exist"))
+                    emitter.onComplete();
+                }
+            }
+        }
+    }
+
+    override fun createNewRoom(name: String, topic: String, visibility: String): Observable<vmodev.clearkeep.viewmodelobjects.Room> {
+        setMXSession();
+        return Observable.create<vmodev.clearkeep.viewmodelobjects.Room> { emitter ->
+            session!!.createRoom(name, topic, visibility, null, null, object : ApiCallback<String> {
+                override fun onSuccess(p0: String?) {
+                    p0?.let { s ->
+                        val room = session!!.dataHandler.getRoom(s)
+                        emitter.onNext(matrixRoomToRoom(room));
+                        emitter.onComplete();
+                    }
+                }
+
+                override fun onUnexpectedError(p0: Exception?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+
+                override fun onMatrixError(p0: MatrixError?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+
+                override fun onNetworkError(p0: Exception?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+            })
+        }
+    }
+
+    override fun inviteUsersToRoom(roomId: String, userIds: List<String>): Observable<vmodev.clearkeep.viewmodelobjects.Room> {
+        setMXSession();
+        return Observable.create<vmodev.clearkeep.viewmodelobjects.Room> { emitter ->
+            val room = session!!.dataHandler.getRoom(roomId);
+            room.invite(userIds, object : ApiCallback<Void> {
+                override fun onSuccess(p0: Void?) {
+                    emitter.onNext(matrixRoomToRoom(room));
+                    emitter.onComplete();
+                }
+
+                override fun onUnexpectedError(p0: Exception?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+
+                override fun onMatrixError(p0: MatrixError?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+
+                override fun onNetworkError(p0: Exception?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+            })
         }
     }
 }

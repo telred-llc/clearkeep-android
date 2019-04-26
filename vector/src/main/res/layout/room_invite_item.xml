@@ -15,7 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:baselineAligned="false">
 
         <FrameLayout
             android:layout_width="70dp"
@@ -25,8 +26,10 @@
                 android:id="@+id/circle_image_view_avatar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@color/app_green"
-                app:imageUrl="@{Room.avatarUrl}" />
+                android:src="@drawable/ic_launcher_app"
+                app:imageUrl="@{Room.avatarUrl}"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@android:color/darker_gray"/>
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/circle_image_view_status"

@@ -150,7 +150,7 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
         dataBinding.setLifecycleOwner(this);
         dataBinding.buttonCreateConvention.setOnClickListener { v ->
             kotlin.run {
-                //                val settingsIntent = Intent(this@HomeScreenActivity, CreateNewConversationActivity::class.java)
+//                val settingsIntent = Intent(this@HomeScreenActivity, CreateNewConversationActivity::class.java)
 //                settingsIntent.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, mxSession.myUserId)
 //                startActivity(settingsIntent)
                 val intent = Intent(this, FindAndCreateNewConversationActivity::class.java)
