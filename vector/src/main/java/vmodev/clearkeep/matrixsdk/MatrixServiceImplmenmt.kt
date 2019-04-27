@@ -8,6 +8,7 @@ import android.text.TextUtils
 import android.util.Log
 import im.vector.Matrix
 import im.vector.util.HomeRoomsViewModel
+import im.vector.util.RoomUtils
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function
@@ -22,6 +23,7 @@ import org.matrix.androidsdk.rest.callback.SimpleApiCallback
 import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
+import vmodev.clearkeep.ultis.toDateTime
 import vmodev.clearkeep.viewmodelobjects.User
 import java.lang.Exception
 import javax.inject.Inject
@@ -148,7 +150,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
 
                 if (myUser != null) {
                     val avatarUrl = session!!.contentManager.getDownloadableUrl(myUser.avatarUrl);
-                    val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = avatarUrl);
+                    val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = avatarUrl, status = if (myUser.isActive) 1 else 0);
                     emitter.onNext(user);
                     emitter.onComplete();
                 } else {
@@ -271,16 +273,48 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         };
     }
 
+    override fun leaveRoom(id: String): Observable<String> {
+        setMXSession();
+        return Observable.create<String> { emitter ->
+            val room = session!!.dataHandler.getRoom(id);
+            room?.let { room ->
+                room.leave(object : ApiCallback<Void> {
+                    override fun onSuccess(p0: Void?) {
+                        emitter.onNext(id);
+                        emitter.onComplete();
+                    }
+
+                    override fun onUnexpectedError(p0: Exception?) {
+                        emitter.onError(Throwable(p0?.message));
+                        emitter.onComplete();
+                    }
+
+                    override fun onMatrixError(p0: MatrixError?) {
+                        emitter.onError(Throwable(p0?.message));
+                        emitter.onComplete();
+                    }
+
+                    override fun onNetworkError(p0: Exception?) {
+                        emitter.onError(Throwable(p0?.message));
+                        emitter.onComplete();
+                    }
+                })
+            }
+        }
+    }
+
     private fun matrixRoomToRoom(room: Room): vmodev.clearkeep.viewmodelobjects.Room {
         val sourcePrimary = if (room.isDirect) 0b00000001 else 0b00000010;
         val sourceSecondary = if (room.isInvited) 0b01000000 else 0b00000000;
         val sourceThird = if ((room.accountData?.keys
-                        ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
+                ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
+        var timeUpdateLong: Long = 0;
+        room.roomSummary?.let { roomSummary -> timeUpdateLong = roomSummary.latestReceivedEvent.originServerTs }
         val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
-        Log.d("Room Type: ", (sourcePrimary or sourceSecondary or sourceThird).toString())
+//        Log.d("Room Type: ", (sourcePrimary or sourceSecondary or sourceThird).toString() + "-----" + room.getRoomDisplayName(application))
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
-                , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
-                , updatedDate = 0);
+            , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
+            , updatedDate = timeUpdateLong);
         return roomObj;
     }
 
@@ -297,7 +331,9 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                             p0?.results?.forEach { t: org.matrix.androidsdk.rest.model.User? ->
                                 kotlin.run {
                                     val avatar = if (t?.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(t?.avatarUrl);
-                                    t?.let { user -> users.add(User(id = user.user_id, name = user.displayname, avatarUrl = avatar)) }
+                                    t?.let { user ->
+                                        users.add(User(id = user.user_id, name = user.displayname, avatarUrl = avatar, status = if (user.isActive) 1 else 0))
+                                    }
                                 }
                             }
                             emitter.onNext(users);
@@ -325,7 +361,6 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                 });
             }
         }
-
     }
 
     override fun createNewDirectMessage(userId: String): Observable<vmodev.clearkeep.viewmodelobjects.Room> {

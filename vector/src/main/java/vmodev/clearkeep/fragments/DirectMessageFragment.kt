@@ -1,5 +1,6 @@
 package vmodev.clearkeep.fragments
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -51,9 +52,6 @@ private const val ROOMS = "ROOMS"
 class DirectMessageFragment : DaggerFragment() {
     private var listener: OnFragmentInteractionListener? = null
 
-    private lateinit var recyclerView: RecyclerView;
-    private lateinit var session: MXSession;
-
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
     @Inject
@@ -75,16 +73,6 @@ class DirectMessageFragment : DaggerFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-//        val view = inflater.inflate(R.layout.fragment_direct_message, container, false)
-//        recyclerView = view.findViewById(R.id.recycler_view_list_conversation);
-//        val layoutManager = LinearLayoutManager(this.context);
-//        val dividerItemDecoration = DividerItemDecoration(this.context, layoutManager.orientation);
-//        recyclerView.layoutManager = layoutManager;
-//        recyclerView.addItemDecoration(dividerItemDecoration);
-//        setUpData();
-//        session = this!!.onGetMxSession()!!;
-//        return view;
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_direct_message, container, false, dataBindingComponent);
         return binding!!.root;
     }
@@ -100,7 +88,7 @@ class DirectMessageFragment : DaggerFragment() {
 
             override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.Room, p1: vmodev.clearkeep.viewmodelobjects.Room): Boolean {
                 return p0.name == p1.name && p0.updatedDate == p1.updatedDate && p0.avatarUrl == p1.avatarUrl
-                        && p0.notifyCount == p1.notifyCount;
+                    && p0.notifyCount == p1.notifyCount;
             }
         }) { room, i ->
             kotlin.run {
@@ -113,14 +101,14 @@ class DirectMessageFragment : DaggerFragment() {
             }
         };
         binding!!.rooms = roomViewModel!!.getRoomsData();
+        binding!!.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding!!.recyclerViewListConversation.adapter = listRoomAdapter;
         roomViewModel!!.getRoomsData().observe(viewLifecycleOwner, Observer { t ->
             kotlin.run {
                 listRoomAdapter!!.submitList(t?.data);
             }
         });
-        roomViewModel!!.setFilter(arrayOf(1, 66, 65))
-//        Observable.timer(10, TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe{ t: Long? -> roomViewModel!!.setFilter(2); }
+        roomViewModel!!.setFilter(arrayOf(1, 65))
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -158,41 +146,6 @@ class DirectMessageFragment : DaggerFragment() {
 
     fun onClickGoRoom(roomId: String) {
         listener?.onClickGoRoom(roomId);
-    }
-
-    //    private fun initRecyclerView() {
-//
-//        binding.searchResult = roomViewModel.results()
-//        searchViewModel.results().observe(viewLifecycleOwner, Observer { result ->
-//            adapter.submitList(result?.data)
-//        })
-//    }
-    private fun setUpData() {
-        val adapter = DirectMessageRecyclerViewAdapter(onGetListDirectMessage(), onGetListDirectMessageInvitation(), onGetMxSession()!!, activity!!);
-        recyclerView.adapter = adapter;
-        adapter.updateData();
-        handleDataChange().subscribe { t: Status? ->
-            kotlin.run {
-                if (t == Status.SUCCESS) {
-                    adapter.rooms = onGetListDirectMessage();
-                    adapter.invitations = onGetListDirectMessageInvitation();
-                    adapter.updateData();
-                    adapter.notifyDataSetChanged();
-                }
-            }
-        };
-
-//        adapter.publishSubject.subscribe { t ->
-//            kotlin.run {
-//                when (t.clickType) {
-//                    0 -> onClickItem(t.room!!);
-//                    1 -> onClickItemDecline(t.room!!)
-//                    2 -> onClickJoinRoom(t.room!!)
-//                    3 -> onClickItemPreview(t.room!!);
-//                    else -> onClickItem(t.room!!);
-//                }
-//            }
-//        };
     }
 
     override fun onAttach(context: Context) {
@@ -246,12 +199,10 @@ class DirectMessageFragment : DaggerFragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance() =
-                DirectMessageFragment().apply {
-                    arguments = Bundle().apply {
+            DirectMessageFragment().apply {
+                arguments = Bundle().apply {
 
-                    }
                 }
+            }
     }
-
-
 }

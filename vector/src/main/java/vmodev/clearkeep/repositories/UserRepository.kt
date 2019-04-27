@@ -40,16 +40,19 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
 
             override fun createCall(): LiveData<User> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.getUser()
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .toFlowable(BackpressureStrategy.LATEST));
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .toFlowable(BackpressureStrategy.LATEST));
             }
 
             override fun createCallAsReesult(): LiveData<User> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.getUser()
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .toFlowable(BackpressureStrategy.LATEST));
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .toFlowable(BackpressureStrategy.LATEST));
+            }
+
+            override fun saveCallResultType(item: User) {
             }
         }.asLiveData();
     }
@@ -88,14 +91,20 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
 
             override fun createCall(): LiveData<List<User>> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.findListUser(keyword).subscribeOn(Schedulers.newThread())
-                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST));
+                    .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST));
             }
 
             override fun createCallAsReesult(): LiveData<List<User>> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.findListUser(keyword).subscribeOn(Schedulers.newThread())
-                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST));
+                    .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST));
+            }
+
+            override fun saveCallResultType(item: List<User>) {
             }
         }.asLiveData();
+    }
+    fun updateUserStatus(){
+
     }
 
     class UserHandleObject constructor(val userId: String, val name: String, val avatarUrl: String);

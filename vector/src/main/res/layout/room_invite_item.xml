@@ -38,7 +38,8 @@
                 android:layout_gravity="end|bottom"
                 android:src="@color/lock_background"
                 app:civ_border_color="@android:color/white"
-                app:civ_border_width="2dp" />
+                app:civ_border_width="2dp"
+                app:visibleGone="@{Room.type == 65}"/>
         </FrameLayout>
 
         <LinearLayout
@@ -55,7 +56,8 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_weight="1"
                 android:text="@{Room.name}"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textSize="@dimen/text_20_sp"/>
 
             <TextView
                 android:id="@+id/text_view_notify"
@@ -105,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:text="@string/date_default"
+                app:timeStamp="@{Room.updatedDate}"
                 android:textAlignment="textEnd" />
 
             <de.hdodenhof.circleimageview.CircleImageView

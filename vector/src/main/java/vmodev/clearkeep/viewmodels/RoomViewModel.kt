@@ -14,19 +14,25 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : Abstra
     private val _filters = MutableLiveData<Array<Int>>();
     private val _id = MutableLiveData<String>();
     private val _joinRoom = MutableLiveData<String>();
+    private val _leaveRoom = MutableLiveData<String>();
     private val _otherUserId = MutableLiveData<String>();
     private val _createNewRoom = MutableLiveData<RoomRepository.CreateNewRoomObject>();
+    private val _inviteUserToRoom = MutableLiveData<RoomRepository.InviteUsersToRoomObject>();
 
     private val rooms: LiveData<Resource<List<Room>>> = Transformations.switchMap(_filters) { input ->
         roomRepository.loadListRoom(input);
     }
     private val roomFind: LiveData<Resource<Room>> = Transformations.switchMap(_id) { input -> roomRepository.loadRoom(input) }
     private val roomJoin: LiveData<Resource<Room>> = Transformations.switchMap(_joinRoom) { input -> roomRepository.joinRoom(input) }
+    private val roomLeave: LiveData<Resource<String>> = Transformations.switchMap(_leaveRoom) { input -> roomRepository.leaveRoom(input) }
     private val inviteUser: LiveData<Resource<Room>> = Transformations.switchMap(_otherUserId) { input ->
         roomRepository.createDirectChatRoom(input);
     }
     private val createNewRoom: LiveData<Resource<Room>> = Transformations.switchMap(_createNewRoom) { input ->
         roomRepository.createNewRoom(input)
+    }
+    private val inviteUsersToRoom: LiveData<Resource<Room>> = Transformations.switchMap(_inviteUserToRoom) { input ->
+        roomRepository.inviteUsersToRoom(input);
     }
 
     private val roomMerge = MediatorLiveData<Resource<Room>>();
@@ -79,5 +85,19 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : Abstra
         _createNewRoom.value = RoomRepository.CreateNewRoomObject(name, topic, visibility);
     }
 
+    override fun setInviteUsersToRoom(roomId: String, userIds: List<String>) {
+        _inviteUserToRoom.value = RoomRepository.InviteUsersToRoomObject(roomId, userIds);
+    }
 
+    override fun getInviteUsersToRoomResult(): LiveData<Resource<Room>> {
+        return inviteUsersToRoom;
+    }
+
+    override fun setLeaveRoom(id: String) {
+        _leaveRoom.value = id;
+    }
+
+    override fun getLeaveRoom(): LiveData<Resource<String>> {
+        return roomLeave;
+    }
 }

@@ -62,14 +62,12 @@ class PreviewInviteRoomActivity : DaggerAppCompatActivity(), LifecycleOwner {
                 }
             }
         })
+        roomViewModel.getLeaveRoom().observe(this, Observer { t -> finish() })
         binding.lifecycleOwner = this;
 
         roomViewModel.setRoomId(roomId);
 
-        binding.buttonJoin.setOnClickListener { v ->
-            kotlin.run {
-                roomViewModel.joinRoom(roomId);
-            }
-        }
+        binding.buttonJoin.setOnClickListener { v -> roomViewModel.joinRoom(roomId) }
+        binding.buttonDecline.setOnClickListener { v -> roomViewModel.setLeaveRoom(roomId) }
     }
 }

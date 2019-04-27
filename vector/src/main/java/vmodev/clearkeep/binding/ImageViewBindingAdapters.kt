@@ -8,4 +8,7 @@ import com.bumptech.glide.request.RequestListener
 interface ImageViewBindingAdapters {
     @BindingAdapter(value = ["imageUrl", "requestListener"], requireAll = false)
     fun bindImage(imageView: ImageView, imageUrl: String?, listener: RequestListener<Drawable?>?);
+
+    @BindingAdapter(value = ["status"], requireAll = false)
+    fun bindStatus(imageView: ImageView, status: Byte?)
 }

@@ -46,6 +46,7 @@ import org.matrix.androidsdk.rest.callback.SimpleApiCallback
 import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.rest.model.RoomMember
+import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.matrixsdk.MatrixService
@@ -60,10 +61,10 @@ import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragmentInteractionListener,
-        FavouritesFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener,
-        DirectMessageFragment.OnFragmentInteractionListener, RoomFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener,
-        SearchRoomsFragment.OnFragmentInteractionListener, SearchMessagesFragment.OnFragmentInteractionListener, SearchPeopleFragment.OnFragmentInteractionListener,
-        SearchFilesFragment.OnFragmentInteractionListener, PreviewFragment.OnFragmentInteractionListener, LifecycleOwner {
+    FavouritesFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener,
+    DirectMessageFragment.OnFragmentInteractionListener, RoomFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener,
+    SearchRoomsFragment.OnFragmentInteractionListener, SearchMessagesFragment.OnFragmentInteractionListener, SearchPeopleFragment.OnFragmentInteractionListener,
+    SearchFilesFragment.OnFragmentInteractionListener, PreviewFragment.OnFragmentInteractionListener, LifecycleOwner {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
@@ -90,7 +91,7 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
         val dataBinding: ActivityHomeScreenBinding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen, dataBindingComponent);
 //        setContentView(R.layout.activity_home_screen)
         mxSession = Matrix.getInstance(this.applicationContext).defaultSession;
-
+        (application as ClearKeepApplication).setEventHandler();
         bottom_navigation_view_home_screen.setOnNavigationItemSelectedListener { menuItem ->
             kotlin.run {
                 when (menuItem.itemId) {
@@ -150,7 +151,7 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
         dataBinding.setLifecycleOwner(this);
         dataBinding.buttonCreateConvention.setOnClickListener { v ->
             kotlin.run {
-//                val settingsIntent = Intent(this@HomeScreenActivity, CreateNewConversationActivity::class.java)
+                //                val settingsIntent = Intent(this@HomeScreenActivity, CreateNewConversationActivity::class.java)
 //                settingsIntent.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, mxSession.myUserId)
 //                startActivity(settingsIntent)
                 val intent = Intent(this, FindAndCreateNewConversationActivity::class.java)
@@ -181,7 +182,6 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
     }
 
     override fun onFragmentInteraction(uri: Uri) {
-
     }
 
     private fun addMxEventListener() {
@@ -208,7 +208,6 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
                 super.onLiveEventsChunkProcessed(fromToken, toToken)
                 needUpdateData();
             }
-
         };
         mxSession.dataHandler.addListener(mxEventListener);
     }
@@ -476,6 +475,7 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
 
                 params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession.getMyUserId()
                 params[VectorRoomActivity.EXTRA_ROOM_ID] = room!!.getRoomId()
+                params[VectorRoomActivity.EXTRA_EXPAND_ROOM_HEADER] = room!!.isDirect;
 
                 CommonActivityUtils.goToRoomPage(this@HomeScreenActivity, mxSession, params)
                 needUpdateData();

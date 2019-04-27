@@ -8,4 +8,8 @@ class FragmentDataBindingComponent constructor(fragment: Fragment) : DataBinding
     override fun getImageViewBindingAdapters(): ImageViewBindingAdapters {
         return fragmentBindingAdapters;
     }
+
+    override fun getTextViewBindingAdapters(): TextViewBindingAdapters {
+        return fragmentBindingAdapters;
+    }
 }

@@ -19,55 +19,66 @@
             type="LiveData&lt;Resource&lt;Room>>" />
     </data>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/circle_image_view_avatar"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="100dp"
-            app:imageUrl="@{room.data.avatarUrl}" />
-
-        <TextView
-            android:layout_width="match_parent"
+        <ProgressBar
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="50dp"
-            android:text="@string/invite_content"
-            android:textAlignment="center"
-            android:textColor="@android:color/darker_gray" />
+            android:layout_gravity="center"
+            app:visibleGone="@{room.status == Status.LOADING}" />
 
-        <Button
-            android:id="@+id/button_join"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="50dp"
-            android:background="@drawable/button_background_gradient"
-            android:text="@string/join"
-            android:textColor="@color/main_text_color"
-            android:textStyle="bold" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/button_decline"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="50dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/button_border_background_green_app_color"
-            android:text="@string/decline"
-            android:textColor="@color/app_green" />
-    </LinearLayout>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/circle_image_view_avatar"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="100dp"
+                app:imageUrl="@{room.data.avatarUrl}" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="50dp"
+                android:text="@string/invite_content"
+                android:textAlignment="center"
+                android:textColor="@android:color/darker_gray" />
+
+            <Button
+                android:id="@+id/button_join"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:background="@drawable/button_background_gradient"
+                android:text="@string/join"
+                android:textColor="@color/main_text_color"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/button_decline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button_border_background_green_app_color"
+                android:text="@string/decline"
+                android:textColor="@color/app_green" />
+        </LinearLayout>
+    </FrameLayout>
 </layout>

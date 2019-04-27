@@ -9,6 +9,7 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.util.DiffUtil
+import android.support.v7.widget.DividerItemDecoration
 import android.widget.Toast
 import com.jakewharton.rxbinding2.widget.RxTextView
 import dagger.android.support.DaggerAppCompatActivity
@@ -81,6 +82,7 @@ class FindAndCreateNewConversationActivity : DaggerAppCompatActivity(), Lifecycl
         }
         binding.users = userViewModel.getUsers();
         binding.inviteUser = roomViewModel.getInviteUserToDirectChat();
+        binding.recyclerViewUsers.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         binding.recyclerViewUsers.adapter = listUserAdapter;
         userViewModel.getUsers().observe(this, Observer { t ->
             kotlin.run {

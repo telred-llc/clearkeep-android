@@ -3,6 +3,7 @@ package vmodev.clearkeep.di
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import vmodev.clearkeep.fragments.DirectMessageFragment
+import vmodev.clearkeep.fragments.FavouritesFragment
 import vmodev.clearkeep.fragments.HomeScreenFragment
 import vmodev.clearkeep.fragments.RoomFragment
 
@@ -15,4 +16,6 @@ abstract class HomeScreenActivityFragmentBuilderModule {
     abstract fun contributeRoomFragment() : RoomFragment;
     @ContributesAndroidInjector
     abstract fun contributeDirectMessageFragment() : DirectMessageFragment;
+    @ContributesAndroidInjector
+    abstract fun contributeFavouriteFragment() : FavouritesFragment;
 }

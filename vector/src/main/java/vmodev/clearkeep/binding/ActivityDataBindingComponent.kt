@@ -8,4 +8,8 @@ class ActivityDataBindingComponent constructor(val activity: FragmentActivity) :
     override fun getImageViewBindingAdapters(): ImageViewBindingAdapters {
         return activityBindingAdapters;
     }
+
+    override fun getTextViewBindingAdapters(): TextViewBindingAdapters {
+        return activityBindingAdapters;
+    }
 }

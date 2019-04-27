@@ -40,7 +40,8 @@
                         android:background="@drawable/circle_background"
                         android:text="@string/zero"
                         android:textAlignment="center"
-                        android:textColor="@color/main_text_color" />
+                        android:textColor="@color/main_text_color"
+                        android:visibility="invisible"/>
                 </FrameLayout>
 
                 <FrameLayout
@@ -58,7 +59,8 @@
                         android:background="@drawable/circle_background"
                         android:text="@string/zero"
                         android:textAlignment="center"
-                        android:textColor="@color/main_text_color"/>
+                        android:textColor="@color/main_text_color"
+                        android:visibility="invisible"/>
                 </FrameLayout>
             </LinearLayout>
         </FrameLayout>

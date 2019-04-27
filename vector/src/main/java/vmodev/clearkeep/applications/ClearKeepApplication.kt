@@ -32,8 +32,8 @@ class ClearKeepApplication : DaggerVectorApp() {
     override fun onCreate() {
         super.onCreate()
         RxJavaPlugins.setErrorHandler { throwable -> Log.d("RX Throw: ", throwable.message) }
-        val mxSession = Matrix.getInstance(this).defaultSession;
-        mxSession?.dataHandler?.addListener(matrixEventHandler.getMXEventListener(mxSession))
+//        val mxSession = Matrix.getInstance(this).defaultSession;
+//        mxSession?.dataHandler?.addListener(matrixEventHandler.getMXEventListener(mxSession))
         Observable.create<Unit> { emitter ->
             run {
                 val unit = dataase.clearAllTables();
@@ -54,5 +54,10 @@ class ClearKeepApplication : DaggerVectorApp() {
         val appComponent = DaggerAppComponent.builder().application(this).build();
         appComponent.inject(this);
         return appComponent;
+    }
+
+    public fun setEventHandler(){
+        val mxSession = Matrix.getInstance(this).defaultSession;
+        mxSession!!.dataHandler!!.addListener(matrixEventHandler.getMXEventListener(mxSession))
     }
 }

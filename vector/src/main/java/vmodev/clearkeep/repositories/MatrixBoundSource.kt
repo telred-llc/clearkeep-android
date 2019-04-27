@@ -81,8 +81,11 @@ abstract class MatrixBoundSource<T, V> @MainThread constructor(private val execu
         result.addSource(apiResponse) { t ->
             kotlin.run {
                 if (t != null) {
-                    executors.mainThread().execute {
-                        setValue(Resource.success(t))
+                    executors.diskIO().execute {
+                        saveCallResultType(t);
+                        executors.mainThread().execute {
+                            setValue(Resource.success(t))
+                        }
                     }
                 }
             }
@@ -98,6 +101,9 @@ abstract class MatrixBoundSource<T, V> @MainThread constructor(private val execu
 
     @WorkerThread
     protected abstract fun saveCallResult(item: V)
+
+    @WorkerThread
+    protected abstract fun saveCallResultType(item: T)
 
     @MainThread
     protected abstract fun shouldFetch(data: T?): Boolean
