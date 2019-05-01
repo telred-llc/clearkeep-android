@@ -39,7 +39,8 @@
                 android:src="@color/lock_background"
                 app:civ_border_color="@android:color/white"
                 app:civ_border_width="2dp"
-                app:visibleGone="@{Room.type == 1 || Room.type == 129}" />
+                app:visibleGone="@{Room.type == 1 || Room.type == 129}"
+                app:status="@{Room.roomMemberStatus}"/>
         </FrameLayout>
 
         <LinearLayout

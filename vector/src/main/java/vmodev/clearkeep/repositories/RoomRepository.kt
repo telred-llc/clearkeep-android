@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
 import io.reactivex.BackpressureStrategy
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
@@ -237,6 +238,15 @@ class RoomRepository @Inject constructor(
             override fun saveCallResultType(item: Room) {
             }
         }.asLiveData();
+    }
+
+    fun updateRoomMemberStatus(roomMemberId: String, status : Byte) {
+        Observable.create<Int> { emitter ->
+            kotlin.run {
+                roomDao.updateRoomMemberStatus(roomMemberId, status);
+                emitter.onComplete();
+            }
+        }.subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe();
     }
 
     class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);

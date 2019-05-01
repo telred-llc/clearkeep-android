@@ -76,6 +76,7 @@ class MatrixEventHandler @Inject constructor(private val application: Applicatio
      */
     override fun onPresenceUpdate(event: Event?, user: User?) {
         super.onPresenceUpdate(event, user)
+        user?.let { roomRepository.updateRoomMemberStatus(it.user_id, if (it.presence.compareTo("online") == 0) 1 else 0) }
     }
 
     override fun getMXEventListener(mxSession: MXSession): MXEventListener {

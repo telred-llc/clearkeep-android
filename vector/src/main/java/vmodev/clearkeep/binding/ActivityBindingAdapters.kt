@@ -20,6 +20,6 @@ class ActivityBindingAdapters constructor(val activity: FragmentActivity) : Imag
     }
 
     override fun bindStatus(imageView: ImageView, status: Byte?) {
-        imageView.setImageResource(if (status?.compareTo(0)==0) R.color.main_text_color_hint else R.color.app_green)
+        status?.let { imageView.setImageResource(if (it.compareTo(0) == 0) R.color.main_text_color_hint else R.color.app_green); }
     }
 }

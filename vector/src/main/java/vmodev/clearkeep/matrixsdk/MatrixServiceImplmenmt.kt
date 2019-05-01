@@ -9,8 +9,10 @@ import android.util.Log
 import im.vector.Matrix
 import im.vector.util.HomeRoomsViewModel
 import im.vector.util.RoomUtils
+import im.vector.util.VectorUtils
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Consumer
 import io.reactivex.functions.Function
 import io.reactivex.internal.operators.observable.ObservableAll
 import io.reactivex.schedulers.Schedulers
@@ -172,11 +174,33 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                     for (filter in filters) {
                         rooms.addAll(funcs[filter].apply(homeRoomsViewModel!!.result))
                     }
+                    var currentIndex: Int = 0;
                     rooms.forEach { t: Room? ->
-                        t?.let { matrixRoomToRoom(it) }?.let { listRoom.add(it) }
+                        t?.let {
+                            asyncUpdateRoomMember(it).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ mrId ->
+                                kotlin.run {
+                                    currentIndex++;
+                                    listRoom.add(matrixRoomToRoom(t, mrId));
+                                    if (currentIndex == rooms.size) {
+                                        emitter.onNext(listRoom);
+                                        emitter.onComplete();
+                                    }
+                                }
+                            }
+                                , { e ->
+                                kotlin.run {
+                                    currentIndex++;
+                                    listRoom.add(matrixRoomToRoom(t));
+                                    if (currentIndex == rooms.size) {
+                                        emitter.onNext(listRoom);
+                                        emitter.onComplete();
+                                    }
+                                }
+                            });
+                        }
                     }
-                    emitter.onNext(listRoom);
-                    emitter.onComplete();
+//                    emitter.onNext(listRoom);
+//                    emitter.onComplete();
                 } else {
                     emitter.onError(NullPointerException());
                     emitter.onComplete();
@@ -303,7 +327,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         }
     }
 
-    private fun matrixRoomToRoom(room: Room): vmodev.clearkeep.viewmodelobjects.Room {
+    private fun matrixRoomToRoom(room: Room, roomMemberId: String = ""): vmodev.clearkeep.viewmodelobjects.Room {
         val sourcePrimary = if (room.isDirect) 0b00000001 else 0b00000010;
         val sourceSecondary = if (room.isInvited) 0b01000000 else 0b00000000;
         val sourceThird = if ((room.accountData?.keys
@@ -311,11 +335,53 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         var timeUpdateLong: Long = 0;
         room.roomSummary?.let { roomSummary -> timeUpdateLong = roomSummary.latestReceivedEvent.originServerTs }
         val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
+        val rooMemberOnlineStatus : Byte = if (roomMemberId.isNullOrEmpty()) 0 else if (VectorUtils.getUserOnlineStatus(application, session!!, roomMemberId, null).compareTo("Online now") == 0) 1 else 0;
 //        Log.d("Room Type: ", (sourcePrimary or sourceSecondary or sourceThird).toString() + "-----" + room.getRoomDisplayName(application))
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
             , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
-            , updatedDate = timeUpdateLong);
+            , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus);
         return roomObj;
+    }
+
+    @SuppressLint("CheckResult")
+    private fun asyncUpdateRoomMember(room: Room): Observable<String> {
+        return Observable.create<String> { emitter ->
+
+            if (!room.isDirect || room.isInvited) {
+                emitter.onError(Throwable("No need check"))
+                emitter.onComplete();
+            }
+
+            room.getMembersAsync(object : ApiCallback<List<RoomMember>> {
+                override fun onSuccess(p0: List<RoomMember>?) {
+                    p0?.forEach { t: RoomMember? ->
+                        t?.userId?.let {
+                            if (t.userId.compareTo(session!!.myUserId) != 0) {
+                                emitter.onNext(t?.userId);
+                                emitter.onComplete();
+                            }
+                        }
+                    }
+                    emitter.onError(Throwable("Dot not exist user"))
+                    emitter.onComplete();
+                }
+
+                override fun onUnexpectedError(p0: Exception?) {
+                    emitter.onError(Throwable(p0?.message))
+                    emitter.onComplete();
+                }
+
+                override fun onMatrixError(p0: MatrixError?) {
+                    emitter.onError(Throwable(p0?.message))
+                    emitter.onComplete();
+                }
+
+                override fun onNetworkError(p0: Exception?) {
+                    emitter.onError(Throwable(p0?.message))
+                    emitter.onComplete();
+                }
+            })
+        };
     }
 
     override fun findListUser(keyword: String): Observable<List<User>> {

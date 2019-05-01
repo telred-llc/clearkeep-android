@@ -30,11 +30,14 @@ abstract class RoomDao {
     @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo ORDER BY type DESC, updatedDate DESC")
     abstract fun loadWithType(filterOne: Int, filterTwo: Int): LiveData<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree")
+    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree ORDER BY type DESC, updatedDate DESC")
     abstract fun loadWithType(filterOne: Int, filterTwo: Int, filterThree: Int): LiveData<List<Room>>;
 
     @Query("DELETE FROM room WHERE id =:id")
     abstract fun deleteRoom(id: String);
+
+    @Query("UPDATE room SET roomMemberStatus =:roomMemberStatus WHERE roomMemberId =:roomMemberId")
+    abstract fun updateRoomMemberStatus(roomMemberId: String, roomMemberStatus: Byte);
 
     fun loadWithType(filter: Array<Int>): LiveData<List<Room>> {
         when (filter.size) {

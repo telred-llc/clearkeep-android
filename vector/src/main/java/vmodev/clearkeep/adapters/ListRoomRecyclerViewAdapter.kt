@@ -39,7 +39,7 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (getItem(position).type != 1 && getItem(position).type != 2 && getItem(position).type != 129 && getItem(position).type != 130) 0 else 1;
+        return if (getItem(position).type != 65 && getItem(position).type != 66) 1 else 0;
     }
 
     override fun onBindViewHolder(p0: DataBoundViewHolder<ViewDataBinding>, p1: Int) {
