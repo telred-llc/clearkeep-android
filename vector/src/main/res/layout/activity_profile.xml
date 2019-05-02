@@ -39,7 +39,7 @@
             android:layout_height="250dp">
 
             <ImageView
-                android:id="@+id/image_view_avatar"
+                app:imageUrl="@{user.data.avatarUrl}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@color/accent_color_dark" />

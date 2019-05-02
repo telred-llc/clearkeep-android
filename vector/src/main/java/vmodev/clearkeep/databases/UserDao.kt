@@ -17,4 +17,13 @@ interface UserDao {
 
     @Query("UPDATE user SET name = :name, avatarUrl = :avatarUrl WHERE id =:id")
     fun updateUser(id: String, name: String, avatarUrl: String): Int;
+
+    @Query("UPDATE user SET status =:status WHERE id=:id")
+    fun updateStatus(id: String, status: Byte)
+
+    @Query("SELECT * FROM user WHERE name =:name")
+    fun findUsers(name: String): LiveData<List<User>>
+
+    @Query("SELECT name FROM user WHERE id =:id")
+    fun getUserNameById(id: String): LiveData<String>
 }

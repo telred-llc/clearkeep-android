@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="java.util.List" />
+
+        <variable
+            name="Room"
+            type="vmodev.clearkeep.viewmodelobjects.Room" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        android:baselineAligned="false">
+
+        <FrameLayout
+            android:layout_width="70dp"
+            android:layout_height="70dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/circle_image_view_avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_launcher_app"
+                app:civ_border_color="@android:color/darker_gray"
+                app:civ_border_width="2dp"
+                app:imageUrl="@{Room.avatarUrl}" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/circle_image_view_status"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="end|bottom"
+                android:src="@color/lock_background"
+                app:civ_border_color="@android:color/white"
+                app:civ_border_width="2dp"
+                app:visibleGone="@{Room.type == 1 || Room.type == 129}"
+                app:status="@{Room.roomMemberStatus}"/>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="7dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_view_name"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_weight="1"
+                android:text="@{Room.name}"
+                android:textSize="@dimen/text_20_sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/text_view_last_message"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_weight="1"
+                android:text="@{Room.name}"
+                android:textColor="@color/main_text_color_hint"
+                android:textSize="@dimen/text_15_sp" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginEnd="40dp"
+                android:background="@drawable/circle_background"
+                android:text="@{``+Room.notifyCount}"
+                android:textAlignment="center"
+                android:textColor="@color/main_text_color"
+                app:visibleGone="@{Room.notifyCount > 0}" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_gravity="end">
+
+                <TextView
+                    android:id="@+id/text_view_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:textAlignment="textEnd"
+                    app:timeStamp="@{Room.updatedDate}"/>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_gravity="end"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_lock_outline_grey_24dp" />
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+</layout>

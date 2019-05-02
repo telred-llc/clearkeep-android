@@ -15,7 +15,7 @@ import vmodev.clearkeep.viewmodelobjects.Resource
  * @property result MediatorLiveData<Resource<T>>
  * @constructor
  */
-abstract class MatrixBoundSource<T, V> @MainThread constructor(private val executors: AppExecutors) {
+abstract class MatrixBoundSource<T, V> @MainThread constructor(private val executors: AppExecutors, private val typeLoad: Int = 0) {
     private val result = MediatorLiveData<Resource<T>>();
 
     init {
@@ -26,7 +26,10 @@ abstract class MatrixBoundSource<T, V> @MainThread constructor(private val execu
             run {
                 result.removeSource(dbSource);
                 if (shouldFetch(t)) {
-                    fetchFromNetwork(dbSource);
+                    if (typeLoad == 0)
+                        fetchFromNetwork(dbSource);
+                    else
+                        fetchFromNetwork();
                 } else {
                     result.addSource(dbSource) { t ->
                         kotlin.run {
@@ -73,6 +76,22 @@ abstract class MatrixBoundSource<T, V> @MainThread constructor(private val execu
         }
     }
 
+    private fun fetchFromNetwork() {
+        val apiResponse = createCallAsReesult();
+        result.addSource(apiResponse) { t ->
+            kotlin.run {
+                if (t != null) {
+                    executors.diskIO().execute {
+                        saveCallResultType(t);
+                        executors.mainThread().execute {
+                            setValue(Resource.success(t))
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private fun setValue(newValue: Resource<T>) {
         if (result.value != newValue)
             result.value = newValue;
@@ -83,6 +102,9 @@ abstract class MatrixBoundSource<T, V> @MainThread constructor(private val execu
     @WorkerThread
     protected abstract fun saveCallResult(item: V)
 
+    @WorkerThread
+    protected abstract fun saveCallResultType(item: T)
+
     @MainThread
     protected abstract fun shouldFetch(data: T?): Boolean
 
@@ -91,4 +113,7 @@ abstract class MatrixBoundSource<T, V> @MainThread constructor(private val execu
 
     @MainThread
     protected abstract fun createCall(): LiveData<V>
+
+    @MainThread
+    protected abstract fun createCallAsReesult(): LiveData<T>
 }

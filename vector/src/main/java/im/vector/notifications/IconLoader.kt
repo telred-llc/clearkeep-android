@@ -75,7 +75,7 @@ class IconLoader(val context: Context,
                     toLoad.add(path)
 
                     backgroundHandler.post {
-                        loadUserIcon(path)
+//                        loadUserIcon(path)
                     }
                 }
             }

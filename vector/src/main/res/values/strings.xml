@@ -1423,5 +1423,14 @@ Why choose Riot.im?
     <string name="display_name">Display name</string>
     <string name="user_id">User ID</string>
     <string name="profile">Profile</string>
+    <string name="probably_you_want">probably you want</string>
+    <string name="new_room">New Room</string>
+    <string name="new_call">New Call</string>
+    <string name="suggested">Suggested (direct messages)</string>
+    <string name="new_conversation">New Conversation</string>
+    <string name="room_name_required">Room name (Required)</string>
+    <string name="room_topic_optional">Room topic (Optional)</string>
+    <string name="room_public">Public</string>
+    <string name="room_public_content">Anyone in the Directory can join</string>
 
 </resources>
