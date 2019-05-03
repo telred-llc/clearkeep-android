@@ -18,6 +18,7 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : Abstra
     private val _otherUserId = MutableLiveData<String>();
     private val _createNewRoom = MutableLiveData<RoomRepository.CreateNewRoomObject>();
     private val _inviteUserToRoom = MutableLiveData<RoomRepository.InviteUsersToRoomObject>();
+    private val _findByText = MutableLiveData<String>();
 
     private val rooms: LiveData<Resource<List<Room>>> = Transformations.switchMap(_filters) { input ->
         roomRepository.loadListRoom(input);
@@ -34,6 +35,7 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : Abstra
     private val inviteUsersToRoom: LiveData<Resource<Room>> = Transformations.switchMap(_inviteUserToRoom) { input ->
         roomRepository.inviteUsersToRoom(input);
     }
+    private val findBytTextResult: LiveData<Resource<List<Room>>> = Transformations.switchMap(_findByText) { input -> roomRepository.findListRoomWithText(input) }
 
     private val roomMerge = MediatorLiveData<Resource<Room>>();
 
@@ -99,5 +101,14 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : Abstra
 
     override fun getLeaveRoom(): LiveData<Resource<String>> {
         return roomLeave;
+    }
+
+    override fun setTextForFindByText(keyword: String) {
+        if (_findByText.value != keyword)
+            _findByText.value = keyword;
+    }
+
+    override fun getFindByTextResult(): LiveData<Resource<List<Room>>> {
+        return findBytTextResult;
     }
 }

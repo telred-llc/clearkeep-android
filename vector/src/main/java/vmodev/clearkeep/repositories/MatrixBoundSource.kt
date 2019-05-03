@@ -21,23 +21,25 @@ abstract class MatrixBoundSource<T, V> @MainThread constructor(private val execu
     init {
         result.value = Resource.loading(null);
         @Suppress("LeakingThis")
-        val dbSource = loadFromDb();
-        result.addSource(dbSource) { t ->
-            run {
-                result.removeSource(dbSource);
-                if (shouldFetch(t)) {
-                    if (typeLoad == 0)
+        if (typeLoad == 0) {
+            val dbSource = loadFromDb();
+            result.addSource(dbSource) { t ->
+                run {
+                    result.removeSource(dbSource);
+                    if (shouldFetch(t)) {
                         fetchFromNetwork(dbSource);
-                    else
-                        fetchFromNetwork();
-                } else {
-                    result.addSource(dbSource) { t ->
-                        kotlin.run {
-                            setValue(Resource.success(t));
+                    } else {
+                        result.addSource(dbSource) { t ->
+                            kotlin.run {
+                                setValue(Resource.success(t));
+                            }
                         }
                     }
                 }
             }
+        }
+        else{
+            fetchFromNetwork();
         }
     }
 

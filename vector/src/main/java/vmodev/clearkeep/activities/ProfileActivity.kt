@@ -17,8 +17,11 @@ import im.vector.databinding.ActivityProfileBinding
 import im.vector.fragments.signout.SignOutBottomSheetDialogFragment
 import im.vector.fragments.signout.SignOutViewModel
 import im.vector.util.VectorUtils
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
+import vmodev.clearkeep.databases.ClearKeepDatabase
 import vmodev.clearkeep.viewmodels.UserViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import javax.inject.Inject
@@ -27,6 +30,8 @@ class ProfileActivity : DaggerAppCompatActivity(), LifecycleOwner {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
+    @Inject
+    lateinit var clearKeepDatabase: ClearKeepDatabase;
 
     lateinit var mxSession: MXSession;
 
@@ -50,7 +55,12 @@ class ProfileActivity : DaggerAppCompatActivity(), LifecycleOwner {
         userViewModel.setUserId(mxSession.myUserId);
         dataBinding.user = userViewModel.getUserData();
         dataBinding.lifecycleOwner = this;
-        dataBinding.buttonSignOut.setOnClickListener { v -> kotlin.run { signOut() } }
+        dataBinding.buttonSignOut.setOnClickListener { v ->
+            kotlin.run {
+
+                signOut();
+            }
+        }
     }
 
     private fun signOut() {
@@ -66,7 +76,9 @@ class ProfileActivity : DaggerAppCompatActivity(), LifecycleOwner {
                     .setTitle(R.string.action_sign_out)
                     .setMessage(R.string.action_sign_out_confirmation_simple)
                     .setPositiveButton(R.string.action_sign_out) { dialog, which ->
-                        CommonActivityUtils.logout(this@ProfileActivity)
+                        Observable.create<Boolean> { emitter -> clearKeepDatabase.clearAllTables() }
+                                .subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe();
+                        CommonActivityUtils.logout(this@ProfileActivity);
                     }
                     .setNegativeButton(R.string.cancel, null)
                     .show()

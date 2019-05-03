@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.text.TextUtils
 import android.util.Log
+import com.google.gson.Gson
 import im.vector.Matrix
 import im.vector.util.HomeRoomsViewModel
 import im.vector.util.RoomUtils
@@ -24,8 +25,12 @@ import org.matrix.androidsdk.rest.callback.ApiCallback
 import org.matrix.androidsdk.rest.callback.SimpleApiCallback
 import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.rest.model.RoomMember
+import org.matrix.androidsdk.rest.model.search.SearchResponse
+import org.matrix.androidsdk.rest.model.search.SearchResult
 import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
+import vmodev.clearkeep.ultis.SearchMessageByTextResult
 import vmodev.clearkeep.ultis.toDateTime
+import vmodev.clearkeep.viewmodelobjects.MessageSearchText
 import vmodev.clearkeep.viewmodelobjects.User
 import java.lang.Exception
 import javax.inject.Inject
@@ -39,8 +44,12 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
     private var homeRoomsViewModel: HomeRoomsViewModel? = null;
     private val funcs: Array<Function<HomeRoomsViewModel.Result, List<Room>>> = Array(255, init = { Function { t: HomeRoomsViewModel.Result -> t.directChats } })
     private fun setMXSession() {
-        if (session != null)
-            return;
+        if (session != null) {
+            if (session!!.isAlive)
+                return;
+        }
+
+
         session = Matrix.getInstance(application).defaultSession;
         homeRoomsViewModel = HomeRoomsViewModel(session!!);
         funcs[1] = Function { t: HomeRoomsViewModel.Result -> t.directChats };
@@ -146,9 +155,10 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
     @SuppressLint("CheckResult")
     override fun getUser(): Observable<User> {
         setMXSession();
+        val myUser = session!!.myUser;
         return Observable.create<User> { emitter ->
             kotlin.run {
-                val myUser = session!!.myUser;
+                //                val myUser = session!!.myUser;
 
                 if (myUser != null) {
                     val avatarUrl = session!!.contentManager.getDownloadableUrl(myUser.avatarUrl);
@@ -187,7 +197,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                                     }
                                 }
                             }
-                                , { e ->
+                                    , { e ->
                                 kotlin.run {
                                     currentIndex++;
                                     listRoom.add(matrixRoomToRoom(t));
@@ -331,15 +341,15 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         val sourcePrimary = if (room.isDirect) 0b00000001 else 0b00000010;
         val sourceSecondary = if (room.isInvited) 0b01000000 else 0b00000000;
         val sourceThird = if ((room.accountData?.keys
-                ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
+                        ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
         var timeUpdateLong: Long = 0;
         room.roomSummary?.let { roomSummary -> timeUpdateLong = roomSummary.latestReceivedEvent.originServerTs }
         val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
-        val rooMemberOnlineStatus : Byte = if (roomMemberId.isNullOrEmpty()) 0 else if (VectorUtils.getUserOnlineStatus(application, session!!, roomMemberId, null).compareTo("Online now") == 0) 1 else 0;
+        val rooMemberOnlineStatus: Byte = if (roomMemberId.isNullOrEmpty()) 0 else if (VectorUtils.getUserOnlineStatus(application, session!!, roomMemberId, null).compareTo("Online now") == 0) 1 else 0;
 //        Log.d("Room Type: ", (sourcePrimary or sourceSecondary or sourceThird).toString() + "-----" + room.getRoomDisplayName(application))
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
-            , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
-            , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus);
+                , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
+                , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus);
         return roomObj;
     }
 
@@ -351,7 +361,6 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                 emitter.onError(Throwable("No need check"))
                 emitter.onComplete();
             }
-
             room.getMembersAsync(object : ApiCallback<List<RoomMember>> {
                 override fun onSuccess(p0: List<RoomMember>?) {
                     p0?.forEach { t: RoomMember? ->
@@ -426,6 +435,51 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                     }
                 });
             }
+        }
+    }
+
+    override fun <T> findListMessageText(keyword: String, typeOfClass: Class<T>): Observable<List<T>> {
+        setMXSession();
+        return Observable.create<List<T>> { emitter ->
+            session!!.searchMessagesByText(keyword, null, object : ApiCallback<SearchResponse> {
+                override fun onSuccess(p0: SearchResponse?) {
+                    val searchResults = ArrayList<T>();
+                    p0?.searchCategories?.roomEvents?.results?.forEach { t: SearchResult? ->
+                        if (typeOfClass == MessageSearchText::class.java) {
+                            if (t?.result?.type?.compareTo("m.room.message") == 0) {
+                                val result: SearchMessageByTextResult = Gson().fromJson(t?.result?.content, SearchMessageByTextResult::class.java);
+                                val room = matrixRoomToRoom(session!!.dataHandler.getRoom(t?.result.roomId));
+
+                                searchResults.add(MessageSearchText(name = room.name, avatarUrl = room.avatarUrl, content = result.body, roomId = room.id, updatedDate = room.updatedDate) as T);
+                            }
+                        } else {
+                            if (t?.result?.type?.compareTo("m.room.name") == 0) {
+//                                val result: SearchMessageByTextResult = Gson().fromJson(t?.result?.content, SearchMessageByTextResult::class.java);
+                                val room = matrixRoomToRoom(session!!.dataHandler.getRoom(t?.result.roomId));
+
+                                searchResults.add(room as T);
+                            }
+                        }
+                        emitter.onNext(searchResults);
+                        emitter.onComplete();
+                    }
+                }
+
+                override fun onUnexpectedError(p0: Exception?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+
+                override fun onMatrixError(p0: MatrixError?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+
+                override fun onNetworkError(p0: Exception?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+            })
         }
     }
 

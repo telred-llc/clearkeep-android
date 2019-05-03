@@ -153,6 +153,7 @@
     <color name="app_green">#63CD9A</color>
     <color name="lock_background">#BBBBBB</color>
     <color name="transparent_black_50">#80000000</color>
+    <color name="background_main_gray">#F1F1F2</color>
 
 
 </resources>

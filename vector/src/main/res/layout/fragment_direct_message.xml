@@ -23,7 +23,11 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:visibleGone="@{rooms.status == Status.LOADING}"/>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view_list_conversation"
             android:layout_width="match_parent"

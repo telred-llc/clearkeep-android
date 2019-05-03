@@ -20,4 +20,6 @@ abstract class AbstractRoomViewModel : ViewModel() {
     abstract fun setCreateNewRoom(name: String, topic: String, visibility: String);
     abstract fun setInviteUsersToRoom(roomId: String, userIds: List<String>);
     abstract fun getInviteUsersToRoomResult() : LiveData<Resource<Room>>;
+    abstract fun setTextForFindByText(keyword : String);
+    abstract fun getFindByTextResult() : LiveData<Resource<List<Room>>>;
 }

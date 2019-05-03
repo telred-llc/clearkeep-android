@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import io.reactivex.Observable
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
+import vmodev.clearkeep.viewmodelobjects.MessageSearchText
 import vmodev.clearkeep.viewmodelobjects.User
 
 public interface MatrixService {
@@ -18,6 +19,7 @@ public interface MatrixService {
     fun joinRoom(id: String): Observable<vmodev.clearkeep.viewmodelobjects.Room>;
     fun leaveRoom(id : String) : Observable<String>;
     fun findListUser(keyword: String): Observable<List<User>>;
+    fun <T> findListMessageText(keyword: String, typeOfClass : Class<T>) : Observable<List<T>>;
     fun createNewDirectMessage(userId: String): Observable<vmodev.clearkeep.viewmodelobjects.Room>;
     fun createNewRoom(name: String, topic: String, visibility: String): Observable<vmodev.clearkeep.viewmodelobjects.Room>
     fun inviteUsersToRoom(roomId: String, userIds: List<String>): Observable<vmodev.clearkeep.viewmodelobjects.Room>;

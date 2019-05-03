@@ -5,8 +5,11 @@
     tools:context="vmodev.clearkeep.activities.HomeScreenActivity">
 
     <data>
+
         <import type="vmodev.clearkeep.viewmodelobjects.Status" />
+
         <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
         <import type="android.arch.lifecycle.LiveData" />
 
         <import type="vmodev.clearkeep.viewmodelobjects.User" />
@@ -18,8 +21,7 @@
 
         <variable
             name="user"
-            type="LiveData&lt;Resource&lt;User>>"
-            />
+            type="LiveData&lt;Resource&lt;User>>" />
     </data>
 
     <LinearLayout
@@ -46,40 +48,33 @@
                     android:layout_height="40dp"
                     android:layout_marginVertical="10dp"
                     android:background="@drawable/ic_launcher_app"
-                    app:imageUrl="@{user.data.avatarUrl}"/>
-
-
-                <android.support.v7.widget.SearchView
-                    android:id="@+id/search_view"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginHorizontal="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/search_view_background" />
+                    app:imageUrl="@{user.data.avatarUrl}" />
 
                 <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="10dp">
-
-                    <Button
-                        android:id="@+id/button_create_convention"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/message_plus_green" />
-
-                    <TextView
-                        android:id="@+id/text_view_cancel"
+                    android:id="@+id/frame_layout_search"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/search_view_background"
+                    android:layout_margin="10dp">
+                    <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/cancel"
-                        android:textColor="@color/app_green"
-                        android:visibility="gone" />
+                        android:src="@drawable/ic_search_gray_24dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="10dp"/>
                 </FrameLayout>
+
+                <Button
+                    android:id="@+id/button_create_convention"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/message_plus_green"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="10dp"/>
             </LinearLayout>
         </android.support.v7.widget.Toolbar>
+
         <FrameLayout
             android:id="@+id/frame_layout_fragment_container"
             android:layout_width="match_parent"
@@ -113,13 +108,13 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_gravity="end"
+                        android:layout_marginTop="10dp"
                         android:layout_marginEnd="20dp"
-                        android:text="@string/zero"
-                        android:visibility="gone"
                         android:background="@drawable/circle_background"
+                        android:text="@string/zero"
                         android:textAlignment="center"
                         android:textColor="@color/main_text_color"
-                        android:layout_marginTop="10dp"/>
+                        android:visibility="gone" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -131,8 +126,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:layout_marginEnd="20dp"
                         android:layout_marginTop="20dp"
+                        android:layout_marginEnd="20dp"
                         android:text="@string/zero"
                         android:visibility="gone" />
                 </FrameLayout>

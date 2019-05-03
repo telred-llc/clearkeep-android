@@ -20,9 +20,9 @@ import javax.inject.Singleton
 
 @Singleton
 class RoomRepository @Inject constructor(
-    private val appExecutors: AppExecutors,
-    private val roomDao: RoomDao,
-    private val matrixService: MatrixService
+        private val appExecutors: AppExecutors,
+        private val roomDao: RoomDao,
+        private val matrixService: MatrixService
 ) {
     fun loadListRoom(filters: Array<Int>): LiveData<Resource<List<Room>>> {
         return object : MatrixBoundSource<List<Room>, List<Room>>(appExecutors) {
@@ -42,16 +42,16 @@ class RoomRepository @Inject constructor(
 
             override fun createCall(): LiveData<List<Room>> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.getListRoom(filters)
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .toFlowable(BackpressureStrategy.LATEST));
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .toFlowable(BackpressureStrategy.LATEST));
             }
 
             override fun createCallAsReesult(): LiveData<List<Room>> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.getListRoom(filters)
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.newThread())
-                    .toFlowable(BackpressureStrategy.LATEST));
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.newThread())
+                        .toFlowable(BackpressureStrategy.LATEST));
             }
 
             override fun saveCallResultType(item: List<Room>) {
@@ -76,12 +76,12 @@ class RoomRepository @Inject constructor(
 
             override fun createCall(): LiveData<Room> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.getRoomWithId(id).subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST));
+                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST));
             }
 
             override fun createCallAsReesult(): LiveData<Room> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.getRoomWithId(id).subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST));
+                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST));
             }
 
             override fun saveCallResultType(item: Room) {
@@ -94,7 +94,7 @@ class RoomRepository @Inject constructor(
         matrixService.getRoomWithId(id).subscribeOn(AndroidSchedulers.mainThread()).observeOn(Schedulers.newThread()).subscribe { t: Room? ->
             run {
                 roomDao.updateRoom(id = t!!.id, updatedDate = t!!.updatedDate
-                    , notifyCount = t!!.notifyCount, avatarUrl = t!!.avatarUrl, type = t!!.type, name = t!!.name);
+                        , notifyCount = t!!.notifyCount, avatarUrl = t!!.avatarUrl, type = t!!.type, name = t!!.name);
             }
         };
     }
@@ -131,12 +131,12 @@ class RoomRepository @Inject constructor(
 
             override fun createCall(): LiveData<String> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.leaveRoom(id).subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST))
+                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST))
             }
 
             override fun createCallAsReesult(): LiveData<String> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.leaveRoom(id).subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST))
+                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST))
             }
 
             override fun saveCallResultType(item: String) {
@@ -161,14 +161,14 @@ class RoomRepository @Inject constructor(
 
             override fun createCall(): LiveData<Room> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.createNewDirectMessage(userId)
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST))
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST))
             }
 
             override fun createCallAsReesult(): LiveData<Room> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.createNewDirectMessage(userId)
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST))
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST))
             }
 
             override fun saveCallResultType(item: Room) {
@@ -192,16 +192,16 @@ class RoomRepository @Inject constructor(
 
             override fun createCall(): LiveData<Room> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.createNewRoom(data.name, data.topic, data.visibility)
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.newThread())
-                    .toFlowable(BackpressureStrategy.LATEST))
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.newThread())
+                        .toFlowable(BackpressureStrategy.LATEST))
             }
 
             override fun createCallAsReesult(): LiveData<Room> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.createNewRoom(data.name, data.topic, data.visibility)
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.newThread())
-                    .toFlowable(BackpressureStrategy.LATEST))
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.newThread())
+                        .toFlowable(BackpressureStrategy.LATEST))
             }
 
             override fun saveCallResultType(item: Room) {
@@ -225,14 +225,14 @@ class RoomRepository @Inject constructor(
 
             override fun createCall(): LiveData<Room> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.inviteUsersToRoom(data.roomId, data.userIds).subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.newThread())
-                    .toFlowable(BackpressureStrategy.LATEST));
+                        .observeOn(Schedulers.newThread())
+                        .toFlowable(BackpressureStrategy.LATEST));
             }
 
             override fun createCallAsReesult(): LiveData<Room> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.inviteUsersToRoom(data.roomId, data.userIds).subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.newThread())
-                    .toFlowable(BackpressureStrategy.LATEST));
+                        .observeOn(Schedulers.newThread())
+                        .toFlowable(BackpressureStrategy.LATEST));
             }
 
             override fun saveCallResultType(item: Room) {
@@ -240,13 +240,43 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
-    fun updateRoomMemberStatus(roomMemberId: String, status : Byte) {
+    fun updateRoomMemberStatus(roomMemberId: String, status: Byte) {
         Observable.create<Int> { emitter ->
             kotlin.run {
                 roomDao.updateRoomMemberStatus(roomMemberId, status);
                 emitter.onComplete();
             }
         }.subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe();
+    }
+
+    fun findListRoomWithText(keyword: String): LiveData<Resource<List<Room>>> {
+        return object : MatrixBoundSource<List<Room>, List<Room>>(appExecutors, 1) {
+            override fun saveCallResult(item: List<Room>) {
+                // Do something
+            }
+
+            override fun saveCallResultType(item: List<Room>) {
+                // Do something
+            }
+
+            override fun shouldFetch(data: List<Room>?): Boolean {
+                return true;
+            }
+
+            override fun loadFromDb(): LiveData<List<Room>> {
+                return roomDao.loadWithType(0);
+            }
+
+            override fun createCall(): LiveData<List<Room>> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.findListMessageText(keyword, Room::class.java)
+                        .subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).toFlowable(BackpressureStrategy.LATEST))
+            }
+
+            override fun createCallAsReesult(): LiveData<List<Room>> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.findListMessageText(keyword, Room::class.java)
+                        .subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).toFlowable(BackpressureStrategy.LATEST))
+            }
+        }.asLiveData();
     }
 
     class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);

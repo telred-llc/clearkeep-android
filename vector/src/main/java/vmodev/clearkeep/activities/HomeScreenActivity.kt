@@ -61,10 +61,10 @@ import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragmentInteractionListener,
-    FavouritesFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener,
-    DirectMessageFragment.OnFragmentInteractionListener, RoomFragment.OnFragmentInteractionListener, SearchFragment.OnFragmentInteractionListener,
-    SearchRoomsFragment.OnFragmentInteractionListener, SearchMessagesFragment.OnFragmentInteractionListener, SearchPeopleFragment.OnFragmentInteractionListener,
-    SearchFilesFragment.OnFragmentInteractionListener, PreviewFragment.OnFragmentInteractionListener, LifecycleOwner {
+        FavouritesFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener,
+        DirectMessageFragment.OnFragmentInteractionListener, RoomFragment.OnFragmentInteractionListener
+        , SearchFragment.OnFragmentInteractionListener
+        , PreviewFragment.OnFragmentInteractionListener, LifecycleOwner {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
@@ -89,7 +89,6 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val dataBinding: ActivityHomeScreenBinding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen, dataBindingComponent);
-//        setContentView(R.layout.activity_home_screen)
         mxSession = Matrix.getInstance(this.applicationContext).defaultSession;
         (application as ClearKeepApplication).setEventHandler();
         bottom_navigation_view_home_screen.setOnNavigationItemSelectedListener { menuItem ->
@@ -116,44 +115,18 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
         }
         homeRoomViewModel = HomeRoomsViewModel(mxSession);
 
-        search_view.setIconifiedByDefault(false);
-
-
         switchFragment(HomeScreenFragment.newInstance());
-        addMxEventListener();
 
-        search_view.setOnQueryTextFocusChangeListener { v, hasFocus ->
-            kotlin.run {
-                if (hasFocus) {
-                    if (checkCurrentSearchFragment())
-                        return@run;
-                    bottom_navigation_view_home_screen.visibility = View.GONE;
-                    circle_image_view_avatar.visibility = View.GONE;
-                    button_create_convention.visibility = View.GONE;
-                    text_view_cancel.visibility = View.VISIBLE;
-                    switchFragment(SearchFragment.newInstance("", ""));
-                }
-            }
-        };
-        text_view_cancel.setOnClickListener { v ->
-            kotlin.run {
-                search_view.clearFocus();
-                bottom_navigation_view_home_screen.visibility = View.VISIBLE;
-                circle_image_view_avatar.visibility = View.VISIBLE;
-                button_create_convention.visibility = View.VISIBLE;
-                text_view_cancel.visibility = View.GONE;
-                onBackPressed();
-            }
-        };
+        dataBinding.frameLayoutSearch.setOnClickListener { v ->
+            val intent = Intent(this, SearchActivity::class.java);
+            startActivity(intent);
+        }
         val userViewModel: AbstractUserViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractUserViewModel::class.java);
         userViewModel.setUserId(mxSession.myUserId);
         dataBinding.user = userViewModel.getUserData();
         dataBinding.setLifecycleOwner(this);
         dataBinding.buttonCreateConvention.setOnClickListener { v ->
             kotlin.run {
-                //                val settingsIntent = Intent(this@HomeScreenActivity, CreateNewConversationActivity::class.java)
-//                settingsIntent.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, mxSession.myUserId)
-//                startActivity(settingsIntent)
                 val intent = Intent(this, FindAndCreateNewConversationActivity::class.java)
                 startActivity(intent);
             }
@@ -182,74 +155,6 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
     }
 
     override fun onFragmentInteraction(uri: Uri) {
-    }
-
-    private fun addMxEventListener() {
-        mxEventListener = object : MXEventListener() {
-            override fun onInitialSyncComplete(toToken: String?) {
-                super.onInitialSyncComplete(toToken)
-                needUpdateData();
-            }
-
-            override fun onAccountInfoUpdate(myUser: MyUser?) {
-                super.onAccountInfoUpdate(myUser)
-//                VectorUtils.loadUserAvatar(this@HomeScreenActivity, mxSession, circle_image_view_avatar, mxSession.myUser);
-            }
-
-            override fun onLiveEvent(event: Event?, roomState: RoomState?) {
-                super.onLiveEvent(event, roomState);
-                needUpdateData();
-//                if (event!!.type == Event.EVENT_TYPE_STATE_ROOM_MEMBER) {
-                needUpdateData();
-//                }
-            }
-
-            override fun onLiveEventsChunkProcessed(fromToken: String?, toToken: String?) {
-                super.onLiveEventsChunkProcessed(fromToken, toToken)
-                needUpdateData();
-            }
-        };
-        mxSession.dataHandler.addListener(mxEventListener);
-    }
-
-    @SuppressLint("CheckResult")
-    private fun needUpdateData() {
-//        Observable.create<Status> { emitter ->
-//            kotlin.run {
-//                val invitationComparator = RoomUtils.getRoomsDateComparator(mxSession, false)
-//                val result = homeRoomViewModel.update();
-//                if (result != null) {
-//                    directMessages = result.directChats;
-//                    rooms = result.otherRooms;
-//                    listFavourites = result.favourites;
-//                    listContacts = result.getDirectChatsWithFavorites();
-//                    Collections.sort(directMessages, invitationComparator)
-//                    Collections.sort(rooms, invitationComparator)
-//                    Collections.sort(listFavourites, invitationComparator)
-//                    Collections.sort(listContacts, invitationComparator)
-//                    emitter.onNext(Status.SUCCESS);
-//                    emitter.onComplete();
-//                } else {
-//                    emitter.onError(NullPointerException());
-//                    emitter.onComplete();
-//                }
-//            }
-//        }.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe { t: Status? ->
-//            kotlin.run {
-//                getRoomInvitations();
-//                publishSubjectListRoomChanged.onNext(t!!);
-//                updateNotifyOnBottomNavigation();
-//            }
-//        };
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        mxSession.dataHandler.removeListener(mxEventListener);
     }
 
     override fun onGetListFavourites(): List<Room> {
@@ -287,15 +192,11 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
     override fun onClickItemDecline(roomId: String) {
         onRejectInvitation(roomId, object : SimpleApiCallback<Void>(this) {
             override fun onSuccess(p0: Void?) {
-                needUpdateData();
             }
         })
     }
 
     override fun onClickItemPreview(roomId: String) {
-//        toolbar.visibility = View.GONE;
-//        bottom_navigation_view_home_screen.visibility = View.GONE;
-//        switchFragment(PreviewFragment.newInstance(roomId));
         val intent: Intent = Intent(this, PreviewInviteRoomActivity::class.java);
         intent.putExtra("ROOM_ID", roomId);
         startActivity(intent);
@@ -312,7 +213,6 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
         onBackPressed();
         onRejectInvitation(room.roomId, object : SimpleApiCallback<Void>(this) {
             override fun onSuccess(p0: Void?) {
-                needUpdateData();
             }
         })
         toolbar.visibility = View.VISIBLE;
@@ -478,7 +378,6 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
                 params[VectorRoomActivity.EXTRA_EXPAND_ROOM_HEADER] = room!!.isDirect;
 
                 CommonActivityUtils.goToRoomPage(this@HomeScreenActivity, mxSession, params)
-                needUpdateData();
             }
 
             private fun onError(errorMessage: String) {
@@ -538,23 +437,12 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
     }
 
     override fun updateData() {
-        needUpdateData();
     }
 
     override fun onClickGoRoom(roomId: String) {
         val room = mxSession.dataHandler.getRoom(roomId);
         openRoom(room);
     }
-
-    override fun onResume() {
-        super.onResume()
-        needUpdateData();
-    }
-
-    //    val consentNotGivenHelper by lazy {
-//        ConsentNotGivenHelper(this, savedInstanceState)
-//                .apply { addToRestorables(this) }
-//    }
     override fun onClickItemJoin(room: Room) {
         joinRoom(room.roomId);
     }
@@ -562,7 +450,6 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
     override fun onClickItemDecline(room: Room) {
         onRejectInvitation(room.roomId, object : SimpleApiCallback<Void>(this) {
             override fun onSuccess(p0: Void?) {
-                needUpdateData();
             }
         })
     }

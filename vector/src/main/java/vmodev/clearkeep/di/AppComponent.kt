@@ -14,7 +14,8 @@ import javax.inject.Singleton
     , AppModule::class, HomeScreenActivityModule::class, ProfileActivityModule::class
     , PreviewInviteRoomActivityModule::class, FindAndCreateNewConversationActivityModule::class
     , CreateNewRoomActivityModule::class
-    , InviteUsersToRoomActivityModule::class])
+    , InviteUsersToRoomActivityModule::class
+    , AbstractSearchActivityModule::class])
 interface AppComponent : AndroidInjector<ClearKeepApplication> {
     override fun inject(instance: ClearKeepApplication?)
 //    fun inject(application: Application)

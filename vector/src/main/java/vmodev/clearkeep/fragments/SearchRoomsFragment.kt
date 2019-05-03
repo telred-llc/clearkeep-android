@@ -1,14 +1,33 @@
 package vmodev.clearkeep.fragments
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.util.DiffUtil
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import dagger.android.support.DaggerFragment
 
 import im.vector.R
+import im.vector.databinding.FragmentSearchRoomsBinding
+import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
+import vmodev.clearkeep.binding.FragmentDataBindingComponent
+import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchViewModel
+import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,11 +43,19 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class SearchRoomsFragment : Fragment() {
+class SearchRoomsFragment : DaggerFragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
+
+    @Inject
+    lateinit var viewMOdelFactory: ViewModelProvider.Factory;
+    @Inject
+    lateinit var appExecutors: AppExecutors;
+
+    val bindingDataComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
+    lateinit var binding: FragmentSearchRoomsBinding;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,12 +68,39 @@ class SearchRoomsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search_rooms, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search_rooms, container, false, bindingDataComponent);
+        return binding.root;
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val roomViewModel = ViewModelProviders.of(this, viewMOdelFactory).get(AbstractRoomViewModel::class.java);
+        binding.rooms = roomViewModel.getFindByTextResult();
+        val roomSearchAdapter = ListRoomRecyclerViewAdapter(appExecutors = appExecutors, dataBindingComponent = bindingDataComponent, diffCallback = object : DiffUtil.ItemCallback<Room>() {
+            override fun areItemsTheSame(p0: Room, p1: Room): Boolean {
+                return p0.id == p1.id;
+            }
+
+            override fun areContentsTheSame(p0: Room, p1: Room): Boolean {
+                return p0.avatarUrl == p1.avatarUrl && p0.notifyCount == p1.notifyCount && p0.updatedDate == p0.updatedDate;
+            }
+        }) { room, i -> }
+        binding.recyclerView.adapter = roomSearchAdapter;
+        roomViewModel.getFindByTextResult().observe(viewLifecycleOwner, Observer { t ->
+            roomSearchAdapter.submitList(t?.data);
+        });
+        binding.lifecycleOwner = viewLifecycleOwner;
+        getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe { t: String? ->
+            t?.let { s ->
+                roomViewModel.setTextForFindByText(s);
+            }
+        };
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
+
+    fun getSearchViewTextChange(): Observable<String>? {
+        return listener?.getSearchViewTextChange();
     }
 
     override fun onAttach(context: Context) {
@@ -76,7 +130,7 @@ class SearchRoomsFragment : Fragment() {
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
+        fun getSearchViewTextChange(): Observable<String>;
     }
 
     companion object {
