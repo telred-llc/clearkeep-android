@@ -154,6 +154,7 @@
     <color name="lock_background">#BBBBBB</color>
     <color name="transparent_black_50">#80000000</color>
     <color name="background_main_gray">#F1F1F2</color>
+    <color name="blue_app">#46B6CB</color>
 
 
 </resources>

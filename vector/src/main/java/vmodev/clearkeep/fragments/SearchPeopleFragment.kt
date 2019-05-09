@@ -19,10 +19,12 @@ import im.vector.databinding.FragmentSearchPeopleBinding
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import javax.inject.Inject
@@ -41,7 +43,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class SearchPeopleFragment : DaggerFragment() {
+class SearchPeopleFragment : DaggerFragment(), ISearchFragment {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -52,8 +54,10 @@ class SearchPeopleFragment : DaggerFragment() {
     @Inject
     lateinit var appExecutors: AppExecutors;
 
-    val dataBindingComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
-    lateinit var binding: FragmentSearchPeopleBinding;
+    private val dataBindingComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
+    private lateinit var binding: FragmentSearchPeopleBinding;
+    private lateinit var userViewModel: AbstractUserViewModel;
+    private var disposable: Disposable? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +76,7 @@ class SearchPeopleFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val userViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractUserViewModel::class.java);
+        userViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractUserViewModel::class.java);
 
         val listUserAdapter: ListUserRecyclerViewAdapter = ListUserRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<User>() {
             override fun areItemsTheSame(p0: User, p1: User): Boolean {
@@ -88,11 +92,7 @@ class SearchPeopleFragment : DaggerFragment() {
         binding.users = userViewModel.getUsers();
         userViewModel.getUsers().observe(viewLifecycleOwner, Observer { t -> listUserAdapter.submitList(t?.data) });
         binding.lifecycleOwner = viewLifecycleOwner;
-        getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe { t: String? ->
-            t?.let { s ->
-                userViewModel.setQuery(s)
-            }
-        }
+
     }
 
     override fun onResume() {
@@ -153,5 +153,23 @@ class SearchPeopleFragment : DaggerFragment() {
                         putString(ARG_PARAM2, param2)
                     }
                 }
+    }
+
+    override fun selectedFragment(query: String): ISearchFragment {
+        userViewModel.setQuery(query);
+        disposable = getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe { t: String? ->
+            t?.let { s ->
+                userViewModel.setQuery(s)
+            }
+        }
+        return this;
+    }
+
+    override fun getFragment(): Fragment {
+        return this;
+    }
+
+    override fun unSelectedFragment() {
+        disposable?.dispose();
     }
 }

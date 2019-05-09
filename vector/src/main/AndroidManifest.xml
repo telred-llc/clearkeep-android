@@ -91,7 +91,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         tools:replace="allowBackup,label">
-        <activity android:name="vmodev.clearkeep.activities.SearchActivity"></activity>
+        <activity android:name="vmodev.clearkeep.activities.RoomActivity"></activity>
+        <activity android:name="vmodev.clearkeep.activities.CallViewActivity" />
+        <activity android:name="vmodev.clearkeep.activities.SearchActivity" />
         <activity android:name="vmodev.clearkeep.activities.InviteUsersToRoomActivity" />
         <activity android:name="vmodev.clearkeep.activities.CreateNewRoomActivity" />
         <activity android:name="vmodev.clearkeep.activities.FindAndCreateNewConversationActivity" />

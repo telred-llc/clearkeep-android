@@ -1432,5 +1432,6 @@ Why choose Riot.im?
     <string name="room_topic_optional">Room topic (Optional)</string>
     <string name="room_public">Public</string>
     <string name="room_public_content">Anyone in the Directory can join</string>
+    <string name="special_symbol">\@</string>
 
 </resources>

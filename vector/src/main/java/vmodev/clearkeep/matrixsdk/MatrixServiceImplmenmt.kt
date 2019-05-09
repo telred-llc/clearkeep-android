@@ -460,9 +460,9 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                                 searchResults.add(room as T);
                             }
                         }
-                        emitter.onNext(searchResults);
-                        emitter.onComplete();
                     }
+                    emitter.onNext(searchResults);
+                    emitter.onComplete();
                 }
 
                 override fun onUnexpectedError(p0: Exception?) {
@@ -642,6 +642,38 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                     emitter.onComplete();
                 }
             })
+        }
+    }
+
+    override fun findMediaFiles(keyword: String): Observable<List<String>> {
+        setMXSession();
+        return Observable.create<List<String>> { emitter ->
+            session!!.searchMediaByName(keyword, null, null, object : ApiCallback<SearchResponse> {
+                override fun onSuccess(p0: SearchResponse?) {
+                    val results = ArrayList<String>();
+
+                    val result = p0?.searchCategories?.roomEvents?.results;
+                    Log.d("Result Size: ", result?.size.toString());
+
+                    emitter.onNext(results);
+                    emitter.onComplete();
+                }
+
+                override fun onUnexpectedError(p0: Exception?) {
+                    emitter.onError(Throwable(p0?.message))
+                    emitter.onComplete();
+                }
+
+                override fun onMatrixError(p0: MatrixError?) {
+                    emitter.onError(Throwable(p0?.message))
+                    emitter.onComplete();
+                }
+
+                override fun onNetworkError(p0: Exception?) {
+                    emitter.onError(Throwable(p0?.message))
+                    emitter.onComplete();
+                }
+            });
         }
     }
 }

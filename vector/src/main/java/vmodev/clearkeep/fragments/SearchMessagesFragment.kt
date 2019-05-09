@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.util.DiffUtil
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,10 +19,12 @@ import im.vector.R
 import im.vector.databinding.FragmentSearchMessagesBinding
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.adapters.ListSearchMessageRecyclerViewAdaptert
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
 import vmodev.clearkeep.viewmodelobjects.MessageSearchText
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchViewModel
 import javax.inject.Inject
@@ -40,7 +43,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class SearchMessagesFragment : DaggerFragment() {
+class SearchMessagesFragment : DaggerFragment(), ISearchFragment {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -53,6 +56,9 @@ class SearchMessagesFragment : DaggerFragment() {
 
     val bindingDataComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
     lateinit var binding: FragmentSearchMessagesBinding;
+    lateinit var searchViewModel: AbstractSearchViewModel;
+
+    private var disposableEditext: Disposable? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +77,7 @@ class SearchMessagesFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val searchViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractSearchViewModel::class.java);
+        searchViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractSearchViewModel::class.java);
         binding.results = searchViewModel.getSearchMessageByTextResult();
 
         val listSearchAdapter = ListSearchMessageRecyclerViewAdaptert(appExecutors = appExecutors
@@ -88,9 +94,7 @@ class SearchMessagesFragment : DaggerFragment() {
         searchViewModel.getSearchMessageByTextResult().observe(viewLifecycleOwner, Observer { t ->
             listSearchAdapter.submitList(t?.data);
         })
-        getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe { t: String? ->
-            t?.let { s -> searchViewModel.setKeywordSearchMessage(s) }
-        }
+
         binding.lifecycleOwner = viewLifecycleOwner;
     }
 
@@ -147,5 +151,21 @@ class SearchMessagesFragment : DaggerFragment() {
                         putString(ARG_PARAM2, param2)
                     }
                 }
+    }
+
+    override fun selectedFragment(query: String): ISearchFragment {
+        searchViewModel.setKeywordSearchMessage(query);
+        disposableEditext = getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe { t: String? ->
+            t?.let { s -> searchViewModel.setKeywordSearchMessage(s) }
+        }
+        return this;
+    }
+
+    override fun getFragment(): Fragment {
+        return this;
+    }
+
+    override fun unSelectedFragment() {
+        disposableEditext?.dispose();
     }
 }

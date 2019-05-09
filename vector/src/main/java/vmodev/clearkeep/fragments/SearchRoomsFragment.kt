@@ -20,10 +20,12 @@ import im.vector.databinding.FragmentSearchRoomsBinding
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchViewModel
@@ -43,19 +45,21 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class SearchRoomsFragment : DaggerFragment() {
+class SearchRoomsFragment : DaggerFragment(), ISearchFragment {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
 
     @Inject
-    lateinit var viewMOdelFactory: ViewModelProvider.Factory;
+    lateinit var viewModelFactory: ViewModelProvider.Factory;
     @Inject
     lateinit var appExecutors: AppExecutors;
 
-    val bindingDataComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
-    lateinit var binding: FragmentSearchRoomsBinding;
+    private val bindingDataComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
+    private lateinit var binding: FragmentSearchRoomsBinding;
+    private lateinit var roomViewModel: AbstractRoomViewModel;
+    private var disposable: Disposable? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +78,7 @@ class SearchRoomsFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val roomViewModel = ViewModelProviders.of(this, viewMOdelFactory).get(AbstractRoomViewModel::class.java);
+        roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
         binding.rooms = roomViewModel.getFindByTextResult();
         val roomSearchAdapter = ListRoomRecyclerViewAdapter(appExecutors = appExecutors, dataBindingComponent = bindingDataComponent, diffCallback = object : DiffUtil.ItemCallback<Room>() {
             override fun areItemsTheSame(p0: Room, p1: Room): Boolean {
@@ -90,11 +94,7 @@ class SearchRoomsFragment : DaggerFragment() {
             roomSearchAdapter.submitList(t?.data);
         });
         binding.lifecycleOwner = viewLifecycleOwner;
-        getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe { t: String? ->
-            t?.let { s ->
-                roomViewModel.setTextForFindByText(s);
-            }
-        };
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -151,5 +151,23 @@ class SearchRoomsFragment : DaggerFragment() {
                         putString(ARG_PARAM2, param2)
                     }
                 }
+    }
+
+    override fun selectedFragment(query: String): ISearchFragment {
+        roomViewModel.setTextForFindByText(query);
+        disposable = getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe { t: String? ->
+            t?.let { s ->
+                roomViewModel.setTextForFindByText(s);
+            }
+        };
+        return this;
+    }
+
+    override fun getFragment(): Fragment {
+        return this;
+    }
+
+    override fun unSelectedFragment() {
+        disposable?.dispose();
     }
 }
