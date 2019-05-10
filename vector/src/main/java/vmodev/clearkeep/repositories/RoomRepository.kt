@@ -140,6 +140,7 @@ class RoomRepository @Inject constructor(
             }
 
             override fun saveCallResultType(item: String) {
+                Log.d("Delete: ", item);
                 roomDao.deleteRoom(item);
             }
         }.asLiveData()

@@ -1433,5 +1433,7 @@ Why choose Riot.im?
     <string name="room_public">Public</string>
     <string name="room_public_content">Anyone in the Directory can join</string>
     <string name="special_symbol">\@</string>
+    <string name="add_to_favourite">Add to favourite</string>
+    <string name="turn_on_room_notification">Turn on room notification</string>
 
 </resources>

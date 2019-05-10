@@ -68,7 +68,7 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
-
+    lateinit var dataBinding: ActivityHomeScreenBinding;
     lateinit var mxSession: MXSession;
     private lateinit var mxEventListener: MXEventListener;
     private lateinit var homeRoomViewModel: HomeRoomsViewModel;
@@ -88,7 +88,7 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val dataBinding: ActivityHomeScreenBinding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen, dataBindingComponent);
+        dataBinding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen, dataBindingComponent);
         mxSession = Matrix.getInstance(this.applicationContext).defaultSession;
         (application as ClearKeepApplication).setEventHandler();
         bottom_navigation_view_home_screen.setOnNavigationItemSelectedListener { menuItem ->
@@ -157,21 +157,10 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
     override fun onFragmentInteraction(uri: Uri) {
     }
 
-    override fun onGetListFavourites(): List<Room> {
-        return listFavourites;
-    }
-
     override fun onGetListContact(): List<Room> {
         return listContacts;
     }
 
-    override fun onGetListDirectMessage(): List<Room> {
-        return directMessages;
-    }
-
-    override fun onGetListRooms(): List<Room> {
-        return rooms;
-    }
 
     override fun onClickItem(room: Room) {
         openRoom(room);
@@ -179,10 +168,6 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
 
     override fun handleDataChange(): PublishSubject<Status> {
         return publishSubjectListRoomChanged;
-    }
-
-    override fun onGetListDirectMessageInvitation(): List<Room> {
-        return directMessageInvite;
     }
 
     override fun onClickItemJoin(roomId: String) {
@@ -223,10 +208,6 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
         toolbar.visibility = View.VISIBLE;
         bottom_navigation_view_home_screen.visibility = View.VISIBLE;
         onBackPressed();
-    }
-
-    override fun onGetListRoomInvitation(): List<Room> {
-        return roomInvites;
     }
 
     protected fun openRoom(room: Room?) {
@@ -368,6 +349,7 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
     }
 
     private fun joinRoom(roomId: String) {
+        dataBinding.progressBar.visibility = View.VISIBLE;
         val room = mxSession.dataHandler.store.getRoom(roomId);
         mxSession.joinRoom(room!!.getRoomId(), object : ApiCallback<String> {
             override fun onSuccess(roomId: String) {
@@ -378,26 +360,31 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
                 params[VectorRoomActivity.EXTRA_EXPAND_ROOM_HEADER] = room!!.isDirect;
 
                 CommonActivityUtils.goToRoomPage(this@HomeScreenActivity, mxSession, params)
+                dataBinding.progressBar.visibility = View.GONE;
             }
 
             private fun onError(errorMessage: String) {
                 Toast.makeText(this@HomeScreenActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                dataBinding.progressBar.visibility = View.GONE;
             }
 
             override fun onNetworkError(e: Exception) {
                 onError(e.localizedMessage)
+                dataBinding.progressBar.visibility = View.GONE;
             }
 
             override fun onMatrixError(e: MatrixError) {
                 if (MatrixError.M_CONSENT_NOT_GIVEN == e.errcode) {
-
+                    dataBinding.progressBar.visibility = View.GONE;
                 } else {
                     onError(e.localizedMessage)
+                    dataBinding.progressBar.visibility = View.GONE;
                 }
             }
 
             override fun onUnexpectedError(e: Exception) {
                 onError(e.localizedMessage)
+                dataBinding.progressBar.visibility = View.GONE;
             }
         })
     }
@@ -443,20 +430,5 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
         val room = mxSession.dataHandler.getRoom(roomId);
         openRoom(room);
     }
-    override fun onClickItemJoin(room: Room) {
-        joinRoom(room.roomId);
-    }
 
-    override fun onClickItemDecline(room: Room) {
-        onRejectInvitation(room.roomId, object : SimpleApiCallback<Void>(this) {
-            override fun onSuccess(p0: Void?) {
-            }
-        })
-    }
-
-    override fun onClickItemPreview(room: Room) {
-        toolbar.visibility = View.GONE;
-        bottom_navigation_view_home_screen.visibility = View.GONE;
-        switchFragment(PreviewFragment.newInstance(room.roomId));
-    }
 }

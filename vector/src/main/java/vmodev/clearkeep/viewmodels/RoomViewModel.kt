@@ -96,7 +96,8 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : Abstra
     }
 
     override fun setLeaveRoom(id: String) {
-        _leaveRoom.value = id;
+        if (_leaveRoom.value != id)
+            _leaveRoom.value = id;
     }
 
     override fun getLeaveRoom(): LiveData<Resource<String>> {

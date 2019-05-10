@@ -314,8 +314,31 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
             room?.let { room ->
                 room.leave(object : ApiCallback<Void> {
                     override fun onSuccess(p0: Void?) {
-                        emitter.onNext(id);
-                        emitter.onComplete();
+                        val roomAfter = session!!.dataHandler.getRoom(id);
+                        roomAfter?.let { r ->
+                            r.leave(object : ApiCallback<Void> {
+                                override fun onSuccess(p0: Void?) {
+                                    emitter.onNext(id);
+                                    emitter.onComplete();
+                                }
+
+                                override fun onUnexpectedError(p0: Exception?) {
+                                    emitter.onError(Throwable(p0?.message));
+                                    emitter.onComplete();
+                                }
+
+                                override fun onMatrixError(p0: MatrixError?) {
+                                    emitter.onError(Throwable(p0?.message));
+                                    emitter.onComplete();
+                                }
+
+                                override fun onNetworkError(p0: Exception?) {
+                                    emitter.onError(Throwable(p0?.message));
+                                    emitter.onComplete();
+                                }
+                            })
+                        }
+
                     }
 
                     override fun onUnexpectedError(p0: Exception?) {
@@ -338,7 +361,12 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
     }
 
     private fun matrixRoomToRoom(room: Room, roomMemberId: String = ""): vmodev.clearkeep.viewmodelobjects.Room {
-        val sourcePrimary = if (room.isDirect) 0b00000001 else 0b00000010;
+        var sourcePrimary = 1;// = if (room.isDirect) 0b00000001 else 0b00000010;
+        if (room.isInvited) {
+            sourcePrimary = if (room.isDirectChatInvitation) 0b00000001 else 0b00000010;
+        } else {
+            sourcePrimary = if (room.isDirect) 0b00000001 else 0b00000010;
+        }
         val sourceSecondary = if (room.isInvited) 0b01000000 else 0b00000000;
         val sourceThird = if ((room.accountData?.keys
                         ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
@@ -346,7 +374,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         room.roomSummary?.let { roomSummary -> timeUpdateLong = roomSummary.latestReceivedEvent.originServerTs }
         val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
         val rooMemberOnlineStatus: Byte = if (roomMemberId.isNullOrEmpty()) 0 else if (VectorUtils.getUserOnlineStatus(application, session!!, roomMemberId, null).compareTo("Online now") == 0) 1 else 0;
-//        Log.d("Room Type: ", (sourcePrimary or sourceSecondary or sourceThird).toString() + "-----" + room.getRoomDisplayName(application))
+        Log.d("Room Type: ", (sourcePrimary or sourceSecondary or sourceThird).toString() + "-----" + room.getRoomDisplayName(application))
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
                 , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus);

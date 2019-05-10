@@ -22,6 +22,7 @@ import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
@@ -55,6 +56,8 @@ class SearchRoomsFragment : DaggerFragment(), ISearchFragment {
     lateinit var viewModelFactory: ViewModelProvider.Factory;
     @Inject
     lateinit var appExecutors: AppExecutors;
+    @Inject
+    lateinit var listRoomRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
 
     private val bindingDataComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
     private lateinit var binding: FragmentSearchRoomsBinding;
@@ -80,18 +83,10 @@ class SearchRoomsFragment : DaggerFragment(), ISearchFragment {
         super.onViewCreated(view, savedInstanceState)
         roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
         binding.rooms = roomViewModel.getFindByTextResult();
-        val roomSearchAdapter = ListRoomRecyclerViewAdapter(appExecutors = appExecutors, dataBindingComponent = bindingDataComponent, diffCallback = object : DiffUtil.ItemCallback<Room>() {
-            override fun areItemsTheSame(p0: Room, p1: Room): Boolean {
-                return p0.id == p1.id;
-            }
-
-            override fun areContentsTheSame(p0: Room, p1: Room): Boolean {
-                return p0.avatarUrl == p1.avatarUrl && p0.notifyCount == p1.notifyCount && p0.updatedDate == p0.updatedDate;
-            }
-        }) { room, i -> }
-        binding.recyclerView.adapter = roomSearchAdapter;
+        listRoomRecyclerViewAdapter.setdataBindingComponent(bindingDataComponent)
+        binding.recyclerView.adapter = listRoomRecyclerViewAdapter.getAdapter();
         roomViewModel.getFindByTextResult().observe(viewLifecycleOwner, Observer { t ->
-            roomSearchAdapter.submitList(t?.data);
+            listRoomRecyclerViewAdapter.getAdapter().submitList(t?.data);
         });
         binding.lifecycleOwner = viewLifecycleOwner;
 

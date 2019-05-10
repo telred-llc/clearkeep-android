@@ -379,6 +379,9 @@ dependencies {
     implementation 'com.jakewharton.rxbinding2:rxbinding-design-kotlin:2.2.0'
     implementation 'com.jakewharton.rxbinding2:rxbinding-leanback-v17-kotlin:2.2.0'
     //======================================================================//
+    //============== Bottom Dialog =========================================//
+    implementation 'com.orhanobut:dialogplus:1.11@aar'
+    //======================================================================//
 }
 
 

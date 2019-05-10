@@ -15,6 +15,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.orhanobut.dialogplus.DialogPlus
+import com.orhanobut.dialogplus.OnItemClickListener
 import dagger.android.DaggerFragment
 import im.vector.R
 import im.vector.databinding.FragmentDirectMessageBinding
@@ -23,17 +25,19 @@ import io.reactivex.functions.Consumer
 import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
+import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
+import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
+import javax.inject.Named
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ROOMS = "ROOMS"
 
 /**
  * A simple [Fragment] subclass.
@@ -48,20 +52,19 @@ class RoomFragment : dagger.android.support.DaggerFragment() {
     // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
 
-    private lateinit var recyclerView: RecyclerView;
-    private lateinit var session: MXSession;
-
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject
     lateinit var appExecutors: AppExecutors;
+    @Inject
+    lateinit var listRoomAdapter: IListRoomRecyclerViewAdapter;
 
-    var dataBindingComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
+    val dataBindingComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
 
-    var binding: FragmentRoomBinding? = null;
+    lateinit var binding: FragmentRoomBinding;
 
-    var roomViewModel: AbstractRoomViewModel? = null;
-    var listRoomAdapter: ListRoomRecyclerViewAdapter? = null;
+    lateinit var roomViewModel: AbstractRoomViewModel;
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,51 +82,52 @@ class RoomFragment : dagger.android.support.DaggerFragment() {
         super.onViewCreated(view, savedInstanceState)
         super.onViewCreated(view, savedInstanceState)
         roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
-        binding!!.setLifecycleOwner(viewLifecycleOwner);
-        listRoomAdapter = ListRoomRecyclerViewAdapter(appExecutors = appExecutors, dataBindingComponent = dataBindingComponent, diffCallback = object : DiffUtil.ItemCallback<vmodev.clearkeep.viewmodelobjects.Room>() {
-            override fun areItemsTheSame(p0: vmodev.clearkeep.viewmodelobjects.Room, p1: vmodev.clearkeep.viewmodelobjects.Room): Boolean {
-                return p0.id == p1.id;
+        binding!!.lifecycleOwner = viewLifecycleOwner;
+        listRoomAdapter.setdataBindingComponent(dataBindingComponent);
+        listRoomAdapter.setOnItemClick { room, i ->
+            when (i) {
+                3 -> onClickGoRoom(room.id);
+                0 -> onClickItemPreview(room.id);
+                1 -> onClickJoinRoom(room.id);
+                2 -> onClickItemDecline(room.id);
             }
-
-            override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.Room, p1: vmodev.clearkeep.viewmodelobjects.Room): Boolean {
-                return p0.name == p1.name && p0.updatedDate == p1.updatedDate && p0.avatarUrl == p1.avatarUrl
-                    && p0.notifyCount == p1.notifyCount;
-            }
-        }) { room, i ->
-            kotlin.run {
-                when (i) {
-                    3 -> onClickGoRoom(room.id);
-                    0 -> onClickItemPreview(room.id);
-                    1 -> onClickJoinRoom(room.id);
-                    2 -> onClickItemDecline(room.id);
-                }
-            }
-        };
+        }
+        listRoomAdapter.setOnItemLongClick { room ->
+            val bottomDialog = DialogPlus.newDialog(this.context)
+                    .setAdapter(BottomDialogRoomLongClick())
+                    .setOnItemClickListener { dialog, item, view, position ->
+                        when (position) {
+                            3 -> onClickItemDecline(room.id)
+                        }
+                        dialog?.dismiss();
+                    }.create();
+            bottomDialog.show();
+        }
         binding!!.rooms = roomViewModel!!.getRoomsData();
         binding!!.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
-        binding!!.recyclerViewListConversation.adapter = listRoomAdapter;
+        binding!!.recyclerViewListConversation.adapter = listRoomAdapter.getAdapter();
         roomViewModel!!.getRoomsData().observe(viewLifecycleOwner, Observer { t ->
-            kotlin.run {
-                listRoomAdapter!!.submitList(t?.data);
-            }
+            listRoomAdapter!!.getAdapter().submitList(t?.data);
         });
         roomViewModel!!.setFilter(arrayOf(2, 66))
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    fun onClickJoinRoom(roomId: String) {
+    private fun onClickJoinRoom(roomId: String) {
         listener?.onClickItemJoin(roomId);
     }
 
-    fun onClickItemDecline(roomId: String) {
-        listener?.onClickItemDecline(roomId);
+    private fun onClickItemDecline(roomId: String) {
+//        listener?.onClickItemDecline(roomId);
+        binding.room = roomViewModel.getLeaveRoom();
+        roomViewModel.setLeaveRoom(roomId);
     }
 
-    fun onClickItemPreview(roomId: String) {
+    private fun onClickItemPreview(roomId: String) {
         listener?.onClickItemPreview(roomId);
     }
 
-    fun onClickGoRoom(roomId: String) {
+    private fun onClickGoRoom(roomId: String) {
         listener?.onClickGoRoom(roomId);
     }
 
@@ -154,16 +158,8 @@ class RoomFragment : dagger.android.support.DaggerFragment() {
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onGetMXSession(): MXSession;
-
-        fun onGetListRooms(): List<Room>;
-        fun onGetListRoomInvitation(): List<Room>;
-        fun onClickItem(room: Room);
-        fun handleDataChange(): PublishSubject<Status>;
-        fun onClickItemJoin(room: Room);
-        fun onClickItemDecline(room: Room);
-        fun onClickItemPreview(room: Room);
         fun onClickItemJoin(roomId: String);
+
         fun onClickItemDecline(roomId: String);
         fun onClickItemPreview(roomId: String);
         fun onClickGoRoom(roomId: String);
@@ -181,9 +177,9 @@ class RoomFragment : dagger.android.support.DaggerFragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance() =
-            RoomFragment().apply {
-                arguments = Bundle().apply {
+                RoomFragment().apply {
+                    arguments = Bundle().apply {
+                    }
                 }
-            }
     }
 }
