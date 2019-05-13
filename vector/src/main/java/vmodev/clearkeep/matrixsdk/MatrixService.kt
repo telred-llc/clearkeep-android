@@ -24,4 +24,6 @@ public interface MatrixService {
     fun createNewRoom(name: String, topic: String, visibility: String): Observable<vmodev.clearkeep.viewmodelobjects.Room>
     fun inviteUsersToRoom(roomId: String, userIds: List<String>): Observable<vmodev.clearkeep.viewmodelobjects.Room>;
     fun findMediaFiles(keyword: String) : Observable<List<String>>;
+    fun addToFavourite(roomId: String) : Observable<vmodev.clearkeep.viewmodelobjects.Room>;
+    fun removeFromFavourite(roomId: String) : Observable<vmodev.clearkeep.viewmodelobjects.Room>;
 }

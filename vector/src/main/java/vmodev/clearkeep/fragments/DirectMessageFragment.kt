@@ -34,6 +34,7 @@ import vmodev.clearkeep.binding.FragmentBindingAdapters
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.fragments.Interfaces.IListRoomOnFragmentInteractionListener
 import vmodev.clearkeep.ultis.RoomType
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.RoomViewModel
@@ -54,8 +55,8 @@ import javax.inject.Named
  * create an instance of this fragment.
  *
  */
-class DirectMessageFragment : DaggerFragment(), IFragment {
-    private var listener: OnFragmentInteractionListener? = null
+class DirectMessageFragment : DataBindingDaggerFragment(), IFragment {
+    private var listener: IListRoomOnFragmentInteractionListener? = null
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
@@ -63,8 +64,6 @@ class DirectMessageFragment : DaggerFragment(), IFragment {
     lateinit var appExecutors: AppExecutors;
     @Inject
     lateinit var listRoomAdapter: IListRoomRecyclerViewAdapter;
-
-    val dataBindingComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
 
     lateinit var binding: FragmentDirectMessageBinding;
 
@@ -100,8 +99,9 @@ class DirectMessageFragment : DaggerFragment(), IFragment {
             val bottomDialog = DialogPlus.newDialog(this.context)
                     .setAdapter(BottomDialogRoomLongClick())
                     .setOnItemClickListener { dialog, item, view, position ->
-                        when(position){
-                            3->onClickItemDecline(room.id);
+                        when (position) {
+                            3 -> onClickItemDecline(room.id);
+                            1 -> onClickAddToFavourite(room.id);
                         }
 
                         dialog?.dismiss();
@@ -121,6 +121,11 @@ class DirectMessageFragment : DaggerFragment(), IFragment {
         listener?.onClickItemJoin(roomId);
     }
 
+    private fun onClickAddToFavourite(roomId: String) {
+        binding.roomObject = roomViewModel.getAddToFavouriteResult();
+        roomViewModel.setAddToFavourite(roomId);
+    }
+
     private fun onClickItemDecline(roomId: String) {
 //        listener?.onClickItemDecline(roomId);
         binding.room = roomViewModel.getLeaveRoom();
@@ -137,7 +142,7 @@ class DirectMessageFragment : DaggerFragment(), IFragment {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
+        if (context is IListRoomOnFragmentInteractionListener) {
             listener = context
         } else {
             throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
@@ -147,26 +152,6 @@ class DirectMessageFragment : DaggerFragment(), IFragment {
     override fun onDetach() {
         super.onDetach()
         listener = null
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onClickItemJoin(roomId: String);
-
-        fun onClickItemDecline(roomId: String);
-        fun onClickItemPreview(roomId: String);
-        fun onClickGoRoom(roomId: String);
     }
 
     companion object {

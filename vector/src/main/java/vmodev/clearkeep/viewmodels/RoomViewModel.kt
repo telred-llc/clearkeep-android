@@ -19,6 +19,8 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : Abstra
     private val _createNewRoom = MutableLiveData<RoomRepository.CreateNewRoomObject>();
     private val _inviteUserToRoom = MutableLiveData<RoomRepository.InviteUsersToRoomObject>();
     private val _findByText = MutableLiveData<String>();
+    private val _addToFavourite = MutableLiveData<String>();
+    private val _removeFromFavourite = MutableLiveData<String>();
 
     private val rooms: LiveData<Resource<List<Room>>> = Transformations.switchMap(_filters) { input ->
         roomRepository.loadListRoom(input);
@@ -36,6 +38,13 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : Abstra
         roomRepository.inviteUsersToRoom(input);
     }
     private val findBytTextResult: LiveData<Resource<List<Room>>> = Transformations.switchMap(_findByText) { input -> roomRepository.findListRoomWithText(input) }
+
+    private val addToFavourite: LiveData<Resource<Room>> = Transformations.switchMap(_addToFavourite) { input ->
+        roomRepository.addToFavourite(input);
+    }
+    private val removeFromFavourite : LiveData<Resource<Room>> = Transformations.switchMap(_removeFromFavourite){input ->
+        roomRepository.removeFromFavourite(input);
+    }
 
     private val roomMerge = MediatorLiveData<Resource<Room>>();
 
@@ -111,5 +120,21 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : Abstra
 
     override fun getFindByTextResult(): LiveData<Resource<List<Room>>> {
         return findBytTextResult;
+    }
+
+    override fun setAddToFavourite(roomId: String) {
+        _addToFavourite.value = roomId;
+    }
+
+    override fun getAddToFavouriteResult(): LiveData<Resource<Room>> {
+        return addToFavourite;
+    }
+
+    override fun setRemoveFromFavourite(roomId: String) {
+        _removeFromFavourite.value = roomId;
+    }
+
+    override fun getRemoveFromFavouriteResult(): LiveData<Resource<Room>> {
+        return removeFromFavourite;
     }
 }

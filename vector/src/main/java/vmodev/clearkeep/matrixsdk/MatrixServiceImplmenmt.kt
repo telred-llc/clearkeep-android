@@ -704,4 +704,124 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
             });
         }
     }
+
+    override fun addToFavourite(roomId: String): Observable<vmodev.clearkeep.viewmodelobjects.Room> {
+        setMXSession();
+        return Observable.create<vmodev.clearkeep.viewmodelobjects.Room> { emitter ->
+            val room = session!!.dataHandler.getRoom(roomId);
+            room?.let { r ->
+                var oldTag: String? = null;
+                val roomAccount = r.accountData;
+                roomAccount?.let { roomAccountData ->
+                    if (roomAccountData.hasTags())
+                        oldTag = roomAccountData.keys?.iterator()?.next();
+                }
+                var tagOrder: Double = 0.0;
+                tagOrder = session!!.tagOrderToBeAtIndex(0, Integer.MAX_VALUE, "m.favourite")
+                r.replaceTag(oldTag, "m.favourite", tagOrder, object : ApiCallback<Void> {
+                    override fun onSuccess(p0: Void?) {
+                        r.replaceTag(oldTag, "m.favourite", tagOrder, object : ApiCallback<Void> {
+                            override fun onSuccess(p0: Void?) {
+                                emitter.onNext(matrixRoomToRoom(r));
+                                emitter.onComplete();
+                            }
+
+                            override fun onUnexpectedError(p0: Exception?) {
+                                emitter.onError(Throwable(p0?.message));
+                                emitter.onComplete();
+                            }
+
+                            override fun onMatrixError(p0: MatrixError?) {
+                                emitter.onError(Throwable(p0?.message));
+                                emitter.onComplete();
+                            }
+
+                            override fun onNetworkError(p0: Exception?) {
+                                emitter.onError(Throwable(p0?.message));
+                                emitter.onComplete();
+                            }
+                        })
+                    }
+
+                    override fun onUnexpectedError(p0: Exception?) {
+                        emitter.onError(Throwable(p0?.message));
+                        emitter.onComplete();
+                    }
+
+                    override fun onMatrixError(p0: MatrixError?) {
+                        emitter.onError(Throwable(p0?.message));
+                        emitter.onComplete();
+                    }
+
+                    override fun onNetworkError(p0: Exception?) {
+                        emitter.onError(Throwable(p0?.message));
+                        emitter.onComplete();
+                    }
+                })
+            } ?: kotlin.run {
+                emitter.onError(Throwable("NullPointer"))
+                emitter.onComplete();
+            }
+        }
+    }
+
+    override fun removeFromFavourite(roomId: String): Observable<vmodev.clearkeep.viewmodelobjects.Room> {
+        setMXSession();
+        return Observable.create<vmodev.clearkeep.viewmodelobjects.Room> { emitter ->
+            val room = session!!.dataHandler.getRoom(roomId);
+            room?.let { r ->
+                var oldTag: String? = null;
+                val roomAccount = r.accountData;
+                roomAccount?.let { roomAccountData ->
+                    if (roomAccountData.hasTags())
+                        oldTag = roomAccountData.keys?.iterator()?.next();
+                }
+                var tagOrder: Double = 0.0;
+                tagOrder = session!!.tagOrderToBeAtIndex(0, Integer.MAX_VALUE, null)
+                r.replaceTag(oldTag, null, tagOrder, object : ApiCallback<Void> {
+                    override fun onSuccess(p0: Void?) {
+                        r.replaceTag(oldTag, null, tagOrder, object : ApiCallback<Void> {
+                            override fun onSuccess(p0: Void?) {
+                                emitter.onNext(matrixRoomToRoom(r));
+                                emitter.onComplete();
+                            }
+
+                            override fun onUnexpectedError(p0: Exception?) {
+                                emitter.onError(Throwable(p0?.message));
+                                emitter.onComplete();
+                            }
+
+                            override fun onMatrixError(p0: MatrixError?) {
+                                emitter.onError(Throwable(p0?.message));
+                                emitter.onComplete();
+                            }
+
+                            override fun onNetworkError(p0: Exception?) {
+                                emitter.onError(Throwable(p0?.message));
+                                emitter.onComplete();
+                            }
+                        })
+                    }
+
+                    override fun onUnexpectedError(p0: Exception?) {
+                        emitter.onError(Throwable(p0?.message));
+                        emitter.onComplete();
+                    }
+
+                    override fun onMatrixError(p0: MatrixError?) {
+                        emitter.onError(Throwable(p0?.message));
+                        emitter.onComplete();
+                    }
+
+                    override fun onNetworkError(p0: Exception?) {
+                        emitter.onError(Throwable(p0?.message));
+                        emitter.onComplete();
+                    }
+                })
+            } ?: kotlin.run {
+                emitter.onError(Throwable("NullPointer"))
+                emitter.onComplete();
+            }
+        }
+    }
 }

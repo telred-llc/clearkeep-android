@@ -48,7 +48,9 @@ import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.rest.model.RoomMember
 import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
+import vmodev.clearkeep.factories.interfaces.IShowListRoomFragmentFactory
 import vmodev.clearkeep.fragments.*
+import vmodev.clearkeep.fragments.Interfaces.IListRoomOnFragmentInteractionListener
 import vmodev.clearkeep.matrixsdk.MatrixService
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.UserViewModel
@@ -58,23 +60,25 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 import javax.inject.Inject
+import javax.inject.Named
 import kotlin.collections.ArrayList
 
-class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragmentInteractionListener,
+class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFragmentInteractionListener,
         FavouritesFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener,
-        DirectMessageFragment.OnFragmentInteractionListener, RoomFragment.OnFragmentInteractionListener
+        IListRoomOnFragmentInteractionListener, RoomFragment.OnFragmentInteractionListener
         , SearchFragment.OnFragmentInteractionListener
         , PreviewFragment.OnFragmentInteractionListener, LifecycleOwner {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
+
+
+
     lateinit var dataBinding: ActivityHomeScreenBinding;
     lateinit var mxSession: MXSession;
-    private lateinit var mxEventListener: MXEventListener;
     private lateinit var homeRoomViewModel: HomeRoomsViewModel;
     private var directMessages: List<Room> = ArrayList();
     private var rooms: List<Room> = ArrayList();
-    private var listFavourites: List<Room> = ArrayList();
     private var listContacts: List<Room> = ArrayList();
     private var roomInvites: ArrayList<Room> = ArrayList();
     private var directMessageInvite: ArrayList<Room> = ArrayList();
@@ -83,8 +87,6 @@ class HomeScreenActivity : DaggerAppCompatActivity(), HomeScreenFragment.OnFragm
     private var directNotifyCount: Int = 0;
 
     private val publishSubjectListRoomChanged: PublishSubject<Status> = PublishSubject.create();
-
-    var dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

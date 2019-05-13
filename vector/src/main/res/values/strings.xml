@@ -1435,5 +1435,6 @@ Why choose Riot.im?
     <string name="special_symbol">\@</string>
     <string name="add_to_favourite">Add to favourite</string>
     <string name="turn_on_room_notification">Turn on room notification</string>
+    <string name="remove_from_favourite">Remove from favourite</string>
 
 </resources>

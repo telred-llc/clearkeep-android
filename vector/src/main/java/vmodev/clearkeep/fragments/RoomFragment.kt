@@ -31,6 +31,7 @@ import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
@@ -48,7 +49,7 @@ import javax.inject.Named
  * create an instance of this fragment.
  *
  */
-class RoomFragment : dagger.android.support.DaggerFragment() {
+class RoomFragment : DataBindingDaggerFragment(), IFragment {
     // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
 
@@ -58,8 +59,6 @@ class RoomFragment : dagger.android.support.DaggerFragment() {
     lateinit var appExecutors: AppExecutors;
     @Inject
     lateinit var listRoomAdapter: IListRoomRecyclerViewAdapter;
-
-    val dataBindingComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
 
     lateinit var binding: FragmentRoomBinding;
 
@@ -143,6 +142,10 @@ class RoomFragment : dagger.android.support.DaggerFragment() {
     override fun onDetach() {
         super.onDetach()
         listener = null
+    }
+
+    override fun getFragment(): Fragment {
+        return this;
     }
 
     /**

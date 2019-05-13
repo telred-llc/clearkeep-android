@@ -10,6 +10,9 @@ import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.factories.DirectMessageFragmentFactory
+import vmodev.clearkeep.factories.RoomMessageFragmentFactory
+import vmodev.clearkeep.factories.interfaces.IShowListRoomFragmentFactory
 import vmodev.clearkeep.fragments.DirectMessageFragment
 import vmodev.clearkeep.fragments.FavouritesFragment
 import vmodev.clearkeep.fragments.HomeScreenFragment
@@ -49,6 +52,20 @@ abstract class HomeScreenActivityFragmentBuilderModule {
                             && p0.notifyCount == p1.notifyCount && p0.roomMemberStatus == p1.roomMemberStatus;
                 }
             })
+        }
+
+        @Provides
+        @JvmStatic
+        @Named(value = IShowListRoomFragmentFactory.DIRECT_MESSAGE_FRAGMENT_FACTORY)
+        fun provideDirectMessageFragmentFactory(): IShowListRoomFragmentFactory {
+            return DirectMessageFragmentFactory();
+        }
+
+        @Provides
+        @JvmStatic
+        @Named(value = IShowListRoomFragmentFactory.ROOM_MESSAGE_FRAGMENT_FACTORY)
+        fun provideRoomMessageFragmentFactory(): IShowListRoomFragmentFactory {
+            return RoomMessageFragmentFactory();
         }
     }
 }

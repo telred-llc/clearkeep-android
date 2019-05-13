@@ -17,6 +17,7 @@ import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import javax.inject.Inject
 import javax.inject.Singleton
+import javax.xml.transform.Source
 
 @Singleton
 class RoomRepository @Inject constructor(
@@ -276,6 +277,74 @@ class RoomRepository @Inject constructor(
             override fun createCallAsReesult(): LiveData<List<Room>> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.findListMessageText(keyword, Room::class.java)
                         .subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).toFlowable(BackpressureStrategy.LATEST))
+            }
+        }.asLiveData();
+    }
+
+    fun addToFavourite(roomId: String): LiveData<Resource<Room>> {
+        return object : MatrixBoundSource<Room, Room>(appExecutors) {
+            override fun saveCallResult(item: Room) {
+                roomDao.updateType(item.id, item.type);
+            }
+
+            override fun saveCallResultType(item: Room) {
+                roomDao.updateType(item.id, item.type);
+            }
+
+            override fun shouldFetch(data: Room?): Boolean {
+                return true;
+            }
+
+            override fun loadFromDb(): LiveData<Room> {
+                return roomDao.findById("--")
+            }
+
+            override fun createCall(): LiveData<Room> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.addToFavourite(roomId)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .toFlowable(BackpressureStrategy.LATEST))
+            }
+
+            override fun createCallAsReesult(): LiveData<Room> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.addToFavourite(roomId)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .toFlowable(BackpressureStrategy.LATEST))
+            }
+        }.asLiveData();
+    }
+
+    fun removeFromFavourite(roomId: String): LiveData<Resource<Room>> {
+        return object : MatrixBoundSource<Room, Room>(appExecutors) {
+            override fun saveCallResult(item: Room) {
+                roomDao.updateType(item.id, item.type);
+            }
+
+            override fun saveCallResultType(item: Room) {
+                roomDao.updateType(item.id, item.type);
+            }
+
+            override fun shouldFetch(data: Room?): Boolean {
+                return true;
+            }
+
+            override fun loadFromDb(): LiveData<Room> {
+                return roomDao.findById("--")
+            }
+
+            override fun createCall(): LiveData<Room> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.removeFromFavourite(roomId)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .toFlowable(BackpressureStrategy.LATEST))
+            }
+
+            override fun createCallAsReesult(): LiveData<Room> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.removeFromFavourite(roomId)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .toFlowable(BackpressureStrategy.LATEST))
             }
         }.asLiveData();
     }
