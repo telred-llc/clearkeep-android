@@ -111,6 +111,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         // the room is launched but it expects to start the dedicated call activity
         val EXTRA_START_CALL_ID = "EXTRA_START_CALL_ID"
+
+        const val WAITING_INFORMATION_ACTIVITY = 13275
     }
 
     private val TAG_FRAGMENT_MATRIX_MESSAGE_LIST = "TAG_FRAGMENT_MATRIX_MESSAGE_LIST"
@@ -1113,6 +1115,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     }
                     mVectorRoomMediasSender!!.sendMedias(sharedDataItems)
                 }
+                WAITING_INFORMATION_ACTIVITY -> finish();
             }
         }
     }
@@ -2593,7 +2596,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //        }
     }
 
-//    @OnClick(R.id.header_texts_container)
+    //    @OnClick(R.id.header_texts_container)
     internal fun onTextsContainerClick() {
 //        if (TextUtils.isEmpty(mEventId) && (null == sRoomPreviewData)) {
 //            enableActionBarHeader(SHOW_ACTION_BAR_HEADER)
@@ -2695,7 +2698,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //                value = if (currentRoom!!.isReady()) currentRoom!!.getTopic() else mDefaultTopic
 //            }
 
-            // if topic value is empty, just hide the topic TextView
+        // if topic value is empty, just hide the topic TextView
 //            if (TextUtils.isEmpty(value)) {
 //                mActionBarHeaderRoomTopic!!.visibility = View.GONE
 //            } else {
@@ -3470,7 +3473,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 .show()
     }
 
-//    @OnClick(R.id.room_header_avatar)
+    //    @OnClick(R.id.room_header_avatar)
     internal fun onRoomAvatarClick() {
         if (currentRoom != null && !TextUtils.isEmpty(currentRoom!!.getAvatarUrl()))
         // Display the avatar in fullscreen with animation
@@ -3483,7 +3486,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
     }
 
-//    @OnClick(R.id.action_bar_header_room_title)
+    //    @OnClick(R.id.action_bar_header_room_title)
     internal fun onRoomHeaderTitleClick() {
         // sanity checks : reported by GA
         if ((null != currentRoom) && (null != currentRoom!!.getState())) {
@@ -3503,7 +3506,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         }
     }
 
-//    @OnClick(R.id.action_bar_header_room_topic)
+    //    @OnClick(R.id.action_bar_header_room_topic)
     internal fun onRoomHeaderTopicClick() {
         // sanity checks : reported by GA
         if ((null != currentRoom) && (null != currentRoom!!.getState())) {
@@ -3523,17 +3526,17 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         }
     }
 
-//    @OnClick(R.id.action_bar_header_room_members_settings_view)
+    //    @OnClick(R.id.action_bar_header_room_members_settings_view)
     internal fun onRoomMembersSettingClick() {
         launchRoomDetails(VectorRoomDetailsActivity.PEOPLE_TAB_INDEX)
     }
 
-//    @OnClick(R.id.action_bar_header_room_members_text_view)
+    //    @OnClick(R.id.action_bar_header_room_members_text_view)
     internal fun onRoomMembersClick() {
         launchRoomDetails(VectorRoomDetailsActivity.PEOPLE_TAB_INDEX)
     }
 
-//    @OnClick(R.id.action_bar_header_room_members_invite_view)
+    //    @OnClick(R.id.action_bar_header_room_members_invite_view)
     internal fun onRoomMemberInviteClick() {
         launchInvitePeople()
     }
@@ -3556,7 +3559,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      * UI Event
      * ========================================================================================== */
 
-//    @OnClick(R.id.editText_messageBox)
+    //    @OnClick(R.id.editText_messageBox)
     internal fun onEditTextClick() {
         // hide the header room as soon as the message input text area is touched
         enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
@@ -3636,6 +3639,13 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
             chooseMediaSource(useNativeCamera, isVoiceFeatureEnabled)
         }
+    }
+
+    @OnClick(R.id.room_action_bar_title)
+    internal fun onClickRoomTitle() {
+        val intent = Intent(this@RoomActivity, RoomSettingsActivity::class.java);
+        intent.putExtra(RoomSettingsActivity.ROOM_ID, currentRoom?.roomId);
+        startActivityForResult(intent, WAITING_INFORMATION_ACTIVITY);
     }
 
     @OnClick(R.id.button_send)

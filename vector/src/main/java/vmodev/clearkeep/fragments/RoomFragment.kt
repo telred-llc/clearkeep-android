@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
@@ -25,6 +26,7 @@ import io.reactivex.functions.Consumer
 import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
+import vmodev.clearkeep.activities.RoomSettingsActivity
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
@@ -58,6 +60,7 @@ class RoomFragment : DataBindingDaggerFragment(), IFragment {
     @Inject
     lateinit var appExecutors: AppExecutors;
     @Inject
+    @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
     lateinit var listRoomAdapter: IListRoomRecyclerViewAdapter;
 
     lateinit var binding: FragmentRoomBinding;
@@ -96,7 +99,9 @@ class RoomFragment : DataBindingDaggerFragment(), IFragment {
                     .setAdapter(BottomDialogRoomLongClick())
                     .setOnItemClickListener { dialog, item, view, position ->
                         when (position) {
+                            1 -> onClickAddToFavourite(room.id)
                             3 -> onClickItemDecline(room.id)
+                            2 -> onClickRoomSettings(room.id)
                         }
                         dialog?.dismiss();
                     }.create();
@@ -112,6 +117,12 @@ class RoomFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
+    private fun onClickRoomSettings(id: String) {
+        val intent = Intent(this.activity, RoomSettingsActivity::class.java);
+        intent.putExtra(RoomSettingsActivity.ROOM_ID, id);
+        startActivity(intent);
+    }
+
     private fun onClickJoinRoom(roomId: String) {
         listener?.onClickItemJoin(roomId);
     }
@@ -128,6 +139,11 @@ class RoomFragment : DataBindingDaggerFragment(), IFragment {
 
     private fun onClickGoRoom(roomId: String) {
         listener?.onClickGoRoom(roomId);
+    }
+
+    private fun onClickAddToFavourite(roomId: String) {
+        binding.roomObject = roomViewModel.getAddToFavouriteResult();
+        roomViewModel.setAddToFavourite(roomId);
     }
 
     override fun onAttach(context: Context) {

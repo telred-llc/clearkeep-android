@@ -20,10 +20,7 @@ import android.widget.Toast
 import dagger.android.support.DaggerAppCompatActivity
 import im.vector.Matrix
 import im.vector.R
-import im.vector.activity.CommonActivityUtils
-import im.vector.activity.MXCActionBarActivity
-import im.vector.activity.VectorRoomActivity
-import im.vector.activity.VectorRoomCreationActivity
+import im.vector.activity.*
 import im.vector.databinding.ActivityHomeScreenBinding
 import im.vector.services.EventStreamService
 import im.vector.ui.badge.BadgeProxy
@@ -48,6 +45,7 @@ import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.rest.model.RoomMember
 import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
+import vmodev.clearkeep.factories.interfaces.IFragmentFactory
 import vmodev.clearkeep.factories.interfaces.IShowListRoomFragmentFactory
 import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.fragments.Interfaces.IListRoomOnFragmentInteractionListener
@@ -71,7 +69,15 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
-
+    @Inject
+    @field:Named(value = IFragmentFactory.HOME_SCREEN_FRAGMENT)
+    lateinit var homeScreenFragmentFactory: IFragmentFactory;
+    @Inject
+    @field:Named(value = IFragmentFactory.FAVOURITES_FRAGMENT)
+    lateinit var favouritesFragmentFactory: IFragmentFactory;
+    @Inject
+    @field:Named(IFragmentFactory.CONTACTS_FRAGMENT)
+    lateinit var contactsFragmentFactory: IFragmentFactory;
 
 
     lateinit var dataBinding: ActivityHomeScreenBinding;
@@ -93,17 +99,17 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         dataBinding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen, dataBindingComponent);
         mxSession = Matrix.getInstance(this.applicationContext).defaultSession;
         (application as ClearKeepApplication).setEventHandler();
-        bottom_navigation_view_home_screen.setOnNavigationItemSelectedListener { menuItem ->
+        dataBinding.bottomNavigationViewHomeScreen.setOnNavigationItemSelectedListener { menuItem ->
             kotlin.run {
                 when (menuItem.itemId) {
                     R.id.action_home -> {
-                        switchFragment(HomeScreenFragment.newInstance());
+                        switchFragment(homeScreenFragmentFactory.createNewInstance().getFragment());
                     };
                     R.id.action_favorites -> {
-                        switchFragment(FavouritesFragment.newInstance());
+                        switchFragment(favouritesFragmentFactory.createNewInstance().getFragment());
                     };
                     R.id.action_contacts -> {
-                        switchFragment(ContactsFragment.newInstance());
+                        switchFragment(contactsFragmentFactory.createNewInstance().getFragment());
                     };
                 }
                 return@run true;
@@ -133,6 +139,17 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
                 startActivity(intent);
             }
         }
+
+        if (intent.hasExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS)) {
+            val intentExtra: Intent = intent.getParcelableExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS);
+            if (mxSession.getDataHandler().getStore().isReady()) {
+                runOnUiThread {
+                    CommonActivityUtils.sendFilesTo(this@HomeScreenActivity, intentExtra)
+                }
+            } else {
+//                mSharedFilesIntent = sharedFilesIntent
+            }
+        }
     }
 
     private fun showAlertDiaglong(title: String, message: String) {
@@ -157,15 +174,6 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     }
 
     override fun onFragmentInteraction(uri: Uri) {
-    }
-
-    override fun onGetListContact(): List<Room> {
-        return listContacts;
-    }
-
-
-    override fun onClickItem(room: Room) {
-        openRoom(room);
     }
 
     override fun handleDataChange(): PublishSubject<Status> {

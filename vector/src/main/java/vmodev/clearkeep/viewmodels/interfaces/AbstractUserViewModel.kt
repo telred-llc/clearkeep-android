@@ -16,6 +16,8 @@ abstract class AbstractUserViewModel : ViewModel() {
     abstract fun getUserData(): LiveData<Resource<User>>;
     abstract fun getUserIdData(): LiveData<String>;
     abstract fun getUsers(): LiveData<Resource<List<User>>>;
-    abstract fun getUsersKeywordData() : LiveData<String>;
-    abstract fun setQuery(query : String);
+    abstract fun getUsersKeywordData(): LiveData<String>;
+    abstract fun setQuery(query: String);
+    abstract fun setRoomIdForGetUsers(roomId: String);
+    abstract fun getUsersInRoomResult(): LiveData<Resource<List<User>>>
 }

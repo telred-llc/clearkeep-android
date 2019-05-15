@@ -13,6 +13,7 @@ import android.support.v7.app.AlertDialog
 import android.text.Html
 import android.text.TextUtils
 import android.widget.Toast
+import com.orhanobut.dialogplus.DialogPlus
 import im.vector.R
 import im.vector.activity.VectorRoomActivity
 import im.vector.fragments.ImageSizeSelectionDialogFragment
@@ -25,6 +26,8 @@ import org.matrix.androidsdk.util.ImageUtils
 import org.matrix.androidsdk.util.Log
 import org.matrix.androidsdk.util.ResourceUtils
 import vmodev.clearkeep.activities.RoomActivity
+import vmodev.clearkeep.adapters.BottomDiaglogImageSendFile
+import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -46,7 +49,7 @@ class RoomMediasSender constructor(val roomActivity: RoomActivity, val vectorMes
         fun onCancel()
     }
 
-    private var mImageSizesListDialog: AlertDialog? = null
+    private var mImageSizesListDialog: DialogPlus? = null
 
     // the linked room activity
     private var mVectorRoomActivity: RoomActivity? = null;
@@ -706,11 +709,47 @@ class RoomMediasSender constructor(val roomActivity: RoomActivity, val vectorMes
 
                     val stringsArray = getImagesCompressionTextsList(mVectorRoomActivity!!, imageSizes, fileSize)
 
-                    mImageSizesListDialog = AlertDialog.Builder(mVectorRoomActivity!!)
-                            .setTitle(im.vector.R.string.compression_options)
-                            .setSingleChoiceItems(stringsArray, -1) { dialog, which ->
-                                mImageSizesListDialog!!.dismiss()
+//                    mImageSizesListDialog = AlertDialog.Builder(mVectorRoomActivity!!)
+//                            .setTitle(im.vector.R.string.compression_options)
+//                            .setSingleChoiceItems(stringsArray, -1) { dialog, which ->
+//                                mImageSizesListDialog!!.dismiss()
+//
+//                                mVectorRoomActivity!!.runOnUiThread {
+//                                    mVectorRoomActivity!!.showWaitingView()
+//
+//                                    val thread = Thread(Runnable {
+//                                        var expectedSize: ImageSize? = null
+//
+//                                        // full size
+//                                        if (0 != which) {
+//                                            expectedSize = imageSizes.imageSizesList[which]
+//                                        }
+//
+//                                        // stored the compression selected by the user
+//                                        mImageCompressionDescription = imageSizes.getImageSizesDescription(mVectorRoomActivity)[which]
+//
+//                                        val fImageUrl = resizeImage(anImageUrl, filename, imageSizes.mFullImageSize, expectedSize, rotationAngle)
+//
+//                                        mVectorRoomActivity!!.runOnUiThread {
+//                                            mVectorMessageListFragment!!.sendMediaMessage(RoomMediaMessage(Uri.parse(fImageUrl),
+//                                                    roomMediaMessage.getFileName(mVectorRoomActivity)))
+//                                            aListener.onDone()
+//                                        }
+//                                    })
+//
+//                                    thread.priority = Thread.MIN_PRIORITY
+//                                    thread.start()
+//                                }
+//                            }
+//                            .setOnCancelListener {
+//                                mImageSizesListDialog = null
+//                                aListener?.onCancel()
+//                            }
+//                            .show()
 
+                    mImageSizesListDialog = DialogPlus.newDialog(mVectorRoomActivity)
+                            .setAdapter(BottomDiaglogImageSendFile(stringsArray))
+                            .setOnItemClickListener { dialog, item, view, position ->
                                 mVectorRoomActivity!!.runOnUiThread {
                                     mVectorRoomActivity!!.showWaitingView()
 
@@ -718,12 +757,12 @@ class RoomMediasSender constructor(val roomActivity: RoomActivity, val vectorMes
                                         var expectedSize: ImageSize? = null
 
                                         // full size
-                                        if (0 != which) {
-                                            expectedSize = imageSizes.imageSizesList[which]
+                                        if (0 != position) {
+                                            expectedSize = imageSizes.imageSizesList[position]
                                         }
 
                                         // stored the compression selected by the user
-                                        mImageCompressionDescription = imageSizes.getImageSizesDescription(mVectorRoomActivity)[which]
+                                        mImageCompressionDescription = imageSizes.getImageSizesDescription(mVectorRoomActivity)[position]
 
                                         val fImageUrl = resizeImage(anImageUrl, filename, imageSizes.mFullImageSize, expectedSize, rotationAngle)
 
@@ -737,12 +776,15 @@ class RoomMediasSender constructor(val roomActivity: RoomActivity, val vectorMes
                                     thread.priority = Thread.MIN_PRIORITY
                                     thread.start()
                                 }
-                            }
-                            .setOnCancelListener {
-                                mImageSizesListDialog = null
+                                dialog?.dismiss();
+                            }.setOnCancelListener{dialog ->
+                                dialog.dismiss();
                                 aListener?.onCancel()
-                            }
-                            .show()
+                            }.setOnBackPressListener{dialogPlus ->
+                                dialogPlus.dismiss();
+                                aListener?.onCancel()
+                            }.create();
+                    mImageSizesListDialog?.show();
                 }// can be rescaled ?
             } catch (e: Exception) {
                 Log.e(LOG_TAG, "sendImageMessage failed " + e.message, e)

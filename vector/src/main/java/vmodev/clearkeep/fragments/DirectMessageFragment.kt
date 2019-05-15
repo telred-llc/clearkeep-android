@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -26,6 +27,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
+import vmodev.clearkeep.activities.RoomSettingsActivity
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
@@ -63,6 +65,7 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IFragment {
     @Inject
     lateinit var appExecutors: AppExecutors;
     @Inject
+    @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
     lateinit var listRoomAdapter: IListRoomRecyclerViewAdapter;
 
     lateinit var binding: FragmentDirectMessageBinding;
@@ -102,6 +105,7 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IFragment {
                         when (position) {
                             3 -> onClickItemDecline(room.id);
                             1 -> onClickAddToFavourite(room.id);
+                            2 -> onClickRoomSettings(room.id);
                         }
 
                         dialog?.dismiss();
@@ -115,6 +119,12 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IFragment {
             listRoomAdapter!!.getAdapter().submitList(t?.data);
         });
         roomViewModel!!.setFilter(arrayOf(1, 65))
+    }
+
+    private fun onClickRoomSettings(id: String) {
+        val intent = Intent(this.activity, RoomSettingsActivity::class.java);
+        intent.putExtra(RoomSettingsActivity.ROOM_ID, id);
+        startActivity(intent);
     }
 
     private fun onClickJoinRoom(roomId: String) {

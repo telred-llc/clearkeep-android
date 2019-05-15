@@ -109,5 +109,39 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
 
     }
 
+    fun getUsersInRoom(roomId: String): LiveData<Resource<List<User>>> {
+        return object : MatrixBoundSource<List<User>, List<User>>(executors, 1) {
+            override fun saveCallResult(item: List<User>) {
+                userDao.insertUsers(item);
+            }
+
+            override fun saveCallResultType(item: List<User>) {
+                userDao.insertUsers(item);
+            }
+
+            override fun shouldFetch(data: List<User>?): Boolean {
+                return true;
+            }
+
+            override fun loadFromDb(): LiveData<List<User>> {
+                return userDao.getUsersByRoomId(roomId);
+            }
+
+            override fun createCall(): LiveData<List<User>> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.getUsersInRoom(roomId)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .toFlowable(BackpressureStrategy.LATEST));
+            }
+
+            override fun createCallAsReesult(): LiveData<List<User>> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.getUsersInRoom(roomId)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .toFlowable(BackpressureStrategy.LATEST));
+            }
+        }.asLiveData()
+    }
+
     class UserHandleObject constructor(val userId: String, val name: String, val avatarUrl: String);
 }

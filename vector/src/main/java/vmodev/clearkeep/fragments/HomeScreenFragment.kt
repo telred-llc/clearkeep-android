@@ -21,6 +21,7 @@ import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.adapters.HomeScreenPagerAdapter
 import vmodev.clearkeep.factories.interfaces.IShowListRoomFragmentFactory
+import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import javax.inject.Inject
@@ -40,7 +41,7 @@ private const val ROOMS = "ROOMS"
  * create an instance of this fragment.
  *
  */
-class HomeScreenFragment : DataBindingDaggerFragment() {
+class HomeScreenFragment : DataBindingDaggerFragment(), IFragment {
     private var listener: OnFragmentInteractionListener? = null;
 
     @Inject
@@ -135,6 +136,10 @@ class HomeScreenFragment : DataBindingDaggerFragment() {
     override fun onDetach() {
         super.onDetach()
         listener = null
+    }
+
+    override fun getFragment(): Fragment {
+        return this;
     }
 
     /**

@@ -13,12 +13,17 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(userRepository: UserRepository) : AbstractUserViewModel() {
     private val _userId = MutableLiveData<String>()
     private val _query = MutableLiveData<String>();
+    private val _roomIdForGetUsers = MutableLiveData<String>();
 
     private val user: LiveData<Resource<User>> = Transformations.switchMap(_userId) { input ->
         userRepository.loadUser(input)
     }
     private val users: LiveData<Resource<List<User>>> = Transformations.switchMap(_query) { input ->
         userRepository.findUserFromNetwork(input);
+    }
+
+    private val usersInRoom: LiveData<Resource<List<User>>> = Transformations.switchMap(_roomIdForGetUsers) { input ->
+        userRepository.getUsersInRoom(input);
     }
 
     override fun setUserId(userId: String) {
@@ -46,5 +51,13 @@ class UserViewModel @Inject constructor(userRepository: UserRepository) : Abstra
     override fun setQuery(query: String) {
         if (_query.value != query)
             _query.value = query;
+    }
+
+    override fun setRoomIdForGetUsers(roomId: String) {
+        _roomIdForGetUsers.value = roomId;
+    }
+
+    override fun getUsersInRoomResult(): LiveData<Resource<List<User>>> {
+        return usersInRoom;
     }
 }

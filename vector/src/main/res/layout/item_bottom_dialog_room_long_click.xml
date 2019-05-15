@@ -19,6 +19,7 @@
         android:text="@string/add_to_favourite"
         android:layout_marginStart="10dp"
         android:layout_gravity="center_vertical"
-        android:textSize="@dimen/text_20_sp"/>
+        android:textSize="@dimen/text_20_sp"
+        android:layout_margin="15dp"/>
 
 </LinearLayout>

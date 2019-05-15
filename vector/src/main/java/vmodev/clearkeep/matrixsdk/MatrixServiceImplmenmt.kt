@@ -3,6 +3,7 @@ package vmodev.clearkeep.matrixsdk
 import android.annotation.SuppressLint
 import android.app.Application
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
 import android.text.TextUtils
 import android.util.Log
@@ -162,7 +163,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
 
                 if (myUser != null) {
                     val avatarUrl = session!!.contentManager.getDownloadableUrl(myUser.avatarUrl);
-                    val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = avatarUrl, status = if (myUser.isActive) 1 else 0);
+                    val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = avatarUrl, status = if (myUser.isActive) 1 else 0, roomId = "");
                     emitter.onNext(user);
                     emitter.onComplete();
                 } else {
@@ -377,7 +378,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         Log.d("Room Type: ", (sourcePrimary or sourceSecondary or sourceThird).toString() + "-----" + room.getRoomDisplayName(application))
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
-                , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus);
+                , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus, topic = if (room.topic.isNullOrEmpty()) "" else room.topic);
         return roomObj;
     }
 
@@ -435,7 +436,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                                 kotlin.run {
                                     val avatar = if (t?.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(t?.avatarUrl);
                                     t?.let { user ->
-                                        users.add(User(id = user.user_id, name = user.displayname, avatarUrl = avatar, status = if (user.isActive) 1 else 0))
+                                        users.add(User(id = user.user_id, name = user.displayname, avatarUrl = avatar, status = if (user.isActive) 1 else 0, roomId = ""))
                                     }
                                 }
                             }
@@ -822,6 +823,51 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                 emitter.onError(Throwable("NullPointer"))
                 emitter.onComplete();
             }
+        }
+    }
+
+    private fun mxUrlToUrl(avatarUrl: String?): String {
+        var avatar: String = "";
+        if (avatarUrl.isNullOrEmpty()) {
+            avatar = "";
+        } else {
+            var url = session!!.contentManager.getDownloadableUrl(avatarUrl);
+            url?.let { avatar = it }
+        };
+        return avatar;
+    }
+
+    override fun getUsersInRoom(roomId: String): Observable<List<User>> {
+        return Observable.create<List<User>> { emitter ->
+            val room = session!!.dataHandler.getRoom(roomId);
+            room.getActiveMembersAsync(object : ApiCallback<List<RoomMember>> {
+                override fun onSuccess(p0: List<RoomMember>?) {
+                    val users = ArrayList<User>();
+                    p0?.forEach { t: RoomMember? ->
+                        t?.let { roomMember ->
+                            users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0, roomId = roomId))
+                            Log.d("Add User: ", roomMember.name);
+                        }
+                    }
+                    emitter.onNext(users);
+                    emitter.onComplete();
+                }
+
+                override fun onUnexpectedError(p0: Exception?) {
+                    emitter.onError(Throwable(p0?.message))
+                    emitter.onComplete()
+                }
+
+                override fun onMatrixError(p0: MatrixError?) {
+                    emitter.onError(Throwable(p0?.message))
+                    emitter.onComplete()
+                }
+
+                override fun onNetworkError(p0: Exception?) {
+                    emitter.onError(Throwable(p0?.message))
+                    emitter.onComplete()
+                }
+            })
         }
     }
 }

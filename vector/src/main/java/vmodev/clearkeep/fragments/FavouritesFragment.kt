@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -22,6 +23,7 @@ import im.vector.databinding.FragmentDirectMessageBinding
 import im.vector.databinding.FragmentFavourites2Binding
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
+import vmodev.clearkeep.activities.RoomSettingsActivity
 import vmodev.clearkeep.adapters.BottomDialogFavouriteRoomLongClick
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
@@ -29,8 +31,10 @@ import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
+import javax.inject.Named
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -45,7 +49,7 @@ private const val LIST_FAVOURITES = "LIST_FAVOURITES"
  * create an instance of this fragment.
  *
  */
-class FavouritesFragment : DataBindingDaggerFragment() {
+class FavouritesFragment : DataBindingDaggerFragment(), IFragment {
     // TODO: Rename and change types of parameters
     // You can declare variable to pass from activity is here
 
@@ -56,6 +60,7 @@ class FavouritesFragment : DataBindingDaggerFragment() {
     @Inject
     lateinit var appExecutors: AppExecutors;
     @Inject
+    @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
     lateinit var listRoomRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
 
     lateinit var binding: FragmentFavourites2Binding;
@@ -90,6 +95,7 @@ class FavouritesFragment : DataBindingDaggerFragment() {
                         when (position) {
                             1 -> onClickRemoveFromFavourite(room.id);
                             3 -> onClickLeaveRoom(room.id);
+                            2 -> onClickRoomSettings(room.id);
                         }
                         dialog?.dismiss();
                     }.create();
@@ -105,6 +111,11 @@ class FavouritesFragment : DataBindingDaggerFragment() {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
+    private fun onClickRoomSettings(id: String) {
+        val intent = Intent(this.activity, RoomSettingsActivity::class.java);
+        intent.putExtra(RoomSettingsActivity.ROOM_ID, id);
+        startActivity(intent);
+    }
 
     private fun onClickGoRoom(roomId: String) {
         listener?.onClickGoRoom(roomId);
@@ -132,6 +143,10 @@ class FavouritesFragment : DataBindingDaggerFragment() {
     override fun onDetach() {
         super.onDetach()
         listener = null
+    }
+
+    override fun getFragment(): Fragment {
+        return this;
     }
 
     /**

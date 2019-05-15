@@ -91,7 +91,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         tools:replace="allowBackup,label">
-        <activity android:name="vmodev.clearkeep.activities.DataBindingDaggerActivity"></activity>
+        <activity android:name="vmodev.clearkeep.activities.OtherRoomSettings"></activity>
+        <activity android:name="vmodev.clearkeep.activities.ViewUserProfileActivity" />
+        <activity android:name="vmodev.clearkeep.activities.SecurityActivity" />
+        <activity android:name="vmodev.clearkeep.activities.RoomMemberListActivity" />
+        <activity android:name="vmodev.clearkeep.activities.RoomSettingsActivity" />
+        <activity android:name="vmodev.clearkeep.activities.DataBindingDaggerActivity" />
         <activity android:name="vmodev.clearkeep.activities.RoomActivity" />
         <activity android:name="vmodev.clearkeep.activities.CallViewActivity" />
         <activity android:name="vmodev.clearkeep.activities.SearchActivity" />

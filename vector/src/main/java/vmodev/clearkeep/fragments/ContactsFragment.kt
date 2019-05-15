@@ -1,6 +1,10 @@
 package vmodev.clearkeep.fragments
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -11,9 +15,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import im.vector.R
+import im.vector.databinding.FragmentContactsBinding
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
+import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
+import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.fragments.Interfaces.IListRoomOnFragmentInteractionListener
+import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
+import javax.inject.Inject
+import javax.inject.Named
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -29,10 +40,16 @@ private const val LIST_CONTACT = "LIST_CONTACT"
  * create an instance of this fragment.
  *
  */
-class ContactsFragment : Fragment() {
+class ContactsFragment : DataBindingDaggerFragment(), IFragment {
     private var listener: OnFragmentInteractionListener? = null
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory;
+    @Inject
+    @field:Named(value = IListRoomRecyclerViewAdapter.ROOM_CONTACT)
+    lateinit var listRoomAdapter: IListRoomRecyclerViewAdapter;
 
-    private lateinit var recyclerView: RecyclerView;
+    lateinit var binding: FragmentContactsBinding;
+    lateinit var roomViewModel: AbstractRoomViewModel;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,27 +60,32 @@ class ContactsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_contacts, container, false)
-        recyclerView = view.findViewById(R.id.recycler_view_list_contact);
-        val layoutManager = LinearLayoutManager(this.context);
-        val dividerItemDecoration = DividerItemDecoration(this.context, layoutManager.orientation);
-        recyclerView.layoutManager = layoutManager;
-        recyclerView.addItemDecoration(dividerItemDecoration);
-        val directMessageRecyclerViewAdapter = DirectMessageRecyclerViewAdapter(this!!.onGetListContact(),ArrayList(), onGetMXSession(), activity!!);
-        directMessageRecyclerViewAdapter.publishSubject.subscribe { r ->kotlin.run { onClickItem(r.room!!) } };
-        recyclerView.adapter = directMessageRecyclerViewAdapter;
-        return view;
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_contacts, container, false, dataBindingComponent);
+        return binding.root;
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
+        val dividerItemDecoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL);
+        listRoomAdapter.setdataBindingComponent(dataBindingComponent)
+        binding.recyclerViewListContact.addItemDecoration(dividerItemDecoration);
+        binding.recyclerViewListContact.adapter = listRoomAdapter.getAdapter();
+        listRoomAdapter.setOnItemClick { room, i ->
+            onClickGoRoom(room.id);
+        }
+        binding.rooms = roomViewModel.getRoomsData();
+        roomViewModel.getRoomsData().observe(viewLifecycleOwner, Observer { t ->
+            listRoomAdapter.getAdapter().submitList(t?.data)
+        })
+        binding.lifecycleOwner = viewLifecycleOwner;
+
+        roomViewModel.setFilter(arrayOf(1, 129))
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    fun onGetMXSession() : MXSession {
-        return listener?.onGetMXSession()!!;
-    }
-    fun onGetListContact() : List<Room>{
-        return listener?.onGetListContact()!!;
-    }
-    fun onClickItem(room : Room){
-        listener?.onClickItem(room);
+    private fun onClickGoRoom(roomId: String) {
+        listener?.onClickGoRoom(roomId);
     }
 
     override fun onAttach(context: Context) {
@@ -80,6 +102,10 @@ class ContactsFragment : Fragment() {
         listener = null
     }
 
+    override fun getFragment(): Fragment {
+        return this;
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -93,9 +119,7 @@ class ContactsFragment : Fragment() {
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onGetMXSession() : MXSession;
-        fun onGetListContact() : List<Room>;
-        fun onClickItem(room : Room);
+        fun onClickGoRoom(roomId: String);
     }
 
     companion object {
@@ -105,7 +129,7 @@ class ContactsFragment : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment ContactsFragment.
+         * @return A new instance of fragment ContactsFragmentFactory.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
