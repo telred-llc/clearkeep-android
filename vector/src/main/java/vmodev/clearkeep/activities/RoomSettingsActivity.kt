@@ -63,13 +63,20 @@ class RoomSettingsActivity : DaggerAppCompatActivity(), IActivity {
             roomViewModel.setLeaveRoom(roomId);
         }
         binding.settingsGroup.setOnClickListener { v ->
-            val securityIntent = Intent(this, SecurityActivity::class.java);
+            val securityIntent = Intent(this, OtherRoomSettings::class.java);
+            securityIntent.putExtra(OtherRoomSettings.ROOM_ID, roomId);
             startActivity(securityIntent);
         }
         binding.membersGroup.setOnClickListener { v ->
             val usersIntent = Intent(this, RoomMemberListActivity::class.java);
             usersIntent.putExtra(RoomMemberListActivity.ROOM_ID, roomId);
             startActivity(usersIntent);
+        }
+        binding.addPeopleGroup.setOnClickListener { v ->
+            val intentAddPeople = Intent(this, InviteUsersToRoomActivity::class.java);
+            intentAddPeople.putExtra(InviteUsersToRoomActivity.ROOM_ID, roomId);
+            intentAddPeople.putExtra(InviteUsersToRoomActivity.CREATE_FROM_NEW_ROOM, false);
+            startActivity(intentAddPeople);
         }
     }
 

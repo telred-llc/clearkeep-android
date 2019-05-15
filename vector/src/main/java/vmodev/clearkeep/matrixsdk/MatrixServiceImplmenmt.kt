@@ -378,7 +378,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         Log.d("Room Type: ", (sourcePrimary or sourceSecondary or sourceThird).toString() + "-----" + room.getRoomDisplayName(application))
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
-                , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus, topic = if (room.topic.isNullOrEmpty()) "" else room.topic);
+                , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1);
         return roomObj;
     }
 
