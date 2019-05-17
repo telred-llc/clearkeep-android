@@ -18,6 +18,7 @@ import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapter
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import javax.inject.Inject
 
@@ -29,7 +30,7 @@ class RoomMemberListActivity : DaggerAppCompatActivity() {
     lateinit var appExecutors: AppExecutors;
 
     private lateinit var binding: ActivityRoomMemberListBinding;
-    private lateinit var userViewModel: AbstractUserViewModel;
+    private lateinit var roomViewModel: AbstractRoomViewModel;
     private lateinit var listUserAdapter: ListUserRecyclerViewAdapter;
 
     private lateinit var session: MXSession;
@@ -65,15 +66,15 @@ class RoomMemberListActivity : DaggerAppCompatActivity() {
                 startActivity(otherUserIntent);
             }
         }
-        userViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractUserViewModel::class.java);
-        binding.users = userViewModel.getUsersInRoomResult();
+        roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
+        binding.users = roomViewModel.getGetUserFromRoomIdResult();
         binding.recyclerView.adapter = listUserAdapter;
-        userViewModel.getUsersInRoomResult().observe(this, Observer { t ->
+        roomViewModel.getGetUserFromRoomIdResult().observe(this, Observer { t ->
             listUserAdapter.submitList(t?.data);
-        })
+        });
         val roomId = intent.getStringExtra(ROOM_ID);
         binding.lifecycleOwner = this;
-        userViewModel.setRoomIdForGetUsers(roomId);
+        roomViewModel.setGetUserFromRoomId(roomId);
 
     }
 

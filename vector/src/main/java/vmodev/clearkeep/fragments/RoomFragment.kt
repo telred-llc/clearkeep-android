@@ -84,7 +84,7 @@ class RoomFragment : DataBindingDaggerFragment(), IFragment {
         super.onViewCreated(view, savedInstanceState)
         super.onViewCreated(view, savedInstanceState)
         roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
-        binding!!.lifecycleOwner = viewLifecycleOwner;
+        binding.lifecycleOwner = viewLifecycleOwner;
         listRoomAdapter.setdataBindingComponent(dataBindingComponent);
         listRoomAdapter.setOnItemClick { room, i ->
             when (i) {
@@ -107,13 +107,13 @@ class RoomFragment : DataBindingDaggerFragment(), IFragment {
                     }.create();
             bottomDialog.show();
         }
-        binding!!.rooms = roomViewModel!!.getRoomsData();
-        binding!!.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
-        binding!!.recyclerViewListConversation.adapter = listRoomAdapter.getAdapter();
-        roomViewModel!!.getRoomsData().observe(viewLifecycleOwner, Observer { t ->
-            listRoomAdapter!!.getAdapter().submitList(t?.data);
+        binding.rooms = roomViewModel.getRoomsData();
+        binding.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        binding.recyclerViewListConversation.adapter = listRoomAdapter.getAdapter();
+        roomViewModel.getRoomsData().observe(viewLifecycleOwner, Observer { t ->
+            listRoomAdapter.getAdapter().submitList(t?.data);
         });
-        roomViewModel!!.setFilter(arrayOf(2, 66))
+        roomViewModel.setFilter(arrayOf(2, 66))
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -88,10 +88,10 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
             mSession = session
 
             mRoom = room
-            mRoomSummary = mRoom!!.dataHandler.store.getSummary(mRoom!!.roomId)
+            mRoomSummary = mRoom?.dataHandler?.store?.getSummary(mRoom?.roomId)
 
-            mReadMarkerEventId = mRoomSummary!!.readMarkerEventId
-            Log.d(LOG_TAG, "Create ReadMarkerManager instance id:" + mReadMarkerEventId + " for room:" + mRoom!!.roomId)
+            mReadMarkerEventId = mRoomSummary?.readMarkerEventId
+            Log.d(LOG_TAG, "Create ReadMarkerManager instance id:" + mReadMarkerEventId + " for room:" + mRoom?.roomId)
 
             mUpdateMode = updateMode
 
@@ -113,7 +113,7 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
                         updateReadMarkerValue()
 
                         if (!TextUtils.isEmpty(mReadMarkerEventId)) {
-                            val lastReadEvent = mRoom!!.dataHandler.store.getEvent(mReadMarkerEventId, mRoom!!.roomId)
+                            val lastReadEvent = mRoom?.dataHandler?.store?.getEvent(mReadMarkerEventId, mRoom?.roomId)
                             if (lastReadEvent == null) {
                                 // Event is not in store, open preview
                                 openPreviewToGivenEvent(mReadMarkerEventId)
@@ -205,8 +205,8 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
      * @param roomId
      */
     fun onReadMarkerChanged(roomId: String) {
-        if (TextUtils.equals(mRoom!!.roomId, roomId)) {
-            val newReadMarkerEventId = mRoomSummary!!.readMarkerEventId
+        if (TextUtils.equals(mRoom?.roomId, roomId)) {
+            val newReadMarkerEventId = mRoomSummary?.readMarkerEventId
             if (!TextUtils.equals(newReadMarkerEventId, mReadMarkerEventId)) {
                 Log.d(LOG_TAG, "onReadMarkerChanged$newReadMarkerEventId")
                 refresh()
@@ -227,7 +227,7 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
             setReadMarkerToLastVisibleRow()
             mHasJumpedToFirstUnread = false
         }
-        mVectorMessageListFragment!!.messageAdapter.updateReadMarker(mReadMarkerEventId, mRoomSummary!!.readReceiptEventId)
+        mVectorMessageListFragment!!.messageAdapter.updateReadMarker(mReadMarkerEventId, mRoomSummary?.readReceiptEventId)
         mVectorMessageListFragment!!.scrollToBottom(0)
     }
 
@@ -244,7 +244,7 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
         Log.d(LOG_TAG, "checkUnreadMessage")
         mJumpToUnreadView?.let {
             if (mJumpToUnreadView!!.visibility != View.VISIBLE) {
-                val readReceiptEventId = mRoomSummary!!.readReceiptEventId
+                val readReceiptEventId = mRoomSummary?.readReceiptEventId
                 if (mReadMarkerEventId != null && mReadMarkerEventId != readReceiptEventId) {
                     if (isLiveMode() && !mHasJumpedToFirstUnread) {
                         // We are catching up as scrolling up
@@ -258,7 +258,7 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
                     } else if (mLastVisibleEvent != null) {
                         // We are catching up as scrolling down
                         // Check if the last received event has been reached by scrolling down
-                        if (mLastVisibleEvent!!.eventId == mRoomSummary!!.latestReceivedEvent.eventId) {
+                        if (mLastVisibleEvent!!.eventId == mRoomSummary?.latestReceivedEvent?.eventId) {
                             Log.d(LOG_TAG, "checkUnreadMessage: last received event has been reached by scrolling down")
                             markAllAsRead()
                         } else if (!isLiveMode()) {
@@ -275,8 +275,8 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
      * Make sure we have the correct read marker event id
      */
     private fun updateReadMarkerValue() {
-        mReadMarkerEventId = mRoomSummary!!.readMarkerEventId
-        mVectorMessageListFragment!!.messageAdapter.updateReadMarker(mReadMarkerEventId, mRoomSummary!!.readReceiptEventId)
+        mReadMarkerEventId = mRoomSummary?.readMarkerEventId
+        mVectorMessageListFragment!!.messageAdapter.updateReadMarker(mReadMarkerEventId, mRoomSummary?.readReceiptEventId)
     }
 
     /**
@@ -297,9 +297,9 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
         //Log.d(LOG_TAG, "updateJumpToBanner");
         var showJumpToView = false
 
-        mReadMarkerEventId = mRoomSummary!!.readMarkerEventId
+        mReadMarkerEventId = mRoomSummary?.readMarkerEventId
         if (mRoomSummary != null && mReadMarkerEventId != null && !mHasJumpedToFirstUnread) {
-            val readReceiptEventId = mRoomSummary!!.readReceiptEventId
+            val readReceiptEventId = mRoomSummary?.readReceiptEventId
 
             if (mReadMarkerEventId != readReceiptEventId) {
                 if (!MXPatterns.isEventId(mReadMarkerEventId)) {
@@ -314,7 +314,7 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
                         showJumpToView = true
                     } else {
                         // Last read event is in the store
-                        val roomMessagesCol = mRoom!!.dataHandler.store.getRoomMessages(mRoom!!.roomId)
+                        val roomMessagesCol = mRoom?.dataHandler?.store?.getRoomMessages(mRoom?.roomId)
                         if (roomMessagesCol == null) {
                             Log.e(LOG_TAG, "updateJumpToBanner getRoomMessages returned null instead of collection with event " + readMarkerEvent.eventId)
                         } else {
@@ -376,7 +376,7 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
         val readMarkerRow = mVectorMessageListFragment!!.messageAdapter.getMessageRow(eventId)
         var readMarkerEvent: Event? = readMarkerRow?.event
         if (readMarkerEvent == null) {
-            readMarkerEvent = mVectorMessageListFragment!!.eventTimeLine.store.getEvent(mReadMarkerEventId, mRoom!!.roomId)
+            readMarkerEvent = mVectorMessageListFragment!!.eventTimeLine.store.getEvent(mReadMarkerEventId, mRoom?.roomId)
         }
         return readMarkerEvent
     }
@@ -398,7 +398,7 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
     private fun openPreviewToGivenEvent(eventId: String?) {
         if (!TextUtils.isEmpty(eventId)) {
             val intent = Intent(mActivity, VectorRoomActivity::class.java)
-            intent.putExtra(VectorRoomActivity.EXTRA_ROOM_ID, mRoom!!.roomId)
+            intent.putExtra(VectorRoomActivity.EXTRA_ROOM_ID, mRoom?.roomId)
             intent.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, mSession!!.myUserId)
             intent.putExtra(VectorRoomActivity.EXTRA_EVENT_ID, eventId)
             intent.putExtra(VectorRoomActivity.EXTRA_IS_UNREAD_PREVIEW_MODE, true)
@@ -418,7 +418,7 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
             Log.d(LOG_TAG, "scrollUpToGivenEvent " + event.eventId)
             if (!scrollToAdapterEvent(event)) {
                 // use the cached events list
-                mRoom!!.timeline.backPaginate(UNREAD_BACK_PAGINATE_EVENT_COUNT, true, object : ApiCallback<Int> {
+                mRoom?.timeline?.backPaginate(UNREAD_BACK_PAGINATE_EVENT_COUNT, true, object : ApiCallback<Int> {
                     override fun onSuccess(info: Int?) {
                         if (!mActivity!!.isFinishing) {
                             mVectorMessageListFragment!!.messageAdapter.notifyDataSetChanged()
@@ -534,8 +534,8 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
                         if (newReadMarkerTs > currentReadMarkerTs) {
                             Log.d(LOG_TAG, "setReadMarkerToLastVisibleRow update read marker to:" + newReadMarkerEvent.eventId
                                     + " isEventId:" + MXPatterns.isEventId(newReadMarkerEvent.eventId))
-                            mRoom!!.setReadMakerEventId(newReadMarkerEvent.eventId)
-                            onReadMarkerChanged(mRoom!!.roomId)
+                            mRoom?.setReadMakerEventId(newReadMarkerEvent.eventId)
+                            mRoom?.let { room -> onReadMarkerChanged(room?.roomId) }
                         }
                     }
                 }
@@ -548,7 +548,7 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
      */
     private fun markAllAsRead() {
         Log.d(LOG_TAG, "markAllAsRead")
-        mRoom!!.markAllAsRead(null)
+        mRoom?.markAllAsRead(null)
     }
 
     /**
@@ -556,24 +556,27 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
      */
     private fun forgetReadMarker() {
         Log.d(LOG_TAG, "forgetReadMarker")
-        mRoom!!.forgetReadMarker(object : ApiCallback<Void> {
-            override fun onSuccess(info: Void) {
-                updateJumpToBanner()
-            }
+        mRoom?.let { room ->
+            mRoom?.forgetReadMarker(object : ApiCallback<Void> {
+                override fun onSuccess(p0: Void?) {
+                    updateJumpToBanner()
+                }
 
-            override fun onNetworkError(e: Exception) {
-                updateJumpToBanner()
-            }
+                override fun onUnexpectedError(p0: java.lang.Exception?) {
+                    updateJumpToBanner()
+                }
 
-            override fun onMatrixError(e: MatrixError) {
-                updateJumpToBanner()
-            }
+                override fun onMatrixError(p0: MatrixError?) {
+                    updateJumpToBanner()
+                }
 
-            override fun onUnexpectedError(e: Exception) {
-                updateJumpToBanner()
-            }
-        })
+                override fun onNetworkError(p0: java.lang.Exception?) {
+                    updateJumpToBanner()
+                }
+            })
+        }
     }
+
 
     /*
      * *********************************************************************************************

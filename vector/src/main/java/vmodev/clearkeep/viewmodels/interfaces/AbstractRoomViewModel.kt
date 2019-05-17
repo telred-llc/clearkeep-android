@@ -4,12 +4,14 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.viewmodels.RoomViewModel
 
 abstract class AbstractRoomViewModel : ViewModel() {
-    abstract fun setFilter(filters: Array<Int>);
+    abstract fun setFilter(filters: Array<Int>, loadType : Int = 0);
     abstract fun setRoomId(id: String);
     abstract fun getRoomsData(): LiveData<Resource<List<Room>>>
-    abstract fun getFilterData(): LiveData<Array<Int>>;
+    abstract fun getFilterData(): LiveData<RoomViewModel.RoomFilters>;
     abstract fun getRoom(): LiveData<Resource<Room>>;
     abstract fun joinRoom(id: String);
     abstract fun setLeaveRoom(id: String);
@@ -26,4 +28,6 @@ abstract class AbstractRoomViewModel : ViewModel() {
     abstract fun getAddToFavouriteResult(): LiveData<Resource<Room>>
     abstract fun setRemoveFromFavourite(roomId: String);
     abstract fun getRemoveFromFavouriteResult(): LiveData<Resource<Room>>
+    abstract fun getGetUserFromRoomIdResult() : LiveData<Resource<List<User>>>;
+    abstract fun setGetUserFromRoomId(roomId: String);
 }

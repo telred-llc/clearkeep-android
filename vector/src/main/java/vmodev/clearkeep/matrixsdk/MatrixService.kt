@@ -2,9 +2,9 @@ package vmodev.clearkeep.matrixsdk
 
 import android.arch.lifecycle.LiveData
 import io.reactivex.Observable
-import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
-import vmodev.clearkeep.viewmodelobjects.MessageSearchText
+import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
+import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.User
 
 public interface MatrixService {
@@ -14,6 +14,7 @@ public interface MatrixService {
     fun getListContact(): LiveData<List<Room>>;
     fun getUser(): Observable<User>;
     fun getListRoom(filters: Array<Int>): Observable<List<vmodev.clearkeep.viewmodelobjects.Room>>;
+    fun getListRoomAndAddUser(filters: Array<Int>): Observable<ListRoomAndRoomUserJoinReturn>;
     fun getListRoomWithTwoFilter(filterOne: Int, filterTwo: Int): Observable<List<vmodev.clearkeep.viewmodelobjects.Room>>;
     fun getRoomWithId(id: String): Observable<vmodev.clearkeep.viewmodelobjects.Room>;
     fun joinRoom(id: String): Observable<vmodev.clearkeep.viewmodelobjects.Room>;
@@ -27,4 +28,5 @@ public interface MatrixService {
     fun addToFavourite(roomId: String): Observable<vmodev.clearkeep.viewmodelobjects.Room>;
     fun removeFromFavourite(roomId: String): Observable<vmodev.clearkeep.viewmodelobjects.Room>;
     fun getUsersInRoom(roomId: String): Observable<List<User>>;
+    fun getUsersInRoomAndAddToRoomUserJoin(roomId: String): Observable<RoomAndRoomUserJoin>;
 }

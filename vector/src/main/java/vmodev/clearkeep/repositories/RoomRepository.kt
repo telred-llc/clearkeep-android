@@ -3,29 +3,33 @@ package vmodev.clearkeep.repositories
 import android.annotation.SuppressLint
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
-import android.arch.lifecycle.MutableLiveData
 import android.util.Log
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
+import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.databases.RoomDao
+import vmodev.clearkeep.databases.UserDao
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.MatrixService
+import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
+import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.User
 import javax.inject.Inject
 import javax.inject.Singleton
-import javax.xml.transform.Source
 
 @Singleton
 class RoomRepository @Inject constructor(
         private val appExecutors: AppExecutors,
         private val roomDao: RoomDao,
+        private val roomUserJoinDao: AbstractRoomUserJoinDao,
+        private val userDao: UserDao,
         private val matrixService: MatrixService
 ) {
-    fun loadListRoom(filters: Array<Int>): LiveData<Resource<List<Room>>> {
+    fun loadListRoom(filters: Array<Int>, type: Int = 0): LiveData<Resource<List<Room>>> {
         return object : MatrixBoundSource<List<Room>, List<Room>>(appExecutors) {
             override fun saveCallResult(item: List<Room>) {
                 roomDao.insertRooms(item);
@@ -37,7 +41,11 @@ class RoomRepository @Inject constructor(
             }
 
             override fun loadFromDb(): LiveData<List<Room>> {
-                return roomDao.loadWithType(filters);
+                if (type == 0) {
+                    return roomDao.loadWithType(filters);
+                } else {
+                    return roomDao.loadWithTypeOnlyTime(filters);
+                }
 //                return MutableLiveData<List<Room>>();
             }
 
@@ -45,6 +53,42 @@ class RoomRepository @Inject constructor(
                 return LiveDataReactiveStreams.fromPublisher(matrixService.getListRoom(filters)
                         .subscribeOn(AndroidSchedulers.mainThread())
                         .observeOn(AndroidSchedulers.mainThread())
+                        .toFlowable(BackpressureStrategy.LATEST));
+            }
+
+            override fun createCallAsReesult(): LiveData<List<Room>> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.getListRoom(filters)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(Schedulers.newThread())
+                        .toFlowable(BackpressureStrategy.LATEST));
+            }
+
+            override fun saveCallResultType(item: List<Room>) {
+                roomDao.insertRooms(item);
+            }
+        }.asLiveData();
+    }
+
+    fun loadListRoomUserJoin(filters: Array<Int>): LiveData<Resource<List<Room>>> {
+        return object : MatrixBoundSource<List<Room>, ListRoomAndRoomUserJoinReturn>(appExecutors) {
+            override fun saveCallResult(item: ListRoomAndRoomUserJoinReturn) {
+                roomDao.insertRooms(item.rooms);
+                userDao.insertUsers(item.users);
+                roomUserJoinDao.insertRoomUserJoins(item.roomUserJoins)
+            }
+
+            override fun shouldFetch(data: List<Room>?): Boolean {
+                return data.isNullOrEmpty();
+            }
+
+            override fun loadFromDb(): LiveData<List<Room>> {
+                return roomDao.loadWithType(filters);
+            }
+
+            override fun createCall(): LiveData<ListRoomAndRoomUserJoinReturn> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.getListRoomAndAddUser(filters)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
                         .toFlowable(BackpressureStrategy.LATEST));
             }
 
@@ -345,6 +389,41 @@ class RoomRepository @Inject constructor(
                         .subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.io())
                         .toFlowable(BackpressureStrategy.LATEST))
+            }
+        }.asLiveData();
+    }
+
+    fun loadUsersWithRoomId(roomId: String): LiveData<Resource<List<User>>> {
+        return object : MatrixBoundSource<List<User>, RoomAndRoomUserJoin>(appExecutors) {
+            override fun saveCallResult(item: RoomAndRoomUserJoin) {
+                roomDao.insert(item.room);
+                userDao.insertUsers(item.users);
+                roomUserJoinDao.insertRoomUserJoins(item.roomUserJoins);
+            }
+
+            override fun saveCallResultType(item: List<User>) {
+                // Do something
+            }
+
+            override fun shouldFetch(data: List<User>?): Boolean {
+                return true;
+            }
+
+            override fun loadFromDb(): LiveData<List<User>> {
+                return roomUserJoinDao.getUsersWithRoomId(roomId);
+            }
+
+            override fun createCall(): LiveData<RoomAndRoomUserJoin> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.getUsersInRoomAndAddToRoomUserJoin(roomId)
+                        .observeOn(Schedulers.io())
+                        .subscribeOn(Schedulers.io()).toFlowable(BackpressureStrategy.LATEST));
+            }
+
+            override fun createCallAsReesult(): LiveData<List<User>> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.getUsersInRoom(roomId)
+                        .observeOn(Schedulers.io())
+                        .subscribeOn(Schedulers.io())
+                        .toFlowable(BackpressureStrategy.LATEST));
             }
         }.asLiveData();
     }

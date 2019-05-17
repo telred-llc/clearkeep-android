@@ -11,7 +11,7 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [AndroidSupportInjectionModule::class, AndroidInjectionModule::class
-    , AppModule::class, HomeScreenActivityModule::class, ProfileActivityModule::class
+    , AppModule::class, AbstractSplashActivityModule::class, HomeScreenActivityModule::class, ProfileActivityModule::class
     , PreviewInviteRoomActivityModule::class, FindAndCreateNewConversationActivityModule::class
     , CreateNewRoomActivityModule::class
     , InviteUsersToRoomActivityModule::class

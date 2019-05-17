@@ -107,7 +107,7 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFragment {
         roomViewModel.getRoomsData().observe(viewLifecycleOwner, Observer { t ->
             listRoomRecyclerViewAdapter.getAdapter().submitList(t?.data);
         });
-        roomViewModel!!.setFilter(arrayOf(129, 130))
+        roomViewModel.setFilter(arrayOf(129, 130), 1)
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -3,18 +3,15 @@ package vmodev.clearkeep.matrixsdk
 import android.annotation.SuppressLint
 import android.app.Application
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
 import android.text.TextUtils
 import android.util.Log
 import com.google.gson.Gson
 import im.vector.Matrix
 import im.vector.util.HomeRoomsViewModel
-import im.vector.util.RoomUtils
 import im.vector.util.VectorUtils
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
 import io.reactivex.functions.Function
 import io.reactivex.internal.operators.observable.ObservableAll
 import io.reactivex.schedulers.Schedulers
@@ -29,9 +26,11 @@ import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.search.SearchResponse
 import org.matrix.androidsdk.rest.model.search.SearchResult
 import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
+import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
+import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.ultis.SearchMessageByTextResult
-import vmodev.clearkeep.ultis.toDateTime
 import vmodev.clearkeep.viewmodelobjects.MessageSearchText
+import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.User
 import java.lang.Exception
 import javax.inject.Inject
@@ -191,7 +190,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                             asyncUpdateRoomMember(it).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ mrId ->
                                 kotlin.run {
                                     currentIndex++;
-                                    listRoom.add(matrixRoomToRoom(t, mrId));
+                                    listRoom.add(matrixRoomToRoom(t, if (mrId.isNotEmpty()) if (mrId[0].id.isNullOrEmpty()) "" else mrId[0].id else ""));
                                     if (currentIndex == rooms.size) {
                                         emitter.onNext(listRoom);
                                         emitter.onComplete();
@@ -383,24 +382,24 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
     }
 
     @SuppressLint("CheckResult")
-    private fun asyncUpdateRoomMember(room: Room): Observable<String> {
-        return Observable.create<String> { emitter ->
-
-            if (!room.isDirect || room.isInvited) {
-                emitter.onError(Throwable("No need check"))
-                emitter.onComplete();
-            }
+    private fun asyncUpdateRoomMember(room: Room): Observable<List<User>> {
+        return Observable.create<List<User>> { emitter ->
+            val users = ArrayList<User>();
+//            if (!room.isDirect || room.isInvited) {
+//                emitter.onError(Throwable("No need check"))
+//                emitter.onComplete();
+//            }
             room.getMembersAsync(object : ApiCallback<List<RoomMember>> {
                 override fun onSuccess(p0: List<RoomMember>?) {
                     p0?.forEach { t: RoomMember? ->
                         t?.userId?.let {
-                            if (t.userId.compareTo(session!!.myUserId) != 0) {
-                                emitter.onNext(t?.userId);
-                                emitter.onComplete();
-                            }
+                            //                            if (t.userId.compareTo(session!!.myUserId) != 0) {
+                            val avatar: String? = if (t?.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(t?.avatarUrl);
+                            users.add(User(name = t?.name, roomId = "", status = 0, avatarUrl = avatar, id = t?.userId));
+//                            }
                         }
                     }
-                    emitter.onError(Throwable("Dot not exist user"))
+                    emitter.onNext(users);
                     emitter.onComplete();
                 }
 
@@ -850,6 +849,94 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                         }
                     }
                     emitter.onNext(users);
+                    emitter.onComplete();
+                }
+
+                override fun onUnexpectedError(p0: Exception?) {
+                    emitter.onError(Throwable(p0?.message))
+                    emitter.onComplete()
+                }
+
+                override fun onMatrixError(p0: MatrixError?) {
+                    emitter.onError(Throwable(p0?.message))
+                    emitter.onComplete()
+                }
+
+                override fun onNetworkError(p0: Exception?) {
+                    emitter.onError(Throwable(p0?.message))
+                    emitter.onComplete()
+                }
+            })
+        }
+    }
+
+    override fun getListRoomAndAddUser(filters: Array<Int>): Observable<ListRoomAndRoomUserJoinReturn> {
+        setMXSession();
+        return Observable.create<ListRoomAndRoomUserJoinReturn> { emitter ->
+            val listRoom = ArrayList<vmodev.clearkeep.viewmodelobjects.Room>();
+            val listUser = ArrayList<User>();
+            val listRoomUserJoin = ArrayList<RoomUserJoin>();
+            val listObject = ArrayList<ListRoomAndRoomUserJoinReturn>();
+            if (homeRoomsViewModel != null && homeRoomsViewModel!!.result != null) {
+                homeRoomsViewModel!!.update();
+                val rooms = ArrayList<Room>();
+                for (filter in filters) {
+                    rooms.addAll(funcs[filter].apply(homeRoomsViewModel!!.result))
+                }
+                var currentIndex: Int = 0;
+                rooms.forEach { t: Room? ->
+                    t?.let { it ->
+                        asyncUpdateRoomMember(it).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ mrId ->
+                            kotlin.run {
+                                currentIndex++;
+                                listRoom.add(matrixRoomToRoom(t, if (mrId.isNotEmpty()) if (mrId[0].id.isNullOrEmpty()) "" else mrId[0].id else ""));
+                                mrId.forEach { u: User? ->
+                                    u?.let { user ->
+                                        listUser.add(user);
+                                        listRoomUserJoin.add(RoomUserJoin(t.roomId, user.id))
+                                    }
+                                }
+                                if (currentIndex == rooms.size) {
+                                    emitter.onNext(ListRoomAndRoomUserJoinReturn(listRoom, listUser, listRoomUserJoin));
+                                    emitter.onComplete();
+                                }
+                            }
+                        }
+                                , { e ->
+                            kotlin.run {
+                                currentIndex++;
+                                listRoom.add(matrixRoomToRoom(t));
+                                if (currentIndex == rooms.size) {
+                                    emitter.onNext(ListRoomAndRoomUserJoinReturn(listRoom, listUser, listRoomUserJoin));
+                                    emitter.onComplete();
+                                }
+                            }
+                        });
+                    }
+                }
+//                    emitter.onNext(listRoom);
+//                    emitter.onComplete();
+            } else {
+                emitter.onError(NullPointerException());
+                emitter.onComplete();
+            }
+        }
+    }
+
+    override fun getUsersInRoomAndAddToRoomUserJoin(roomId: String): Observable<RoomAndRoomUserJoin> {
+        return Observable.create<RoomAndRoomUserJoin> { emitter ->
+            val room = session!!.dataHandler.getRoom(roomId);
+            room.getActiveMembersAsync(object : ApiCallback<List<RoomMember>> {
+                override fun onSuccess(p0: List<RoomMember>?) {
+                    val users = ArrayList<User>();
+                    val roomUserJoin = ArrayList<RoomUserJoin>();
+                    p0?.forEach { t: RoomMember? ->
+                        t?.let { roomMember ->
+                            users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0, roomId = roomId))
+                            roomUserJoin.add(RoomUserJoin(room.roomId, roomMember.userId))
+                        }
+                    }
+                    emitter.onNext(RoomAndRoomUserJoin(room = matrixRoomToRoom(room), users = users, roomUserJoins = roomUserJoin));
                     emitter.onComplete();
                 }
 
