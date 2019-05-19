@@ -46,10 +46,15 @@ class MatrixEventHandler @Inject constructor(private val application: Applicatio
         Log.d("List Direct: ", "Update");
     }
 
+    override fun onLiveEventsChunkProcessed(fromToken: String?, toToken: String?) {
+        super.onLiveEventsChunkProcessed(fromToken, toToken)
+        Log.d("Event Chunk:" , fromToken + toToken);
+    }
+
     override fun onLiveEvent(event: Event?, roomState: RoomState?) {
         super.onLiveEvent(event, roomState)
 
-//        Log.d("Event Type:" , event?.type);
+        Log.d("Event Type:" , event?.type);
 
         if (event?.type?.compareTo("m.room.join_rules") == 0) {
             if (event?.roomId != null) {

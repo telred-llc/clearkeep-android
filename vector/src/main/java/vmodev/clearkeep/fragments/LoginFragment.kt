@@ -13,11 +13,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import im.vector.LoginHandler
 import im.vector.R
-import im.vector.activity.SplashActivity
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.matrix.androidsdk.HomeServerConnectionConfig
+import org.matrix.androidsdk.rest.callback.ApiCallback
 import org.matrix.androidsdk.rest.callback.SimpleApiCallback
 import org.matrix.androidsdk.rest.model.MatrixError
+import vmodev.clearkeep.activities.DemoEmptyActivity
+import vmodev.clearkeep.activities.SplashActivity
 import java.lang.Exception
 
 // TODO: Rename parameter arguments, choose names that match
@@ -52,7 +54,7 @@ class LoginFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_login, container, false);
-        view.findViewById<Button>(R.id.button_sign_in).setOnClickListener({ v ->
+        view.findViewById<Button>(R.id.button_sign_in).setOnClickListener { v ->
             run {
                 val password = edit_text_password.text.toString().trim();
                 val username = edit_text_username.text.toString().trim();
@@ -67,10 +69,10 @@ class LoginFragment : Fragment() {
 
                 onPressedLogin();
                 val homeServerConnectionConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse("https://study.sinbadflyce.com"))
-                        .withIdentityServerUri(Uri.parse("https://matrix.org")).build();
+                    .withIdentityServerUri(Uri.parse("https://matrix.org")).build();
                 val loginHandler = LoginHandler();
                 loginHandler.login(this.context, homeServerConnectionConfig, edit_text_username.text.toString(), null, null,
-                        edit_text_password.text.toString(), object : SimpleApiCallback<Void>(this.activity) {
+                    edit_text_password.text.toString(), object : ApiCallback<Void> {
                     override fun onSuccess(p0: Void?) {
                         gotoHomeActivity();
                     }
@@ -97,7 +99,7 @@ class LoginFragment : Fragment() {
                     }
                 });
             }
-        });
+        };
         view.findViewById<Button>(R.id.button_sign_up).setOnClickListener { v -> run {
             onPressedSignUp();
         } }

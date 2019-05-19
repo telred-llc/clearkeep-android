@@ -25,7 +25,7 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : Abstra
     private val _roomIdForGetUser = MutableLiveData<String>();
 
     private val rooms: LiveData<Resource<List<Room>>> = Transformations.switchMap(_filters) { input ->
-        roomRepository.loadListRoomUserJoin(input.filters);
+        roomRepository.loadListRoomUserJoin(input.filters, input.loadType);
     }
     private val roomFind: LiveData<Resource<Room>> = Transformations.switchMap(_id) { input -> roomRepository.loadRoom(input) }
     private val roomJoin: LiveData<Resource<Room>> = Transformations.switchMap(_joinRoom) { input -> roomRepository.joinRoom(input) }
@@ -151,5 +151,5 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : Abstra
         _roomIdForGetUser.value = roomId;
     }
 
-    class RoomFilters constructor(val filters: Array<Int>, val loadType: Int)
+    class RoomFilters constructor(val filters: Array<Int>, val loadType: Int = 0)
 }

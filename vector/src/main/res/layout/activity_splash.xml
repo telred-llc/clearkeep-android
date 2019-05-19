@@ -16,12 +16,6 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.Room" />
 
-        <import type="vmodev.clearkeep.viewmodelobjects.User" />
-
-        <variable
-            name="users"
-            type="LiveData&lt;Resource&lt;List&lt;User>>>" />
-
         <variable
             name="rooms"
             type="LiveData&lt;Resource&lt;List&lt;Room>>>" />
@@ -29,21 +23,38 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/button_login_background_color">
 
-        <pl.droidsonroids.gif.GifImageView
-            android:id="@+id/gif_image_view_splash"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/ic_launcher_app" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/background_purple_to_transparent_gradient" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/background_blue_to_transparent_gradient" />
+
+        <RelativeLayout
+            android:id="@+id/relative_layout_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/image_view_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@drawable/ic_launcher_app_white" />
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
-            android:orientation="horizontal"
-            app:visibleGone="@{rooms.status == Status.LOADING}">
+            android:orientation="horizontal">
 
             <ProgressBar
                 android:layout_width="20dp"
@@ -54,7 +65,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:text="@string/loading" />
+                android:text="@string/loading"
+                android:textColor="@color/lb_tv_white" />
         </LinearLayout>
     </FrameLayout>
 </layout>

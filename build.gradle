@@ -27,7 +27,7 @@ buildscript {
 ext {
     versionCodeProp = 82700
     versionNameProp = "0.0.6-dev"
-    versionBuild = System.getenv("BUILD_NUMBER") as Integer ?: 0
+    versionBuild = 1
     buildNumberProp = "${versionBuild}"
 }
 
