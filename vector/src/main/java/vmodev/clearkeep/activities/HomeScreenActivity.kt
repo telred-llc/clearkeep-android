@@ -55,14 +55,12 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     @field:Named(IFragmentFactory.CONTACTS_FRAGMENT)
     lateinit var contactsFragmentFactory: IFragmentFactory;
     @Inject
-    lateinit var homeScreenViewModelFactory : IHomeScreenViewModelFactory;
+    lateinit var homeScreenViewModelFactory: IHomeScreenViewModelFactory;
 
 
     lateinit var binding: ActivityHomeScreenBinding;
     lateinit var mxSession: MXSession;
     private lateinit var homeRoomViewModel: HomeRoomsViewModel;
-    private lateinit var roomViewModel: AbstractRoomViewModel;
-    private lateinit var userViewModel: AbstractUserViewModel;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,10 +97,8 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
             val intent = Intent(this, SearchActivity::class.java);
             startActivity(intent);
         }
-        userViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractUserViewModel::class.java);
-        roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class .java);
-        binding.user = homeScreenViewModelFactory.getViewModel().getUserData();
-        binding.rooms = roomViewModel.getRoomsData();
+        binding.user = homeScreenViewModelFactory.getViewModel().getUserById();
+        binding.rooms = homeScreenViewModelFactory.getViewModel().getListRoomByType();
         binding.lifecycleOwner = this;
         binding.buttonCreateConvention.setOnClickListener { v ->
             kotlin.run {
@@ -110,8 +106,8 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
                 startActivity(intent);
             }
         }
-        userViewModel.setUserId(mxSession.myUserId);
-        roomViewModel.setFilter(arrayOf(1, 2, 65, 66))
+        homeScreenViewModelFactory.getViewModel().setValueForUserById(mxSession.myUserId);
+        homeScreenViewModelFactory.getViewModel().setValueForListRoomType(arrayOf(1, 2, 65, 66))
         if (intent.hasExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS)) {
             val intentExtra: Intent = intent.getParcelableExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS);
             if (mxSession.getDataHandler().getStore().isReady()) {

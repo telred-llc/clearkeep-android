@@ -20,6 +20,8 @@ import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
+import vmodev.clearkeep.factories.viewmodels.interfaces.IContactFragmentViewModelFactory
+import vmodev.clearkeep.fragments.Interfaces.IContactFragment
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.fragments.Interfaces.IListRoomOnFragmentInteractionListener
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
@@ -40,16 +42,16 @@ private const val LIST_CONTACT = "LIST_CONTACT"
  * create an instance of this fragment.
  *
  */
-class ContactsFragment : DataBindingDaggerFragment(), IFragment {
+class ContactsFragment : DataBindingDaggerFragment(), IContactFragment {
     private var listener: OnFragmentInteractionListener? = null
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
     @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM_CONTACT)
     lateinit var listRoomAdapter: IListRoomRecyclerViewAdapter;
-
+    @Inject
+    lateinit var contactViewModelFactory: IContactFragmentViewModelFactory;
     lateinit var binding: FragmentContactsBinding;
-    lateinit var roomViewModel: AbstractRoomViewModel;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +68,6 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
         val dividerItemDecoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL);
         listRoomAdapter.setdataBindingComponent(dataBindingComponent)
         binding.recyclerViewListContact.addItemDecoration(dividerItemDecoration);
@@ -74,13 +75,13 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment {
         listRoomAdapter.setOnItemClick { room, i ->
             onClickGoRoom(room.id);
         }
-        binding.rooms = roomViewModel.getRoomsData();
-        roomViewModel.getRoomsData().observe(viewLifecycleOwner, Observer { t ->
+        binding.rooms = contactViewModelFactory.getViewModel().getListRoomByType();
+        contactViewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
             listRoomAdapter.getAdapter().submitList(t?.data)
         })
         binding.lifecycleOwner = viewLifecycleOwner;
 
-        roomViewModel.setFilter(arrayOf(1, 129))
+        contactViewModelFactory.getViewModel().setListType(arrayOf(1, 129))
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -15,7 +15,9 @@ import im.vector.R
 import im.vector.databinding.FragmentHomeScreenBinding
 import vmodev.clearkeep.adapters.HomeScreenPagerAdapter
 import vmodev.clearkeep.factories.interfaces.IShowListRoomFragmentFactory
+import vmodev.clearkeep.factories.viewmodels.interfaces.IHomeScreenFragmentViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.fragments.Interfaces.IHomeScreenFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
 import javax.inject.Named
@@ -32,7 +34,7 @@ import javax.inject.Named
  * create an instance of this fragment.
  *
  */
-class HomeScreenFragment : DataBindingDaggerFragment(), IFragment {
+class HomeScreenFragment : DataBindingDaggerFragment(), IHomeScreenFragment {
     private var listener: OnFragmentInteractionListener? = null;
 
     @Inject
@@ -43,8 +45,10 @@ class HomeScreenFragment : DataBindingDaggerFragment(), IFragment {
     @Inject
     @field:Named(value = IShowListRoomFragmentFactory.ROOM_MESSAGE_FRAGMENT_FACTORY)
     lateinit var roomMessageFragmentFactory: IShowListRoomFragmentFactory;
-    private lateinit var roomViewModelDirectMessage: AbstractRoomViewModel;
-    private lateinit var roomViewModelRoomMessage: AbstractRoomViewModel;
+    @Inject
+    lateinit var homeScreenFragmentViewModelFactory: IHomeScreenFragmentViewModelFactory;
+    //    private lateinit var roomViewModelDirectMessage: AbstractRoomViewModel;
+//    private lateinit var roomViewModelRoomMessage: AbstractRoomViewModel;
     private lateinit var binding: FragmentHomeScreenBinding;
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,13 +67,13 @@ class HomeScreenFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        roomViewModelDirectMessage = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
-        roomViewModelRoomMessage = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
-        binding.roomsDirectMessage = roomViewModelDirectMessage.getRoomsData();
-        binding.roomsRoomMessage = roomViewModelRoomMessage.getRoomsData();
+//        roomViewModelDirectMessage = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
+//        roomViewModelRoomMessage = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
+        binding.roomsDirectMessage = homeScreenFragmentViewModelFactory.getViewModel().getListRoomDirectMessage();
+        binding.roomsRoomMessage = homeScreenFragmentViewModelFactory.getViewModel().getListRoomsMessage();
         binding.lifecycleOwner = viewLifecycleOwner;
-        roomViewModelDirectMessage.setFilter(arrayOf(1, 1 or 64));
-        roomViewModelRoomMessage.setFilter(arrayOf(2, 2 or 64))
+        homeScreenFragmentViewModelFactory.getViewModel().setTypesDirectMessage(arrayOf(1, 1 or 64));
+        homeScreenFragmentViewModelFactory.getViewModel().setTypesRoomsMessage(arrayOf(2, 2 or 64))
     }
 
     // TODO: Rename method, update argument and hook method into UI event

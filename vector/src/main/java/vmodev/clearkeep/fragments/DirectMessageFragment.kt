@@ -35,6 +35,8 @@ import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentBindingAdapters
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.factories.viewmodels.interfaces.IDirectMessageFragmentViewModelFactory
+import vmodev.clearkeep.fragments.Interfaces.IDriectMessageFragment
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.fragments.Interfaces.IListRoomOnFragmentInteractionListener
 import vmodev.clearkeep.ultis.RoomType
@@ -58,7 +60,7 @@ import javax.inject.Named
  * create an instance of this fragment.
  *
  */
-class DirectMessageFragment : DataBindingDaggerFragment(), IFragment {
+class DirectMessageFragment : DataBindingDaggerFragment(), IDriectMessageFragment {
     private var listener: IListRoomOnFragmentInteractionListener? = null
 
     @Inject
@@ -71,7 +73,8 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IFragment {
 
     lateinit var binding: FragmentDirectMessageBinding;
 
-    lateinit var roomViewModel: AbstractRoomViewModel;
+    @Inject
+    lateinit var directMessageViewModelFactory: IDirectMessageFragmentViewModelFactory;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,7 +91,7 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
+//        roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
         binding.lifecycleOwner = viewLifecycleOwner;
         listRoomAdapter.setdataBindingComponent(dataBindingComponent);
         listRoomAdapter.setOnItemClick { room, i ->
@@ -113,13 +116,13 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IFragment {
                     }.create();
             bottomDialog.show();
         }
-        binding.rooms = roomViewModel!!.getRoomsData();
+        binding.rooms = directMessageViewModelFactory.getViewModel().getListRoomByType();
         binding.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewListConversation.adapter = listRoomAdapter.getAdapter();
-        roomViewModel!!.getRoomsData().observe(viewLifecycleOwner, Observer { t ->
+        directMessageViewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
             listRoomAdapter!!.getAdapter().submitList(t?.data);
         });
-        roomViewModel!!.setFilter(arrayOf(1, 65))
+        directMessageViewModelFactory.getViewModel().setListType(arrayOf(1, 65))
     }
 
     private fun onClickRoomSettings(id: String) {
@@ -133,14 +136,14 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun onClickAddToFavourite(roomId: String) {
-        binding.roomObject = roomViewModel.getAddToFavouriteResult();
-        roomViewModel.setAddToFavourite(roomId);
+        binding.roomObject = directMessageViewModelFactory.getViewModel().getAddToFavouriteResult();
+        directMessageViewModelFactory.getViewModel().setAddToFavourite(roomId);
     }
 
     private fun onClickItemDecline(roomId: String) {
 //        listener?.onClickItemDecline(roomId);
-        binding.room = roomViewModel.getLeaveRoom();
-        roomViewModel.setLeaveRoom(roomId);
+        binding.room = directMessageViewModelFactory.getViewModel().getLeaveRoom();
+        directMessageViewModelFactory.getViewModel().setLeaveRoom(roomId);
     }
 
     private fun onClickItemPreview(roomId: String) {

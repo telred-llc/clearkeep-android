@@ -1,5 +1,6 @@
 package vmodev.clearkeep.di
 
+import android.arch.lifecycle.ViewModelProvider
 import android.support.v4.app.Fragment
 import android.support.v7.util.DiffUtil
 import dagger.Binds
@@ -14,8 +15,10 @@ import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.*
 import vmodev.clearkeep.factories.interfaces.IFragmentFactory
 import vmodev.clearkeep.factories.interfaces.IShowListRoomFragmentFactory
+import vmodev.clearkeep.factories.viewmodels.*
+import vmodev.clearkeep.factories.viewmodels.interfaces.*
 import vmodev.clearkeep.fragments.*
-import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.fragments.Interfaces.*
 import vmodev.clearkeep.viewmodelobjects.Room
 import javax.inject.Inject
 import javax.inject.Named
@@ -37,6 +40,36 @@ abstract class HomeScreenActivityFragmentBuilderModule {
 
     @ContributesAndroidInjector
     abstract fun contributeContactFragment(): ContactsFragment;
+
+    @Binds
+    abstract fun bindDirectMessageFragment(fragment: DirectMessageFragment): IDriectMessageFragment;
+
+    @Binds
+    abstract fun bindHomeScreenFragment(fragment: HomeScreenFragment): IHomeScreenFragment;
+
+    @Binds
+    abstract fun bindRoomFragment(fragment: RoomFragment): IRoomFragment;
+
+    @Binds
+    abstract fun bindFavouritesFragment(fragment: FavouritesFragment): IFavouritesFragment;
+
+    @Binds
+    abstract fun bindContactFragment(fragment: ContactsFragment): IContactFragment;
+
+    @Binds
+    abstract fun bindDirectMessageFragmentViewModelFactory(factory: DirectMessageFragmentViewModelFactory): IDirectMessageFragmentViewModelFactory;
+
+    @Binds
+    abstract fun bindHomeScreenFragmentViewModelFactory(factory: HomeScreenFragmentViewModelFactory): IHomeScreenFragmentViewModelFactory;
+
+    @Binds
+    abstract fun bindRoomFragmentViewModelFactory(factory: RoomFragmentViewModelFactory): IRoomFragmentViewModelFactory;
+
+    @Binds
+    abstract fun bindFavouritesFragmentViewModelFactory(factory: FavouritesFragmentViewModelFactory): IFavouritesFragmentViewModelFactory;
+
+    @Binds
+    abstract fun bindContactFragmentViewModelFactory(factory: ContactFragmentViewModelFactory): IContactFragmentViewModelFactory;
 
     @Module
     companion object {

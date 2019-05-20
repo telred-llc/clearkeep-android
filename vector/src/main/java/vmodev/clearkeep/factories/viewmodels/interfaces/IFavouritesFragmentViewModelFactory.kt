@@ -1,0 +1,6 @@
+package vmodev.clearkeep.factories.viewmodels.interfaces
+
+import vmodev.clearkeep.viewmodels.interfaces.AbstractFavouritesFragmentViewModel
+
+interface IFavouritesFragmentViewModelFactory : IViewModelFactory<AbstractFavouritesFragmentViewModel> {
+}

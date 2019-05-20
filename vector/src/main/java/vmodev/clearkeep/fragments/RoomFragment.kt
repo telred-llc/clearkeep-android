@@ -33,7 +33,9 @@ import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.factories.viewmodels.interfaces.IRoomFragmentViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.fragments.Interfaces.IRoomFragment
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
@@ -51,7 +53,7 @@ import javax.inject.Named
  * create an instance of this fragment.
  *
  */
-class RoomFragment : DataBindingDaggerFragment(), IFragment {
+class RoomFragment : DataBindingDaggerFragment(), IRoomFragment {
     // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
 
@@ -62,11 +64,9 @@ class RoomFragment : DataBindingDaggerFragment(), IFragment {
     @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
     lateinit var listRoomAdapter: IListRoomRecyclerViewAdapter;
-
+    @Inject
+    lateinit var roomFragmentViewModelFactory: IRoomFragmentViewModelFactory;
     lateinit var binding: FragmentRoomBinding;
-
-    lateinit var roomViewModel: AbstractRoomViewModel;
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,7 +83,6 @@ class RoomFragment : DataBindingDaggerFragment(), IFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         super.onViewCreated(view, savedInstanceState)
-        roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
         binding.lifecycleOwner = viewLifecycleOwner;
         listRoomAdapter.setdataBindingComponent(dataBindingComponent);
         listRoomAdapter.setOnItemClick { room, i ->
@@ -107,13 +106,13 @@ class RoomFragment : DataBindingDaggerFragment(), IFragment {
                     }.create();
             bottomDialog.show();
         }
-        binding.rooms = roomViewModel.getRoomsData();
+        binding.rooms = roomFragmentViewModelFactory.getViewModel().getListRoomByType();
         binding.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewListConversation.adapter = listRoomAdapter.getAdapter();
-        roomViewModel.getRoomsData().observe(viewLifecycleOwner, Observer { t ->
+        roomFragmentViewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
             listRoomAdapter.getAdapter().submitList(t?.data);
         });
-        roomViewModel.setFilter(arrayOf(2, 66))
+        roomFragmentViewModelFactory.getViewModel().setListType(arrayOf(2, 66))
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -129,8 +128,8 @@ class RoomFragment : DataBindingDaggerFragment(), IFragment {
 
     private fun onClickItemDecline(roomId: String) {
 //        listener?.onClickItemDecline(roomId);
-        binding.room = roomViewModel.getLeaveRoom();
-        roomViewModel.setLeaveRoom(roomId);
+        roomFragmentViewModelFactory.getViewModel().getLeaveRoom();
+        roomFragmentViewModelFactory.getViewModel().setLeaveRoom(roomId);
     }
 
     private fun onClickItemPreview(roomId: String) {
@@ -142,8 +141,8 @@ class RoomFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun onClickAddToFavourite(roomId: String) {
-        binding.roomObject = roomViewModel.getAddToFavouriteResult();
-        roomViewModel.setAddToFavourite(roomId);
+        binding.roomObject = roomFragmentViewModelFactory.getViewModel().getAddToFavouriteResult();
+        roomFragmentViewModelFactory.getViewModel().setAddToFavourite(roomId);
     }
 
     override fun onAttach(context: Context) {
