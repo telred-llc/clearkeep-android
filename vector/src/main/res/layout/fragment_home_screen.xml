@@ -5,6 +5,21 @@
 
     <data>
 
+        <import type="java.util.List" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
+        <import type="android.arch.lifecycle.LiveData" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Room" />
+
+        <variable
+            name="roomsDirectMessage"
+            type="LiveData&lt;Resource&lt;List&lt;Room>>>" />
+
+        <variable
+            name="roomsRoomMessage"
+            type="LiveData&lt;Resource&lt;List&lt;Room>>>" />
     </data>
 
     <LinearLayout
@@ -26,9 +41,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:baselineAligned="false"
                 android:gravity="bottom"
-                android:orientation="horizontal"
-                android:baselineAligned="false">
+                android:orientation="horizontal">
 
                 <FrameLayout
                     android:layout_width="0dp"
@@ -43,10 +58,9 @@
                         android:layout_marginEnd="20dp"
                         android:layout_marginBottom="10dp"
                         android:background="@drawable/circle_background"
-                        android:text="@string/zero"
                         android:textAlignment="center"
                         android:textColor="@color/main_text_color"
-                        android:visibility="invisible" />
+                        app:roomsHighlightCount="@{roomsDirectMessage.data}" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -62,10 +76,9 @@
                         android:layout_marginEnd="20dp"
                         android:layout_marginBottom="10dp"
                         android:background="@drawable/circle_background"
-                        android:text="@string/zero"
                         android:textAlignment="center"
                         android:textColor="@color/main_text_color"
-                        android:visibility="invisible" />
+                        app:roomsHighlightCount="@{roomsRoomMessage.data}" />
                 </FrameLayout>
             </LinearLayout>
         </FrameLayout>

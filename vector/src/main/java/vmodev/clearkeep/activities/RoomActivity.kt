@@ -1166,7 +1166,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
             // send the read receipt
             currentRoom!!.sendReadReceipt(latestDisplayedEvent, object : ApiCallback<Void> {
-                override fun onSuccess(info: Void) {
+                override fun onSuccess(info: Void?) {
                     // reported by a rageshake that mLatestDisplayedEvent.evenId was null whereas it was tested before being used
                     // use a final copy of the event
                     try {

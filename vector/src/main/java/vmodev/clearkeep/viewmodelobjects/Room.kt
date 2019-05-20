@@ -23,5 +23,6 @@ data class Room(
         @field:SerializedName("notifyCount") val notifyCount: Int,
         @field:SerializedName("roomMemberId") val roomMemberId: String,
         @field:SerializedName("roomMemberStatus") val roomMemberStatus: Byte?,
-        @field:SerializedName("version") val version : Int
+        @field:SerializedName("version") val version: Int,
+        @field:SerializedName("highlightCount") val highlightCount: Int
 )

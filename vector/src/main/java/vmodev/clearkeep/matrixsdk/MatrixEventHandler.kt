@@ -74,6 +74,11 @@ class MatrixEventHandler @Inject constructor(private val application: Applicatio
                 roomRepository.updateRoomFromRemote(event?.roomId);
             }
         }
+        if (event?.type?.compareTo("m.room.encrypted") == 0) {
+            if (event?.roomId != null) {
+                roomRepository.updateRoomFromRemote(event?.roomId);
+            }
+        }
     }
 
     /**

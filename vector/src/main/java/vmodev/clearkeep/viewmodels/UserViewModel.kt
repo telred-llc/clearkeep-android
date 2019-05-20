@@ -7,6 +7,7 @@ import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import javax.inject.Inject
 
@@ -59,5 +60,9 @@ class UserViewModel @Inject constructor(userRepository: UserRepository) : Abstra
 
     override fun getUsersInRoomResult(): LiveData<Resource<List<User>>> {
         return usersInRoom;
+    }
+
+    override fun getRoomViewModel(): AbstractRoomViewModel {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

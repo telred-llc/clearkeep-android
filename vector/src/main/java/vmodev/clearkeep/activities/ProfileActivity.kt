@@ -7,6 +7,7 @@ import android.content.DialogInterface
 import android.databinding.DataBindingUtil
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AlertDialog
 import dagger.android.DaggerActivity
 import dagger.android.support.DaggerAppCompatActivity
@@ -20,13 +21,14 @@ import im.vector.util.VectorUtils
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
+import vmodev.clearkeep.activities.interfaces.IProfileActivity
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.databases.ClearKeepDatabase
 import vmodev.clearkeep.viewmodels.UserViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import javax.inject.Inject
 
-class ProfileActivity : DaggerAppCompatActivity(), LifecycleOwner {
+class ProfileActivity : DaggerAppCompatActivity(), IProfileActivity {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
@@ -83,5 +85,9 @@ class ProfileActivity : DaggerAppCompatActivity(), LifecycleOwner {
                     .setNegativeButton(R.string.cancel, null)
                     .show()
         }
+    }
+
+    override fun getActivity(): FragmentActivity {
+        return this;
     }
 }
