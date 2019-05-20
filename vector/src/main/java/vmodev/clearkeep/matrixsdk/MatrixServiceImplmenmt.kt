@@ -16,6 +16,7 @@ import io.reactivex.functions.Function
 import io.reactivex.internal.operators.observable.ObservableAll
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.crypto.MXCRYPTO_ALGORITHM_MEGOLM
 import org.matrix.androidsdk.data.Room
 import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.data.RoomTag
@@ -197,7 +198,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                                     }
                                 }
                             }
-                                    , { e ->
+                                , { e ->
                                 kotlin.run {
                                     currentIndex++;
                                     listRoom.add(matrixRoomToRoom(t));
@@ -338,7 +339,6 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                                 }
                             })
                         }
-
                     }
 
                     override fun onUnexpectedError(p0: Exception?) {
@@ -369,15 +369,15 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         }
         val sourceSecondary = if (room.isInvited) 0b01000000 else 0b00000000;
         val sourceThird = if ((room.accountData?.keys
-                        ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
+                ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
         var timeUpdateLong: Long = 0;
         room.roomSummary?.let { roomSummary -> timeUpdateLong = roomSummary.latestReceivedEvent.originServerTs }
         val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
         val rooMemberOnlineStatus: Byte = if (roomMemberId.isNullOrEmpty()) 0 else if (VectorUtils.getUserOnlineStatus(application, session!!, roomMemberId, null).compareTo("Online now") == 0) 1 else 0;
 //        Log.d("Room Type: ", (sourcePrimary or sourceSecondary or sourceThird).toString() + "-----" + room.getRoomDisplayName(application))
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
-                , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
-                , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount);
+            , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
+            , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount);
         return roomObj;
     }
 
@@ -524,7 +524,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                 }
             }, { t ->
                 kotlin.run {
-                    session!!.createDirectMessageRoom(userId, object : ApiCallback<String> {
+                    session!!.createDirectMessageRoom(userId, MXCRYPTO_ALGORITHM_MEGOLM, object : ApiCallback<String> {
                         override fun onSuccess(p0: String?) {
                             p0?.let { s ->
                                 val room = session!!.dataHandler.getRoom(s);
@@ -618,7 +618,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
     override fun createNewRoom(name: String, topic: String, visibility: String): Observable<vmodev.clearkeep.viewmodelobjects.Room> {
         setMXSession();
         return Observable.create<vmodev.clearkeep.viewmodelobjects.Room> { emitter ->
-            session!!.createRoom(name, topic, visibility, null, null, object : ApiCallback<String> {
+            session!!.createRoom(name, topic, visibility, null, MXCRYPTO_ALGORITHM_MEGOLM, object : ApiCallback<String> {
                 override fun onSuccess(p0: String?) {
                     p0?.let { s ->
                         val room = session!!.dataHandler.getRoom(s)
@@ -902,7 +902,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                                 }
                             }
                         }
-                                , { e ->
+                            , { e ->
                             kotlin.run {
                                 currentIndex++;
                                 listRoom.add(matrixRoomToRoom(t));
