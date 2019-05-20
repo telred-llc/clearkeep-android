@@ -15,8 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:baselineAligned="false"
+        android:orientation="horizontal">
 
         <FrameLayout
             android:layout_width="70dp"
@@ -39,8 +39,8 @@
                 android:src="@color/lock_background"
                 app:civ_border_color="@android:color/white"
                 app:civ_border_width="2dp"
-                app:visibleGone="@{Room.type == 1 || Room.type == 129}"
-                app:status="@{Room.roomMemberStatus}"/>
+                app:status="@{Room.roomMemberStatus}"
+                app:visibleGone="@{Room.type == 1 || Room.type == 129}" />
         </FrameLayout>
 
         <LinearLayout
@@ -66,7 +66,8 @@
                 android:layout_height="0dp"
                 android:layout_marginHorizontal="10dp"
                 android:layout_weight="1"
-                android:text="@{Room.name}"
+                android:singleLine="true"
+                android:text="@{Room.lastMessage}"
                 android:textColor="@color/main_text_color_hint"
                 android:textSize="@dimen/text_15_sp" />
         </LinearLayout>
@@ -89,8 +90,8 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_gravity="end">
+                android:layout_gravity="end"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/text_view_time"
@@ -98,7 +99,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:textAlignment="textEnd"
-                    app:timeStamp="@{Room.updatedDate}"/>
+                    app:timeStamp="@{Room.updatedDate}" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="wrap_content"

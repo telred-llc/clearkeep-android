@@ -9,6 +9,7 @@ import android.util.Log
 import com.google.gson.Gson
 import im.vector.Matrix
 import im.vector.util.HomeRoomsViewModel
+import im.vector.util.RoomUtils
 import im.vector.util.VectorUtils
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -371,13 +372,18 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         val sourceThird = if ((room.accountData?.keys
                 ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
         var timeUpdateLong: Long = 0;
-        room.roomSummary?.let { roomSummary -> timeUpdateLong = roomSummary.latestReceivedEvent.originServerTs }
+        var lastMessage: String = "";
+        room.roomSummary?.let { roomSummary ->
+            timeUpdateLong = roomSummary.latestReceivedEvent.originServerTs
+            lastMessage = RoomUtils.getRoomMessageToDisplay(application, session!!, roomSummary).toString();
+        }
         val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
+
         val rooMemberOnlineStatus: Byte = if (roomMemberId.isNullOrEmpty()) 0 else if (VectorUtils.getUserOnlineStatus(application, session!!, roomMemberId, null).compareTo("Online now") == 0) 1 else 0;
 //        Log.d("Room Type: ", (sourcePrimary or sourceSecondary or sourceThird).toString() + "-----" + room.getRoomDisplayName(application))
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
             , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
-            , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount);
+            , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, lastMessage = lastMessage);
         return roomObj;
     }
 
