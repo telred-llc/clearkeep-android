@@ -33,7 +33,7 @@ class PreviewInviteRoomActivity : DaggerAppCompatActivity(), LifecycleOwner {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = DataBindingUtil.setContentView<ActivityPreviewInviteRoomBinding>(this, R.layout.activity_preview_invite_room, dataBindingComponent);
-        val roomId: String = intent.getStringExtra("ROOM_ID") ?: ""
+        val roomId: String = intent.getStringExtra(ROOM_ID) ?: ""
         mxSession = Matrix.getInstance(applicationContext).defaultSession;
         setSupportActionBar(binding.toolbar);
         supportActionBar!!.setTitle(R.string.profile);
@@ -85,5 +85,9 @@ class PreviewInviteRoomActivity : DaggerAppCompatActivity(), LifecycleOwner {
         binding.buttonDecline.setOnClickListener { v ->
             roomViewModel.setLeaveRoom(roomId)
         }
+    }
+
+    companion object {
+        const val ROOM_ID = "ROOM_ID";
     }
 }

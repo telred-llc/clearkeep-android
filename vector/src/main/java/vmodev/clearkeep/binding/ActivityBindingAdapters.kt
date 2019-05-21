@@ -40,4 +40,8 @@ class ActivityBindingAdapters constructor(val activity: FragmentActivity) : Imag
         else
             textView.visibility = View.VISIBLE
     }
+
+    override fun bindEncrypted(imageView: ImageView, encrypted: Byte?) {
+        encrypted?.let { imageView.setImageResource(if (it.compareTo(0) == 0) R.drawable.ic_lock_outline_grey_24dp else R.drawable.ic_lock_outline_green_24dp); }
+    }
 }

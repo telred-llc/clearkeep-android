@@ -15,6 +15,7 @@ import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorHomeActivity
 import im.vector.activity.VectorRoomActivity
+import im.vector.activity.VectorUnifiedSearchActivity
 import im.vector.databinding.ActivityHomeScreenBinding
 import im.vector.services.EventStreamService
 import im.vector.ui.badge.BadgeProxy
@@ -94,7 +95,8 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         switchFragment(HomeScreenFragment.newInstance());
 
         binding.frameLayoutSearch.setOnClickListener { v ->
-            val intent = Intent(this, SearchActivity::class.java);
+//            val intent = Intent(this, SearchActivity::class.java);
+            val intent = Intent(this, UnifiedSearchActivity::class.java)
             startActivity(intent);
         }
         binding.user = homeScreenViewModelFactory.getViewModel().getUserById();

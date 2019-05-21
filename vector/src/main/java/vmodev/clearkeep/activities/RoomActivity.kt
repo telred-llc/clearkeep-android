@@ -74,6 +74,7 @@ import org.matrix.androidsdk.rest.model.message.Message
 import org.matrix.androidsdk.util.JsonUtils
 import org.matrix.androidsdk.util.Log
 import org.matrix.androidsdk.util.PermalinkUtils
+import vmodev.clearkeep.fragments.MessageListFragment
 import vmodev.clearkeep.ultis.ReadMarkerManager
 import vmodev.clearkeep.ultis.RoomMediasSender
 import java.util.*
@@ -81,7 +82,7 @@ import java.util.*
 class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPreviewDataListener,
         MatrixMessageListFragment.IEventSendingListener,
         MatrixMessageListFragment.IOnScrollListener,
-        VectorMessageListFragment.VectorMessageListFragmentListener,
+        MessageListFragment.VectorMessageListFragmentListener,
         VectorReadReceiptsDialogFragment.VectorReadReceiptsDialogFragmentListener {
     companion object {
         // the session
@@ -142,7 +143,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     val CONFIRM_MEDIA_REQUEST_CODE = 7
 
-    private var mVectorMessageListFragment: VectorMessageListFragment? = null
+    private var mVectorMessageListFragment: MessageListFragment? = null
     private var mxSession: MXSession? = null
 
     private var currentRoom: Room? = null
@@ -642,7 +643,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         CommonActivityUtils.resumeEventStream(this)
 
         val fm = supportFragmentManager
-        mVectorMessageListFragment = fm.findFragmentByTag(TAG_FRAGMENT_MATRIX_MESSAGE_LIST) as VectorMessageListFragment?
+        mVectorMessageListFragment = fm.findFragmentByTag(TAG_FRAGMENT_MATRIX_MESSAGE_LIST) as MessageListFragment?
         if (mVectorMessageListFragment == null) {
             Log.d(LOG_TAG, "Create VectorMessageListFragment")
 
@@ -654,7 +655,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     null)
             else
                 VectorMessageListFragment.PREVIEW_MODE_READ_ONLY
-            mVectorMessageListFragment = VectorMessageListFragment.newInstance(mMyUserId, roomId, mEventId,
+            mVectorMessageListFragment = MessageListFragment.newInstance(mMyUserId, roomId, mEventId,
                     previewMode,
                     org.matrix.androidsdk.R.layout.fragment_matrix_message_list_fragment)
             fm.beginTransaction().add(R.id.anchor_fragment_messages, mVectorMessageListFragment!!, TAG_FRAGMENT_MATRIX_MESSAGE_LIST).commit()
@@ -716,7 +717,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                             showWaitingView()
 
                             WidgetsManager.getSharedInstance().closeWidget(mxSession, currentRoom, widget.widgetId, object : ApiCallback<Void> {
-                                override fun onSuccess(info: Void) {
+                                override fun onSuccess(info: Void?) {
                                     hideWaitingView()
                                 }
 

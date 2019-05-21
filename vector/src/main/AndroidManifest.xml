@@ -90,6 +90,7 @@
         android:theme="@style/AppTheme.Light"
         tools:replace="allowBackup,label">
         <activity android:name="vmodev.clearkeep.activities.DemoEmptyActivity"></activity>
+        <activity android:name="vmodev.clearkeep.activities.UnifiedSearchActivity" />
         <activity android:name="vmodev.clearkeep.activities.RolesPermissionActivity" />
         <activity android:name="vmodev.clearkeep.activities.OtherRoomSettingsAdvancedActivity" />
         <activity android:name="vmodev.clearkeep.activities.OtherRoomSettings" />

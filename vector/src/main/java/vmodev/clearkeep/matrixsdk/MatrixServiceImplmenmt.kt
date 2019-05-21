@@ -199,7 +199,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                                     }
                                 }
                             }
-                                , { e ->
+                                    , { e ->
                                 kotlin.run {
                                     currentIndex++;
                                     listRoom.add(matrixRoomToRoom(t));
@@ -370,7 +370,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         }
         val sourceSecondary = if (room.isInvited) 0b01000000 else 0b00000000;
         val sourceThird = if ((room.accountData?.keys
-                ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
+                        ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
         var timeUpdateLong: Long = 0;
         var lastMessage: String = "";
         room.roomSummary?.let { roomSummary ->
@@ -382,8 +382,9 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         val rooMemberOnlineStatus: Byte = if (roomMemberId.isNullOrEmpty()) 0 else if (VectorUtils.getUserOnlineStatus(application, session!!, roomMemberId, null).compareTo("Online now") == 0) 1 else 0;
 //        Log.d("Room Type: ", (sourcePrimary or sourceSecondary or sourceThird).toString() + "-----" + room.getRoomDisplayName(application))
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
-            , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
-            , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, lastMessage = lastMessage);
+                , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
+                , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, lastMessage = lastMessage
+                , encrypted = if (room.isEncrypted) 1 else 0);
         return roomObj;
     }
 
@@ -908,7 +909,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                                 }
                             }
                         }
-                            , { e ->
+                                , { e ->
                             kotlin.run {
                                 currentIndex++;
                                 listRoom.add(matrixRoomToRoom(t));

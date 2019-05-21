@@ -28,12 +28,13 @@ import org.matrix.androidsdk.util.ResourceUtils
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.BottomDiaglogImageSendFile
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
+import vmodev.clearkeep.fragments.MessageListFragment
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 import java.util.ArrayList
 
-class RoomMediasSender constructor(val roomActivity: RoomActivity, val vectorMessageListFragment: VectorMessageListFragment, val mediasCache: MXMediaCache) {
+class RoomMediasSender constructor(val roomActivity: RoomActivity, val vectorMessageListFragment: MessageListFragment, val mediasCache: MXMediaCache) {
     private val LOG_TAG = im.vector.util.VectorRoomMediasSender::class.java.simpleName
 
     private val TAG_FRAGMENT_IMAGE_SIZE_DIALOG = "TAG_FRAGMENT_IMAGE_SIZE_DIALOG"
@@ -55,7 +56,7 @@ class RoomMediasSender constructor(val roomActivity: RoomActivity, val vectorMes
     private var mVectorRoomActivity: RoomActivity? = null;
 
     // the room fragment
-    private var mVectorMessageListFragment: VectorMessageListFragment? = null;
+    private var mVectorMessageListFragment: MessageListFragment? = null;
 
     // the medias cache
     private var mMediasCache: MXMediaCache? = null;

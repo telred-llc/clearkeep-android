@@ -26,11 +26,12 @@ import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.util.Log
 import vmodev.clearkeep.activities.RoomActivity
+import vmodev.clearkeep.fragments.MessageListFragment
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import java.util.ArrayList
 
-class ReadMarkerManager constructor(val activity: RoomActivity, val messageListFragment: VectorMessageListFragment,
+class ReadMarkerManager constructor(val activity: RoomActivity, val messageListFragment: MessageListFragment,
                                     val session: MXSession, val room: Room?, @UpdateMode val updateMode: Int,
                                     val jumpToFirstUnreadView: View?) : VectorMessagesAdapter.ReadMarkerListener {
     private val LOG_TAG = ReadMarkerManager::class.java.simpleName
@@ -56,7 +57,7 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
     private var mJumpToUnreadViewSpinner: View? = null
 
     private var mActivity: RoomActivity? = null
-    private var mVectorMessageListFragment: VectorMessageListFragment? = null
+    private var mVectorMessageListFragment: MessageListFragment? = null
     private var mSession: MXSession? = null
     private var mRoom: Room? = null
     private var mRoomSummary: RoomSummary? = null
