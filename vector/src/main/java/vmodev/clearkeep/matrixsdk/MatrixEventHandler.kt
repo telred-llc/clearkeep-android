@@ -32,7 +32,8 @@ class MatrixEventHandler @Inject constructor(private val application: Applicatio
         super.onAccountDataUpdated()
         val user = mxSession!!.myUser;
         Log.d("UserId:", user.user_id);
-        userRepository.updateUser(user.user_id, user.displayname, user.avatarUrl);
+        val userAvatarUrl = if (user.avatarUrl.isNullOrEmpty()) "" else user.avatarUrl;
+        userRepository.updateUser(user.user_id, user.displayname, userAvatarUrl );
     }
 
     override fun onAccountInfoUpdate(myUser: MyUser?) {
@@ -48,13 +49,13 @@ class MatrixEventHandler @Inject constructor(private val application: Applicatio
 
     override fun onLiveEventsChunkProcessed(fromToken: String?, toToken: String?) {
         super.onLiveEventsChunkProcessed(fromToken, toToken)
-        Log.d("Event Chunk:" , fromToken + toToken);
+        Log.d("Event Chunk:", fromToken + toToken);
     }
 
     override fun onLiveEvent(event: Event?, roomState: RoomState?) {
         super.onLiveEvent(event, roomState)
 
-        Log.d("Event Type:" , event?.type);
+        Log.d("Event Type:", event?.type);
 
         if (event?.type?.compareTo("m.room.join_rules") == 0) {
             if (event?.roomId != null) {

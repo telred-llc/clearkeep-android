@@ -20,6 +20,7 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.text.style.ClickableSpan
 import android.text.style.URLSpan
+import android.util.Pair
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -1139,14 +1140,59 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     override fun onUnknownDevices(event: Event, error: MXCryptoError) {
         refreshNotificationsArea()
-        CommonActivityUtils.displayUnknownDevicesDialog(mxSession,
-                this,
-                error.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>,
-                false
-        ) {
-            mVectorMessageListFragment!!.resendUnsentMessages()
-            refreshNotificationsArea()
+//        CommonActivityUtils.displayUnknownDevicesDialog(mxSession,
+//                this,
+//                error.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>,
+//                false
+//        ) {
+//            mVectorMessageListFragment!!.resendUnsentMessages()
+//            refreshNotificationsArea()
+//        }
+        val devicesInfo = error.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>;
+        devicesInfo?.let {
+            val deviceList = getDevicesList(it);
+            deviceList.forEach { t: Pair<String, List<MXDeviceInfo>>? ->
+                t?.second?.forEach { d: MXDeviceInfo? ->
+                    d?.let { mxDeviceInfo ->
+                        if (mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNVERIFIED || mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNKNOWN) {
+                            mxSession!!.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, mxDeviceInfo.deviceId, mxDeviceInfo.userId, object : SimpleApiCallback<Void>() {
+                                override fun onSuccess(p0: Void?) {
+                                    android.util.Log.d("Verify device success", mxDeviceInfo.deviceId.toString())
+                                }
+                            })
+                        }
+                    }
+                }
+            }
         }
+        mVectorMessageListFragment!!.resendUnsentMessages()
+        refreshNotificationsArea()
+    }
+
+    /**
+     * Convert a MXUsersDevicesMap to a list of List
+     *
+     * @return the list of list
+     */
+    private fun getDevicesList(devicesInfo: MXUsersDevicesMap<MXDeviceInfo>): List<Pair<String, List<MXDeviceInfo>>> {
+        val res = ArrayList<Pair<String, List<MXDeviceInfo>>>()
+
+        // sanity check
+        if (null != devicesInfo) {
+            val userIds = devicesInfo.getUserIds()
+
+            for (userId in userIds) {
+                val deviceInfos = ArrayList<MXDeviceInfo>()
+                val deviceIds = devicesInfo.getUserDeviceIds(userId)
+
+                for (deviceId in deviceIds) {
+                    deviceInfos.add(devicesInfo.getObject(deviceId, userId))
+                }
+                res.add(Pair(userId, deviceInfos))
+            }
+        }
+
+        return res
     }
 
     override fun onConsentNotGiven(event: Event, matrixError: MatrixError) {
@@ -1654,15 +1700,32 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     val cryptoError = e as MXCryptoError
                     if (MXCryptoError.UNKNOWN_DEVICES_CODE == cryptoError.errcode) {
                         hideWaitingView()
-                        CommonActivityUtils.displayUnknownDevicesDialog(mxSession,
-                                this@RoomActivity,
-                                cryptoError.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>,
-                                true,
-                                object : VectorUnknownDevicesFragment.IUnknownDevicesSendAnywayListener {
-                                    override fun onSendAnyway() {
-                                        startIpCall(useJitsiCall, aIsVideoCall)
+//                        CommonActivityUtils.displayUnknownDevicesDialog(mxSession,
+//                                this@RoomActivity,
+//                                cryptoError.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>,
+//                                true,
+//                                object : VectorUnknownDevicesFragment.IUnknownDevicesSendAnywayListener {
+//                                    override fun onSendAnyway() {
+//                                        startIpCall(useJitsiCall, aIsVideoCall)
+//                                    }
+//                                })
+                        val devicesInfo = cryptoError.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>;
+                        devicesInfo?.let {
+                            val deviceList = getDevicesList(it);
+                            deviceList.forEach { t: Pair<String, List<MXDeviceInfo>>? ->
+                                t?.second?.forEach { d: MXDeviceInfo? ->
+                                    d?.let { mxDeviceInfo ->
+                                        if (mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNVERIFIED || mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNKNOWN) {
+                                            mxSession!!.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, mxDeviceInfo.deviceId, mxDeviceInfo.userId, object : SimpleApiCallback<Void>() {
+                                                override fun onSuccess(p0: Void?) {
+                                                    android.util.Log.d("Verify device success", mxDeviceInfo.deviceId.toString())
+                                                }
+                                            })
+                                        }
                                     }
-                                })
+                                }
+                            }
+                        }
 
                         return
                     }

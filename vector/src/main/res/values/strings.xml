@@ -1261,4 +1261,12 @@ Why choose Riot.im?
     <string name="members_only_since_they_were_invited">Members only (since they were invited)</string>
     <string name="members_only_since_they_joined">Members only (since they joined)</string>
     <string name="permissions">Permissions</string>
+    <string name="notification">Notification</string>
+    <string name="calls">Calls</string>
+    <string name="report">Report</string>
+    <string name="term_and_conditions"><![CDATA[Term & Conditions]]></string>
+    <string name="privacy_and_policy">Privacy Policy</string>
+    <string name="copyright">Copyright</string>
+    <string name="mark_all_messages_as_read">Mark all messages as read</string>
+    <string name="clear_cache">Clear cache</string>
 </resources>

@@ -22,6 +22,7 @@ import org.matrix.androidsdk.fragments.MatrixMessageListFragment
 import org.matrix.androidsdk.listeners.MXEventListener
 import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.User
+import vmodev.clearkeep.activities.ViewUserProfileActivity
 
 class SearchPeopleListFragment : VectorBaseFragment() {
 
@@ -108,7 +109,7 @@ class SearchPeopleListFragment : VectorBaseFragment() {
         // the chevron is managed in the header view
         mPeopleListView!!.setGroupIndicator(null)
         mAdapter = VectorParticipantsAdapter(activity,
-                R.layout.adapter_item_vector_add_participants,
+                R.layout.adapter_item_add_participants,
                 R.layout.adapter_item_vector_people_header,
                 mSession, null, false)
         mPeopleListView!!.setAdapter(mAdapter)
@@ -118,19 +119,22 @@ class SearchPeopleListFragment : VectorBaseFragment() {
 
             if (child is ParticipantAdapterItem && child.mIsValid) {
 
-                val startRoomInfoIntent = Intent(activity, VectorMemberDetailsActivity::class.java)
-                startRoomInfoIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MEMBER_ID, child.mUserId)
+//                val startRoomInfoIntent = Intent(activity, VectorMemberDetailsActivity::class.java)
+//                startRoomInfoIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MEMBER_ID, child.mUserId)
+//
+//                if (!TextUtils.isEmpty(child.mAvatarUrl)) {
+//                    startRoomInfoIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MEMBER_AVATAR_URL, child.mAvatarUrl)
+//                }
+//
+//                if (!TextUtils.isEmpty(child.mDisplayName)) {
+//                    startRoomInfoIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MEMBER_DISPLAY_NAME, child.mDisplayName)
+//                }
 
-                if (!TextUtils.isEmpty(child.mAvatarUrl)) {
-                    startRoomInfoIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MEMBER_AVATAR_URL, child.mAvatarUrl)
-                }
-
-                if (!TextUtils.isEmpty(child.mDisplayName)) {
-                    startRoomInfoIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MEMBER_DISPLAY_NAME, child.mDisplayName)
-                }
-
-                startRoomInfoIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MATRIX_ID, mSession!!.credentials.userId)
-                startActivity(startRoomInfoIntent)
+//                startRoomInfoIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MATRIX_ID, mSession!!.credentials.userId)
+//                startActivity(startRoomInfoIntent)
+                val intent = Intent(activity, ViewUserProfileActivity::class.java);
+                intent.putExtra(ViewUserProfileActivity.USER_ID, child.mUserId);
+                startActivity(intent);
             }
 
             true

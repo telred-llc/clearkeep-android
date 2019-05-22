@@ -60,5 +60,10 @@ abstract class ViewModelModule {
     abstract fun bindContactFragmentViewModel(viewModel: ContactFragmentViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractProfileSettingsActivityViewModel::class)
+    abstract fun bindProfileSettingsActivityViewModel(viewModel: ProfileSettingsActivityViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }

@@ -50,6 +50,7 @@ import org.matrix.androidsdk.util.JsonUtils
 import org.matrix.androidsdk.util.Log
 import org.matrix.androidsdk.util.PermalinkUtils
 import vmodev.clearkeep.activities.ProfileActivity
+import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.activities.ViewUserProfileActivity
 import java.io.File
 import java.util.ArrayList
@@ -467,7 +468,7 @@ class MessageListFragment : MatrixMessageListFragment<VectorMessagesAdapter>(), 
      * @param textMsg the event text
      * @param action  an action ic_action_vector_XXX
      */
-    override fun onEventAction(event: Event, textMsg: String, action: Int) {
+    override fun onEventAction(event: Event, textMsg: String?, action: Int) {
         if (action == R.id.ic_action_vector_resend_message) {
             activity!!.runOnUiThread { resend(event) }
         } else if (action == R.id.ic_action_vector_redact_message) {
@@ -497,6 +498,8 @@ class MessageListFragment : MatrixMessageListFragment<VectorMessagesAdapter>(), 
         } else if (action == R.id.ic_action_vector_copy) {
             activity!!.runOnUiThread(object : Runnable {
                 override fun run() {
+                    if (textMsg.isNullOrEmpty())
+                        return
                     copyToClipboard(activity!!, textMsg)
                 }
             })
@@ -526,7 +529,7 @@ class MessageListFragment : MatrixMessageListFragment<VectorMessagesAdapter>(), 
         } else if (action == R.id.ic_action_vector_quote) {
             val attachedActivity = activity
 
-            if ((null != attachedActivity) && (attachedActivity is VectorRoomActivity)) {
+            if ((null != attachedActivity) && (attachedActivity is RoomActivity) && !textMsg.isNullOrEmpty()) {
                 // Quote all paragraphs instead
                 val messageParagraphs = textMsg.split(("\n\n").toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 var quotedTextMsg = ""

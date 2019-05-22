@@ -292,7 +292,7 @@
                 android:layout_weight="0.26"
                 android:background="@drawable/button_background_green"
                 android:fontFamily="sans-serif-medium"
-                android:text="@string/join"
+                android:text="@string/preview"
                 android:textColor="@android:color/white"
                 android:textSize="14sp" />
 
