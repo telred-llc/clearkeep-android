@@ -32,4 +32,10 @@ interface UserDao {
 
     @Query("SELECT * FROM user WHERE roomId =:roomId")
     fun getUsersByRoomId(roomId: String): LiveData<List<User>>
+
+    @Query("UPDATE user SET name =:name WHERE id =:id")
+    fun updateUserName(id: String, name: String)
+
+    @Query("UPDATE user SET name =:name, avatarUrl =:avatarUrl WHERE id=:id")
+    fun updateUserNameAndAvatarUrl(id: String, name: String, avatarUrl: String)
 }

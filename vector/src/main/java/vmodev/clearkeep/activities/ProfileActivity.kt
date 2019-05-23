@@ -4,6 +4,7 @@ import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.DialogInterface
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -34,7 +35,7 @@ class ProfileActivity : DaggerAppCompatActivity(), IProfileActivity {
     lateinit var viewModelFactory: ViewModelProvider.Factory;
     @Inject
     lateinit var clearKeepDatabase: ClearKeepDatabase;
-
+    lateinit var binding: ActivityProfileBinding;
     lateinit var mxSession: MXSession;
 
     private lateinit var userViewModel: AbstractUserViewModel;
@@ -42,26 +43,31 @@ class ProfileActivity : DaggerAppCompatActivity(), IProfileActivity {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val dataBinding = DataBindingUtil.setContentView<ActivityProfileBinding>(this, R.layout.activity_profile, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_profile, dataBindingComponent);
         mxSession = Matrix.getInstance(this.applicationContext).defaultSession;
-        setSupportActionBar(dataBinding.toolbar);
-        supportActionBar!!.setTitle(R.string.profile);
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true);
-        supportActionBar!!.setDisplayShowHomeEnabled(true);
-        dataBinding.toolbar.setNavigationOnClickListener { v ->
-            kotlin.run {
-                onBackPressed();
-            }
+        setSupportActionBar(binding.toolbar);
+        supportActionBar?.setTitle(R.string.profile);
+        supportActionBar?.setDisplayHomeAsUpEnabled(true);
+        supportActionBar?.setDisplayShowHomeEnabled(true);
+        binding.toolbar.setNavigationOnClickListener {
+            onBackPressed();
         }
         userViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractUserViewModel::class.java);
         userViewModel.setUserId(mxSession.myUserId);
-        dataBinding.user = userViewModel.getUserData();
-        dataBinding.lifecycleOwner = this;
-        dataBinding.buttonSignOut.setOnClickListener { v ->
-            kotlin.run {
-
-                signOut();
-            }
+        binding.user = userViewModel.getUserData();
+        binding.lifecycleOwner = this;
+        binding.buttonSignOut.setOnClickListener {
+            signOut();
+        }
+        binding.buttonSetting.setOnClickListener {
+            val intentProfileSetting = Intent(this, ProfileSettingsActivity::class.java);
+            intentProfileSetting.putExtra(ProfileSettingsActivity.USER_ID, mxSession.myUserId);
+            startActivity(intentProfileSetting);
+        }
+        binding.buttonEditProfile.setOnClickListener {
+            val intentEditProfile = Intent(this, EditProfileActivity::class.java);
+            intentEditProfile.putExtra(EditProfileActivity.USER_ID, mxSession.myUserId)
+            startActivity(intentEditProfile)
         }
     }
 

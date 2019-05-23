@@ -6,6 +6,7 @@ import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.User
+import java.io.InputStream
 
 public interface MatrixService {
     fun getListDirectMessageConversation(): LiveData<List<Room>>;
@@ -29,4 +30,7 @@ public interface MatrixService {
     fun removeFromFavourite(roomId: String): Observable<vmodev.clearkeep.viewmodelobjects.Room>;
     fun getUsersInRoom(roomId: String): Observable<List<User>>;
     fun getUsersInRoomAndAddToRoomUserJoin(roomId: String): Observable<RoomAndRoomUserJoin>;
+    fun updateUser(name: String, avatar: InputStream?): Observable<User>;
+    fun updateUser(name: String): Observable<String>;
+    fun updateUser(avatar: InputStream): Observable<String>;
 }

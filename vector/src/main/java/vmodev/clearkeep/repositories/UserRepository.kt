@@ -15,6 +15,7 @@ import vmodev.clearkeep.matrixsdk.MatrixService
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
+import java.io.InputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -141,6 +142,41 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
                         .toFlowable(BackpressureStrategy.LATEST));
             }
         }.asLiveData()
+    }
+
+    fun updateUser(userId: String, name: String, avatarImage: InputStream?): LiveData<Resource<User>> {
+        return object : MatrixBoundSource<User, User>(executors) {
+            override fun saveCallResult(item: User) {
+                if (item.avatarUrl.isNullOrEmpty())
+                    userDao.updateUserName(item.id, item.name)
+                else
+                    userDao.updateUserNameAndAvatarUrl(item.id, item.name, item.avatarUrl)
+            }
+
+            override fun saveCallResultType(item: User) {
+
+            }
+
+            override fun shouldFetch(data: User?): Boolean {
+                return true;
+            }
+
+            override fun loadFromDb(): LiveData<User> {
+                return userDao.findById(userId)
+            }
+
+            override fun createCall(): LiveData<User> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.updateUser(name, avatarImage)
+                        .subscribeOn(Schedulers.io()).observeOn(Schedulers.io())
+                        .toFlowable(BackpressureStrategy.LATEST))
+            }
+
+            override fun createCallAsReesult(): LiveData<User> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.updateUser(name, avatarImage)
+                        .subscribeOn(Schedulers.io()).observeOn(Schedulers.io())
+                        .toFlowable(BackpressureStrategy.LATEST))
+            }
+        }.asLiveData();
     }
 
     class UserHandleObject constructor(val userId: String, val name: String, val avatarUrl: String);

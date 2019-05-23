@@ -13,6 +13,7 @@ import im.vector.util.RoomUtils
 import im.vector.util.VectorUtils
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Consumer
 import io.reactivex.functions.Function
 import io.reactivex.internal.operators.observable.ObservableAll
 import io.reactivex.schedulers.Schedulers
@@ -21,6 +22,7 @@ import org.matrix.androidsdk.crypto.MXCRYPTO_ALGORITHM_MEGOLM
 import org.matrix.androidsdk.data.Room
 import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.data.RoomTag
+import org.matrix.androidsdk.listeners.IMXMediaUploadListener
 import org.matrix.androidsdk.rest.callback.ApiCallback
 import org.matrix.androidsdk.rest.callback.SimpleApiCallback
 import org.matrix.androidsdk.rest.model.MatrixError
@@ -34,6 +36,7 @@ import vmodev.clearkeep.ultis.SearchMessageByTextResult
 import vmodev.clearkeep.viewmodelobjects.MessageSearchText
 import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.User
+import java.io.InputStream
 import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -163,8 +166,10 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                 //                val myUser = session!!.myUser;
 
                 if (myUser != null) {
-                    val avatarUrl = session!!.contentManager.getDownloadableUrl(myUser.avatarUrl);
-                    val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = avatarUrl, status = if (myUser.isActive) 1 else 0, roomId = "");
+                    var avatar = "";
+                    var result = session!!.contentManager.getDownloadableUrl(myUser.avatarUrl);
+                    result?.let { avatar = result }
+                    val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = avatar, status = if (myUser.isActive) 1 else 0, roomId = "");
                     emitter.onNext(user);
                     emitter.onComplete();
                 } else {
@@ -401,7 +406,13 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                     p0?.forEach { t: RoomMember? ->
                         t?.userId?.let {
                             //                            if (t.userId.compareTo(session!!.myUserId) != 0) {
-                            val avatar: String? = if (t?.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(t?.avatarUrl);
+                            var avatar = "";
+                            if (t?.avatarUrl.isNullOrEmpty() || t == null) {
+                                avatar = "";
+                            } else {
+                                var result = session!!.contentManager.getDownloadableUrl(t?.avatarUrl);
+                                result?.let { avatar = result }
+                            };
                             users.add(User(name = t?.name, roomId = "", status = 0, avatarUrl = avatar, id = t?.userId));
 //                            }
                         }
@@ -440,7 +451,13 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                             val users = ArrayList<User>();
                             p0?.results?.forEach { t: org.matrix.androidsdk.rest.model.User? ->
                                 kotlin.run {
-                                    val avatar = if (t?.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(t?.avatarUrl);
+                                    var avatar = "";
+                                    if (t?.avatarUrl.isNullOrEmpty() || t == null) {
+                                        avatar = "";
+                                    } else {
+                                        var result = session!!.contentManager.getDownloadableUrl(t?.avatarUrl);
+                                        result?.let { avatar = result }
+                                    };
                                     t?.let { user ->
                                         users.add(User(id = user.user_id, name = user.displayname, avatarUrl = avatar, status = if (user.isActive) 1 else 0, roomId = ""))
                                     }
@@ -960,6 +977,111 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                 override fun onNetworkError(p0: Exception?) {
                     emitter.onError(Throwable(p0?.message))
                     emitter.onComplete()
+                }
+            })
+        }
+    }
+
+    override fun updateUser(name: String, avatar: InputStream?): Observable<User> {
+        if (avatar == null) {
+            return Observable.create<User> {
+                updateUser(name).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe({ sn ->
+                    it.onNext(User(name = sn, id = session!!.myUserId, roomId = "", status = 0, avatarUrl = ""))
+                    it.onComplete();
+                }, { en ->
+                    it.onError(en);
+                    it.onComplete();
+                })
+            }
+        } else {
+            return Observable.create<User> {
+                updateUser(name).observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe({ sn ->
+                    updateUser(avatar).observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe({ sa ->
+                        it.onNext(User(name = sn, id = session!!.myUserId, avatarUrl = sa, status = 0, roomId = ""));
+                        it.onComplete();
+                    }, { ea ->
+                        it.onError(ea);
+                        it.onComplete();
+                    })
+                }, { en ->
+                    it.onError(en);
+                    it.onComplete();
+                })
+            }
+        }
+    }
+
+    override fun updateUser(name: String): Observable<String> {
+        return Observable.create<String> {
+            session!!.myUser.updateDisplayName(name, object : ApiCallback<Void> {
+                override fun onSuccess(p0: Void?) {
+                    it.onNext(name);
+                    it.onComplete();
+                }
+
+                override fun onUnexpectedError(p0: Exception?) {
+                    it.onError(Throwable(p0?.message));
+                    it.onComplete();
+                }
+
+                override fun onMatrixError(p0: MatrixError?) {
+                    it.onError(Throwable(p0?.message));
+                    it.onComplete();
+                }
+
+                override fun onNetworkError(p0: Exception?) {
+                    it.onError(Throwable(p0?.message));
+                    it.onComplete();
+                }
+            })
+        }
+    }
+
+    override fun updateUser(avatar: InputStream): Observable<String> {
+        return Observable.create<String> {
+            session!!.mediaCache.uploadContent(avatar, "", "PNG", "", object : IMXMediaUploadListener {
+                override fun onUploadProgress(p0: String?, p1: IMXMediaUploadListener.UploadStats?) {
+                    //Do something
+                }
+
+                override fun onUploadCancel(p0: String?) {
+                    // Do Something
+                }
+
+                override fun onUploadStart(p0: String?) {
+                    // Do Something
+                }
+
+                override fun onUploadComplete(p0: String?, p1: String?) {
+                    session!!.myUser.updateAvatarUrl(p1, object : ApiCallback<Void> {
+                        override fun onSuccess(p0: Void?) {
+                            var avatar = "";
+                            var result = session!!.contentManager.getDownloadableUrl(session!!.myUser.avatarUrl);
+                            result?.let { avatar = result }
+                            it.onNext(avatar);
+                            it.onComplete();
+                        }
+
+                        override fun onUnexpectedError(p0: Exception?) {
+                            it.onError(Throwable(p0?.message))
+                            it.onComplete();
+                        }
+
+                        override fun onMatrixError(p0: MatrixError?) {
+                            it.onError(Throwable(p0?.message))
+                            it.onComplete();
+                        }
+
+                        override fun onNetworkError(p0: Exception?) {
+                            it.onError(Throwable(p0?.message))
+                            it.onComplete();
+                        }
+                    })
+                }
+
+                override fun onUploadError(p0: String?, p1: Int, p2: String?) {
+                    it.onError(Throwable(p2));
+                    it.onComplete();
                 }
             })
         }

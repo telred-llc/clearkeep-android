@@ -22,7 +22,8 @@ import javax.inject.Singleton
     , AbstractViewUserProfileActivityModule::class
     , AbstractOtherRoomSettingsAdvancedActivityModule::class
     , AbstractRolesPermissionActivityModule::class
-    , AbstractProfileSettingsActivityModule::class])
+    , AbstractProfileSettingsActivityModule::class
+    , AbstractEditProfileActivityModule::class])
 interface AppComponent : AndroidInjector<ClearKeepApplication> {
     override fun inject(instance: ClearKeepApplication?)
 //    fun inject(application: Application)

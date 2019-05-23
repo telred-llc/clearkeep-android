@@ -65,5 +65,10 @@ abstract class ViewModelModule {
     abstract fun bindProfileSettingsActivityViewModel(viewModel: ProfileSettingsActivityViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractEditProfileActivityViewModel::class)
+    abstract fun bindEditProfileActivityViewModel(viewModel: EditProfileActivityViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }

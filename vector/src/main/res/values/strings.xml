@@ -1269,4 +1269,9 @@ Why choose Riot.im?
     <string name="copyright">Copyright</string>
     <string name="mark_all_messages_as_read">Mark all messages as read</string>
     <string name="clear_cache">Clear cache</string>
+    <string name="enter_name">Enter name</string>
+    <string name="update_profile_success">Update profile success</string>
+    <string name="display_name_cannot_empty">Display name cannot empty</string>
+    <string name="you_need_enter_you_name">You need enter your name</string>
+    <string name="close">Close</string>
 </resources>
