@@ -6,10 +6,7 @@ import dagger.Module
 import dagger.Provides
 import im.vector.Matrix
 import org.matrix.androidsdk.MXSession
-import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
-import vmodev.clearkeep.databases.ClearKeepDatabase
-import vmodev.clearkeep.databases.RoomDao
-import vmodev.clearkeep.databases.UserDao
+import vmodev.clearkeep.databases.*
 import vmodev.clearkeep.matrixsdk.MatrixService
 import vmodev.clearkeep.matrixsdk.MatrixServiceImplmenmt
 import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
@@ -42,5 +39,11 @@ class AppModule {
     @Provides
     fun provideRoomUserDao(clearKeepDatabase: ClearKeepDatabase): AbstractRoomUserJoinDao {
         return clearKeepDatabase.roomUserJoinDao();
+    }
+
+    @Singleton
+    @Provides
+    fun provideDeviceSettingsDao(clearKeepDatabase: ClearKeepDatabase): AbstractDeviceSettingsDao {
+        return clearKeepDatabase.deviceSettingsDao();
     }
 }

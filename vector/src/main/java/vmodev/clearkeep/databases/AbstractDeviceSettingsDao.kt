@@ -1,5 +1,6 @@
 package vmodev.clearkeep.databases
 
+import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 import vmodev.clearkeep.viewmodelobjects.DeviceSettings
 
@@ -28,4 +29,7 @@ abstract class AbstractDeviceSettingsDao {
 
     @Query("UPDATE deviceSettings SET rageShakeToReportBug =:status WHERE id =:id")
     abstract fun updateRageShakeToReportBug(id: String, status: Byte)
+
+    @Query("SELECT * FROM devicesettings WHERE id =:id")
+    abstract fun findById(id: String): LiveData<DeviceSettings>;
 }

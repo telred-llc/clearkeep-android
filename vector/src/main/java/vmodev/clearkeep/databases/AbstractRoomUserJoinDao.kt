@@ -23,4 +23,7 @@ abstract class AbstractRoomUserJoinDao {
 
     @Query("SELECT * FROM room INNER JOIN roomUserJoin ON room.id = roomUserJoin.room_id WHERE roomUserJoin.user_id =:userId")
     abstract fun getRoomsWithUserId(userId: String): LiveData<List<Room>>
+//
+//    @Query("DELETE FROM roomUserJoin WHERE roomUserJoin.room_id =:roomId")
+//    abstract fun deleteRoomUserJoinWithRoomId(roomId: String);
 }

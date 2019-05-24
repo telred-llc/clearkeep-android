@@ -1271,7 +1271,14 @@ Why choose Riot.im?
     <string name="clear_cache">Clear cache</string>
     <string name="enter_name">Enter name</string>
     <string name="update_profile_success">Update profile success</string>
-    <string name="display_name_cannot_empty">Display name cannot empty</string>
-    <string name="you_need_enter_you_name">You need enter your name</string>
+    <string name="display_name_cannot_empty">An error occurred</string>
+    <string name="you_need_enter_you_name">Display name cannot be empty</string>
     <string name="close">Close</string>
+    <string name="receive_call_rom_lock_screen">Receive incoming call on you lock screen</string>
+    <string name="integrated_calling">Integrated calling</string>
+    <string name="notifications_on_this_device">Notifications on this device</string>
+    <string name="show_decrypted_content">Show decrypted content</string>
+    <string name="global_notification_content">Global notification settings are avaiable on your ClearKeep web client</string>
+    <string name="pin_rooms_with_missed_notifications">Pin rooms missed notifications</string>
+    <string name="pin_rooms_with_unread_messages">Pin rooms with unread messages</string>
 </resources>

@@ -39,6 +39,11 @@ class ProfileSettingsActivity : DaggerAppCompatActivity(), IProfileSettingsActiv
             intentEditProfile.putExtra(EditProfileActivity.USER_ID, userId);
             startActivity(intentEditProfile);
         }
+        binding.callGroup.setOnClickListener {
+            val intentCalls = Intent(this, CallSettingsActivity::class.java);
+            intentCalls.putExtra(CallSettingsActivity.USER_ID, userId);
+            startActivity(intentCalls)
+        }
     }
 
     override fun getActivity(): FragmentActivity {

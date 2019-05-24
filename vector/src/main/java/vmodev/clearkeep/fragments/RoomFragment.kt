@@ -128,7 +128,7 @@ class RoomFragment : DataBindingDaggerFragment(), IRoomFragment {
 
     private fun onClickItemDecline(roomId: String) {
 //        listener?.onClickItemDecline(roomId);
-        roomFragmentViewModelFactory.getViewModel().getLeaveRoom();
+        binding.room = roomFragmentViewModelFactory.getViewModel().getLeaveRoom();
         roomFragmentViewModelFactory.getViewModel().setLeaveRoom(roomId);
     }
 

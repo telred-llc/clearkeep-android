@@ -3,6 +3,7 @@ package vmodev.clearkeep.binding
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.support.v4.app.FragmentActivity
+import android.support.v7.widget.SwitchCompat
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -12,7 +13,7 @@ import im.vector.R
 import vmodev.clearkeep.ultis.toDateTime
 import vmodev.clearkeep.viewmodelobjects.Room
 
-class ActivityBindingAdapters constructor(val activity: FragmentActivity) : ImageViewBindingAdapters, TextViewBindingAdapters {
+class ActivityBindingAdapters constructor(val activity: FragmentActivity) : ImageViewBindingAdapters, TextViewBindingAdapters, ISwitchCompatViewBindingAdapters {
     override fun bindImage(imageView: ImageView, imageUrl: String?, listener: RequestListener<Drawable?>?) {
         Glide.with(activity).load(imageUrl).listener(listener).placeholder(R.drawable.ic_launcher_app).into(imageView);
     }
@@ -43,5 +44,11 @@ class ActivityBindingAdapters constructor(val activity: FragmentActivity) : Imag
 
     override fun bindEncrypted(imageView: ImageView, encrypted: Byte?) {
         encrypted?.let { imageView.setImageResource(if (it.compareTo(0) == 0) R.drawable.ic_lock_outline_grey_24dp else R.drawable.ic_lock_outline_green_24dp); }
+    }
+
+    override fun bindStatus(switchCompat: SwitchCompat, status: Byte?) {
+        status?.let {
+            switchCompat.isChecked = status.compareTo(0) != 0
+        }
     }
 }

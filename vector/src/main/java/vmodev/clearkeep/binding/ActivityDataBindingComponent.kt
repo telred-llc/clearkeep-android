@@ -14,4 +14,8 @@ class ActivityDataBindingComponent @Inject constructor(val activity: FragmentAct
     override fun getTextViewBindingAdapters(): TextViewBindingAdapters {
         return activityBindingAdapters;
     }
+
+    override fun getISwitchCompatViewBindingAdapters(): ISwitchCompatViewBindingAdapters {
+        return activityBindingAdapters;
+    }
 }
