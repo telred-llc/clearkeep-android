@@ -1281,4 +1281,5 @@ Why choose Riot.im?
     <string name="global_notification_content">Global notification settings are avaiable on your ClearKeep web client</string>
     <string name="pin_rooms_with_missed_notifications">Pin rooms missed notifications</string>
     <string name="pin_rooms_with_unread_messages">Pin rooms with unread messages</string>
+    <string name="notifications">Notifications</string>
 </resources>

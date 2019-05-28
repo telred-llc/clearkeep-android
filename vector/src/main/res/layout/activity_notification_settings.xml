@@ -6,6 +6,17 @@
 
     <data>
 
+        <import type="android.arch.lifecycle.LiveData" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Status" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.DeviceSettings" />
+
+        <variable
+            name="deviceSettings"
+            type="LiveData&lt;Resource&lt;DeviceSettings>>" />
     </data>
 
     <FrameLayout
@@ -15,7 +26,8 @@
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            app:visibleGone="@{deviceSettings.status == Status.LOADING}" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,7 +54,8 @@
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/switch_compat_notification_on_this_device"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    app:status="@{deviceSettings.data.notificationOnThisDevice}"/>
             </LinearLayout>
 
             <LinearLayout
@@ -60,7 +73,8 @@
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/switch_compat_show_decrypted_content"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    app:status="@{deviceSettings.data.showDecryptedContent}"/>
             </LinearLayout>
 
             <TextView
@@ -85,7 +99,8 @@
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/switch_compat_pin_rooms_with_missed_notifications"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    app:status="@{deviceSettings.data.pinRoomWithMissedNotifications}"/>
             </LinearLayout>
 
             <LinearLayout
@@ -103,9 +118,9 @@
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/switch_compat_pin_rooms_with_unread_messages"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    app:status="@{deviceSettings.data.pinRoomWithUnreadMessages}"/>
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>
-
 </layout>
