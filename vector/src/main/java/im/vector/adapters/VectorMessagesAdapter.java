@@ -55,12 +55,15 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.binaryfork.spanny.Spanny;
+import com.google.gson.JsonParser;
 
 import org.matrix.androidsdk.MXPatterns;
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.adapters.AbstractMessagesAdapter;
 import org.matrix.androidsdk.adapters.MessageRow;
 import org.matrix.androidsdk.crypto.MXCryptoError;
+import org.matrix.androidsdk.crypto.MXDecryptionException;
+import org.matrix.androidsdk.crypto.MXEventDecryptionResult;
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo;
 import org.matrix.androidsdk.data.Room;
 import org.matrix.androidsdk.db.MXMediaCache;
@@ -80,6 +83,7 @@ import org.matrix.androidsdk.util.JsonUtils;
 import org.matrix.androidsdk.util.Log;
 import org.matrix.androidsdk.util.PermalinkUtils;
 import org.matrix.androidsdk.view.HtmlTagHandler;
+//import org.matrix.olm.OlmInboundGroupSession;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -509,7 +513,20 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
             // ensure that notifyDataSetChanged is not called
             // it seems that setNotifyOnChange is reinitialized to true;
             setNotifyOnChange(false);
-
+            String stringContent = row.getEvent().content.toString();
+            String stringType = row.getEvent().getType();
+            String stringRoomId = row.getEvent().roomId;
+            String stringUserId = row.getSender().getUserId();
+            JsonParser jsonParser = new JsonParser();
+            android.util.Log.d("Event Data String", stringContent);
+            Event even = new Event(stringType, jsonParser.parse(stringContent).getAsJsonObject(), stringUserId, stringRoomId);
+            try {
+                MXEventDecryptionResult result = mSession.getDataHandler().getCrypto().decryptEvent(even, null);
+                android.util.Log.d("Event Dat", result.mClearEvent.toString());
+            } catch (MXDecryptionException e) {
+                e.printStackTrace();
+                android.util.Log.d("Error", e.getMessage());
+            }
             if (mIsSearchMode) {
                 mLiveMessagesRowList.add(row);
             } else {

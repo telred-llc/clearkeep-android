@@ -8,7 +8,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.ClearKeepDatabase
 import vmodev.clearkeep.di.DaggerAppComponent
-import vmodev.clearkeep.matrixsdk.IMatrixEventHandler
+import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
 import javax.inject.Inject
 import io.reactivex.plugins.RxJavaPlugins
 

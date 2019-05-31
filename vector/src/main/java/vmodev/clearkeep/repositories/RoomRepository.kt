@@ -12,7 +12,7 @@ import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.databases.RoomDao
 import vmodev.clearkeep.databases.UserDao
 import vmodev.clearkeep.executors.AppExecutors
-import vmodev.clearkeep.matrixsdk.MatrixService
+import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.Resource

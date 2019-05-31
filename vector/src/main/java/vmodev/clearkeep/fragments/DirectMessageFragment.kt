@@ -27,6 +27,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
+import vmodev.clearkeep.activities.MessageListActivity
 import vmodev.clearkeep.activities.RoomSettingsActivity
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
@@ -151,7 +152,10 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDriectMessageFragmen
     }
 
     private fun onClickGoRoom(roomId: String) {
-        listener?.onClickGoRoom(roomId);
+//        listener?.onClickGoRoom(roomId);
+        val intnetGoRoom = Intent(activity, MessageListActivity::class.java);
+        intnetGoRoom.putExtra(MessageListActivity.ROOM_ID, roomId);
+        startActivity(intnetGoRoom);
     }
 
     override fun onAttach(context: Context) {

@@ -80,5 +80,10 @@ abstract class ViewModelModule {
     abstract fun bindAbstractNotificationSettingsActivityViewModel(viewModel: NotificationSettingsActivityViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractMessageListActivityViewModel::class)
+    abstract fun bindMessageListActivityViewModel(viewModel: MessageListActivityViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }

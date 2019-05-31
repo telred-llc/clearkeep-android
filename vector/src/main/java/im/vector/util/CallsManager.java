@@ -629,7 +629,7 @@ public class CallsManager {
             } else {
                 mCallSoundsManager.startSound(isBusy ? R.raw.busy : R.raw.callend, false, new CallSoundsManager.OnMediaListener() {
                     @Override
-                    public void onMediaReadyToPlay() {
+                        public void onMediaReadyToPlay() {
                         if (null != mCallActivity) {
                             mCallActivity.finish();
                             mCallActivity = null;
