@@ -28,7 +28,9 @@ class MatrixMessageHandler constructor(private val roomId: String, context: Cont
     private lateinit var room: Room;
     private val eventTimeLineListener = object : EventTimeline.Listener {
         override fun onEvent(p0: Event?, p1: EventTimeline.Direction?, p2: RoomState?) {
-            Log.d("Message Event", p0?.contentAsJsonObject.toString())
+//            Log.d("Message Event", p0?.contentAsJsonObject.toString())
+            val result = session.dataHandler.crypto.decryptEvent(p0, null);
+            Log.d("Message Decrypt", result?.mClearEvent.toString());
         }
     }
 
