@@ -2,6 +2,7 @@ package vmodev.clearkeep.repositories
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
+import android.util.Log
 import io.reactivex.BackpressureStrategy
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractMessageDao
@@ -27,15 +28,37 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
             }
 
             override fun loadFromDB(): LiveData<List<Message>> {
-                return messageDao.getListMessageWithRoomId(roomId);
+                return messageDao.getAllMessage();
             }
 
             override fun checkRemoteSourceWithLocalSource(remoteData: List<Message>, localData: List<Message>): List<Message> {
-                if (localData.size == remoteData.size)
-                    return ArrayList<Message>();
-                else {
-                    return remoteData;
-                }
+//                if (localData.size == remoteData.size)
+//                    return ArrayList<Message>();
+//                else {
+//                    return remoteData;
+//                }
+                Log.d("Message Data Size", localData.size.toString())
+                return localData;
+            }
+        }.asLiveData();
+    }
+
+    fun loadMessageWithId(id: String): LiveData<Resource<Message>> {
+        return object : AbstractNetworkBoundSourceWithCondition<Message, Message>() {
+            override fun saveCallResult(item: Message) {
+                messageDao.insert(item);
+            }
+
+            override fun createCall(): LiveData<Message> {
+                return messageDao.findById(id);
+            }
+
+            override fun loadFromDB(): LiveData<Message> {
+                return messageDao.findById(id);
+            }
+
+            override fun checkRemoteSourceWithLocalSource(remoteData: Message, localData: Message): Message {
+                return localData;
             }
         }.asLiveData();
     }

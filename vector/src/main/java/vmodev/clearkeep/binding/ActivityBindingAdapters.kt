@@ -9,8 +9,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestListener
+import com.google.gson.JsonParser
+import im.vector.Matrix
 import im.vector.R
+import org.matrix.androidsdk.rest.model.Event
 import vmodev.clearkeep.ultis.toDateTime
+import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.Room
 
 class ActivityBindingAdapters constructor(val activity: FragmentActivity) : ImageViewBindingAdapters, TextViewBindingAdapters, ISwitchCompatViewBindingAdapters {
@@ -50,5 +54,18 @@ class ActivityBindingAdapters constructor(val activity: FragmentActivity) : Imag
         status?.let {
             switchCompat.isChecked = status.compareTo(0) != 0
         }
+    }
+
+    override fun bindDecryptMessage(textView: TextView, message: Message?) {
+        message?.let {
+            val session = Matrix.getInstance(activity.applicationContext).defaultSession;
+            val parser = JsonParser();
+            val event = Event(message?.messageType, parser.parse(message.encryptedContent).asJsonObject, message.userId, message.roomId);
+            val result = session.dataHandler.crypto.decryptEvent(event, null);
+            result?.let {
+                textView.text = result.mClearEvent.toString();
+            }
+        }
+
     }
 }

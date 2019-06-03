@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import im.vector.Matrix
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
 import org.matrix.androidsdk.data.RoomState
@@ -17,11 +19,13 @@ import org.matrix.androidsdk.rest.model.sync.RoomResponse
 import org.matrix.androidsdk.rest.model.sync.RoomSync
 import org.matrix.androidsdk.rest.model.sync.RoomSyncState
 import org.matrix.androidsdk.rest.model.sync.RoomSyncTimeline
+import vmodev.clearkeep.databases.AbstractMessageDao
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixMessageHandler
+import vmodev.clearkeep.repositories.MessageRepository
 import vmodev.clearkeep.viewmodelobjects.Message
 import java.lang.Exception
 
-class MatrixMessageHandler constructor(private val roomId: String, context: Context) : IMatrixMessageHandler {
+class MatrixMessageHandler constructor(private val roomId: String, context: Context, messageDao: AbstractMessageDao) : IMatrixMessageHandler {
 
     private lateinit var session: MXSession;
     private lateinit var eventTimeline: EventTimeline;
@@ -29,8 +33,19 @@ class MatrixMessageHandler constructor(private val roomId: String, context: Cont
     private val eventTimeLineListener = object : EventTimeline.Listener {
         override fun onEvent(p0: Event?, p1: EventTimeline.Direction?, p2: RoomState?) {
 //            Log.d("Message Event", p0?.contentAsJsonObject.toString())
-            val result = session.dataHandler.crypto.decryptEvent(p0, null);
-            Log.d("Message Decrypt", result?.mClearEvent.toString());
+//            Log.d("Message Raw", p0?.contentAsJsonObject.toString());
+//            val result = session.dataHandler.crypto.decryptEvent(p0, null);
+//            Log.d("Message Decrypt", result?.mClearEvent.toString());
+
+            p0?.let {
+                val message = Message(messageId = it.eventId, roomId = it.roomId, userId = it.sender, messageType = it.type, encryptedContent = it.contentAsJsonObject.toString())
+                Observable.create<Int> { emitter ->
+                    messageDao.insert(message);
+                    emitter.onNext(1);
+                    Log.d("Message Raw", message.messageId);
+                    emitter.onComplete();
+                }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe();
+            }
         }
     }
 

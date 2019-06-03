@@ -17,4 +17,10 @@ abstract class AbstractMessageDao {
 
     @Query("SELECT * FROM message INNER JOIN room WHERE room.id =:roomId")
     abstract fun getListMessageWithRoomId(roomId: String): LiveData<List<Message>>
+
+    @Query("SELECT * FROM message WHERE messageId =:id")
+    abstract fun findById(id: String): LiveData<Message>;
+
+    @Query("SELECT * FROM message")
+    abstract fun getAllMessage(): LiveData<List<Message>>;
 }

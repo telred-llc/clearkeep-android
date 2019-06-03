@@ -938,8 +938,8 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                         });
                     }
                 }
-                emitter.onNext(ListRoomAndRoomUserJoinReturn(listRoom, listUser, listRoomUserJoin));
-                emitter.onComplete();
+//                emitter.onNext(ListRoomAndRoomUserJoinReturn(listRoom, listUser, listRoomUserJoin));
+//                emitter.onComplete();
             } else {
                 emitter.onError(NullPointerException());
                 emitter.onComplete();
