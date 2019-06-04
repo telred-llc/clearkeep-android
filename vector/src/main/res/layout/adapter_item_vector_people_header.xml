@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?><!-- menu header is always wrap to content
+     so it is required to define a sublayout with the right height -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/people_header_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/vctr_list_header_background_color"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/people_header_sub_layout"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginBottom="11dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/people_header_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/vctr_list_header_primary_text_color"
+                android:textSize="14sp"
+                tools:text="Header" />
+
+            <ProgressBar
+                android:id="@+id/heading_loading_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_toEndOf="@+id/people_header_text_view"
+                android:layout_toRightOf="@+id/people_header_text_view"
+                android:indeterminate="true"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/heading_image"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginRight="15dp"
+            android:tint="?attr/vctr_list_header_primary_text_color"
+            tools:src="@drawable/ic_material_expand_more_black" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/people_header_matrix_contacts_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="6dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <CheckBox
+            android:id="@+id/contacts_filter_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/people_search_filter_text"
+            android:textColor="?attr/vctr_list_header_primary_text_color"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

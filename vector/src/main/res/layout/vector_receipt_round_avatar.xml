@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<im.vector.view.VectorCircularImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="12dp"
+    android:layout_height="12dp"
+    android:layout_marginEnd="6dp"
+    android:layout_marginRight="6dp"
+    android:adjustViewBounds="true"
+    android:contentDescription="@string/receipt_avatar"
+    android:scaleType="centerCrop"
+    tools:src="@tools:sample/avatars" />

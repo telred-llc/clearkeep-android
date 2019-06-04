@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:background="?android:attr/colorBackground">
+
+    <ImageView
+        android:id="@+id/file_search_thumbnail"
+        android:layout_width="72dp"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        tools:src="@tools:sample/backgrounds/scenic" />
+
+    <!-- Message timestamp -->
+    <TextView
+        android:id="@+id/search_file_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginRight="12dp"
+        android:fontFamily="sans-serif-light"
+        android:textColor="@color/vector_silver_color"
+        android:textSize="12sp"
+        tools:text="370Kb" />
+
+    <TextView
+        android:id="@+id/file_search_filename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_toStartOf="@id/search_file_size"
+        android:layout_toLeftOf="@id/search_file_size"
+        android:layout_toEndOf="@id/file_search_thumbnail"
+        android:layout_toRightOf="@id/file_search_thumbnail"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-regular"
+        android:maxLines="1"
+        android:textSize="16sp"
+        tools:text="File name" />
+
+    <!-- Last message of the room -->
+    <TextView
+        android:id="@+id/file_search_room_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/file_search_filename"
+        android:layout_alignLeft="@id/file_search_filename"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="26dp"
+        android:layout_marginRight="26dp"
+        android:layout_marginBottom="18dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="14sp"
+        tools:text="Room name and date" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="?attr/vctr_list_divider_color" />
+</RelativeLayout>

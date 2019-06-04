@@ -1,0 +1,6 @@
+package vmodev.clearkeep.factories.viewmodels.interfaces
+
+import vmodev.clearkeep.viewmodels.interfaces.AbstractHomeScreenFragmentViewModel
+
+interface IHomeScreenFragmentViewModelFactory : IViewModelFactory<AbstractHomeScreenFragmentViewModel> {
+}
