@@ -1270,7 +1270,7 @@ Why choose Riot.im?
     <string name="mark_all_messages_as_read">Mark all messages as read</string>
     <string name="clear_cache">Clear cache</string>
     <string name="enter_name">Enter name</string>
-    <string name="update_profile_success">Update profile success</string>
+    <string name="update_profile_success">Your profile has been updated successfully</string>
     <string name="display_name_cannot_empty">An error occurred</string>
     <string name="you_need_enter_you_name">Display name cannot be empty</string>
     <string name="close">Close</string>
@@ -1282,4 +1282,7 @@ Why choose Riot.im?
     <string name="pin_rooms_with_missed_notifications">Pin rooms missed notifications</string>
     <string name="pin_rooms_with_unread_messages">Pin rooms with unread messages</string>
     <string name="notifications">Notifications</string>
+    <string name="you_have_no_chat_here">You have no chat here, tap to under button to start.</string>
+    <string name="start_direct_chat">Start Direct Chat</string>
+    <string name="start_room_chat">Start Room Chat</string>
 </resources>

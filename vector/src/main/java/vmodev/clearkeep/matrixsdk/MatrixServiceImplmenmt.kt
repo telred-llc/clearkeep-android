@@ -459,7 +459,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                                         result?.let { avatar = result }
                                     };
                                     t?.let { user ->
-                                        users.add(User(id = user.user_id, name = user.displayname, avatarUrl = avatar, status = if (user.isActive) 1 else 0, roomId = ""))
+                                        users.add(User(id = user.user_id, name = if (user.displayname.isNullOrEmpty()) "" else user.displayname, avatarUrl = avatar, status = if (user.isActive) 1 else 0, roomId = ""))
                                     }
                                 }
                             }
@@ -908,38 +908,41 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                     rooms.addAll(funcs[filter].apply(homeRoomsViewModel!!.result))
                 }
                 var currentIndex: Int = 0;
-                rooms.forEach { t: Room? ->
-                    t?.let { it ->
-                        asyncUpdateRoomMember(it).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ mrId ->
-                            kotlin.run {
-                                currentIndex++;
-                                listRoom.add(matrixRoomToRoom(t, if (mrId.isNotEmpty()) if (mrId[0].id.isNullOrEmpty()) "" else mrId[0].id else ""));
-                                mrId.forEach { u: User? ->
-                                    u?.let { user ->
-                                        listUser.add(user);
-                                        listRoomUserJoin.add(RoomUserJoin(t.roomId, user.id))
+                if (rooms.size == 0) {
+                    emitter.onNext(ListRoomAndRoomUserJoinReturn(listRoom, listUser, listRoomUserJoin));
+                    emitter.onComplete();
+                } else {
+                    rooms.forEach { t: Room? ->
+                        t?.let { it ->
+                            asyncUpdateRoomMember(it).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ mrId ->
+                                kotlin.run {
+                                    currentIndex++;
+                                    listRoom.add(matrixRoomToRoom(t, if (mrId.isNotEmpty()) if (mrId[0].id.isNullOrEmpty()) "" else mrId[0].id else ""));
+                                    mrId.forEach { u: User? ->
+                                        u?.let { user ->
+                                            listUser.add(user);
+                                            listRoomUserJoin.add(RoomUserJoin(t.roomId, user.id))
+                                        }
+                                    }
+                                    if (currentIndex == rooms.size) {
+                                        emitter.onNext(ListRoomAndRoomUserJoinReturn(listRoom, listUser, listRoomUserJoin));
+                                        emitter.onComplete();
                                     }
                                 }
-                                if (currentIndex == rooms.size) {
-                                    emitter.onNext(ListRoomAndRoomUserJoinReturn(listRoom, listUser, listRoomUserJoin));
-                                    emitter.onComplete();
-                                }
                             }
+                                    , { e ->
+                                kotlin.run {
+                                    currentIndex++;
+                                    listRoom.add(matrixRoomToRoom(t));
+                                    if (currentIndex == rooms.size) {
+                                        emitter.onNext(ListRoomAndRoomUserJoinReturn(listRoom, listUser, listRoomUserJoin));
+                                        emitter.onComplete();
+                                    }
+                                }
+                            });
                         }
-                                , { e ->
-                            kotlin.run {
-                                currentIndex++;
-                                listRoom.add(matrixRoomToRoom(t));
-                                if (currentIndex == rooms.size) {
-                                    emitter.onNext(ListRoomAndRoomUserJoinReturn(listRoom, listUser, listRoomUserJoin));
-                                    emitter.onComplete();
-                                }
-                            }
-                        });
                     }
                 }
-                emitter.onNext(ListRoomAndRoomUserJoinReturn(listRoom, listUser, listRoomUserJoin));
-                emitter.onComplete();
             } else {
                 emitter.onError(NullPointerException());
                 emitter.onComplete();
