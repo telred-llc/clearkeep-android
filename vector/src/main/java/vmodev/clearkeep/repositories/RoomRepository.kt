@@ -289,6 +289,32 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
+    fun updateAllRoomWhenStartApp(filters: Array<Int>): LiveData<Resource<List<Room>>> {
+        return object : AbstractNetworkBoundSource<List<Room>, ListRoomAndRoomUserJoinReturn>() {
+            override fun saveCallResult(item: ListRoomAndRoomUserJoinReturn) {
+                roomDao.insertRooms(item.rooms);
+                userDao.insertUsers(item.users);
+                roomUserJoinDao.insertRoomUserJoins(item.roomUserJoins)
+            }
+
+            override fun shouldFetch(data: List<Room>?): Boolean {
+                return true;
+            }
+
+            override fun loadFromDb(): LiveData<List<Room>> {
+                return roomDao.loadWithType(filters);
+
+            }
+
+            override fun createCall(): LiveData<ListRoomAndRoomUserJoinReturn> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.getListRoomAndAddUser(filters)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .toFlowable(BackpressureStrategy.LATEST));
+            }
+        }.asLiveData();
+    }
+
     class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);
     class InviteUsersToRoomObject constructor(val roomId: String, val userIds: List<String>);
 }
