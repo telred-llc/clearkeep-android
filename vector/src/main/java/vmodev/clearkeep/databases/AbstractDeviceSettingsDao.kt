@@ -7,7 +7,7 @@ import vmodev.clearkeep.viewmodelobjects.DeviceSettings
 @Dao
 abstract class AbstractDeviceSettingsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(obj: DeviceSettings)
+    abstract fun insert(deviceSettings: DeviceSettings)
 
     @Query("UPDATE deviceSettings SET notificationOnThisDevice =:status WHERE id =:id")
     abstract fun updateNotificationsOnThisDevice(id: String, status: Byte)
@@ -30,6 +30,6 @@ abstract class AbstractDeviceSettingsDao {
     @Query("UPDATE deviceSettings SET rageShakeToReportBug =:status WHERE id =:id")
     abstract fun updateRageShakeToReportBug(id: String, status: Byte)
 
-    @Query("SELECT * FROM devicesettings WHERE id =:id")
+    @Query("SELECT * FROM deviceSettings WHERE id =:id")
     abstract fun findById(id: String): LiveData<DeviceSettings>;
 }
