@@ -56,26 +56,9 @@ class MessageListActivity : DaggerAppCompatActivity(), IMessageListActivity {
         binding.recyclerViewListMessage.adapter = adapter;
         viewModelFactory.getViewModel().getListMessageResult().observe(this, Observer {
             adapter.submitList(it?.data);
-            it?.data?.let {
-                if (it.size > 0) {
-                    Log.d("Message Data", it[0].encryptedContent)
-                }
-            }
-        })
-        binding.message = viewModelFactory.getViewModel().getMessageResult();
-        viewModelFactory.getViewModel().getMessageResult().observe(this, Observer {
-            it?.data?.let {
-                Log.d("Message Data", it.encryptedContent)
-            }
         })
         binding.lifecycleOwner = this;
         viewModelFactory.getViewModel().setRoomIdForGetListMessage(roomId);
-        Observable.timer(10, TimeUnit.SECONDS).subscribeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread()).subscribe {
-            Log.d("Message Start", "Start Find");
-            viewModelFactory.getViewModel().setRoomIdForGetListMessage(roomId);
-            viewModelFactory.getViewModel().setMessageId("\$1559563435113OVimK:study.sinbadflyce.com")
-        }
-        Log.d("Message Room", roomId);
     }
 
     override fun getActivity(): FragmentActivity {

@@ -28,7 +28,7 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
             }
 
             override fun loadFromDB(): LiveData<List<Message>> {
-                return messageDao.getAllMessage();
+                return messageDao.getListMessageWithRoomId(roomId);
             }
 
             override fun checkRemoteSourceWithLocalSource(remoteData: List<Message>, localData: List<Message>): List<Message> {
@@ -37,7 +37,7 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
 //                else {
 //                    return remoteData;
 //                }
-                Log.d("Message Data Size", localData.size.toString())
+//                Log.d("Message Data Size", localData.size.toString())
                 return localData;
             }
         }.asLiveData();

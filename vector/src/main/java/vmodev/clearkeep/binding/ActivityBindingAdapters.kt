@@ -12,6 +12,7 @@ import com.bumptech.glide.request.RequestListener
 import com.google.gson.JsonParser
 import im.vector.Matrix
 import im.vector.R
+import org.matrix.androidsdk.crypto.MXDecryptionException
 import org.matrix.androidsdk.rest.model.Event
 import vmodev.clearkeep.ultis.toDateTime
 import vmodev.clearkeep.viewmodelobjects.Message
@@ -61,10 +62,15 @@ class ActivityBindingAdapters constructor(val activity: FragmentActivity) : Imag
             val session = Matrix.getInstance(activity.applicationContext).defaultSession;
             val parser = JsonParser();
             val event = Event(message?.messageType, parser.parse(message.encryptedContent).asJsonObject, message.userId, message.roomId);
-            val result = session.dataHandler.crypto.decryptEvent(event, null);
-            result?.let {
-                textView.text = result.mClearEvent.toString();
+            try {
+                val result = session.dataHandler.crypto.decryptEvent(event, null);
+                result?.let {
+                    textView.text = result.mClearEvent.toString();
+                }
+            } catch (e: MXDecryptionException) {
+                android.util.Log.d("Decrypt Error", e.message)
             }
+
         }
 
     }
