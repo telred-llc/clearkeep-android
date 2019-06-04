@@ -1786,7 +1786,8 @@ public class MXDataHandler {
                 }
 
                 if (null != result) {
-//                    event.setClearData(result);
+                    android.util.Log.d("Event Type", event.type);
+                    event.setClearData(result);
                     return true;
                 }
             } else {
