@@ -86,6 +86,9 @@ class FindAndCreateNewConversationActivity : DaggerAppCompatActivity(), Lifecycl
         binding.recyclerViewUsers.adapter = listUserAdapter;
         userViewModel.getUsers().observe(this, Observer { t ->
             kotlin.run {
+                t?.data?.let {
+                    Log.d("User Size", it.size.toString())
+                }
                 listUserAdapter.submitList(t?.data);
             }
         });

@@ -26,6 +26,8 @@ import io.reactivex.functions.Consumer
 import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
+import vmodev.clearkeep.activities.CreateNewConversationActivity
+import vmodev.clearkeep.activities.CreateNewRoomActivity
 import vmodev.clearkeep.activities.RoomSettingsActivity
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
@@ -107,6 +109,10 @@ class RoomFragment : DataBindingDaggerFragment(), IRoomFragment {
             bottomDialog.show();
         }
         binding.rooms = roomFragmentViewModelFactory.getViewModel().getListRoomByType();
+        binding.buttonStartDirectChat.setOnClickListener {
+            val intentNewChat = Intent(context, CreateNewRoomActivity::class.java);
+            startActivity(intentNewChat);
+        }
         binding.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewListConversation.adapter = listRoomAdapter.getAdapter();
         roomFragmentViewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
