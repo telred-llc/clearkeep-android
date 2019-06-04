@@ -1,6 +1,7 @@
 package vmodev.clearkeep.activities
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
@@ -48,6 +49,7 @@ class InviteUsersToRoomActivity : DaggerAppCompatActivity(), LifecycleOwner {
 
     private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
     private lateinit var roomId: String;
+    private var createFromNewRoom: Boolean = true;
     private lateinit var mxSession: MXSession;
     private val listSelected = HashMap<String, String>();
 
@@ -61,10 +63,14 @@ class InviteUsersToRoomActivity : DaggerAppCompatActivity(), LifecycleOwner {
         supportActionBar!!.setDisplayShowHomeEnabled(true);
         binding.toolbar.setNavigationOnClickListener { v ->
             kotlin.run {
-                joinRoom(roomId);
+                if (createFromNewRoom)
+                    joinRoom(roomId);
+                else
+                    finish();
             }
         }
-        roomId = intent.getStringExtra("ROOM_ID");
+        roomId = intent.getStringExtra(ROOM_ID);
+        createFromNewRoom = intent.getBooleanExtra(CREATE_FROM_NEW_ROOM, true);
         mxSession = Matrix.getInstance(applicationContext).defaultSession;
         val listUserAdapter = ListUserToInviteRecyclerViewAdapter(appExecutors = appExecutors, dataBindingComponent = dataBindingComponent, listSelected = listSelected
             , diffCallback = object : DiffUtil.ItemCallback<User>() {
@@ -97,7 +103,13 @@ class InviteUsersToRoomActivity : DaggerAppCompatActivity(), LifecycleOwner {
             listSelected.clear();
         });
         roomViewModel.getInviteUsersToRoomResult().observe(this, Observer { t ->
-            t?.data?.let { resource -> joinRoom(resource.id) }
+            t?.data?.let { resource ->
+                if (createFromNewRoom)
+                    joinRoom(resource.id)
+                else {
+                    finish();
+                }
+            }
         })
         var disposable: Disposable? = null;
         RxTextView.textChanges(binding.editTextQuery).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
@@ -155,5 +167,10 @@ class InviteUsersToRoomActivity : DaggerAppCompatActivity(), LifecycleOwner {
                 onError(e.localizedMessage)
             }
         })
+    }
+
+    companion object {
+        const val ROOM_ID = "ROOM_ID";
+        const val CREATE_FROM_NEW_ROOM = "CREATE_FROM_NEW_ROOM";
     }
 }

@@ -2484,8 +2484,8 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
         final PopupMenu popup = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) ?
                 new PopupMenu(mContext, anchorView, Gravity.END) : new PopupMenu(mContext, anchorView);
 
-        popup.getMenuInflater().inflate(R.menu.vector_room_message_settings, popup.getMenu());
-
+//        popup.getMenuInflater().inflate(R.menu.vector_room_message_settings, popup.getMenu());
+        popup.getMenuInflater().inflate(R.menu.room_message_setting_popup, popup.getMenu());
         // force to display the icons
         try {
             Field[] fields = popup.getClass().getDeclaredFields();
@@ -2531,9 +2531,9 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
         if (event.canBeResent()) {
             menu.findItem(R.id.ic_action_vector_resend_message).setVisible(true);
 
-            if (event.isUndelivered() || event.isUnknownDevice()) {
-                menu.findItem(R.id.ic_action_vector_redact_message).setVisible(true);
-            }
+//            if (event.isUndelivered() || event.isUnknownDevice()) {
+//                menu.findItem(R.id.ic_action_vector_redact_message).setVisible(true);
+//            }
         } else if (event.mSentState == Event.SentState.SENT) {
 
             // test if the event can be redacted
@@ -2554,14 +2554,14 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
                 }
             }
 
-            menu.findItem(R.id.ic_action_vector_redact_message).setVisible(canBeRedacted);
+//            menu.findItem(R.id.ic_action_vector_redact_message).setVisible(canBeRedacted);
 
             if (Event.EVENT_TYPE_MESSAGE.equals(event.getType())) {
                 Message message = JsonUtils.toMessage(event.getContentAsJsonObject());
 
                 // share / forward the message
                 menu.findItem(R.id.ic_action_vector_share).setVisible(!mIsRoomEncrypted);
-                menu.findItem(R.id.ic_action_vector_forward).setVisible(true);
+//                menu.findItem(R.id.ic_action_vector_forward).setVisible(true);
 
                 // save the media in the downloads directory
                 if (Message.MSGTYPE_IMAGE.equals(message.msgtype)
@@ -2571,7 +2571,7 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
                 }
 
                 // offer to report a message content
-                menu.findItem(R.id.ic_action_vector_report).setVisible(!mIsPreviewMode && !TextUtils.equals(event.sender, mSession.getMyUserId()));
+//                menu.findItem(R.id.ic_action_vector_report).setVisible(!mIsPreviewMode && !TextUtils.equals(event.sender, mSession.getMyUserId()));
             }
         }
 

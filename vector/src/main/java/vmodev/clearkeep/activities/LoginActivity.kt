@@ -1,7 +1,6 @@
 package vmodev.clearkeep.activities
 
 import android.app.AlertDialog
-import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,13 +8,9 @@ import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import dagger.android.support.DaggerAppCompatActivity
 import im.vector.LoginHandler
-import im.vector.Matrix
 import im.vector.R
 import im.vector.RegistrationManager
-import im.vector.activity.CommonActivityUtils
-import im.vector.activity.SplashActivity
 import im.vector.repositories.ServerUrlsRepository
 import kotlinx.android.synthetic.main.activity_login.*
 import org.matrix.androidsdk.HomeServerConnectionConfig
@@ -27,12 +22,9 @@ import org.matrix.androidsdk.rest.model.login.RegistrationFlowResponse
 import org.matrix.androidsdk.rest.model.pid.ThreePid
 import org.matrix.androidsdk.util.JsonUtils
 import org.matrix.androidsdk.util.Log
-import vmodev.clearkeep.applications.ClearKeepApplication
-import vmodev.clearkeep.di.DaggerAppComponent
 import vmodev.clearkeep.fragments.HandlerVerifyEmailFragment
 import vmodev.clearkeep.fragments.LoginFragment
 import vmodev.clearkeep.fragments.SignUpFragment
-import javax.inject.Inject
 import javax.net.ssl.HttpsURLConnection
 
 class LoginActivity : AppCompatActivity(), LoginFragment.OnFragmentInteractionListener, SignUpFragment.OnFragmentInteractionListener,

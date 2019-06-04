@@ -39,10 +39,10 @@
             android:layout_height="250dp">
 
             <ImageView
-                app:imageUrl="@{user.data.avatarUrl}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@color/accent_color_dark" />
+                android:src="@color/accent_color_dark"
+                app:imageUrl="@{user.data.avatarUrl}" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -76,6 +76,7 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/button_setting"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
@@ -85,6 +86,7 @@
                 android:textStyle="bold" />
 
             <Button
+                android:id="@+id/button_edit_profile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"

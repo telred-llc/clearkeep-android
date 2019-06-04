@@ -12,4 +12,8 @@ class FragmentDataBindingComponent constructor(fragment: Fragment) : DataBinding
     override fun getTextViewBindingAdapters(): TextViewBindingAdapters {
         return fragmentBindingAdapters;
     }
+
+    override fun getISwitchCompatViewBindingAdapters(): ISwitchCompatViewBindingAdapters {
+        return fragmentBindingAdapters;
+    }
 }

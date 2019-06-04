@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModel
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.viewmodels.RoomViewModel
 
 /**
  * ViewModelProvider need ViewModel type to get a ViewModel instance
@@ -16,6 +17,9 @@ abstract class AbstractUserViewModel : ViewModel() {
     abstract fun getUserData(): LiveData<Resource<User>>;
     abstract fun getUserIdData(): LiveData<String>;
     abstract fun getUsers(): LiveData<Resource<List<User>>>;
-    abstract fun getUsersKeywordData() : LiveData<String>;
-    abstract fun setQuery(query : String);
+    abstract fun getUsersKeywordData(): LiveData<String>;
+    abstract fun setQuery(query: String);
+    abstract fun setRoomIdForGetUsers(roomId: String);
+    abstract fun getUsersInRoomResult(): LiveData<Resource<List<User>>>
+    abstract fun getRoomViewModel() : AbstractRoomViewModel;
 }

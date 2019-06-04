@@ -87,21 +87,35 @@
         android:icon="@mipmap/ic_launcher_app_second_icon"
         android:label="@string/riot_app_name"
         android:largeHeap="true"
-        android:resizeableActivity="true"
         android:roundIcon="@mipmap/ic_launcher_app_second_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         tools:replace="allowBackup,label">
-        <activity android:name="vmodev.clearkeep.activities.InviteUsersToRoomActivity"></activity>
+        <activity android:name="vmodev.clearkeep.activities.NotificationSettingsActivity"></activity>
+        <activity android:name="vmodev.clearkeep.activities.CallSettingsActivity" />
+        <activity android:name="vmodev.clearkeep.activities.EditProfileActivity" />
+        <activity android:name="vmodev.clearkeep.activities.ProfileSettingsActivity" />
+        <activity android:name="vmodev.clearkeep.activities.DemoEmptyActivity" />
+        <activity android:name="vmodev.clearkeep.activities.UnifiedSearchActivity" />
+        <activity android:name="vmodev.clearkeep.activities.RolesPermissionActivity" />
+        <activity android:name="vmodev.clearkeep.activities.OtherRoomSettingsAdvancedActivity" />
+        <activity android:name="vmodev.clearkeep.activities.OtherRoomSettings" />
+        <activity android:name="vmodev.clearkeep.activities.ViewUserProfileActivity" />
+        <activity android:name="vmodev.clearkeep.activities.SecurityActivity" />
+        <activity android:name="vmodev.clearkeep.activities.RoomMemberListActivity" />
+        <activity android:name="vmodev.clearkeep.activities.RoomSettingsActivity" />
+        <activity android:name="vmodev.clearkeep.activities.DataBindingDaggerActivity" />
+        <activity android:name="vmodev.clearkeep.activities.RoomActivity" />
+        <activity android:name="vmodev.clearkeep.activities.CallViewActivity" />
+        <activity android:name="vmodev.clearkeep.activities.SearchActivity" />
+        <activity android:name="vmodev.clearkeep.activities.InviteUsersToRoomActivity" />
         <activity android:name="vmodev.clearkeep.activities.CreateNewRoomActivity" />
         <activity android:name="vmodev.clearkeep.activities.FindAndCreateNewConversationActivity" />
         <activity android:name="vmodev.clearkeep.activities.RoomInviteMembersActivity" />
         <activity android:name="vmodev.clearkeep.activities.CreateNewConversationActivity" />
         <activity android:name="vmodev.clearkeep.activities.PreviewInviteRoomActivity" />
         <activity android:name="vmodev.clearkeep.activities.ProfileActivity" />
-        <activity
-            android:name="vmodev.clearkeep.activities.HomeScreenActivity"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity android:name="vmodev.clearkeep.activities.HomeScreenActivity" />
         <activity android:name="vmodev.clearkeep.activities.LoginActivity" />
         <activity android:name="vmodev.clearkeep.activities.SplashActivity">
             <intent-filter>
@@ -119,8 +133,6 @@
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>

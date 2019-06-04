@@ -30,6 +30,7 @@ import java.util.List;
 
 import im.vector.Matrix;
 import im.vector.R;
+import vmodev.clearkeep.activities.HomeScreenActivity;
 
 /**
  * Dummy activity used to manage the shared
@@ -131,7 +132,8 @@ public class VectorSharedFilesActivity extends VectorAppCompatActivity {
         Intent activityIntent;
 
         if (isAppLaunched) {
-            activityIntent = new Intent(this, VectorHomeActivity.class);
+//            activityIntent = new Intent(this, VectorHomeActivity.class);
+            activityIntent = new Intent(this, HomeScreenActivity.class);
         } else {
             activityIntent = new Intent(this, SplashActivity.class);
         }

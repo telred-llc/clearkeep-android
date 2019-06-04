@@ -1,31 +1,29 @@
 package vmodev.clearkeep.fragments
 
 import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
-import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import dagger.android.support.DaggerFragment
 
 import im.vector.R
-import io.reactivex.functions.Consumer
-import io.reactivex.subjects.PublishSubject
-import org.matrix.androidsdk.data.Room
+import im.vector.databinding.FragmentHomeScreenBinding
 import vmodev.clearkeep.adapters.HomeScreenPagerAdapter
-import vmodev.clearkeep.viewmodelobjects.Status
-import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
+import vmodev.clearkeep.factories.interfaces.IShowListRoomFragmentFactory
+import vmodev.clearkeep.factories.viewmodels.interfaces.IHomeScreenFragmentViewModelFactory
+import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.fragments.Interfaces.IHomeScreenFragment
+import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
+import javax.inject.Named
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val DIRECT_MESSAGE = "DIRECT_MESSAGE";
-private const val ROOMS = "ROOMS"
 
 /**
  * A simple [Fragment] subclass.
@@ -36,20 +34,22 @@ private const val ROOMS = "ROOMS"
  * create an instance of this fragment.
  *
  */
-class HomeScreenFragment : DaggerFragment() {
+class HomeScreenFragment : DataBindingDaggerFragment(), IHomeScreenFragment {
     private var listener: OnFragmentInteractionListener? = null;
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
-
-    private lateinit var viewPager: ViewPager;
-    private lateinit var tabLayout: TabLayout;
-    private lateinit var textViewNotifyRoom: TextView;
-    private lateinit var textViewNotifyDirect: TextView;
-
-//    private val dataBindingComponent : FragmentData
-
-    private lateinit var userViewModel : AbstractUserViewModel;
+    @Inject
+    @field:Named(value = IShowListRoomFragmentFactory.DIRECT_MESSAGE_FRAGMENT_FACTORY)
+    lateinit var directMessageFragmentFactory: IShowListRoomFragmentFactory;
+    @Inject
+    @field:Named(value = IShowListRoomFragmentFactory.ROOM_MESSAGE_FRAGMENT_FACTORY)
+    lateinit var roomMessageFragmentFactory: IShowListRoomFragmentFactory;
+    @Inject
+    lateinit var homeScreenFragmentViewModelFactory: IHomeScreenFragmentViewModelFactory;
+    //    private lateinit var roomViewModelDirectMessage: AbstractRoomViewModel;
+//    private lateinit var roomViewModelRoomMessage: AbstractRoomViewModel;
+    private lateinit var binding: FragmentHomeScreenBinding;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,18 +60,20 @@ class HomeScreenFragment : DaggerFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_home_screen, container, false)
-        viewPager = view.findViewById<ViewPager>(R.id.view_pager_home_screen);
-        tabLayout = view.findViewById(R.id.tab_layout_home_screen);
-        textViewNotifyRoom = view.findViewById(R.id.text_view_notify_room);
-        textViewNotifyDirect = view.findViewById(R.id.text_view_notify_direct);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home_screen, container, false, dataBindingComponent);
         setUpViewPage();
-        return view;
+        return binding.root;
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+//        roomViewModelDirectMessage = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
+//        roomViewModelRoomMessage = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
+        binding.roomsDirectMessage = homeScreenFragmentViewModelFactory.getViewModel().getListRoomDirectMessage();
+        binding.roomsRoomMessage = homeScreenFragmentViewModelFactory.getViewModel().getListRoomsMessage();
+        binding.lifecycleOwner = viewLifecycleOwner;
+        homeScreenFragmentViewModelFactory.getViewModel().setTypesDirectMessage(arrayOf(1, 1 or 64));
+        homeScreenFragmentViewModelFactory.getViewModel().setTypesRoomsMessage(arrayOf(2, 2 or 64))
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -79,48 +81,11 @@ class HomeScreenFragment : DaggerFragment() {
         listener?.onFragmentInteraction(uri)
     }
 
-    fun getRoomNotifyCount(): Int {
-        return listener?.getRoomNotifyCount()!!;
-    }
-
-    fun getDirectNotifyCount(): Int {
-        return listener?.getDirectNotifyCount()!!;
-    }
-
-    fun handleDataChange(): PublishSubject<Status> {
-        return listener?.handleDataChange()!!;
-    }
-
-    fun upData() {
-        return listener?.updateData()!!;
-    }
 
     private fun setUpViewPage() {
-        val fragments: Array<Fragment> = arrayOf(DirectMessageFragment.newInstance(), RoomFragment.newInstance());
-        viewPager.adapter = HomeScreenPagerAdapter(childFragmentManager, fragments);
-        tabLayout.setupWithViewPager(viewPager);
-        handleDataChange().subscribe { t ->
-            kotlin.run {
-                if (getRoomNotifyCount() > 0) {
-                    textViewNotifyRoom.visibility = View.VISIBLE;
-                    textViewNotifyRoom.text = getRoomNotifyCount().toString();
-                } else {
-                    textViewNotifyRoom.visibility = View.INVISIBLE;
-                }
-                if (getDirectNotifyCount() > 0) {
-                    textViewNotifyDirect.visibility = View.VISIBLE;
-                    textViewNotifyDirect.text = getDirectNotifyCount().toString();
-                } else {
-                    textViewNotifyDirect.visibility = View.INVISIBLE;
-                }
-            }
-        };
-        upData();
-    }
-
-    override fun onResume() {
-        super.onResume()
-        upData();
+        val fragments: Array<Fragment> = arrayOf(directMessageFragmentFactory.createNewInstance().getFragment(), roomMessageFragmentFactory.createNewInstance().getFragment());
+        binding.viewPagerHomeScreen.adapter = HomeScreenPagerAdapter(childFragmentManager, fragments);
+        binding.tabLayoutHomeScreen.setupWithViewPager(binding.viewPagerHomeScreen);
     }
 
     override fun onAttach(context: Context) {
@@ -137,6 +102,10 @@ class HomeScreenFragment : DaggerFragment() {
         listener = null
     }
 
+    override fun getFragment(): Fragment {
+        return this;
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -151,11 +120,6 @@ class HomeScreenFragment : DaggerFragment() {
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         fun onFragmentInteraction(uri: Uri)
-
-        fun updateData();
-        fun getRoomNotifyCount(): Int;
-        fun getDirectNotifyCount(): Int;
-        fun handleDataChange(): PublishSubject<Status>;
     }
 
     companion object {
@@ -170,9 +134,9 @@ class HomeScreenFragment : DaggerFragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance() =
-            HomeScreenFragment().apply {
-                arguments = Bundle().apply {
+                HomeScreenFragment().apply {
+                    arguments = Bundle().apply {
+                    }
                 }
-            }
     }
 }

@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -14,18 +15,28 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.orhanobut.dialogplus.DialogPlus
+import com.orhanobut.dialogplus.OnItemClickListener
 import dagger.android.support.DaggerFragment
 import im.vector.R
 import im.vector.databinding.FragmentDirectMessageBinding
 import im.vector.databinding.FragmentFavourites2Binding
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
+import vmodev.clearkeep.activities.RoomSettingsActivity
+import vmodev.clearkeep.adapters.BottomDialogFavouriteRoomLongClick
+import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
+import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.factories.viewmodels.interfaces.IFavouritesFragmentViewModelFactory
+import vmodev.clearkeep.fragments.Interfaces.IFavouritesFragment
+import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
+import javax.inject.Named
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -40,7 +51,7 @@ private const val LIST_FAVOURITES = "LIST_FAVOURITES"
  * create an instance of this fragment.
  *
  */
-class FavouritesFragment : DaggerFragment() {
+class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment {
     // TODO: Rename and change types of parameters
     // You can declare variable to pass from activity is here
 
@@ -50,13 +61,13 @@ class FavouritesFragment : DaggerFragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory;
     @Inject
     lateinit var appExecutors: AppExecutors;
+    @Inject
+    @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
+    lateinit var listRoomRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
+    @Inject
+    lateinit var favouritesFragmentViewModelFactory: IFavouritesFragmentViewModelFactory;
+    lateinit var binding: FragmentFavourites2Binding;
 
-    var dataBindingComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
-
-    var binding: FragmentFavourites2Binding? = null;
-
-    var roomViewModel: AbstractRoomViewModel? = null;
-    var listRoomAdapter: ListRoomRecyclerViewAdapter? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,68 +79,57 @@ class FavouritesFragment : DaggerFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_favourites2, container, false, dataBindingComponent);
-        return binding!!.root;
+        return binding.root;
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
-        binding!!.setLifecycleOwner(viewLifecycleOwner);
-        listRoomAdapter = ListRoomRecyclerViewAdapter(appExecutors = appExecutors, dataBindingComponent = dataBindingComponent, diffCallback = object : DiffUtil.ItemCallback<vmodev.clearkeep.viewmodelobjects.Room>() {
-            override fun areItemsTheSame(p0: vmodev.clearkeep.viewmodelobjects.Room, p1: vmodev.clearkeep.viewmodelobjects.Room): Boolean {
-                return p0.id == p1.id;
-            }
-
-            override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.Room, p1: vmodev.clearkeep.viewmodelobjects.Room): Boolean {
-                return p0.name == p1.name && p0.updatedDate == p1.updatedDate && p0.avatarUrl == p1.avatarUrl
-                    && p0.notifyCount == p1.notifyCount;
-            }
-        }) { room, i ->
-            kotlin.run {
-                when (i) {
-                    3 -> onClickGoRoom(room.id);
-                    0 -> onClickItemPreview(room.id);
-                    1 -> onClickJoinRoom(room.id);
-                    2 -> onClickItemDecline(room.id);
-                }
-            }
-        };
-        binding!!.rooms = roomViewModel!!.getRoomsData();
-        binding!!.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
-        binding!!.recyclerViewListConversation.adapter = listRoomAdapter;
-        roomViewModel!!.getRoomsData().observe(viewLifecycleOwner, Observer { t ->
-            kotlin.run {
-                listRoomAdapter!!.submitList(t?.data);
-            }
+        binding.lifecycleOwner = viewLifecycleOwner;
+        listRoomRecyclerViewAdapter.setdataBindingComponent(dataBindingComponent);
+        listRoomRecyclerViewAdapter.setOnItemClick { room, i ->
+            onClickGoRoom(room.id);
+        }
+        listRoomRecyclerViewAdapter.setOnItemLongClick { room ->
+            val bottomDialog = DialogPlus.newDialog(this.context)
+                    .setAdapter(BottomDialogFavouriteRoomLongClick())
+                    .setOnItemClickListener { dialog, item, view, position ->
+                        when (position) {
+                            1 -> onClickRemoveFromFavourite(room.id);
+                            3 -> onClickLeaveRoom(room.id);
+                            2 -> onClickRoomSettings(room.id);
+                        }
+                        dialog?.dismiss();
+                    }.create();
+            bottomDialog.show();
+        }
+        binding.rooms = favouritesFragmentViewModelFactory.getViewModel().getListRoomByType();
+        binding.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        binding.recyclerViewListConversation.adapter = listRoomRecyclerViewAdapter.getAdapter();
+        favouritesFragmentViewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
+            listRoomRecyclerViewAdapter.getAdapter().submitList(t?.data);
         });
-        roomViewModel!!.setFilter(arrayOf(129, 130))
+        favouritesFragmentViewModelFactory.getViewModel().setListType(arrayOf(129, 130))
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    fun onGetMXSession(): MXSession {
-        return listener?.onGetMXSession()!!;
-    }
-    fun onGetRooms() : List<Room>{
-        return listener?.onGetListFavourites()!!;
-    }
-    fun onClickItem(room : Room){
-        listener?.onClickItem(room);
+    private fun onClickRoomSettings(id: String) {
+        val intent = Intent(this.activity, RoomSettingsActivity::class.java);
+        intent.putExtra(RoomSettingsActivity.ROOM_ID, id);
+        startActivity(intent);
     }
 
-    fun onClickJoinRoom(roomId: String) {
-        listener?.onClickItemJoin(roomId);
-    }
-
-    fun onClickItemDecline(roomId: String) {
-        listener?.onClickItemDecline(roomId);
-    }
-
-    fun onClickItemPreview(roomId: String) {
-        listener?.onClickItemPreview(roomId);
-    }
-
-    fun onClickGoRoom(roomId: String) {
+    private fun onClickGoRoom(roomId: String) {
         listener?.onClickGoRoom(roomId);
+    }
+
+    private fun onClickLeaveRoom(roomId: String) {
+        binding.room = favouritesFragmentViewModelFactory.getViewModel().getLeaveRoom();
+        favouritesFragmentViewModelFactory.getViewModel().setLeaveRoom(roomId);
+    }
+
+    private fun onClickRemoveFromFavourite(roomId: String) {
+        binding.roomObject = favouritesFragmentViewModelFactory.getViewModel().getRemoveFromFavouriteResult();
+        favouritesFragmentViewModelFactory.getViewModel().setRemoveFromFavourite(roomId);
     }
 
     override fun onAttach(context: Context) {
@@ -146,6 +146,10 @@ class FavouritesFragment : DaggerFragment() {
         listener = null
     }
 
+    override fun getFragment(): Fragment {
+        return this;
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -159,13 +163,6 @@ class FavouritesFragment : DaggerFragment() {
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onGetMXSession(): MXSession;
-        fun onGetListFavourites() : List<Room>;
-        fun onClickItem(room : Room);
-
-        fun onClickItemJoin(roomId: String);
-        fun onClickItemDecline(roomId: String);
-        fun onClickItemPreview(roomId: String);
         fun onClickGoRoom(roomId: String);
     }
 
