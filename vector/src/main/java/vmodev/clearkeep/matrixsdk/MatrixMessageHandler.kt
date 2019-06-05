@@ -59,6 +59,7 @@ class MatrixMessageHandler constructor(private val roomId: String, context: Cont
         session = Matrix.getInstance(context).defaultSession;
         room = session.dataHandler.getRoom(roomId);
         eventTimeline = room.timeline;
+
         eventTimeline.addEventTimelineListener(eventTimeLineListener);
         session.roomsApiClient.initialSync(roomId, object : ApiCallback<RoomResponse> {
             override fun onSuccess(info: RoomResponse?) {
