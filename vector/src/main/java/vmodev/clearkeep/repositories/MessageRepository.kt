@@ -32,13 +32,13 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
             }
 
             override fun checkRemoteSourceWithLocalSource(remoteData: List<Message>, localData: List<Message>): List<Message> {
-//                if (localData.size == remoteData.size)
-//                    return ArrayList<Message>();
-//                else {
-//                    return remoteData;
-//                }
+                if (localData.size == remoteData.size)
+                    return ArrayList<Message>();
+                else {
+                    return remoteData;
+                }
 //                Log.d("Message Data Size", localData.size.toString())
-                return localData;
+//                return remoteData;
             }
         }.asLiveData();
     }

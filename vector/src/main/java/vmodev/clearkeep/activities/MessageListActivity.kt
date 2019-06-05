@@ -8,10 +8,12 @@ import android.support.v4.app.FragmentActivity
 import android.support.v7.util.DiffUtil
 import android.util.Log
 import dagger.android.support.DaggerAppCompatActivity
+import im.vector.Matrix
 import im.vector.R
 import im.vector.databinding.ActivityMessageListBinding
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.activities.interfaces.IMessageListActivity
 import vmodev.clearkeep.adapters.ListMessageRecyclerViewAdapter
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
@@ -32,19 +34,22 @@ class MessageListActivity : DaggerAppCompatActivity(), IMessageListActivity {
     private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
     private lateinit var roomId: String;
 
+    private lateinit var session: MXSession;
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_message_list, dataBindingComponent);
         roomId = intent.getStringExtra(ROOM_ID);
         setSupportActionBar(binding.toolbar);
-        supportActionBar?.setTitle(R.string.edit_profile);
         supportActionBar?.setDisplayHomeAsUpEnabled(true);
         supportActionBar?.setDisplayShowHomeEnabled(true);
         binding.toolbar.setNavigationOnClickListener {
             onBackPressed();
         }
+        session = Matrix.getInstance(applicationContext).defaultSession;
         binding.messages = viewModelFactory.getViewModel().getListMessageResult();
-        val adapter = ListMessageRecyclerViewAdapter(appExecutors, dataBindingComponent, object : DiffUtil.ItemCallback<Message>() {
+        binding.room = viewModelFactory.getViewModel().getRoomResult();
+        val adapter = ListMessageRecyclerViewAdapter(session.myUserId, appExecutors, dataBindingComponent, object : DiffUtil.ItemCallback<Message>() {
             override fun areItemsTheSame(p0: Message, p1: Message): Boolean {
                 return p0.messageId == p1.messageId;
             }
