@@ -50,6 +50,7 @@ import im.vector.activity.VectorCallViewActivity;
 import im.vector.activity.VectorHomeActivity;
 import im.vector.notifications.NotificationUtils;
 import im.vector.services.EventStreamService;
+import vmodev.clearkeep.activities.CallViewActivity;
 
 /**
  * This class contains the call toolbox.
@@ -407,7 +408,14 @@ public class CallsManager {
                             if (null != unknownDevices) {
                                 intent.putExtra(VectorHomeActivity.EXTRA_CALL_UNKNOWN_DEVICES, unknownDevices);
                             }
-                            context.startActivity(intent);
+//                            context.startActivity(intent);
+
+                            Intent intentStartCall = new Intent(context, CallViewActivity.class);
+                            intentStartCall.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intentStartCall.putExtra(VectorCallViewActivity.EXTRA_MATRIX_ID, mActiveCall.getSession().getMyUserId());
+                            intentStartCall.putExtra(VectorCallViewActivity.EXTRA_CALL_ID,  mActiveCall.getCallId());
+                            context.startActivity(intentStartCall);
+
                         } else {
                             Log.d(LOG_TAG, "onIncomingCall : the home activity exists : but permissions have to be checked before");
                             // check incoming call required permissions, before allowing the call..

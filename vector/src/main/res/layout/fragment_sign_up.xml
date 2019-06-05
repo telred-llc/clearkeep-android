@@ -1,0 +1,88 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="vmodev.clearkeep.fragments.SignUpFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/login_background_main_color"
+        android:orientation="vertical">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/text_input_edit_text_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/username_or_email"
+            android:textColor="@color/main_text_color"
+            android:textColorHint="@color/main_text_color_hint"
+            android:layout_marginHorizontal="20dp"
+            android:inputType="textEmailAddress"/>
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/text_input_edit_text_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/settings_password"
+            android:textColor="@color/main_text_color"
+            android:textColorHint="@color/main_text_color_hint"
+            android:layout_margin="20dp"
+            android:inputType="textPassword"/>
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/text_input_edit_text_confirm_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/repeat_password"
+            android:textColor="@color/main_text_color"
+            android:textColorHint="@color/main_text_color_hint"
+            android:layout_marginHorizontal="20dp"
+            android:inputType="textPassword"/>
+
+        <Button
+            android:id="@+id/button_register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@drawable/button_background_gradient"
+            android:text="@string/register"
+            android:textColor="@color/main_text_color" />
+
+        <FrameLayout
+            android:id="@+id/frame_layout_have_an_account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_border_background"
+            android:layout_marginHorizontal="20dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="2dp"
+                    android:text="@string/have_an_account"
+                    android:textAlignment="textEnd"
+                    android:textAllCaps="true"
+                    android:textColor="@color/main_text_color"
+                    tools:ignore="RtlCompat" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="2dp"
+                    android:text="@string/sign_in"
+                    android:textAllCaps="true"
+                    android:textColor="@color/button_login_background_color"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+
+</layout>

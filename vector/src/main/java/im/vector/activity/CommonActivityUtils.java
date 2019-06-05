@@ -87,6 +87,11 @@ import im.vector.push.PushManager;
 import im.vector.services.EventStreamService;
 import im.vector.ui.badge.BadgeProxy;
 import im.vector.util.PreferencesManager;
+import vmodev.clearkeep.activities.CallViewActivity;
+import vmodev.clearkeep.activities.FindAndCreateNewConversationActivity;
+import vmodev.clearkeep.activities.HomeScreenActivity;
+import vmodev.clearkeep.activities.InviteUsersToRoomActivity;
+import vmodev.clearkeep.activities.PreviewInviteRoomActivity;
 
 /**
  * Contains useful functions which are called in multiple activities.
@@ -361,7 +366,8 @@ public class CommonActivityUtils {
                     Activity activeActivity = VectorApp.getCurrentActivity();
 
                     // go to login page
-                    Intent intent = new Intent(activeActivity, LoginActivity.class);
+//                    Intent intent = new Intent(activeActivity, LoginActivity.class);
+                    Intent intent = new Intent(activeActivity, vmodev.clearkeep.activities.LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
                     if (null != activeActivity) {
@@ -790,7 +796,9 @@ public class CommonActivityUtils {
                     @Override
                     public void run() {
                         // if the activity is not the home activity
-                        if (!(fromActivity instanceof VectorHomeActivity)) {
+                        if (!(fromActivity instanceof HomeScreenActivity) && !(fromActivity instanceof PreviewInviteRoomActivity)
+                                && !(fromActivity instanceof FindAndCreateNewConversationActivity)
+                                && !(fromActivity instanceof InviteUsersToRoomActivity) && !(fromActivity instanceof CallViewActivity)) {
                             // pop to the home activity
                             Log.d(LOG_TAG, "## goToRoomPage(): start VectorHomeActivity..");
                             Intent intent = new Intent(fromActivity, VectorHomeActivity.class);
@@ -802,7 +810,7 @@ public class CommonActivityUtils {
                             // already to the home activity
                             // so just need to open the room activity
                             Log.d(LOG_TAG, "## goToRoomPage(): already in VectorHomeActivity..");
-                            Intent intent = new Intent(fromActivity, VectorRoomActivity.class);
+                            Intent intent = new Intent(fromActivity, vmodev.clearkeep.activities.RoomActivity.class);
 
                             for (String key : params.keySet()) {
                                 Object value = params.get(key);

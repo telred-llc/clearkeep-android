@@ -145,6 +145,16 @@
 
     <!-- Notification (do not depends on theme -->
     <color name="notification_accent_color">#368BD6</color>
+    <color name="login_background_main_color">#3C4B62</color>
+    <color name="main_text_color_hint">#B8BDC7</color>
+    <color name="main_text_color">#FFFFFF</color>
+    <color name="button_login_background_color">#25B4CA</color>
+    <color name="home_screen_bottom_navigation_view_background">#F3F2F3</color>
+    <color name="app_green">#63CD9A</color>
+    <color name="lock_background">#BBBBBB</color>
+    <color name="transparent_black_50">#80000000</color>
+    <color name="background_main_gray">#F1F1F2</color>
+    <color name="blue_app">#46B6CB</color>
 
 
 </resources>

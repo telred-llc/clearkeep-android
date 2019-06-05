@@ -11,6 +11,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/call_switch_camera_view"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/header_pending_callview"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="10dp"
+            android:background="@drawable/circle_background_blue"
+            android:scaleType="center"
+            android:src="@drawable/ic_switch_camera_white" />
+
+        <ImageView
+            android:id="@+id/start_video_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_material_videocam_grey"
+            android:visibility="gone" />
+
         <im.vector.view.VectorCircularImageView
             android:id="@+id/call_other_member"
             android:layout_width="100dp"
@@ -26,64 +44,92 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@android:color/white"
-            android:gravity="center">
+            android:layout_marginBottom="10dp"
+            android:background="@android:color/transparent"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:visibility="gone">
 
-            <ImageView
-                android:id="@+id/room_chat_link"
+            <FrameLayout
                 android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="14"
-                android:src="@drawable/ic_material_message_grey" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent">
 
-            <ImageView
-                android:id="@+id/call_speaker_view"
+                <ImageView
+                    android:id="@+id/mute_audio"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/circle_background_gray"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_mic_off_white_24dp" />
+            </FrameLayout>
+
+            <FrameLayout
                 android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="14"
-                android:src="@drawable/ic_material_speaker_phone_grey" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent">
 
-            <ImageView
-                android:id="@+id/call_switch_camera_view"
+                <ImageView
+                    android:id="@+id/call_speaker_view"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/circle_background_gray"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_volume_off_white" />
+            </FrameLayout>
+
+            <FrameLayout
                 android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="14"
-                android:src="@drawable/ic_material_switch_video_grey"
-                android:visibility="invisible" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent">
 
+                <ImageView
+                    android:id="@+id/hang_up_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/circle_background"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_call_end_white" />
+            </FrameLayout>
 
-            <!-- Hang up button used when the call is established or
-            when the call is being setup and the called device has not yet reached -->
-            <ImageView
-                android:id="@+id/hang_up_button"
+            <FrameLayout
                 android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="16"
-                android:src="@drawable/ic_material_call_end_grey" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent">
 
-            <!-- for further use: for now we cannot switch from audio to video -->
-            <ImageView
-                android:id="@+id/start_video_call"
-                android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="14"
-                android:src="@drawable/ic_material_videocam_grey"
-                android:visibility="invisible" />
+                <ImageView
+                    android:id="@+id/mute_local_camera"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/circle_background_gray"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_video_cam_off_white" />
+            </FrameLayout>
 
-            <ImageView
-                android:id="@+id/mute_local_camera"
+            <FrameLayout
                 android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="14"
-                android:src="@drawable/ic_material_videocam_off_grey"
-                android:visibility="invisible" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent">
 
-            <ImageView
-                android:id="@+id/mute_audio"
-                android:layout_width="0dp"
-                android:layout_height="24dp"
-                android:layout_weight="14"
-                android:src="@drawable/ic_material_mic_off_grey" />
+                <ImageView
+                    android:id="@+id/room_chat_link"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/circle_background_blue"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_message_white" />
+            </FrameLayout>
+
         </LinearLayout>
 
         <!-- container layout for the action buttons -->
@@ -91,25 +137,42 @@
             android:id="@+id/incoming_call_menu_buttons_layout_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/call_menu_buttons_layout_container"
             android:layout_alignParentBottom="true"
-            android:background="@android:color/white"
-            android:gravity="center">
+            android:background="@android:color/transparent"
+            android:baselineAligned="false"
+            android:gravity="center"
+            android:layout_marginBottom="100dp"
+            android:visibility="gone">
 
-            <ImageView
-                android:id="@+id/reject_incoming_call"
+            <FrameLayout
                 android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="50"
-                android:src="@drawable/voice_call_end_fushia" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
 
-            <ImageView
-                android:id="@+id/accept_incoming_call"
+                <ImageView
+                    android:id="@+id/reject_incoming_call"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/circle_background"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_call_end_white" />
+            </FrameLayout>
+
+            <FrameLayout
                 android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="50"
-                android:src="@drawable/voice_call_start_green" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
 
+                <ImageView
+                    android:id="@+id/accept_incoming_call"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/circle_background_green"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_call_white_24dp" />
+            </FrameLayout>
         </LinearLayout>
 
         <im.vector.view.VectorPendingCallView

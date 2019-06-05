@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="vmodev.clearkeep.activities.CallSettingsActivity">
+
+    <data>
+
+        <import type="android.arch.lifecycle.LiveData" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Status" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.DeviceSettings" />
+
+        <variable
+            name="deviceSettings"
+            type="LiveData&lt;Resource&lt;DeviceSettings>>" />
+
+        <variable
+            name="deviceSettingsChanged"
+            type="LiveData&lt;Resource&lt;DeviceSettings>>" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:visibleGone="@{deviceSettings.status == Status.LOADING || deviceSettingsChanged.status == Status.LOADING}" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/receive_call_rom_lock_screen"
+                android:textColor="@color/lb_grey" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/integrated_calling" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switch_compat_integrated_calling"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:status="@{deviceSettings.data.integratedCalling}" />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+</layout>

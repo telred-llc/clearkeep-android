@@ -1,0 +1,16 @@
+package vmodev.clearkeep.factories.viewmodels
+
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
+import vmodev.clearkeep.activities.interfaces.IActivity
+import vmodev.clearkeep.activities.interfaces.IProfileSettingsActivity
+import vmodev.clearkeep.factories.viewmodels.interfaces.IProfileSettingsActivityViewModelFactory
+import vmodev.clearkeep.viewmodels.interfaces.AbstractProfileSettingsActivityViewModel
+import javax.inject.Inject
+
+class ProfileSettingsActivityViewModelFactory @Inject constructor(activity: IProfileSettingsActivity, factory: ViewModelProvider.Factory) : IProfileSettingsActivityViewModelFactory {
+    private val viewModel = ViewModelProviders.of(activity.getActivity(), factory).get(AbstractProfileSettingsActivityViewModel::class.java)
+    override fun getViewModel(): AbstractProfileSettingsActivityViewModel {
+        return viewModel;
+    }
+}
