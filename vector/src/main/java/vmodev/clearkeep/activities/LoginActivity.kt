@@ -8,6 +8,7 @@ import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import im.vector.BuildConfig
 import im.vector.LoginHandler
 import im.vector.R
 import im.vector.RegistrationManager
@@ -81,7 +82,7 @@ class LoginActivity : AppCompatActivity(), LoginFragment.OnFragmentInteractionLi
     private fun initRegisterScreen() {
         mLoginHandler = LoginHandler();
         mRegistrationManager = RegistrationManager(null);
-        hsConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse("https://study.sinbadflyce.com")).withIdentityServerUri(Uri.parse("https://matrix.org")).build();
+        hsConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse(BuildConfig.HOME_SERVER)).withIdentityServerUri(Uri.parse("https://matrix.org")).build();
         mHandler = Handler(mainLooper);
         checkRegistrationFlows();
     }
