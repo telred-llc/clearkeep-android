@@ -59,6 +59,7 @@ class MessageListActivity : DaggerAppCompatActivity(), IMessageListActivity {
             }
         });
         binding.recyclerViewListMessage.adapter = adapter;
+//        binding.messagesUpdate = viewModelFactory.getViewModel().registerMatrixMessageHandlerResult();
         viewModelFactory.getViewModel().getListMessageResult().observe(this, Observer {
             adapter.submitList(it?.data);
         })
@@ -68,6 +69,11 @@ class MessageListActivity : DaggerAppCompatActivity(), IMessageListActivity {
 
     override fun getActivity(): FragmentActivity {
         return this;
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("Finish Activity", "Destroy Message List")
     }
 
     companion object {

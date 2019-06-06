@@ -27,6 +27,10 @@
             type="LiveData&lt;Resource&lt;Message>>" />
 
         <variable
+            name="messagesUpdate"
+            type="LiveData&lt;Resource&lt;List&lt;Message>>>" />
+
+        <variable
             name="room"
             type="LiveData&lt;Resource&lt;Room>>" />
 
@@ -106,6 +110,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/lb_grey" />
+
+            <ProgressBar
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                app:visibleGone="@{messagesUpdate.status == Status.LOADING}" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view_list_message"

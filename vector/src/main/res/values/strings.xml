@@ -1283,4 +1283,5 @@ Why choose Riot.im?
     <string name="pin_rooms_with_unread_messages">Pin rooms with unread messages</string>
     <string name="notifications">Notifications</string>
     <string name="send_an_encrypted_message">Send an encrypted message...</string>
+    <string name="preview_message">Preview</string>
 </resources>

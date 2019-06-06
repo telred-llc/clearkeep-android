@@ -37,10 +37,47 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
                 else {
                     return remoteData;
                 }
-//                Log.d("Message Data Size", localData.size.toString())
-//                return remoteData;
             }
         }.asLiveData();
+    }
+
+    fun loadListMessageFromLocalDBWithRoomId(roomId: String): LiveData<Resource<List<Message>>> {
+        return object : AbstractLocalLoadSouce<List<Message>>() {
+            override fun loadFromDB(): LiveData<List<Message>> {
+                return messageDao.getListMessageWithRoomId(roomId);
+            }
+        }.asLiveData();
+    }
+
+    fun registerMatrixMessageHandler(roomId: String): LiveData<Resource<List<Message>>> {
+        return object : AbstractNetworkBoundSourceWithCondition<List<Message>, List<Message>>() {
+            override fun saveCallResult(item: List<Message>) {
+                messageDao.insertListMessage(item);
+            }
+
+            override fun createCall(): LiveData<List<Message>> {
+                return LiveDataReactiveStreams.fromPublisher(matrixMessageHandlerFactory.getOrCreateMessageHandler(roomId).getHistoryMessage()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .toFlowable(BackpressureStrategy.LATEST))
+            }
+
+            override fun loadFromDB(): LiveData<List<Message>> {
+                return messageDao.getListMessageWithRoomId(roomId);
+            }
+
+            override fun checkRemoteSourceWithLocalSource(remoteData: List<Message>, localData: List<Message>): List<Message> {
+                if (localData.size == remoteData.size)
+                    return ArrayList<Message>();
+                else {
+                    return remoteData;
+                }
+            }
+        }.asLiveData();
+    }
+
+    fun removeMatrixMessageHandler(roomId: String) {
+        matrixMessageHandlerFactory.unRegisterListener(roomId);
     }
 
     fun loadMessageWithId(id: String): LiveData<Resource<Message>> {

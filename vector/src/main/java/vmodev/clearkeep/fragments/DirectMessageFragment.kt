@@ -111,6 +111,7 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDriectMessageFragmen
                             3 -> onClickItemDecline(room.id);
                             1 -> onClickAddToFavourite(room.id);
                             2 -> onClickRoomSettings(room.id);
+                            4 -> onClickGoRoomPreview(room.id);
                         }
 
                         dialog?.dismiss();
@@ -124,6 +125,12 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDriectMessageFragmen
             listRoomAdapter!!.getAdapter().submitList(t?.data);
         });
         directMessageViewModelFactory.getViewModel().setListType(arrayOf(1, 65))
+    }
+
+    private fun onClickGoRoomPreview(id: String) {
+        val intnetGoRoom = Intent(activity, MessageListActivity::class.java);
+        intnetGoRoom.putExtra(MessageListActivity.ROOM_ID, id);
+        startActivity(intnetGoRoom);
     }
 
     private fun onClickRoomSettings(id: String) {
@@ -152,10 +159,7 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDriectMessageFragmen
     }
 
     private fun onClickGoRoom(roomId: String) {
-//        listener?.onClickGoRoom(roomId);
-        val intnetGoRoom = Intent(activity, MessageListActivity::class.java);
-        intnetGoRoom.putExtra(MessageListActivity.ROOM_ID, roomId);
-        startActivity(intnetGoRoom);
+        listener?.onClickGoRoom(roomId);
     }
 
     override fun onAttach(context: Context) {

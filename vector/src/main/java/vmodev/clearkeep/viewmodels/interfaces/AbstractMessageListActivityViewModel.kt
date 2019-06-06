@@ -12,5 +12,6 @@ abstract class AbstractMessageListActivityViewModel : ViewModel() {
     abstract fun setMessageId(id: String);
     abstract fun getMessageResult(): LiveData<Resource<Message>>;
     abstract fun getRoomResult(): LiveData<Resource<Room>>;
-    abstract fun setRoomId(roomId: String);
+    abstract fun removeMatrixMessageHandler(roomId: String);
+    abstract fun registerMatrixMessageHandlerResult(): LiveData<Resource<List<Message>>>;
 }

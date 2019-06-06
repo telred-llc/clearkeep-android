@@ -11,12 +11,13 @@ import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodels.interfaces.AbstractMessageListActivityViewModel
 import javax.inject.Inject
 
-class MessageListActivityViewModel @Inject constructor(messageRepository: MessageRepository, roomRepository: RoomRepository) : AbstractMessageListActivityViewModel() {
+class MessageListActivityViewModel @Inject constructor(private val messageRepository: MessageRepository, roomRepository: RoomRepository) : AbstractMessageListActivityViewModel() {
     private val _roomIdForGetListMessage = MutableLiveData<String>();
     private val _messageId = MutableLiveData<String>();
-    private val _getListMessageResult = Transformations.switchMap(_roomIdForGetListMessage) { input -> messageRepository.loadListMessageWithRoomId(input) }
+    private val _getListMessageResult = Transformations.switchMap(_roomIdForGetListMessage) { input -> messageRepository.loadListMessageFromLocalDBWithRoomId(input) }
     private val _getMessage = Transformations.switchMap(_roomIdForGetListMessage) { input -> messageRepository.loadMessageWithId(input) }
     private val _getRoomResult = Transformations.switchMap(_roomIdForGetListMessage) { input -> roomRepository.loadRoom(input) }
+    private val _registerMatrixMessageHandlerResult = Transformations.switchMap(_roomIdForGetListMessage) { input -> messageRepository.registerMatrixMessageHandler(input) }
 
     override fun getListMessageResult(): LiveData<Resource<List<Message>>> {
         return _getListMessageResult;
@@ -39,7 +40,11 @@ class MessageListActivityViewModel @Inject constructor(messageRepository: Messag
         return _getRoomResult;
     }
 
-    override fun setRoomId(roomId: String) {
+    override fun removeMatrixMessageHandler(roomId: String) {
+        messageRepository.removeMatrixMessageHandler(roomId);
+    }
 
+    override fun registerMatrixMessageHandlerResult(): LiveData<Resource<List<Message>>> {
+        return _registerMatrixMessageHandlerResult;
     }
 }
