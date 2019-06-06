@@ -28,6 +28,8 @@ import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.activities.MessageListActivity
+import vmodev.clearkeep.activities.CreateNewConversationActivity
+import vmodev.clearkeep.activities.FindAndCreateNewConversationActivity
 import vmodev.clearkeep.activities.RoomSettingsActivity
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
@@ -119,6 +121,10 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDriectMessageFragmen
             bottomDialog.show();
         }
         binding.rooms = directMessageViewModelFactory.getViewModel().getListRoomByType();
+        binding.buttonStartDirectChat.setOnClickListener {
+            val intentNewChat = Intent(context, FindAndCreateNewConversationActivity::class.java);
+            startActivity(intentNewChat);
+        }
         binding.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewListConversation.adapter = listRoomAdapter.getAdapter();
         directMessageViewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Automatically generated file. DO NOT MODIFY -->
+
+    <!-- Values from build type: debug -->
+    <string name="git_sdk_revision" translatable="false">"f465c4d7b"</string>
+    <string name="git_sdk_revision_date" translatable="false">"2019-06-06 11:05:18 +0700"</string>
+    <string name="git_sdk_revision_unix_date" translatable="false">"1559793918"</string>
+
+</resources>

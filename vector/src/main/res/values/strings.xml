@@ -1284,4 +1284,9 @@ Why choose Riot.im?
     <string name="notifications">Notifications</string>
     <string name="send_an_encrypted_message">Send an encrypted message...</string>
     <string name="preview_message">Preview</string>
+    <string name="you_have_no_chat_here">You have no chat here, tap to under button to start.</string>
+    <string name="start_direct_chat">Start Direct Chat</string>
+    <string name="start_room_chat">Start Room Chat</string>
+    <string name="time_demo">, 04:55 PM</string>
+    <string name="me">Me</string>
 </resources>

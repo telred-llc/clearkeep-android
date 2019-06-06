@@ -9,6 +9,8 @@ import vmodev.clearkeep.databases.AbstractMessageDao
 import vmodev.clearkeep.factories.messaghandler.interfaces.IMessageHandlerFactory
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.Resource
+import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.User
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -67,11 +69,11 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
             }
 
             override fun checkRemoteSourceWithLocalSource(remoteData: List<Message>, localData: List<Message>): List<Message> {
-                if (localData.size == remoteData.size)
-                    return ArrayList<Message>();
-                else {
+//                if (localData.size == remoteData.size)
+//                    return ArrayList<Message>();
+//                else {
                     return remoteData;
-                }
+//                }
             }
         }.asLiveData();
     }
@@ -96,6 +98,30 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
 
             override fun checkRemoteSourceWithLocalSource(remoteData: Message, localData: Message): Message {
                 return localData;
+            }
+        }.asLiveData();
+    }
+
+    fun loadUsersInRoom(roomId: String): LiveData<Resource<List<User>>> {
+        return object : AbstractLocalLoadSouce<List<User>>() {
+            override fun loadFromDB(): LiveData<List<User>> {
+                return messageDao.getUsersInRoom(roomId);
+            }
+        }.asLiveData();
+    }
+
+    fun loadUserByMessageId(messageId: String): LiveData<Resource<User>> {
+        return object : AbstractLocalLoadSouce<User>() {
+            override fun loadFromDB(): LiveData<User> {
+                return messageDao.getUserByMessageId(messageId);
+            }
+        }.asLiveData();
+    }
+
+    fun loadRoomByRoomId(roomId: String): LiveData<Resource<Room>> {
+        return object : AbstractLocalLoadSouce<Room>() {
+            override fun loadFromDB(): LiveData<Room> {
+                return messageDao.getRoomByRoomId(roomId);
             }
         }.asLiveData();
     }

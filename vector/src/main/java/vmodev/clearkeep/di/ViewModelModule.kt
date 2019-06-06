@@ -85,5 +85,10 @@ abstract class ViewModelModule {
     abstract fun bindMessageListActivityViewModel(viewModel: MessageListActivityViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractSplashActivityViewModel::class)
+    abstract fun bindAbstractSplashActivityModule(viewModel: SplashActivityViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }

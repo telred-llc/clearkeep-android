@@ -909,7 +909,6 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                 }
                 var currentIndex: Int = 0;
                 if (rooms.size == 0) {
-                    Log.d("Room Size", rooms.size.toString());
                     emitter.onNext(ListRoomAndRoomUserJoinReturn(listRoom, listUser, listRoomUserJoin));
                     emitter.onComplete();
                 } else {

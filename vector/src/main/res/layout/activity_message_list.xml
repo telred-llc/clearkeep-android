@@ -63,6 +63,7 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
+                        android:id="@+id/linearLayoutRoomSetting"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -124,7 +125,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_message_sent" />
+                tools:listitem="@layout/item_message_sent_with_no_avatar" />
 
             <FrameLayout
                 android:layout_width="match_parent"

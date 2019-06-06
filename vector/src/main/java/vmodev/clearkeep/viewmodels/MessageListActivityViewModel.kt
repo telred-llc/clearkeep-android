@@ -8,23 +8,24 @@ import vmodev.clearkeep.repositories.RoomRepository
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractMessageListActivityViewModel
 import javax.inject.Inject
 
-class MessageListActivityViewModel @Inject constructor(private val messageRepository: MessageRepository, roomRepository: RoomRepository) : AbstractMessageListActivityViewModel() {
+class MessageListActivityViewModel @Inject constructor(private val messageRepository: MessageRepository) : AbstractMessageListActivityViewModel() {
     private val _roomIdForGetListMessage = MutableLiveData<String>();
     private val _messageId = MutableLiveData<String>();
     private val _getListMessageResult = Transformations.switchMap(_roomIdForGetListMessage) { input -> messageRepository.loadListMessageFromLocalDBWithRoomId(input) }
     private val _getMessage = Transformations.switchMap(_roomIdForGetListMessage) { input -> messageRepository.loadMessageWithId(input) }
-    private val _getRoomResult = Transformations.switchMap(_roomIdForGetListMessage) { input -> roomRepository.loadRoom(input) }
+    private val _getRoomResult = Transformations.switchMap(_roomIdForGetListMessage) { input -> messageRepository.loadRoomByRoomId(input) }
     private val _registerMatrixMessageHandlerResult = Transformations.switchMap(_roomIdForGetListMessage) { input -> messageRepository.registerMatrixMessageHandler(input) }
+    private val _getUsersByRoomId = Transformations.switchMap(_roomIdForGetListMessage) { input -> messageRepository.loadUsersInRoom(input) }
 
     override fun getListMessageResult(): LiveData<Resource<List<Message>>> {
         return _getListMessageResult;
     }
 
     override fun setRoomIdForGetListMessage(roomId: String) {
-//        if (_roomIdForGetListMessage.value != roomId)
         _roomIdForGetListMessage.value = roomId;
     }
 
@@ -46,5 +47,9 @@ class MessageListActivityViewModel @Inject constructor(private val messageReposi
 
     override fun registerMatrixMessageHandlerResult(): LiveData<Resource<List<Message>>> {
         return _registerMatrixMessageHandlerResult;
+    }
+
+    override fun getUsersByRoomIdResult(): LiveData<Resource<List<User>>> {
+        return _getUsersByRoomId;
     }
 }

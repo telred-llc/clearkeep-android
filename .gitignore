@@ -99,3 +99,5 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+#matrix-sdk-build
+matrix-sdk/build/

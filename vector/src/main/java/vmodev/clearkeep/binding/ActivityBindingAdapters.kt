@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.SwitchCompat
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -55,6 +56,7 @@ class ActivityBindingAdapters constructor(val activity: FragmentActivity) : Imag
 
     override fun bindStatus(switchCompat: SwitchCompat, status: Byte?) {
         status?.let {
+            Log.d("switch Compat", status.toString())
             switchCompat.isChecked = status.compareTo(0) != 0
         }
     }

@@ -93,10 +93,12 @@ class MatrixMessageHandler constructor(private val roomId: String, context: Cont
                     roomSync.timeline.events = info?.messages?.chunk;
 
                     roomSync.timeline.events.forEach { t: Event? ->
+
                         t?.let {
                             if (it.type.compareTo("m.room.encrypted") == 0) {
                                 val message = Message(messageId = it.eventId, roomId = it.roomId, userId = it.userId, messageType = it.type, encryptedContent = it.contentAsJsonObject.toString());
                                 listMessage.add(message);
+                                Log.d("Message Event", it.contentAsJsonObject.toString());
                             }
                         }
                     }

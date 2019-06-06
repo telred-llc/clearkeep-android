@@ -1,0 +1,1 @@
+[{"outputType":{"type":"MERGED_MANIFESTS"},"apkData":{"type":"MAIN","splits":[],"versionCode":923,"versionName":"0.9.23","enabled":true,"outputFile":"matrix-sdk-debug-0.9.23.aar","fullName":"debug","baseName":"debug"},"path":"../../library_manifest/debug/AndroidManifest.xml","properties":{"packageId":"org.matrix.androidsdk","split":""}}]

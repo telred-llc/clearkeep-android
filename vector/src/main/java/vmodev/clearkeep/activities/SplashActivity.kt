@@ -9,6 +9,7 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.support.v7.preference.PreferenceManager
 import dagger.android.support.DaggerAppCompatActivity
 import im.vector.ErrorListener
@@ -27,20 +28,21 @@ import org.matrix.androidsdk.rest.callback.ApiCallback
 import org.matrix.androidsdk.rest.callback.SimpleApiCallback
 import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.util.Log
+import vmodev.clearkeep.activities.interfaces.ISplashActivity
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
+import vmodev.clearkeep.factories.viewmodels.interfaces.ISplashActivityViewModelFactory
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import java.util.ArrayList
 import java.util.HashMap
 import javax.inject.Inject
 
-class SplashActivity : DaggerAppCompatActivity() {
+class SplashActivity : DaggerAppCompatActivity(), ISplashActivity {
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory;
+    lateinit var viewModelFactory: ISplashActivityViewModelFactory;
 
     private lateinit var binding: ActivitySplashBinding;
-    private lateinit var roomViewModel: AbstractRoomViewModel;
 
     private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
 
@@ -54,8 +56,7 @@ class SplashActivity : DaggerAppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_splash, dataBindingComponent);
 
-        roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
-        binding.rooms = roomViewModel.getRoomsData();
+        binding.rooms = viewModelFactory.getViewModel().getAllRoomResult();
         if (!hasCredentials()) {
             val intent = Intent(this, LoginActivity::class.java);
             startActivity(intent);
@@ -74,12 +75,12 @@ class SplashActivity : DaggerAppCompatActivity() {
             return
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1
-            && PreferenceManager.getDefaultSharedPreferences(this).getInt(PreferencesManager.VERSION_BUILD, 0) < 81200
-            && PreferenceManager.getDefaultSharedPreferences(this).getBoolean(NEED_TO_CLEAR_CACHE_BEFORE_81200, true)) {
+                && PreferenceManager.getDefaultSharedPreferences(this).getInt(PreferencesManager.VERSION_BUILD, 0) < 81200
+                && PreferenceManager.getDefaultSharedPreferences(this).getBoolean(NEED_TO_CLEAR_CACHE_BEFORE_81200, true)) {
             PreferenceManager.getDefaultSharedPreferences(this)
-                .edit()
-                .putBoolean(NEED_TO_CLEAR_CACHE_BEFORE_81200, false)
-                .apply()
+                    .edit()
+                    .putBoolean(NEED_TO_CLEAR_CACHE_BEFORE_81200, false)
+                    .apply()
 
             // Force a clear cache
 //            Matrix.getInstance(this)!!.reloadSessions(this)
@@ -169,13 +170,13 @@ class SplashActivity : DaggerAppCompatActivity() {
         if (!hasCorruptedStore()) {
             val intent = Intent(this, HomeScreenActivity::class.java)
 
-            roomViewModel.getRoomsData().observe(this, Observer { t ->
+            viewModelFactory.getViewModel().getAllRoomResult().observe(this, Observer { t ->
                 if (t?.status == Status.SUCCESS) {
                     startActivity(intent)
                     finish()
                 }
             })
-            roomViewModel.setFilter(arrayOf(1, 2, 65, 66, 129, 130));
+            viewModelFactory.getViewModel().setFiltersForGetAllRoom(arrayOf(1, 2, 65, 66, 129, 130));
         } else {
             CommonActivityUtils.logout(this)
         }
@@ -343,6 +344,10 @@ class SplashActivity : DaggerAppCompatActivity() {
                 session.setFailureCallback(null)
             }
         }
+    }
+
+    override fun getActivity(): FragmentActivity {
+        return this;
     }
 
     companion object {

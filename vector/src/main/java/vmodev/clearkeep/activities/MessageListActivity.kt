@@ -1,6 +1,7 @@
 package vmodev.clearkeep.activities
 
 import android.arch.lifecycle.Observer
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -20,6 +21,7 @@ import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IMessageListActivityViewModelFactory
 import vmodev.clearkeep.viewmodelobjects.Message
+import vmodev.clearkeep.viewmodelobjects.User
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -35,7 +37,7 @@ class MessageListActivity : DaggerAppCompatActivity(), IMessageListActivity {
     private lateinit var roomId: String;
 
     private lateinit var session: MXSession;
-
+    private val members = HashMap<String, User>();
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_message_list, dataBindingComponent);
@@ -46,10 +48,15 @@ class MessageListActivity : DaggerAppCompatActivity(), IMessageListActivity {
         binding.toolbar.setNavigationOnClickListener {
             onBackPressed();
         }
+        binding.linearLayoutRoomSetting.setOnClickListener {
+            val intentSetting = Intent(this, RoomSettingsActivity::class.java);
+            intentSetting.putExtra(RoomSettingsActivity.ROOM_ID, roomId);
+            startActivity(intentSetting);
+        }
         session = Matrix.getInstance(applicationContext).defaultSession;
         binding.messages = viewModelFactory.getViewModel().getListMessageResult();
         binding.room = viewModelFactory.getViewModel().getRoomResult();
-        val adapter = ListMessageRecyclerViewAdapter(session.myUserId, appExecutors, dataBindingComponent, object : DiffUtil.ItemCallback<Message>() {
+        val adapter = ListMessageRecyclerViewAdapter(session.myUserId, members, appExecutors, dataBindingComponent, object : DiffUtil.ItemCallback<Message>() {
             override fun areItemsTheSame(p0: Message, p1: Message): Boolean {
                 return p0.messageId == p1.messageId;
             }
@@ -59,9 +66,23 @@ class MessageListActivity : DaggerAppCompatActivity(), IMessageListActivity {
             }
         });
         binding.recyclerViewListMessage.adapter = adapter;
-//        binding.messagesUpdate = viewModelFactory.getViewModel().registerMatrixMessageHandlerResult();
+        binding.messagesUpdate = viewModelFactory.getViewModel().registerMatrixMessageHandlerResult();
+        viewModelFactory.getViewModel().getUsersByRoomIdResult().observe(this, Observer {
+            it?.data?.let {
+                it.forEach { t: User? ->
+                    t?.let {
+                        if (!members.containsKey(it.id))
+                            members.put(it.id, it);
+                    }
+                }
+            }
+        })
         viewModelFactory.getViewModel().getListMessageResult().observe(this, Observer {
             adapter.submitList(it?.data);
+            it?.data?.let {
+                if (it.isNotEmpty())
+                    binding.recyclerViewListMessage.smoothScrollToPosition(it.size - 1);
+            }
         })
         binding.lifecycleOwner = this;
         viewModelFactory.getViewModel().setRoomIdForGetListMessage(roomId);
@@ -73,7 +94,7 @@ class MessageListActivity : DaggerAppCompatActivity(), IMessageListActivity {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("Finish Activity", "Destroy Message List")
+        viewModelFactory.getViewModel().removeMatrixMessageHandler(roomId);
     }
 
     companion object {

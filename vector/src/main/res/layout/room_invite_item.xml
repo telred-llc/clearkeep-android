@@ -15,8 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:baselineAligned="false"
+        android:orientation="horizontal">
 
         <FrameLayout
             android:layout_width="70dp"
@@ -27,9 +27,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_launcher_app"
-                app:imageUrl="@{Room.avatarUrl}"
+                app:civ_border_color="@android:color/darker_gray"
                 app:civ_border_width="2dp"
-                app:civ_border_color="@android:color/darker_gray"/>
+                app:imageUrl="@{Room.avatarUrl}" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/circle_image_view_status"
@@ -39,7 +39,7 @@
                 android:src="@color/lock_background"
                 app:civ_border_color="@android:color/white"
                 app:civ_border_width="2dp"
-                app:visibleGone="@{Room.type == 65}"/>
+                app:visibleGone="@{Room.type == 65}" />
         </FrameLayout>
 
         <LinearLayout
@@ -55,9 +55,10 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginHorizontal="10dp"
                 android:layout_weight="1"
+                android:singleLine="true"
                 android:text="@{Room.name}"
-                android:textStyle="bold"
-                android:textSize="@dimen/text_20_sp"/>
+                android:textSize="@dimen/text_20_sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/text_view_notify"
@@ -107,8 +108,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                app:timeStamp="@{Room.updatedDate}"
-                android:textAlignment="textEnd" />
+                android:textAlignment="textEnd"
+                app:timeStamp="@{Room.updatedDate}" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="wrap_content"

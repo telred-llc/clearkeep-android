@@ -53,8 +53,8 @@ abstract class AbstractNetworkBoundSourceWithCondition<T, V> @MainThread constru
         }
     }
 
-    public fun asLiveData(): LiveData<Resource<T>> {
-        return result as LiveData<Resource<T>>;
+    fun asLiveData(): LiveData<Resource<T>> {
+        return result;
     }
 
     @WorkerThread

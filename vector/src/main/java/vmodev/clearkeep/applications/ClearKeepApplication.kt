@@ -26,20 +26,20 @@ class ClearKeepApplication : DaggerVectorApp() {
         RxJavaPlugins.setErrorHandler { throwable -> Log.d("RX Throw: ", throwable.message) }
 //        val mxSession = Matrix.getInstance(this).defaultSession;
 //        mxSession?.dataHandler?.addListener(matrixEventHandler.getMXEventListener(mxSession))
-        Observable.create<Unit> { emitter ->
-            run {
-                val unit = database.clearAllTables();
-                if (unit != null) {
-                    emitter.onNext(unit);
-                    emitter.onComplete();
-                } else {
-                    emitter.onError(Throwable(message = "Can not delete database"))
-                    emitter.onComplete();
-                }
-            }
-        }.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe { b ->
-            Log.d("Delete DB Success", b.toString())
-        };
+//        Observable.create<Unit> { emitter ->
+//            run {
+//                val unit = database.clearAllTables()
+//                if (unit != null) {
+//                    emitter.onNext(unit);
+//                    emitter.onComplete();
+//                } else {
+//                    emitter.onError(Throwable(message = "Can not delete database"))
+//                    emitter.onComplete();
+//                }
+//            }
+//        }.subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe { b ->
+//            Log.d("Delete DB Success", b.toString())
+//        };
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerVectorApp> {

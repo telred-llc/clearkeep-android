@@ -6,9 +6,15 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.Message" />
 
+        <import type="vmodev.clearkeep.viewmodelobjects.User" />
+
         <variable
             name="message"
             type="Message" />
+
+        <variable
+            name="user"
+            type="User" />
     </data>
 
     <LinearLayout
@@ -24,7 +30,8 @@
             android:id="@+id/image_view_avatar"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@color/app_green" />
+            android:src="@color/app_green"
+            app:imageUrl="@{user.avatarUrl}" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -40,25 +47,32 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{message.userId}"
-                    android:textColor="@color/lb_grey" />
+                    android:text="@{user.name}"
+                    android:textColor="@color/lb_grey"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/time_demo"
+                    android:textColor="@color/lb_grey"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/background_radius_green"
+                android:background="@drawable/background_radius_gradient"
                 android:minHeight="40dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_margin="5dp"
                     android:text="@string/invite_content"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/text_20_sp"
-                    app:decryptMessage="@{message}"
-                    android:layout_gravity="center"/>
+                    app:decryptMessage="@{message}" />
             </FrameLayout>
         </LinearLayout>
     </LinearLayout>
