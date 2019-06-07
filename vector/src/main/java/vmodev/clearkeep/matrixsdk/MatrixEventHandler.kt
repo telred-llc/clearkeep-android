@@ -48,7 +48,7 @@ class MatrixEventHandler @Inject constructor(private val application: Applicatio
     override fun onLiveEvent(event: Event?, roomState: RoomState?) {
         super.onLiveEvent(event, roomState)
 
-        Log.d("Event Type:", event?.type);
+        Log.d("EventType:", event?.type);
 //        event?.contentAsJsonObject?.let {
 //            val content = it.toString();
 //            val parser = JsonParser();

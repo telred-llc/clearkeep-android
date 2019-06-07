@@ -14,12 +14,13 @@ abstract class AbstractNetworkCreateOrUpdateSource<T, V> @MainThread constructor
 
     init {
         result.value = Resource.loading(null);
-        val dbSource = loadFromDb();
         val remoteSource = createCall();
         result.addSource(remoteSource) { remoteData ->
             result.removeSource(remoteSource);
             if (remoteData != null) {
+                val dbSource = loadFromDb();
                 result.addSource(dbSource) { dbData ->
+                    result.removeSource(dbSource);
                     Observable.create<Int> { emitter ->
                         if (dbData != null)
                             updateItem(remoteData);
