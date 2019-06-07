@@ -92,6 +92,7 @@ import vmodev.clearkeep.activities.FindAndCreateNewConversationActivity;
 import vmodev.clearkeep.activities.HomeScreenActivity;
 import vmodev.clearkeep.activities.InviteUsersToRoomActivity;
 import vmodev.clearkeep.activities.PreviewInviteRoomActivity;
+import vmodev.clearkeep.activities.ViewUserProfileActivity;
 
 /**
  * Contains useful functions which are called in multiple activities.
@@ -798,7 +799,8 @@ public class CommonActivityUtils {
                         // if the activity is not the home activity
                         if (!(fromActivity instanceof HomeScreenActivity) && !(fromActivity instanceof PreviewInviteRoomActivity)
                                 && !(fromActivity instanceof FindAndCreateNewConversationActivity)
-                                && !(fromActivity instanceof InviteUsersToRoomActivity) && !(fromActivity instanceof CallViewActivity)) {
+                                && !(fromActivity instanceof InviteUsersToRoomActivity) && !(fromActivity instanceof CallViewActivity)
+                                && !(fromActivity instanceof ViewUserProfileActivity)) {
                             // pop to the home activity
                             Log.d(LOG_TAG, "## goToRoomPage(): start VectorHomeActivity..");
                             Intent intent = new Intent(fromActivity, VectorHomeActivity.class);

@@ -82,7 +82,12 @@ abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(AbstractSplashActivityViewModel::class)
-    abstract fun bindAbstractSplashActivityModule(viewModel: SplashActivityViewModel): ViewModel;
+    abstract fun bindAbstractSplashActivityViewModel(viewModel: SplashActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractViewUserProfileActivityViewModel::class)
+    abstract fun bindViewUserProfileActivityViewModel(viewModel: ViewUserProfileActivityViewModel): ViewModel;
 
     @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
