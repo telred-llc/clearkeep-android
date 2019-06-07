@@ -66,6 +66,6 @@ abstract class AbstractNetworkBoundSourceWithCondition<T, V> @MainThread constru
     @MainThread
     abstract fun loadFromDB(): LiveData<T>
 
-    @MainThread
+    @WorkerThread
     abstract fun checkRemoteSourceWithLocalSource(remoteData: V, localData: T): V
 }

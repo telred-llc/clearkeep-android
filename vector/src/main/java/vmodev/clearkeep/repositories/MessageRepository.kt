@@ -54,7 +54,10 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
     fun registerMatrixMessageHandler(roomId: String): LiveData<Resource<List<Message>>> {
         return object : AbstractNetworkBoundSourceWithCondition<List<Message>, List<Message>>() {
             override fun saveCallResult(item: List<Message>) {
-                messageDao.insertListMessage(item);
+                item.forEach {
+                    Log.d("List Insert", it.roomId)
+                    messageDao.insert(it);
+                }
             }
 
             override fun createCall(): LiveData<List<Message>> {
@@ -69,11 +72,13 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
             }
 
             override fun checkRemoteSourceWithLocalSource(remoteData: List<Message>, localData: List<Message>): List<Message> {
-//                if (localData.size == remoteData.size)
-//                    return ArrayList<Message>();
-//                else {
+                Log.d("List Size RM", remoteData.size.toString() + "-----" + localData.size.toString());
+
+                if (localData.size == remoteData.size)
+                    return ArrayList<Message>();
+                else {
                     return remoteData;
-//                }
+                }
             }
         }.asLiveData();
     }

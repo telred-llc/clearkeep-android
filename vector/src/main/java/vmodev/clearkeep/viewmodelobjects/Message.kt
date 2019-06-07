@@ -6,7 +6,7 @@ import android.arch.persistence.room.ForeignKey
 import android.arch.persistence.room.Index
 import com.google.gson.annotations.SerializedName
 
-@Entity(primaryKeys = ["messageId"]
+@Entity(primaryKeys = ["id"]
         , foreignKeys = [
     ForeignKey(entity = Room::class,
             parentColumns = ["id"],
@@ -19,7 +19,7 @@ import com.google.gson.annotations.SerializedName
 ]
 )
 data class Message(
-        @field:SerializedName("messageId") val messageId: String,
+        @field:SerializedName("id") val id: String,
         @field:SerializedName("encrypted_content") val encryptedContent: String,
         @field:SerializedName("message_type") val messageType: String,
         @ColumnInfo(name = "room_id") val roomId: String,

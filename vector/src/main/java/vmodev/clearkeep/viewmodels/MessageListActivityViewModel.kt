@@ -3,6 +3,7 @@ package vmodev.clearkeep.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
+import org.matrix.androidsdk.util.Log
 import vmodev.clearkeep.repositories.MessageRepository
 import vmodev.clearkeep.repositories.RoomRepository
 import vmodev.clearkeep.viewmodelobjects.Message

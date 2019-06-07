@@ -48,36 +48,39 @@ class MatrixEventHandler @Inject constructor(private val application: Applicatio
     override fun onLiveEvent(event: Event?, roomState: RoomState?) {
         super.onLiveEvent(event, roomState)
 
-        Log.d("Event Type:", event?.contentAsJsonObject.toString());
-        event?.contentAsJsonObject?.let {
-            val content = it.toString();
-            val parser = JsonParser();
-            val contentJson = parser.parse(content).asJsonObject;
-            Log.d("Event Type Convert", contentJson.toString());
-        }
+        Log.d("Event Type:", event?.type);
+//        event?.contentAsJsonObject?.let {
+//            val content = it.toString();
+//            val parser = JsonParser();
+//            val contentJson = parser.parse(content).asJsonObject;
+//            Log.d("Event Type Convert", contentJson.toString());
+//        }
 
 
         if (event?.type?.compareTo("m.room.join_rules") == 0) {
             if (event?.roomId != null) {
-                roomRepository.insertRoom(event?.roomId);
+//                roomRepository.insertRoom(event?.roomId);
+                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
             }
         }
         if (event?.type?.compareTo("m.room.name") == 0) {
             if (event?.roomId != null)
-                roomRepository.insertRoom(event?.roomId);
+                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
+//                roomRepository.insertRoom(event?.roomId);
         }
         if (event?.type?.compareTo("m.room.member") == 0) {
             if (event?.roomId != null)
-                roomRepository.insertRoom(event?.roomId);
+                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
+//                roomRepository.insertRoom(event?.roomId);
         }
         if (event?.type?.compareTo("m.room.message") == 0) {
             if (event?.roomId != null) {
-                roomRepository.updateRoomFromRemote(event?.roomId);
+                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
             }
         }
         if (event?.type?.compareTo("m.room.encrypted") == 0) {
             if (event?.roomId != null) {
-                roomRepository.updateRoomFromRemote(event?.roomId);
+                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
             }
         }
     }

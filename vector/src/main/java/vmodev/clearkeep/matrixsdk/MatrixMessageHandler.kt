@@ -96,7 +96,7 @@ class MatrixMessageHandler constructor(private val roomId: String, context: Cont
 
                         t?.let {
                             if (it.type.compareTo("m.room.encrypted") == 0) {
-                                val message = Message(messageId = it.eventId, roomId = it.roomId, userId = it.userId, messageType = it.type, encryptedContent = it.contentAsJsonObject.toString());
+                                val message = Message(id = it.eventId, roomId = it.roomId, userId = it.userId, messageType = it.type, encryptedContent = it.contentAsJsonObject.toString());
                                 listMessage.add(message);
                                 Log.d("Message Event", it.contentAsJsonObject.toString());
                             }

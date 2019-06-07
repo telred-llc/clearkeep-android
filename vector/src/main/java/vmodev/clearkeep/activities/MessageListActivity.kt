@@ -56,9 +56,14 @@ class MessageListActivity : DaggerAppCompatActivity(), IMessageListActivity {
         session = Matrix.getInstance(applicationContext).defaultSession;
         binding.messages = viewModelFactory.getViewModel().getListMessageResult();
         binding.room = viewModelFactory.getViewModel().getRoomResult();
+        viewModelFactory.getViewModel().getRoomResult().observe(this, Observer {
+            it?.data?.let {
+                Log.d("RoomChange", it.avatarUrl)
+            }
+        })
         val adapter = ListMessageRecyclerViewAdapter(session.myUserId, members, appExecutors, dataBindingComponent, object : DiffUtil.ItemCallback<Message>() {
             override fun areItemsTheSame(p0: Message, p1: Message): Boolean {
-                return p0.messageId == p1.messageId;
+                return p0.id == p1.id;
             }
 
             override fun areContentsTheSame(p0: Message, p1: Message): Boolean {
@@ -80,6 +85,7 @@ class MessageListActivity : DaggerAppCompatActivity(), IMessageListActivity {
         viewModelFactory.getViewModel().getListMessageResult().observe(this, Observer {
             adapter.submitList(it?.data);
             it?.data?.let {
+                Log.d("List Size", it.size.toString());
                 if (it.isNotEmpty())
                     binding.recyclerViewListMessage.smoothScrollToPosition(it.size - 1);
             }

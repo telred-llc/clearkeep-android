@@ -6,11 +6,11 @@ import vmodev.clearkeep.viewmodelobjects.Room
 
 @Dao
 abstract class RoomDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(room: Room);
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    abstract fun insert(room: Room): Long;
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertRooms(rooms: List<Room>);
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    abstract fun insertRooms(rooms: List<Room>): List<Long>;
 
     @Query("SELECT * FROM room WHERE type = :type")
     abstract fun loadWithType(type: Int): LiveData<List<Room>>;
@@ -53,6 +53,11 @@ abstract class RoomDao {
 
     @Query("UPDATE room SET type =:type WHERE id =:id")
     abstract fun updateType(id: String, type: Int)
+
+    @Update
+    abstract fun updateRooms(rooms: List<Room>): Int;
+    @Update
+    abstract fun updateRoom(room : Room) : Int;
 
     fun loadWithType(filter: Array<Int>): LiveData<List<Room>> {
         when (filter.size) {
