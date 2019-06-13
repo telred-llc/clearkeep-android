@@ -4,6 +4,6 @@ import android.databinding.DataBindingComponent
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.fragments.Interfaces.IListRoomOnFragmentInteractionListener
 
-interface IListRoomRecyclerViewAdapterFatory {
+interface IListRoomRecyclerViewAdapterFactory {
     fun createAdapter(dataBindingComponent : DataBindingComponent) : IListRoomRecyclerViewAdapter;
 }

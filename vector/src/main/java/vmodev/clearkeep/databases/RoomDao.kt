@@ -54,6 +54,9 @@ abstract class RoomDao {
     @Query("UPDATE room SET type =:type WHERE id =:id")
     abstract fun updateType(id: String, type: Int)
 
+    @Query("SELECT * FROM room WHERE id IN (:ids)")
+    abstract fun getListRoomWithListId(ids: List<String>): LiveData<List<Room>>;
+
     fun loadWithType(filter: Array<Int>): LiveData<List<Room>> {
         when (filter.size) {
             1 -> return loadWithType(filter[0]);

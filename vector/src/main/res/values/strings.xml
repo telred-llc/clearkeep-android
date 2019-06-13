@@ -1295,4 +1295,8 @@ Why choose Riot.im?
     <string name="save_to_file">Save to file</string>
     <string name="key_copy_to_clipboard">Key is copy to clipboard</string>
     <string name="confirm_passphrase_mismatch">Confirm passphrase mismatch</string>
+    <string name="hide_all_message_from_this_user">Hide all message from this user</string>
+    <string name="direct_chats">Direct chats</string>
+    <string name="room_chats">Room chats</string>
+    <string name="online">Online</string>
 </resources>

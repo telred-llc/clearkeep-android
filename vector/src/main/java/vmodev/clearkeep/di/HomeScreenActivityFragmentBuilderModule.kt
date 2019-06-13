@@ -73,21 +73,21 @@ abstract class HomeScreenActivityFragmentBuilderModule {
 
     @Module
     companion object {
-        @Provides
-        @JvmStatic
-        @Named(value = IListRoomRecyclerViewAdapter.ROOM)
-        fun provideListRoomDirectMessageAdapter(appExecutors: AppExecutors): IListRoomRecyclerViewAdapter {
-            return ListRoomRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<Room>() {
-                override fun areItemsTheSame(p0: Room, p1: Room): Boolean {
-                    return p0.id == p1.id;
-                }
-
-                override fun areContentsTheSame(p0: Room, p1: Room): Boolean {
-                    return p0.name == p1.name && p0.updatedDate == p1.updatedDate && p0.avatarUrl == p1.avatarUrl
-                            && p0.notifyCount == p1.notifyCount && p0.roomMemberStatus == p1.roomMemberStatus;
-                }
-            })
-        }
+//        @Provides
+//        @JvmStatic
+//        @Named(value = IListRoomRecyclerViewAdapter.ROOM)
+//        fun provideListRoomDirectMessageAdapter(appExecutors: AppExecutors): IListRoomRecyclerViewAdapter {
+//            return ListRoomRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<Room>() {
+//                override fun areItemsTheSame(p0: Room, p1: Room): Boolean {
+//                    return p0.id == p1.id;
+//                }
+//
+//                override fun areContentsTheSame(p0: Room, p1: Room): Boolean {
+//                    return p0.name == p1.name && p0.updatedDate == p1.updatedDate && p0.avatarUrl == p1.avatarUrl
+//                            && p0.notifyCount == p1.notifyCount && p0.roomMemberStatus == p1.roomMemberStatus;
+//                }
+//            })
+//        }
 
         @Provides
         @JvmStatic

@@ -2,9 +2,9 @@ package vmodev.clearkeep.factories
 
 import android.databinding.DataBindingComponent
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
-import vmodev.clearkeep.factories.interfaces.IListRoomRecyclerViewAdapterFatory
+import vmodev.clearkeep.factories.interfaces.IListRoomRecyclerViewAdapterFactory
 
-class ListRoomDirectMessageRecyclerViewAdapterFatory : IListRoomRecyclerViewAdapterFatory {
+class ListRoomDirectMessageRecyclerViewAdapterFactory : IListRoomRecyclerViewAdapterFactory {
     override fun createAdapter(dataBindingComponent: DataBindingComponent): IListRoomRecyclerViewAdapter {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
