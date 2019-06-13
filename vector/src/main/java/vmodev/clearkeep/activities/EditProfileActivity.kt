@@ -62,7 +62,7 @@ class EditProfileActivity : DaggerAppCompatActivity(), IEditProfileActivity {
         binding.lifecycleOwner = this;
 
         binding.imageViewTakePhoto.setOnClickListener {
-            requestReadExternalStorge();
+            requestReadExternalStorage();
         }
         binding.imageViewTakeCamera.setOnClickListener {
             requestCameraPermission();
@@ -131,19 +131,19 @@ class EditProfileActivity : DaggerAppCompatActivity(), IEditProfileActivity {
             val cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(cameraIntent, RESULT_TAKE_IMAGE_FROM_CAMERA);
         } else {
-            EasyPermissions.requestPermissions(this, "", REQUEST_CAMERA_PERMISSION, *params)
+            EasyPermissions.requestPermissions(this, "Application need permission for take picture", REQUEST_CAMERA_PERMISSION, *params)
         }
     }
 
     @AfterPermissionGranted(REQUEST_READ_EXTERNAL_STORAGE)
-    private fun requestReadExternalStorge() {
+    private fun requestReadExternalStorage() {
         val params = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE);
         if (EasyPermissions.hasPermissions(this, *params)) {
             val photoPickerIntent = Intent(Intent.ACTION_PICK)
             photoPickerIntent.type = "image/*"
             startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG)
         } else {
-            EasyPermissions.requestPermissions(this, "", REQUEST_READ_EXTERNAL_STORAGE, *params);
+            EasyPermissions.requestPermissions(this, "Application need permission for get picture from gallery", REQUEST_READ_EXTERNAL_STORAGE, *params);
         }
     }
 

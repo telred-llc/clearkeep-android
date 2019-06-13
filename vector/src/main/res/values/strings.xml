@@ -1285,4 +1285,14 @@ Why choose Riot.im?
     <string name="you_have_no_chat_here">You have no chat here, tap to under button to start.</string>
     <string name="start_direct_chat">Start Direct Chat</string>
     <string name="start_room_chat">Start Room Chat</string>
+    <string name="export_key_content">You should export your key which is useful to decrypt the message in the next login.</string>
+    <string name="export_keys">Export keys</string>
+    <string name="encryption_export_room_keys_message_content">This process allows you to export the key for messages you have received in encrypted room to local file. You will then be able to import the file to another Matrix client in the future, so that client will be also be able to decrypt these messages. The exported file will allow anyone who can read it to decrypt any encrypted messages that you can see, so you should be careful to keep it secure.</string>
+    <string name="export">Export</string>
+    <string name="exporting">Exporting...</string>
+    <string name="title">Title</string>
+    <string name="share_or_save">Share or Save</string>
+    <string name="save_to_file">Save to file</string>
+    <string name="key_copy_to_clipboard">Key is copy to clipboard</string>
+    <string name="confirm_passphrase_mismatch">Confirm passphrase mismatch</string>
 </resources>
