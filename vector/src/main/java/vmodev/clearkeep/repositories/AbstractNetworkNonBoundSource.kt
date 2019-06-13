@@ -16,9 +16,9 @@ abstract class AbstractNetworkNonBoundSource<T> @MainThread constructor() {
         result.addSource(apiResponse) { responseData ->
             result.removeSource(apiResponse);
             if (responseData != null) {
-                result.addSource(apiResponse) {
-                    setValue(Resource.success(it))
-                }
+//                result.addSource(apiResponse) {
+                    setValue(Resource.success(responseData))
+//                }
             } else {
                 setValue(Resource.error("Error", null))
             }

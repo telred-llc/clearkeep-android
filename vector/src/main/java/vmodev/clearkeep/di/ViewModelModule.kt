@@ -90,5 +90,10 @@ abstract class ViewModelModule {
     abstract fun bindViewUserProfileActivityViewModel(viewModel: ViewUserProfileActivityViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractExportKeyActivityViewModel::class)
+    abstract fun bindExportKeyActivityViewModel(viewModel: ExportKeyActivityViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }

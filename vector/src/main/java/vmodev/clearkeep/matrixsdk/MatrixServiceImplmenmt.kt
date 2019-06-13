@@ -19,14 +19,18 @@ import io.reactivex.internal.operators.observable.ObservableAll
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.crypto.MXCRYPTO_ALGORITHM_MEGOLM
+import org.matrix.androidsdk.crypto.keysbackup.MegolmBackupCreationInfo
 import org.matrix.androidsdk.data.Room
 import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.data.RoomTag
 import org.matrix.androidsdk.listeners.IMXMediaUploadListener
+import org.matrix.androidsdk.listeners.ProgressListener
 import org.matrix.androidsdk.rest.callback.ApiCallback
 import org.matrix.androidsdk.rest.callback.SimpleApiCallback
+import org.matrix.androidsdk.rest.callback.SuccessErrorCallback
 import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.rest.model.RoomMember
+import org.matrix.androidsdk.rest.model.keys.KeysVersion
 import org.matrix.androidsdk.rest.model.search.SearchResponse
 import org.matrix.androidsdk.rest.model.search.SearchResult
 import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
@@ -1087,6 +1091,67 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                     it.onComplete();
                 }
             })
+        }
+    }
+
+    override fun exportNewBackupKey(passphrase: String): Observable<String> {
+        setMXSession();
+        return Observable.create<String> { emitter ->
+            session!!.dataHandler.crypto?.let { mxCrypto ->
+                mxCrypto.keysBackup.prepareKeysBackupVersion(passphrase, object : ProgressListener {
+                    override fun onProgress(progress: Int, total: Int) {
+
+                    }
+                }, object : SuccessErrorCallback<MegolmBackupCreationInfo> {
+                    override fun onSuccess(p0: MegolmBackupCreationInfo?) {
+                        val keyBackup = mxCrypto.keysBackup;
+                        p0?.let {info ->
+                            keyBackup.createKeysBackupVersion(info, object : ApiCallback<KeysVersion> {
+                                override fun onSuccess(kv: KeysVersion?) {
+                                    kv?.let {
+                                        it.version?.let {
+                                            emitter.onNext(info.recoveryKey);
+                                            emitter.onComplete();
+                                        }?.run {
+                                            emitter.onError(Throwable("KeysVersion Value is null"));
+//                                            emitter.onComplete();
+                                        }
+                                    }?.run {
+                                        emitter.onError(Throwable("KeysVersion is null"));
+//                                        emitter.onComplete();
+                                    }
+                                }
+
+                                override fun onUnexpectedError(p0: Exception?) {
+                                    emitter.onError(Throwable(p0?.message));
+                                    emitter.onComplete();
+                                }
+
+                                override fun onMatrixError(p0: MatrixError?) {
+                                    emitter.onError(Throwable(p0?.message));
+                                    emitter.onComplete();
+                                }
+
+                                override fun onNetworkError(p0: Exception?) {
+                                    emitter.onError(Throwable(p0?.message));
+                                    emitter.onComplete();
+                                }
+                            });
+                        }?.run {
+//                            emitter.onError(Throwable("MegolmBackupCreationInfo is null"));
+//                            emitter.onComplete();
+                        }
+                    }
+
+                    override fun onUnexpectedError(p0: Exception?) {
+                        emitter.onError(Throwable(p0?.message));
+//                        emitter.onComplete();
+                    }
+                });
+            }?.run {
+//                emitter.onError(Throwable("Crypto is null"));
+//                emitter.onComplete();
+            }
         }
     }
 }

@@ -46,4 +46,10 @@ class AppModule {
     fun provideDeviceSettingsDao(clearKeepDatabase: ClearKeepDatabase): AbstractDeviceSettingsDao {
         return clearKeepDatabase.deviceSettingsDao();
     }
+
+    @Singleton
+    @Provides
+    fun provideBackupKeyPath(clearKeepDatabase: ClearKeepDatabase): AbstractBackupKeyPathDao {
+        return clearKeepDatabase.backupKeyPathDao();
+    }
 }

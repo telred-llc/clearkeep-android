@@ -49,6 +49,10 @@ class ProfileSettingsActivity : DaggerAppCompatActivity(), IProfileSettingsActiv
             intentNotifications.putExtra(NotificationSettingsActivity.USER_ID, userId);
             startActivity(intentNotifications);
         }
+        binding.securityGroup.setOnClickListener {
+            val intentSecurity = Intent(this, ExportKeyActivity::class.java);
+            startActivity(intentSecurity);
+        }
     }
 
     override fun getActivity(): FragmentActivity {
