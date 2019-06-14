@@ -1,7 +1,6 @@
 package vmodev.clearkeep.fragments
 
 import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.databinding.DataBindingUtil
 import android.net.Uri
@@ -14,11 +13,9 @@ import android.view.ViewGroup
 import im.vector.R
 import im.vector.databinding.FragmentHomeScreenBinding
 import vmodev.clearkeep.adapters.HomeScreenPagerAdapter
-import vmodev.clearkeep.factories.interfaces.IShowListRoomFragmentFactory
+import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IShowListRoomFragmentFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IHomeScreenFragmentViewModelFactory
-import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.fragments.Interfaces.IHomeScreenFragment
-import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
 import javax.inject.Named
 

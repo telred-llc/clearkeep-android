@@ -26,5 +26,6 @@ data class Room(
         @field:SerializedName("version") val version: Int,
         @field:SerializedName("highlightCount") val highlightCount: Int,
         @field:SerializedName("lastMessage") val lastMessage: String,
-        @field:SerializedName("encrypted") val encrypted: Byte
+        @field:SerializedName("encrypted") val encrypted: Byte,
+        @field:SerializedName("status") val status: Byte
 )

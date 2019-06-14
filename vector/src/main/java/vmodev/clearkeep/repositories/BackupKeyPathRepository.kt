@@ -6,7 +6,7 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractBackupKeyPathDao
-import vmodev.clearkeep.matrixsdk.MatrixService
+import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.viewmodelobjects.BackupKeyPath
 import vmodev.clearkeep.viewmodelobjects.Resource
 import javax.inject.Inject

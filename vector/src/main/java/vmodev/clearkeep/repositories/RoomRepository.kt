@@ -12,11 +12,12 @@ import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.databases.RoomDao
 import vmodev.clearkeep.databases.UserDao
 import vmodev.clearkeep.executors.AppExecutors
-import vmodev.clearkeep.matrixsdk.MatrixService
+import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.User
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -107,13 +108,61 @@ class RoomRepository @Inject constructor(
     }
 
     @SuppressLint("CheckResult")
-    fun updateRoomFromRemote(id: String) {
-        matrixService.getRoomWithId(id).subscribeOn(AndroidSchedulers.mainThread()).observeOn(Schedulers.newThread()).subscribe { t: Room? ->
-            run {
-                roomDao.updateRoom(id = t!!.id, updatedDate = t!!.updatedDate
-                        , notifyCount = t!!.notifyCount, avatarUrl = t!!.avatarUrl, type = t!!.type, name = t!!.name);
+    fun updateOrCreateRoomFromRemote(id: String) {
+//        matrixService.getRoomWithId(id).subscribeOn(AndroidSchedulers.mainThread()).observeOn(Schedulers.newThread()).subscribe { t: Room? ->
+//            run {
+//                roomDao.updateRoom(id = t!!.id, updatedDate = t!!.updatedDate
+//                        , notifyCount = t!!.notifyCount, avatarUrl = t!!.avatarUrl, type = t!!.type, name = t!!.name);
+//            }
+//        };
+//        object : AbstractNetworkCreateOrUpdateSource<Room, RoomAndRoomUserJoin>() {
+//            override fun loadFromDb(): LiveData<Room> {
+//                return roomDao.findById(id);
+//            }
+//
+//            override fun createNewItem(item: RoomAndRoomUserJoin) {
+//                roomDao.insert(item.room);
+//                userDao.insertUsers(item.users);
+//                roomUserJoinDao.insertRoomUserJoins(item.roomUserJoins);
+//            }
+//
+//            override fun updateItem(item: RoomAndRoomUserJoin) {
+//                roomDao.updateRoom(item.room);
+//                userDao.updateUsers(item.users);
+//                roomUserJoinDao.updateRoomUserJoin(item.roomUserJoins);
+//            }
+//
+//            override fun createCall(): LiveData<RoomAndRoomUserJoin> {
+//                return LiveDataReactiveStreams.fromPublisher(matrixService.getUsersInRoomAndAddToRoomUserJoin(id)
+//                        .subscribeOn(Schedulers.io())
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .toFlowable(BackpressureStrategy.LATEST));
+//            }
+//        }.asLiveData();
+        matrixService.getUsersInRoomAndAddToRoomUserJoin(id).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe { t: RoomAndRoomUserJoin? ->
+            val room = roomDao.findByIdSync(id);
+            t?.let { r ->
+                if (r.room.status.compareTo(0) == 0 || r.room.updatedDate.compareTo(0) == 0)
+                    return@let;
+                if (room == null) {
+                    Observable.create<Int> {
+                        roomDao.insert(r.room);
+                        userDao.insertUsers(r.users);
+                        roomUserJoinDao.insertRoomUserJoins(r.roomUserJoins);
+                        it.onNext(1);
+                        it.onComplete();
+                    }.subscribeOn(Schedulers.io()).subscribe();
+                } else {
+                    Observable.create<Int> {
+                        roomDao.updateRoom(r.room);
+                        userDao.updateUsers(r.users);
+                        roomUserJoinDao.updateRoomUserJoin(r.roomUserJoins);
+                        it.onNext(1);
+                        it.onComplete();
+                    }.subscribeOn(Schedulers.io()).subscribe();
+                }
             }
-        };
+        }
     }
 
     @SuppressLint("CheckResult")
@@ -311,6 +360,75 @@ class RoomRepository @Inject constructor(
                         .subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.io())
                         .toFlowable(BackpressureStrategy.LATEST));
+            }
+        }.asLiveData();
+    }
+
+    fun updateAndCreateListRoom(filters: Array<Int>): LiveData<Resource<List<Room>>> {
+        return object : AbstractNetworkCreateAndUpdateSource<List<Room>, ListRoomAndRoomUserJoinReturn>() {
+            override fun insertResult(item: ListRoomAndRoomUserJoinReturn) {
+                roomDao.insertRooms(item.rooms);
+                userDao.insertUsers(item.users);
+                roomUserJoinDao.insertRoomUserJoins(item.roomUserJoins)
+            }
+
+            override fun updateResult(item: ListRoomAndRoomUserJoinReturn) {
+                roomDao.updateRooms(item.rooms);
+                userDao.updateUsers(item.users);
+                roomUserJoinDao.updateRoomUserJoin(item.roomUserJoins);
+            }
+
+            override fun loadFromDb(): LiveData<List<Room>> {
+                return roomDao.loadWithType(filters);
+            }
+
+            override fun createCall(): LiveData<ListRoomAndRoomUserJoinReturn> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.getListRoomAndAddUser(filters)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .toFlowable(BackpressureStrategy.LATEST));
+            }
+
+            override fun getItemInsert(localData: List<Room>?, remoteData: ListRoomAndRoomUserJoinReturn?): ListRoomAndRoomUserJoinReturn {
+                val rooms = ArrayList<Room>();
+                var users = ArrayList<User>();
+                var roomUserJoins = ArrayList<RoomUserJoin>();
+                remoteData?.let { remote ->
+                    users.addAll(remote.users);
+                    roomUserJoins.addAll(remote.roomUserJoins);
+                    rooms.addAll(remote.rooms);
+                }
+                return ListRoomAndRoomUserJoinReturn(rooms, users, roomUserJoins);
+            }
+
+            override fun getItemUpdate(localData: List<Room>?, remoteData: ListRoomAndRoomUserJoinReturn?): ListRoomAndRoomUserJoinReturn {
+                val rooms = ArrayList<Room>();
+                var users = ArrayList<User>();
+                var roomUserJoins = ArrayList<RoomUserJoin>();
+                var hashMapRemoteRoom = HashMap<String, Room>();
+                remoteData?.let { remote ->
+                    users.addAll(remote.users);
+                    roomUserJoins.addAll(remote.roomUserJoins);
+                    remote.rooms.forEach { hashMapRemoteRoom.put(it.id, it) }
+                    localData?.let { local ->
+                        local.forEach { r ->
+                            hashMapRemoteRoom[r.id]?.let {
+                                if (r.updatedDate != it.updatedDate)
+                                    rooms.add(it);
+                            };
+                        }
+                    }
+                }
+                Log.d("ListSize", rooms.size.toString());
+                return ListRoomAndRoomUserJoinReturn(rooms, users, roomUserJoins);
+            }
+        }.asLiveData();
+    }
+
+    fun getListRoomWithListId(ids: List<String>): LiveData<Resource<List<Room>>> {
+        return object : AbstractLocalBoundSource<List<Room>>() {
+            override fun loadFromDb(): LiveData<List<Room>> {
+                return roomDao.getListRoomWithListId(ids);
             }
         }.asLiveData();
     }
