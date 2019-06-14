@@ -37,7 +37,7 @@ android {
 
     defaultConfig {
         applicationId 'com.vmodev.clearkeep'
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 28
         // use the version code
         versionName rootProject.ext.versionNameProp
@@ -79,6 +79,8 @@ android {
             resValue "string", "build_number", rootProject.ext.buildNumberProp
             buildConfigField "boolean", "LOW_PRIVACY_LOG_ENABLE", "false"
             minifyEnabled false
+            buildConfigField "String", "HOME_SERVER", "\"https://study.sinbadflyce.com\""
+            buildConfigField "String", "PUSH_GATEWAY", "\"https://matrix.org/_matrix/push/v1/notify\""
         }
 
         release {
@@ -90,6 +92,8 @@ android {
             buildConfigField "boolean", "LOW_PRIVACY_LOG_ENABLE", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "HOME_SERVER", "\"https://ck.furoute.com\""
+            buildConfigField "String", "PUSH_GATEWAY", "\"http://ck.furoute.com:5000\""
         }
 
         matrixorg.initWith(buildTypes.release)
@@ -124,37 +128,42 @@ android {
             buildConfigField "String", "FLAVOR_DESCRIPTION", "\"FDroid\""
         }
     }
-
     lintOptions {
-        warning 'MissingTranslation'
-
-        // Treat some warnings as errors
-        // Resources
-        error 'TypographyEllipsis'
-        warning 'ImpliedQuantity'
-
-        // UX
-        error 'ButtonOrder'
-
-        // Layout
-        error 'StringFormatCount'
-        error 'HardcodedText'
-        error 'SpUsage'
-        error 'ObsoleteLayoutParam'
-        error 'InefficientWeight'
-        error 'DisableBaselineAlignment'
-        error 'ScrollViewSize'
-
-        // RTL
-        error 'RtlEnabled'
-        error 'RtlHardcoded'
-        error 'RtlSymmetry'
-
-        // Code
-        error 'SetTextI18n'
-        error 'ViewConstructor'
-        error 'UseValueOf'
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
     }
+//    lintOptions {
+//        warning 'MissingTranslation'
+
+    // Treat some warnings as errors
+    // Resources
+//        error 'TypographyEllipsis'
+//        warning 'ImpliedQuantity'
+//
+//         UX
+//        error 'ButtonOrder'
+//
+//         Layout
+//        error 'StringFormatCount'
+//        error 'HardcodedText'
+//        error 'SpUsage'
+//        error 'ObsoleteLayoutParam'
+//        error 'InefficientWeight'
+//        error 'DisableBaselineAlignment'
+//        error 'ScrollViewSize'
+//
+//         RTL
+//        error 'RtlEnabled'
+//        error 'RtlHardcoded'
+//        error 'RtlSymmetry'
+//
+//         Code
+//        error 'SetTextI18n'
+//        error 'ViewConstructor'
+//        error 'UseValueOf'
+//    }
 
     repositories {
         flatDir {
@@ -277,17 +286,18 @@ dependencies {
     implementation 'com.facebook.fresco:imagepipeline-okhttp3:1.3.0'
     implementation 'com.facebook.soloader:soloader:0.1.0'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation 'org.webkit:android-jsc:r174650'
+//    implementation 'org.webkit:android-jsc:r174650'
     implementation(name: 'jitsi-sdk', ext: 'aar')
     implementation(name: 'react-native-background-timer', ext: 'aar')
     implementation(name: 'react-native-fetch-blob', ext: 'aar')
     implementation(name: 'react-native-immersive', ext: 'aar')
     implementation(name: 'react-native-keep-awake', ext: 'aar')
     implementation(name: 'react-native-vector-icons', ext: 'aar')
-    implementation(name: 'react-native-webrtc', ext: 'aar')
-    implementation(name: 'react-native', ext: 'aar')
+//    implementation(name: 'react-native-webrtc', ext: 'aar')
+//    implementation(name: 'react-native', ext: 'aar')
     implementation(name: 'react-native-locale-detector', ext: 'aar')
-
+    implementation('com.facebook.react:react-native:0.59.2')
+    implementation('com.facebook.react:react-native-webrtc:1.69.0-jitsi-799011')
     // another tracking than GA
     implementation 'org.piwik.sdk:piwik-sdk:2.0.0'
 
@@ -388,6 +398,13 @@ dependencies {
 
     // For developers using the Android Support Library
     implementation 'pub.devrel:easypermissions:2.0.1'
+//    implementation project(path: ':matrix-sdk')
+//    implementation project(path: ':matrix-sdk-crypto')
+//    implementation project(path: ':matrix-sdk-core')
+//    implementation project(path: ':matrix-sdk')
+//    implementation project(path: ':matrix-sdk')
+//    implementation project(path: ':matrix-sdk-crypto')
+//    implementation project(path: ':matrix-sdk-core')
     //======================================================================//
 }
 

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="vmodev.clearkeep.activities.UserInformationActivity">
+
+    <data>
+
+        <import type="android.arch.lifecycle.LiveData" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Status" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
+        <import type="java.util.List" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.User" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Room" />
+
+        <variable
+            name="user"
+            type="LiveData&lt;Resource&lt;User>>" />
+
+        <variable
+            name="directChatRooms"
+            type="LiveData&lt;Resource&lt;List&lt;Room>>>" />
+
+        <variable
+            name="roomChatRooms"
+            type="LiveData&lt;Resource&lt;List&lt;Room>>>" />
+
+        <variable
+            name="room"
+            type="LiveData&lt;Resource&lt;Room>>" />
+
+        <variable
+            name="leaveRoom"
+            type="LiveData&lt;Resource&lt;String>>" />
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_main_gray">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="10dp"
+                        android:orientation="vertical">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/circle_image_view_avatar"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@color/app_green"
+                            app:imageUrl="@{user.data.avatarUrl}" />
+
+                        <TextView
+                            android:id="@+id/text_view_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="@{user.data.name}"
+                            android:textSize="@dimen/text_20_sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/text_view_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="@string/online"
+                            android:textColor="@color/app_green" />
+                    </LinearLayout>
+
+                </android.support.v7.widget.Toolbar>
+
+                <FrameLayout
+                    android:id="@+id/frame_layout_hide_all_message_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="20dp"
+                        android:text="@string/hide_all_message_from_this_user" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:text="@string/direct_chats"
+                    android:textAllCaps="true"
+                    android:textColor="@color/lb_grey" />
+
+                <FrameLayout
+                    android:id="@+id/frame_layout_start_new_chat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+                    app:visibleGone="@{directChatRooms.data.size == 0}">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="20dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/ic_add_circle_grey_24dp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:text="@string/start_new_chat" />
+                    </LinearLayout>
+                </FrameLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view_list_direct_chat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                    app:visibleGone="@{directChatRooms.data.size > 0}"
+                    tools:listitem="@layout/room_item" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:text="@string/room_chats"
+                    android:textAllCaps="true"
+                    android:textColor="@color/lb_grey" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view_list_room_chat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                    tools:listitem="@layout/room_item" />
+            </LinearLayout>
+        </ScrollView>
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:visibleGone="@{user.status == Status.LOADING || directChatRooms.status == Status.LOADING || roomChatRooms.status == Status.LOADING || room.status == Status.LOADING || leaveRoom.status == Status.LOADING}" />
+    </FrameLayout>
+</layout>

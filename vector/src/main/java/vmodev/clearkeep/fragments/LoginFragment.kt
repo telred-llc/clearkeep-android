@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import im.vector.BuildConfig
 import im.vector.LoginHandler
 import im.vector.R
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -68,7 +69,7 @@ class LoginFragment : Fragment() {
                 }
 
                 onPressedLogin();
-                val homeServerConnectionConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse("https://study.sinbadflyce.com"))
+                val homeServerConnectionConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse(BuildConfig.HOME_SERVER))
                     .withIdentityServerUri(Uri.parse("https://matrix.org")).build();
                 val loginHandler = LoginHandler();
                 loginHandler.login(this.context, homeServerConnectionConfig, edit_text_username.text.toString(), null, null,

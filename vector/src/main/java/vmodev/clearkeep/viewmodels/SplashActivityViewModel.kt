@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class SplashActivityViewModel @Inject constructor(roomRepository: RoomRepository) : AbstractSplashActivityViewModel() {
     private val _filters = MutableLiveData<Array<Int>>();
-    private val _getAllRoomResult = Transformations.switchMap(_filters) { input -> roomRepository.updateAllRoomWhenStartApp(input) }
+    private val _getAllRoomResult = Transformations.switchMap(_filters) { input -> roomRepository.updateAndCreateListRoom(input) }
 
     override fun getAllRoomResult(): LiveData<Resource<List<Room>>> {
         return _getAllRoomResult;
