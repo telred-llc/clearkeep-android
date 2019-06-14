@@ -1,4 +1,4 @@
-package vmodev.clearkeep.factories.interfaces
+package vmodev.clearkeep.factories.activitiesandfragments.interfaces
 
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 

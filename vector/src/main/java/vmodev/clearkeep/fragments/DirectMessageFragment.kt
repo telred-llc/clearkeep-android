@@ -1,52 +1,28 @@
 package vmodev.clearkeep.fragments
 
-import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.util.DiffUtil
 import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.orhanobut.dialogplus.DialogPlus
-import com.orhanobut.dialogplus.OnItemClickListener
-import dagger.android.support.DaggerFragment
 import im.vector.R
 import im.vector.databinding.FragmentDirectMessageBinding
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.subjects.PublishSubject
-import org.matrix.androidsdk.MXSession
-import org.matrix.androidsdk.data.Room
-import vmodev.clearkeep.activities.CreateNewConversationActivity
+import vmodev.clearkeep.activities.MessageListActivity
 import vmodev.clearkeep.activities.FindAndCreateNewConversationActivity
 import vmodev.clearkeep.activities.RoomSettingsActivity
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
-import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
-import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
-import vmodev.clearkeep.binding.FragmentBindingAdapters
-import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IDirectMessageFragmentViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IDriectMessageFragment
-import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.fragments.Interfaces.IListRoomOnFragmentInteractionListener
-import vmodev.clearkeep.ultis.RoomType
-import vmodev.clearkeep.viewmodelobjects.Status
-import vmodev.clearkeep.viewmodelobjects.User
-import vmodev.clearkeep.viewmodels.RoomViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -112,6 +88,7 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDriectMessageFragmen
                             3 -> onClickItemDecline(room.id);
                             1 -> onClickAddToFavourite(room.id);
                             2 -> onClickRoomSettings(room.id);
+                            4 -> onClickGoRoomPreview(room.id);
                         }
 
                         dialog?.dismiss();
@@ -129,6 +106,12 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDriectMessageFragmen
             listRoomAdapter!!.getAdapter().submitList(t?.data);
         });
         directMessageViewModelFactory.getViewModel().setListType(arrayOf(1, 65))
+    }
+
+    private fun onClickGoRoomPreview(id: String) {
+        val intentGoRoom = Intent(activity, MessageListActivity::class.java);
+        intentGoRoom.putExtra(MessageListActivity.ROOM_ID, id);
+        startActivity(intentGoRoom);
     }
 
     private fun onClickRoomSettings(id: String) {

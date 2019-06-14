@@ -1,7 +1,6 @@
 package vmodev.clearkeep.activities
 
 import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.net.Uri
@@ -15,7 +14,6 @@ import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorHomeActivity
 import im.vector.activity.VectorRoomActivity
-import im.vector.activity.VectorUnifiedSearchActivity
 import im.vector.databinding.ActivityHomeScreenBinding
 import im.vector.services.EventStreamService
 import im.vector.ui.badge.BadgeProxy
@@ -28,12 +26,10 @@ import org.matrix.androidsdk.rest.callback.SimpleApiCallback
 import org.matrix.androidsdk.rest.model.MatrixError
 import vmodev.clearkeep.activities.interfaces.IHomeScreenActivity
 import vmodev.clearkeep.applications.ClearKeepApplication
-import vmodev.clearkeep.factories.interfaces.IFragmentFactory
+import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IFragmentFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IHomeScreenViewModelFactory
 import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.fragments.Interfaces.IListRoomOnFragmentInteractionListener
-import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named

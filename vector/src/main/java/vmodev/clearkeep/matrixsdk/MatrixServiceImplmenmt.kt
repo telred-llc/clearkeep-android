@@ -13,7 +13,6 @@ import im.vector.util.RoomUtils
 import im.vector.util.VectorUtils
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
 import io.reactivex.functions.Function
 import io.reactivex.internal.operators.observable.ObservableAll
 import io.reactivex.schedulers.Schedulers
@@ -34,6 +33,7 @@ import org.matrix.androidsdk.rest.model.keys.KeysVersion
 import org.matrix.androidsdk.rest.model.search.SearchResponse
 import org.matrix.androidsdk.rest.model.search.SearchResult
 import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
+import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.ultis.SearchMessageByTextResult
@@ -393,7 +393,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
                 , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, lastMessage = lastMessage
-                , encrypted = if (room.isEncrypted) 1 else 0);
+                , encrypted = if (room.isEncrypted) 1 else 0, status = if (room.isLeaving || room.isLeft) 0 else 1);
         return roomObj;
     }
 
@@ -463,7 +463,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                                         result?.let { avatar = result }
                                     };
                                     t?.let { user ->
-                                        users.add(User(id = user.user_id, name = if (user.displayname.isNullOrEmpty()) "" else user.displayname, avatarUrl = avatar, status = if (user.isActive) 1 else 0, roomId = ""))
+                                        users.add(User(id = user.user_id, name = user.displayname, avatarUrl = avatar, status = if (user.isActive) 1 else 0, roomId = ""))
                                     }
                                 }
                             }
@@ -957,10 +957,10 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
     override fun getUsersInRoomAndAddToRoomUserJoin(roomId: String): Observable<RoomAndRoomUserJoin> {
         return Observable.create<RoomAndRoomUserJoin> { emitter ->
             val room = session!!.dataHandler.getRoom(roomId);
-            room.getActiveMembersAsync(object : ApiCallback<List<RoomMember>> {
+            val users = ArrayList<User>();
+            val roomUserJoin = ArrayList<RoomUserJoin>();
+            room.getMembersAsync(object : ApiCallback<List<RoomMember>> {
                 override fun onSuccess(p0: List<RoomMember>?) {
-                    val users = ArrayList<User>();
-                    val roomUserJoin = ArrayList<RoomUserJoin>();
                     p0?.forEach { t: RoomMember? ->
                         t?.let { roomMember ->
                             users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0, roomId = roomId))
@@ -972,18 +972,18 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                 }
 
                 override fun onUnexpectedError(p0: Exception?) {
-                    emitter.onError(Throwable(p0?.message))
-                    emitter.onComplete()
+                    emitter.onNext(RoomAndRoomUserJoin(room = matrixRoomToRoom(room), users = users, roomUserJoins = roomUserJoin));
+                    emitter.onComplete();
                 }
 
                 override fun onMatrixError(p0: MatrixError?) {
-                    emitter.onError(Throwable(p0?.message))
-                    emitter.onComplete()
+                    emitter.onNext(RoomAndRoomUserJoin(room = matrixRoomToRoom(room), users = users, roomUserJoins = roomUserJoin));
+                    emitter.onComplete();
                 }
 
                 override fun onNetworkError(p0: Exception?) {
-                    emitter.onError(Throwable(p0?.message))
-                    emitter.onComplete()
+                    emitter.onNext(RoomAndRoomUserJoin(room = matrixRoomToRoom(room), users = users, roomUserJoins = roomUserJoin));
+                    emitter.onComplete();
                 }
             })
         }
@@ -1105,7 +1105,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                 }, object : SuccessErrorCallback<MegolmBackupCreationInfo> {
                     override fun onSuccess(p0: MegolmBackupCreationInfo?) {
                         val keyBackup = mxCrypto.keysBackup;
-                        p0?.let {info ->
+                        p0?.let { info ->
                             keyBackup.createKeysBackupVersion(info, object : ApiCallback<KeysVersion> {
                                 override fun onSuccess(kv: KeysVersion?) {
                                     kv?.let {
@@ -1138,7 +1138,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                                 }
                             });
                         }?.run {
-//                            emitter.onError(Throwable("MegolmBackupCreationInfo is null"));
+                            //                            emitter.onError(Throwable("MegolmBackupCreationInfo is null"));
 //                            emitter.onComplete();
                         }
                     }
@@ -1149,7 +1149,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                     }
                 });
             }?.run {
-//                emitter.onError(Throwable("Crypto is null"));
+                //                emitter.onError(Throwable("Crypto is null"));
 //                emitter.onComplete();
             }
         }

@@ -1,6 +1,6 @@
-package vmodev.clearkeep.factories
+package vmodev.clearkeep.factories.activitiesandfragments
 
-import vmodev.clearkeep.factories.interfaces.IFragmentFactory
+import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IFragmentFactory
 import vmodev.clearkeep.fragments.FavouritesFragment
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 

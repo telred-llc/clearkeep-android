@@ -18,5 +18,7 @@ abstract class AbstractUserInformationActivityViewModel : ViewModel() {
     abstract fun setRoomIdForJoinRoom(roomId: String);
     abstract fun joinRoomWithIdResult(): LiveData<Resource<Room>>;
     abstract fun setRoomIdForRemoveFromFavourite(roomId: String);
-    abstract fun gerRemoveRoomFromFavourtieResult(): LiveData<Resource<Room>>;
+    abstract fun gerRemoveRoomFromFavouriteResult(): LiveData<Resource<Room>>;
+    abstract fun setUserIdForCreateNewConversation(userId: String);
+    abstract fun getCreateNewConversationResult() : LiveData<Resource<Room>>;
 }

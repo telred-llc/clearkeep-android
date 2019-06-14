@@ -1,12 +1,8 @@
 package vmodev.clearkeep.viewmodels
 
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.LiveDataReactiveStreams
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
-import io.reactivex.BackpressureStrategy
-import io.reactivex.schedulers.Schedulers
-import vmodev.clearkeep.matrixsdk.MatrixService
 import vmodev.clearkeep.repositories.SearchRepository
 import vmodev.clearkeep.viewmodelobjects.MessageSearchText
 import vmodev.clearkeep.viewmodelobjects.Resource

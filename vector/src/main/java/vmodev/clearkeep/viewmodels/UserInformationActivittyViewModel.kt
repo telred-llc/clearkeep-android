@@ -19,6 +19,7 @@ class UserInformationActivityViewModel @Inject constructor(userRepository: UserR
     private val _roomIdForAddToFavourite = MutableLiveData<String>();
     private val _roomIdForRemoveFromFavourite = MutableLiveData<String>();
     private val _roomIdForJoinRoom = MutableLiveData<String>();
+    private val _userIdForCreateNewConversation = MutableLiveData<String>();
     private val _userByIdResult = Transformations.switchMap(_userId) { input -> userRepository.loadUser(input) }
     private val _directChatRoomsResult = Transformations.switchMap(_userId) { input -> roomUserJoinRepository.getDirectChatRoomByUserId(input) }
     private val _roomChatRoomsResult = Transformations.switchMap(_userId) { input -> roomUserJoinRepository.getRoomChatRoomByUserId(input) }
@@ -26,6 +27,7 @@ class UserInformationActivityViewModel @Inject constructor(userRepository: UserR
     private val _addRoomToFavouriteResult = Transformations.switchMap(_roomIdForAddToFavourite) { input -> roomRepository.addToFavourite(input) }
     private val _removeRoomFromFavouriteResult = Transformations.switchMap(_roomIdForRemoveFromFavourite) { input -> roomRepository.removeFromFavourite(input) }
     private val _joinRoomResult = Transformations.switchMap(_roomIdForJoinRoom) { input -> roomRepository.joinRoom(input) }
+    private val _createNewConversationResult = Transformations.switchMap(_userIdForCreateNewConversation) { input -> roomRepository.createDirectChatRoom(input) }
 
     override fun setUserId(userId: String) {
         _userId.value = userId;
@@ -71,7 +73,15 @@ class UserInformationActivityViewModel @Inject constructor(userRepository: UserR
         _roomIdForRemoveFromFavourite.value = roomId;
     }
 
-    override fun gerRemoveRoomFromFavourtieResult(): LiveData<Resource<Room>> {
+    override fun gerRemoveRoomFromFavouriteResult(): LiveData<Resource<Room>> {
         return _removeRoomFromFavouriteResult;
+    }
+
+    override fun setUserIdForCreateNewConversation(userId: String) {
+        _userIdForCreateNewConversation.value = userId;
+    }
+
+    override fun getCreateNewConversationResult(): LiveData<Resource<Room>> {
+        return _createNewConversationResult;
     }
 }

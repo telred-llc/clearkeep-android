@@ -1,4 +1,4 @@
-package vmodev.clearkeep.matrixsdk
+package vmodev.clearkeep.matrixsdk.interfaces
 
 import android.arch.lifecycle.LiveData
 import io.reactivex.Observable

@@ -26,6 +26,8 @@ import javax.inject.Singleton
     , AbstractEditProfileActivityModule::class
     , AbstractCallSettingsActivityModule::class
     , AbstractNotificationSettingsActivityModule::class
+    , AbstractMessageListActivityModule::class
+    , AbstractNotificationSettingsActivityModule::class
     , AbstractExportKeyActivityModule::class
     , AbstractUserInformationActivityModule::class])
 interface AppComponent : AndroidInjector<ClearKeepApplication> {

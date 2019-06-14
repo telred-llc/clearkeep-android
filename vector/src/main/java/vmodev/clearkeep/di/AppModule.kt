@@ -11,13 +11,12 @@ import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.databases.*
 import vmodev.clearkeep.executors.AppExecutors
-import vmodev.clearkeep.matrixsdk.MatrixService
 import vmodev.clearkeep.matrixsdk.MatrixServiceImplmenmt
 import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
 import javax.inject.Named
 import javax.inject.Singleton
 
-@Module(includes = [ViewModelModule::class, MatrixSDKModule::class])
+@Module(includes = [ViewModelModule::class, MatrixSDKModule::class, AbstractMatrixSDKModule::class])
 class AppModule {
 
     @Singleton
@@ -68,8 +67,15 @@ class AppModule {
 
             override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.Room, p1: vmodev.clearkeep.viewmodelobjects.Room): Boolean {
                 return p0.name == p1.name && p0.updatedDate == p1.updatedDate && p0.avatarUrl == p1.avatarUrl
-                        && p0.notifyCount == p1.notifyCount && p0.roomMemberStatus == p1.roomMemberStatus;
+                        && p0.notifyCount == p1.notifyCount && p0.roomMemberStatus == p1.roomMemberStatus && p0.type == p1.type
+                        && p0.lastMessage == p1.lastMessage;
             }
         })
+    }
+
+    @Singleton
+    @Provides
+    fun provideMessageDao(clearKeepDatabase: ClearKeepDatabase): AbstractMessageDao {
+        return clearKeepDatabase.messageDao();
     }
 }

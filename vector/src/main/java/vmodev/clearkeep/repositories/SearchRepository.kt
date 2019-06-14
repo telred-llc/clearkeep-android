@@ -2,12 +2,11 @@ package vmodev.clearkeep.repositories
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
-import android.arch.lifecycle.MutableLiveData
 import io.reactivex.BackpressureStrategy
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.RoomDao
 import vmodev.clearkeep.executors.AppExecutors
-import vmodev.clearkeep.matrixsdk.MatrixService
+import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.viewmodelobjects.MessageSearchText
 import vmodev.clearkeep.viewmodelobjects.Resource
 import javax.inject.Inject

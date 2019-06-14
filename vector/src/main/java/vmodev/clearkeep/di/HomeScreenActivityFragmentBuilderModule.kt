@@ -1,7 +1,5 @@
 package vmodev.clearkeep.di
 
-import android.arch.lifecycle.ViewModelProvider
-import android.support.v4.app.Fragment
 import android.support.v7.util.DiffUtil
 import dagger.Binds
 import dagger.Module
@@ -10,17 +8,15 @@ import dagger.android.ContributesAndroidInjector
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomContactRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
-import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
-import vmodev.clearkeep.factories.*
-import vmodev.clearkeep.factories.interfaces.IFragmentFactory
-import vmodev.clearkeep.factories.interfaces.IShowListRoomFragmentFactory
+import vmodev.clearkeep.factories.activitiesandfragments.*
+import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IFragmentFactory
+import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IShowListRoomFragmentFactory
 import vmodev.clearkeep.factories.viewmodels.*
 import vmodev.clearkeep.factories.viewmodels.interfaces.*
 import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.fragments.Interfaces.*
 import vmodev.clearkeep.viewmodelobjects.Room
-import javax.inject.Inject
 import javax.inject.Named
 
 @Suppress("unused")

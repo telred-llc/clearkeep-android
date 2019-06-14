@@ -37,7 +37,7 @@ android {
 
     defaultConfig {
         applicationId 'com.vmodev.clearkeep'
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 28
         // use the version code
         versionName rootProject.ext.versionNameProp
@@ -286,17 +286,18 @@ dependencies {
     implementation 'com.facebook.fresco:imagepipeline-okhttp3:1.3.0'
     implementation 'com.facebook.soloader:soloader:0.1.0'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation 'org.webkit:android-jsc:r174650'
+//    implementation 'org.webkit:android-jsc:r174650'
     implementation(name: 'jitsi-sdk', ext: 'aar')
     implementation(name: 'react-native-background-timer', ext: 'aar')
     implementation(name: 'react-native-fetch-blob', ext: 'aar')
     implementation(name: 'react-native-immersive', ext: 'aar')
     implementation(name: 'react-native-keep-awake', ext: 'aar')
     implementation(name: 'react-native-vector-icons', ext: 'aar')
-    implementation(name: 'react-native-webrtc', ext: 'aar')
-    implementation(name: 'react-native', ext: 'aar')
+//    implementation(name: 'react-native-webrtc', ext: 'aar')
+//    implementation(name: 'react-native', ext: 'aar')
     implementation(name: 'react-native-locale-detector', ext: 'aar')
-
+    implementation('com.facebook.react:react-native:0.59.2')
+    implementation('com.facebook.react:react-native-webrtc:1.69.0-jitsi-799011')
     // another tracking than GA
     implementation 'org.piwik.sdk:piwik-sdk:2.0.0'
 
@@ -397,6 +398,13 @@ dependencies {
 
     // For developers using the Android Support Library
     implementation 'pub.devrel:easypermissions:2.0.1'
+//    implementation project(path: ':matrix-sdk')
+//    implementation project(path: ':matrix-sdk-crypto')
+//    implementation project(path: ':matrix-sdk-core')
+//    implementation project(path: ':matrix-sdk')
+//    implementation project(path: ':matrix-sdk')
+//    implementation project(path: ':matrix-sdk-crypto')
+//    implementation project(path: ':matrix-sdk-core')
     //======================================================================//
 }
 
