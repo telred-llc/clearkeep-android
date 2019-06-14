@@ -129,8 +129,8 @@ class ExportKeyActivity : DaggerAppCompatActivity(), IExportKeyActivity, ExportK
             intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + it.path));
 
             intentShareFile.putExtra(Intent.EXTRA_SUBJECT,
-                    "ClearKeep Sharing Backup Key");
-            intentShareFile.putExtra(Intent.EXTRA_TEXT, "ClearKeep Sharing Backup Key");
+                    "ClearKeep Export Key");
+            intentShareFile.putExtra(Intent.EXTRA_TEXT, "ClearKeep Export Key");
 
             startActivity(Intent.createChooser(intentShareFile, "Share Backup Key"));
         }
