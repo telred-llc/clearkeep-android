@@ -9,6 +9,7 @@ import org.matrix.androidsdk.data.RoomState
 import org.matrix.androidsdk.listeners.MXEventListener
 import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.User
+import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
 import vmodev.clearkeep.repositories.RoomRepository
 import vmodev.clearkeep.repositories.UserRepository
@@ -16,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MatrixEventHandler @Inject constructor(private val application: Application,
+class MatrixEventHandler @Inject constructor(private val application: ClearKeepApplication,
                                              private val userRepository: UserRepository,
                                              private val roomRepository: RoomRepository)
     : MXEventListener(), IMatrixEventHandler {

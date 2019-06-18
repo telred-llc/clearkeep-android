@@ -37,14 +37,12 @@ import java.util.ArrayList
 import java.util.HashMap
 import javax.inject.Inject
 
-class SplashActivity : DaggerAppCompatActivity(), ISplashActivity {
+class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
 
     @Inject
     lateinit var viewModelFactory: ISplashActivityViewModelFactory;
 
     private lateinit var binding: ActivitySplashBinding;
-
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
 
     private val mListeners = HashMap<MXSession, IMXEventListener>()
     private val mDoneListeners = HashMap<MXSession, IMXEventListener>()

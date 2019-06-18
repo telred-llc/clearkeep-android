@@ -8,11 +8,9 @@ import im.vector.R
 import im.vector.databinding.ActivityOtherRoomSettingsBinding
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
 
-class OtherRoomSettings : AppCompatActivity() {
+class OtherRoomSettings : DataBindingDaggerActivity() {
 
     private lateinit var binding: ActivityOtherRoomSettingsBinding;
-
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

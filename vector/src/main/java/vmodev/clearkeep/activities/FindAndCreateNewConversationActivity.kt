@@ -36,7 +36,7 @@ import java.util.HashMap
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class FindAndCreateNewConversationActivity : DaggerAppCompatActivity(), LifecycleOwner {
+class FindAndCreateNewConversationActivity : DataBindingDaggerActivity(), LifecycleOwner {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
@@ -45,8 +45,6 @@ class FindAndCreateNewConversationActivity : DaggerAppCompatActivity(), Lifecycl
 
     lateinit var userViewModel: AbstractUserViewModel;
     lateinit var roomViewModel: AbstractRoomViewModel;
-
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
 
     private lateinit var mxSession: MXSession;
 

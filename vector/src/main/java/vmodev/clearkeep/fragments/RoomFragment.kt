@@ -105,7 +105,7 @@ class RoomFragment : DataBindingDaggerFragment(), IRoomFragment {
                             2 -> onClickRoomSettings(room.id)
                         }
                         dialog?.dismiss();
-                    }.create();
+                    }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create();
             bottomDialog.show();
         }
         binding.rooms = roomFragmentViewModelFactory.getViewModel().getListRoomByType();

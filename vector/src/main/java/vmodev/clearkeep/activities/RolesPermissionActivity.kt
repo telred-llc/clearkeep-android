@@ -8,10 +8,9 @@ import im.vector.R
 import im.vector.databinding.ActivityRolesPermissionBinding
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
 
-class RolesPermissionActivity : DaggerAppCompatActivity() {
+class RolesPermissionActivity : DataBindingDaggerActivity() {
 
     private lateinit var binding: ActivityRolesPermissionBinding;
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

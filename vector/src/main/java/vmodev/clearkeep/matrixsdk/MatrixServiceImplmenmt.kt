@@ -33,6 +33,7 @@ import org.matrix.androidsdk.rest.model.keys.KeysVersion
 import org.matrix.androidsdk.rest.model.search.SearchResponse
 import org.matrix.androidsdk.rest.model.search.SearchResult
 import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
+import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
@@ -46,7 +47,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MatrixServiceImplmenmt @Inject constructor(private val application: Application) : MatrixService {
+class MatrixServiceImplmenmt @Inject constructor(private val application: ClearKeepApplication) : MatrixService {
 
     //    @Inject
     private var session: MXSession? = null;
@@ -450,9 +451,9 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         return Observable.create<List<User>> { emitter ->
             kotlin.run {
                 session!!.searchUsers(keyword, 100, filter, object : ApiCallback<SearchUsersResponse> {
+                    val users = ArrayList<User>();
                     override fun onSuccess(p0: SearchUsersResponse?) {
                         if (p0 != null) {
-                            val users = ArrayList<User>();
                             p0?.results?.forEach { t: org.matrix.androidsdk.rest.model.User? ->
                                 kotlin.run {
                                     var avatar = "";
@@ -463,30 +464,30 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                                         result?.let { avatar = result }
                                     };
                                     t?.let { user ->
-                                        users.add(User(id = user.user_id, name = user.displayname, avatarUrl = avatar, status = if (user.isActive) 1 else 0, roomId = ""))
+                                        users.add(User(id = user.user_id, name = if (user.displayname.isNullOrEmpty()) "Riot-bot" else user.displayname, avatarUrl = avatar, status = if (user.isActive) 1 else 0, roomId = ""))
                                     }
                                 }
                             }
                             emitter.onNext(users);
                             emitter.onComplete();
                         } else {
-                            emitter.onError(NullPointerException());
+                            emitter.onNext(users);
                             emitter.onComplete();
                         }
                     }
 
                     override fun onUnexpectedError(p0: Exception?) {
-                        emitter.onError(Throwable(message = p0?.message));
+                        emitter.onNext(users);
                         emitter.onComplete();
                     }
 
                     override fun onMatrixError(p0: MatrixError?) {
-                        emitter.onError(Throwable(message = p0?.message));
+                        emitter.onNext(users);
                         emitter.onComplete();
                     }
 
                     override fun onNetworkError(p0: Exception?) {
-                        emitter.onError(Throwable(message = p0?.message));
+                        emitter.onNext(users);
                         emitter.onComplete();
                     }
                 });

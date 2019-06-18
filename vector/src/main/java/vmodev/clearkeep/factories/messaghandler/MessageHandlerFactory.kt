@@ -1,6 +1,7 @@
 package vmodev.clearkeep.factories.messaghandler
 
 import android.app.Application
+import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.databases.AbstractMessageDao
 import vmodev.clearkeep.factories.messaghandler.interfaces.IMessageHandlerFactory
 import vmodev.clearkeep.matrixsdk.MatrixMessageHandler
@@ -8,7 +9,7 @@ import vmodev.clearkeep.matrixsdk.interfaces.IMatrixMessageHandler
 import vmodev.clearkeep.repositories.MessageRepository
 import javax.inject.Inject
 
-class MessageHandlerFactory @Inject constructor(private val context: Application, private val messageDao: AbstractMessageDao) : IMessageHandlerFactory {
+class MessageHandlerFactory @Inject constructor(private val context: ClearKeepApplication, private val messageDao: AbstractMessageDao) : IMessageHandlerFactory {
 
     private val mapMessageHandler = HashMap<String, IMatrixMessageHandler>();
 

@@ -19,8 +19,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/lb_details_description_body_color">
+        android:layout_height="match_parent">
 
         <ProgressBar
             android:layout_width="wrap_content"
@@ -36,22 +35,19 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white" />
+                android:layout_height="wrap_content" />
 
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:text="@string/export_key_content"
-                android:textColor="@color/lb_grey" />
+                android:text="@string/export_key_content" />
 
             <FrameLayout
                 android:id="@+id/frame_layout_export_keys_group"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/text_view_export_keys"

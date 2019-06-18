@@ -22,7 +22,7 @@ import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import javax.inject.Inject
 
-class RoomMemberListActivity : DaggerAppCompatActivity() {
+class RoomMemberListActivity : DataBindingDaggerActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
@@ -34,8 +34,6 @@ class RoomMemberListActivity : DaggerAppCompatActivity() {
     private lateinit var listUserAdapter: ListUserRecyclerViewAdapter;
 
     private lateinit var session: MXSession;
-
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

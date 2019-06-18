@@ -14,13 +14,12 @@ import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.factories.viewmodels.interfaces.INotificationSettingsActivityViewModelFactory
 import javax.inject.Inject
 
-class NotificationSettingsActivity : DaggerAppCompatActivity(), INotificationSettingsActivity {
+class NotificationSettingsActivity : DataBindingDaggerActivity(), INotificationSettingsActivity {
 
     @Inject
     lateinit var viewModelFactory: INotificationSettingsActivityViewModelFactory;
     lateinit var userId: String;
     private lateinit var binding: ActivityNotificationSettingsBinding;
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_notification_settings, dataBindingComponent);

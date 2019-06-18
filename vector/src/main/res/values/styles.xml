@@ -246,4 +246,15 @@
         <item name="android:textColorTertiary">@color/riot_tertiary_text_color_status</item>
     </style>
 
+    <declare-styleable name="ClearKeep">
+        <attr name="icon_color" format="color" />
+    </declare-styleable>
+
+    <style name="DarkTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="icon_color">#FFFFFFFF</item>
+    </style>
+
+    <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="icon_color">#FF000000</item>
+    </style>
 </resources>
