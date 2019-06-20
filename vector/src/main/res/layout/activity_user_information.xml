@@ -42,8 +42,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/background_main_gray">
+        android:layout_height="match_parent">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -97,8 +96,7 @@
                 <FrameLayout
                     android:id="@+id/frame_layout_hide_all_message_group"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/white">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -148,7 +146,6 @@
                     android:id="@+id/recycler_view_list_direct_chat"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/white"
                     app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                     app:visibleGone="@{directChatRooms.data.size > 0}"
                     tools:listitem="@layout/room_item" />
@@ -165,7 +162,6 @@
                     android:id="@+id/recycler_view_list_room_chat"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/white"
                     app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                     tools:listitem="@layout/room_item" />
             </LinearLayout>

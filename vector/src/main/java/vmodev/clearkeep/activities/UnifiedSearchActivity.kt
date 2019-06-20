@@ -14,13 +14,13 @@ import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorBaseSearchActivity
-import im.vector.adapters.VectorUnifiedSearchFragmentPagerAdapter
 import im.vector.contacts.ContactsManager
 import im.vector.util.PERMISSION_REQUEST_CODE
 import im.vector.util.checkPermissions
 import org.matrix.androidsdk.fragments.MatrixMessageListFragment
 import org.matrix.androidsdk.util.Log
 import vmodev.clearkeep.adapters.UnifiedSearchFragmentPagerAdapter
+import vmodev.clearkeep.applications.IApplication
 
 class UnifiedSearchActivity : BaseSearchActivity(), VectorBaseSearchActivity.IVectorSearchActivity {
 
@@ -36,13 +36,16 @@ class UnifiedSearchActivity : BaseSearchActivity(), VectorBaseSearchActivity.IVe
 
     private var mPosition: Int = 0
 
+    private lateinit var applcation: IApplication;
+
     override fun getLayoutRes(): Int {
+        applcation = applicationContext as IApplication;
+        setTheme(applcation.getCurrentTheme());
         return R.layout.activity_unified_search
     }
 
     override fun initUiAndData() {
         super.initUiAndData()
-
         if (CommonActivityUtils.shouldRestartApp(this)) {
             Log.e(LOG_TAG, "Restart the application.")
             CommonActivityUtils.restartApp(this)

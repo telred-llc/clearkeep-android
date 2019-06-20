@@ -6,9 +6,6 @@ import android.util.Log
 import dagger.android.AndroidInjector
 import im.vector.Matrix
 import im.vector.R
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.ClearKeepDatabase
 import vmodev.clearkeep.di.DaggerAppComponent
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
@@ -16,7 +13,7 @@ import javax.inject.Inject
 import io.reactivex.plugins.RxJavaPlugins
 
 
-class ClearKeepApplication : DaggerVectorApp(), IAppication {
+class ClearKeepApplication : DaggerVectorApp(), IApplication {
 
     @Inject
     lateinit var matrixEventHandler: IMatrixEventHandler;

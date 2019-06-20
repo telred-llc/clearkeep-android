@@ -15,6 +15,7 @@
         <import type="android.arch.lifecycle.LiveData" />
 
         <import type="vmodev.clearkeep.viewmodelobjects.User" />
+
         <import type="vmodev.clearkeep.viewmodelobjects.Room" />
 
         <variable
@@ -52,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:hint="@string/search"/>
+                android:hint="@string/search" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -80,7 +81,7 @@
                         android:layout_height="40dp"
                         android:layout_gravity="center_horizontal"
                         android:src="@drawable/ic_group_add_gray_24dp"
-                        app:civ_border_color="@color/vector_dark_grey_color"
+                        app:civ_border_color="?attr/icon_color"
                         app:civ_border_width="2dp" />
 
                     <TextView
@@ -103,7 +104,7 @@
                         android:layout_height="40dp"
                         android:layout_gravity="center_horizontal"
                         android:src="@drawable/ic_phone_gray_24dp"
-                        app:civ_border_color="@color/vector_dark_grey_color"
+                        app:civ_border_color="?attr/icon_color"
                         app:civ_border_width="2dp" />
 
                     <TextView

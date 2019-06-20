@@ -61,8 +61,8 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
             roomViewModel.setLeaveRoom(roomId);
         }
         binding.settingsGroup.setOnClickListener { v ->
-            val securityIntent = Intent(this, OtherRoomSettings::class.java);
-            securityIntent.putExtra(OtherRoomSettings.ROOM_ID, roomId);
+            val securityIntent = Intent(this, OtherRoomSettingsActivity::class.java);
+            securityIntent.putExtra(OtherRoomSettingsActivity.ROOM_ID, roomId);
             startActivity(securityIntent);
         }
         binding.membersGroup.setOnClickListener { v ->

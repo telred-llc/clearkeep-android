@@ -2,7 +2,7 @@ package vmodev.clearkeep.applications
 
 import android.app.Application
 
-interface IAppication {
+interface IApplication {
     fun getCurrentTheme(): Int;
     fun setCurrentTheme(theme: Int);
     fun getApplication(): Application;

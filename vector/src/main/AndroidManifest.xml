@@ -103,7 +103,7 @@
         <activity android:name="vmodev.clearkeep.activities.UnifiedSearchActivity" />
         <activity android:name="vmodev.clearkeep.activities.RolesPermissionActivity" />
         <activity android:name="vmodev.clearkeep.activities.OtherRoomSettingsAdvancedActivity" />
-        <activity android:name="vmodev.clearkeep.activities.OtherRoomSettings" />
+        <activity android:name="vmodev.clearkeep.activities.OtherRoomSettingsActivity" />
         <activity android:name="vmodev.clearkeep.activities.ViewUserProfileActivity" />
         <activity android:name="vmodev.clearkeep.activities.SecurityActivity" />
         <activity android:name="vmodev.clearkeep.activities.RoomMemberListActivity" />
