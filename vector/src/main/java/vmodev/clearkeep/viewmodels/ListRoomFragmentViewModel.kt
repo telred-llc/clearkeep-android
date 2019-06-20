@@ -1,0 +1,76 @@
+package vmodev.clearkeep.viewmodels
+
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
+import vmodev.clearkeep.repositories.RoomRepository
+import vmodev.clearkeep.viewmodelobjects.Resource
+import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodels.interfaces.AbstractListRoomFragmentViewModel
+import javax.inject.Inject
+
+class ListRoomFragmentViewModel @Inject constructor(roomRepository: RoomRepository) : AbstractListRoomFragmentViewModel() {
+
+    private val _directRoomFilters = MutableLiveData<Array<Int>>();
+    private val _groupRoomFilters = MutableLiveData<Array<Int>>();
+    private val _roomIdForLeave = MutableLiveData<String>();
+    private val _roomIdForAddToFavourite = MutableLiveData<String>();
+    private val _roomIdForRemoveFromFavourite = MutableLiveData<String>();
+    private val _roomIdForJoinRoom = MutableLiveData<String>();
+
+    private val _leaveRoomWithIdResult = Transformations.switchMap(_roomIdForLeave) { input -> roomRepository.leaveRoom(input) }
+    private val _addRoomToFavouriteResult = Transformations.switchMap(_roomIdForAddToFavourite) { input -> roomRepository.addToFavourite(input) }
+    private val _removeRoomFromFavouriteResult = Transformations.switchMap(_roomIdForRemoveFromFavourite) { input -> roomRepository.removeFromFavourite(input) }
+    private val _joinRoomResult = Transformations.switchMap(_roomIdForJoinRoom) { input -> roomRepository.joinRoom(input) }
+
+    private val _getListDirectRoomResult = Transformations.switchMap(_directRoomFilters) { input -> roomRepository.loadListRoom(input) }
+    private val _getListGroupRoomResult = Transformations.switchMap(_groupRoomFilters) { input -> roomRepository.loadListRoom(input) }
+
+    override fun setFiltersDirectRoom(filters: Array<Int>) {
+        _directRoomFilters.value = filters;
+    }
+
+    override fun setFiltersGroupRoom(filters: Array<Int>) {
+        _groupRoomFilters.value = filters;
+    }
+
+    override fun getListDirectRoomResult(): LiveData<Resource<List<Room>>> {
+        return _getListDirectRoomResult;
+    }
+
+    override fun getListGroupRoomResult(): LiveData<Resource<List<Room>>> {
+        return _getListGroupRoomResult;
+    }
+
+    override fun setLeaveRoomId(roomId: String) {
+        _roomIdForLeave.value = roomId;
+    }
+
+    override fun getLeaveRoomWithIdResult(): LiveData<Resource<String>> {
+        return _leaveRoomWithIdResult;
+    }
+
+    override fun setAddToFavouriteRoomId(roomId: String) {
+        _roomIdForAddToFavourite.value = roomId;
+    }
+
+    override fun getAddToFavouriteResult(): LiveData<Resource<Room>> {
+        return _addRoomToFavouriteResult;
+    }
+
+    override fun setRoomIdForJoinRoom(roomId: String) {
+        _roomIdForJoinRoom.value = roomId;
+    }
+
+    override fun joinRoomWithIdResult(): LiveData<Resource<Room>> {
+        return _joinRoomResult;
+    }
+
+    override fun setRoomIdForRemoveFromFavourite(roomId: String) {
+        _roomIdForRemoveFromFavourite.value = roomId;
+    }
+
+    override fun gerRemoveRoomFromFavouriteResult(): LiveData<Resource<Room>> {
+        return _removeRoomFromFavouriteResult;
+    }
+}

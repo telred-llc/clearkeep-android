@@ -39,7 +39,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         FavouritesFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener,
         IListRoomOnFragmentInteractionListener, RoomFragment.OnFragmentInteractionListener
         , SearchFragment.OnFragmentInteractionListener
-        , PreviewFragment.OnFragmentInteractionListener, IHomeScreenActivity {
+        , PreviewFragment.OnFragmentInteractionListener, ListRoomFragment.OnFragmentInteractionListener, IHomeScreenActivity {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
@@ -52,6 +52,9 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     @Inject
     @field:Named(IFragmentFactory.CONTACTS_FRAGMENT)
     lateinit var contactsFragmentFactory: IFragmentFactory;
+    @Inject
+    @field:Named(IFragmentFactory.LIST_ROOM_FRAGMENT)
+    lateinit var listRoomFragmentFactory: IFragmentFactory;
     @Inject
     lateinit var homeScreenViewModelFactory: IHomeScreenViewModelFactory;
 
@@ -69,7 +72,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
             kotlin.run {
                 when (menuItem.itemId) {
                     R.id.action_home -> {
-                        switchFragment(homeScreenFragmentFactory.createNewInstance().getFragment());
+                        switchFragment(listRoomFragmentFactory.createNewInstance().getFragment());
                     };
                     R.id.action_favorites -> {
                         switchFragment(favouritesFragmentFactory.createNewInstance().getFragment());
@@ -89,7 +92,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         }
         homeRoomViewModel = HomeRoomsViewModel(mxSession);
 
-        switchFragment(HomeScreenFragment.newInstance());
+        switchFragment(listRoomFragmentFactory.createNewInstance().getFragment());
 
         binding.frameLayoutSearch.setOnClickListener { v ->
             //            val intent = Intent(this, SearchActivity::class.java);
