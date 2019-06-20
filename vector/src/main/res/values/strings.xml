@@ -1304,4 +1304,5 @@ Why choose Riot.im?
     <string name="room_chats">Room chats</string>
     <string name="online">Online</string>
     <string name="theme">Theme</string>
+    <string name="directs">Directs</string>
 </resources>

@@ -37,6 +37,9 @@ abstract class HomeScreenActivityFragmentBuilderModule {
     @ContributesAndroidInjector
     abstract fun contributeContactFragment(): ContactsFragment;
 
+    @ContributesAndroidInjector
+    abstract fun contributeListRoomFragment(): ListRoomFragment;
+
     @Binds
     abstract fun bindDirectMessageFragment(fragment: DirectMessageFragment): IDriectMessageFragment;
 
@@ -53,6 +56,9 @@ abstract class HomeScreenActivityFragmentBuilderModule {
     abstract fun bindContactFragment(fragment: ContactsFragment): IContactFragment;
 
     @Binds
+    abstract fun bindListRoomFragment(fragment: ListRoomFragment): IListRoomFragment;
+
+    @Binds
     abstract fun bindDirectMessageFragmentViewModelFactory(factory: DirectMessageFragmentViewModelFactory): IDirectMessageFragmentViewModelFactory;
 
     @Binds
@@ -66,6 +72,9 @@ abstract class HomeScreenActivityFragmentBuilderModule {
 
     @Binds
     abstract fun bindContactFragmentViewModelFactory(factory: ContactFragmentViewModelFactory): IContactFragmentViewModelFactory;
+
+    @Binds
+    abstract fun bindListRoomFragmentViewModelFactory(factory: ListRoomFragmentViewModelFactory): IListRoomFragmentViewModelFactory;
 
     @Module
     companion object {
@@ -134,6 +143,13 @@ abstract class HomeScreenActivityFragmentBuilderModule {
         @Named(value = IFragmentFactory.CONTACTS_FRAGMENT)
         fun provideContactsFragmentFactory(): IFragmentFactory {
             return ContactsFragmentFactory();
+        }
+
+        @Provides
+        @JvmStatic
+        @Named(value = IFragmentFactory.LIST_ROOM_FRAGMENT)
+        fun provideListRoomFragmentFactory(): IFragmentFactory {
+            return ListRoomFragmentFactory();
         }
     }
 }

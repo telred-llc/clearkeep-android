@@ -114,5 +114,10 @@ abstract class ViewModelModule {
     abstract fun bindDataBindingDaggerActivityViewModel(viewModel: DataBindingDaggerActivityViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractListRoomFragmentViewModel::class)
+    abstract fun bindListRoomFragmentViewModel(viewModel: ListRoomFragmentViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }

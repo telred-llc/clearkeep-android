@@ -6,8 +6,10 @@ import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.viewmodelobjects.Resource
+import java.lang.NullPointerException
 
 abstract class AbstractNetworkBoundSource<T, V> @MainThread constructor() {
     private val result = MediatorLiveData<Resource<T>>();
@@ -51,13 +53,22 @@ abstract class AbstractNetworkBoundSource<T, V> @MainThread constructor() {
                     }
                 }
             } else {
-                Observable.create<Int> { emitter ->
-                    result.addSource(dbSource) {
-                        setValue(Resource.success(it))
-                        emitter.onNext(1);
-                        emitter.onComplete();
+                Observable.create<T> { emitter ->
+                    result.addSource(loadFromDb()) {
+                        it?.let {
+                            emitter.onNext(it);
+                            emitter.onComplete();
+                        }?.run {
+                            emitter.onError(NullPointerException());
+                            emitter.onComplete();
+                        }
+
                     }
-                }.subscribeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread()).subscribe();
+                }.subscribeOn(AndroidSchedulers.mainThread()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+                    setValue(Resource.success(it));
+                }, {
+                    setValue(Resource.error(it.message, null))
+                });
             }
         }
     }
