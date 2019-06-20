@@ -29,7 +29,7 @@ import vmodev.clearkeep.viewmodels.UserViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import javax.inject.Inject
 
-class ProfileActivity : DaggerAppCompatActivity(), IProfileActivity {
+class ProfileActivity : DataBindingDaggerActivity(), IProfileActivity {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
@@ -39,7 +39,7 @@ class ProfileActivity : DaggerAppCompatActivity(), IProfileActivity {
     lateinit var mxSession: MXSession;
 
     private lateinit var userViewModel: AbstractUserViewModel;
-    private var dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
+//    private var dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

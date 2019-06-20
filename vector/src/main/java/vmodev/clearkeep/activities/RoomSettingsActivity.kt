@@ -21,15 +21,13 @@ import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
 import javax.inject.Named
 
-class RoomSettingsActivity : DaggerAppCompatActivity(), IActivity {
+class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
 
     lateinit var roomViewModel: AbstractRoomViewModel;
     lateinit var roomId: String;
-
-    private val dataBindingComponent: DataBindingComponent = ActivityDataBindingComponent(this);
 
     lateinit var binding: ActivityRoomSettingsBinding;
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,8 +61,8 @@ class RoomSettingsActivity : DaggerAppCompatActivity(), IActivity {
             roomViewModel.setLeaveRoom(roomId);
         }
         binding.settingsGroup.setOnClickListener { v ->
-            val securityIntent = Intent(this, OtherRoomSettings::class.java);
-            securityIntent.putExtra(OtherRoomSettings.ROOM_ID, roomId);
+            val securityIntent = Intent(this, OtherRoomSettingsActivity::class.java);
+            securityIntent.putExtra(OtherRoomSettingsActivity.ROOM_ID, roomId);
             startActivity(securityIntent);
         }
         binding.membersGroup.setOnClickListener { v ->

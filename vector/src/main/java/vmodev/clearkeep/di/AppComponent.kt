@@ -29,7 +29,9 @@ import javax.inject.Singleton
     , AbstractMessageListActivityModule::class
     , AbstractNotificationSettingsActivityModule::class
     , AbstractExportKeyActivityModule::class
-    , AbstractUserInformationActivityModule::class])
+    , AbstractUserInformationActivityModule::class
+    , AbstractChangeThemeActivityModule::class
+    , AbstractOtherRoomSettingsActivityModule::class])
 interface AppComponent : AndroidInjector<ClearKeepApplication> {
     override fun inject(instance: ClearKeepApplication?)
 //    fun inject(application: Application)
@@ -37,7 +39,7 @@ interface AppComponent : AndroidInjector<ClearKeepApplication> {
     @Component.Builder
     interface Builder {
         @BindsInstance
-        fun application(application: Application): Builder
+        fun application(application: ClearKeepApplication): Builder
 
         fun build(): AppComponent
     }

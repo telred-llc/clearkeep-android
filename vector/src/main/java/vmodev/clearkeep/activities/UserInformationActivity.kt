@@ -22,7 +22,7 @@ import vmodev.clearkeep.factories.viewmodels.interfaces.IUserInformationActivity
 import javax.inject.Inject
 import javax.inject.Named
 
-class UserInformationActivity : DaggerAppCompatActivity(), IUserInformationActivity {
+class UserInformationActivity : DataBindingDaggerActivity(), IUserInformationActivity {
 
     @Inject
     lateinit var viewModelFactory: IUserInformationActivityViewModelFactory;
@@ -33,7 +33,6 @@ class UserInformationActivity : DaggerAppCompatActivity(), IUserInformationActiv
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
     lateinit var listRoomChatRoomAdapter: IListRoomRecyclerViewAdapter;
 
-    private val dataBindingComponent = ActivityDataBindingComponent(this);
     private lateinit var binding: ActivityUserInformationBinding;
     private lateinit var userId: String;
     private lateinit var session: MXSession;

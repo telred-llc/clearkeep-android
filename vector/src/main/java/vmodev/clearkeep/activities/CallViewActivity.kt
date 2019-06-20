@@ -43,6 +43,7 @@ import org.matrix.androidsdk.call.VideoLayoutConfiguration
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo
 import org.matrix.androidsdk.crypto.data.MXUsersDevicesMap
 import org.matrix.androidsdk.util.Log
+import vmodev.clearkeep.applications.IApplication
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -283,7 +284,10 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
         return ActivityOtherThemes.Call
     }
 
+    private lateinit var application: IApplication;
     override fun getLayoutRes(): Int {
+        application = applicationContext as IApplication;
+        setTheme(application.getCurrentTheme());
         return R.layout.activity_call_view
     }
 

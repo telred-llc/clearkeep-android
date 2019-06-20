@@ -25,7 +25,7 @@ import vmodev.clearkeep.viewmodelobjects.User
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class MessageListActivity : DaggerAppCompatActivity(), IMessageListActivity {
+class MessageListActivity : DataBindingDaggerActivity(), IMessageListActivity {
 
     @Inject
     lateinit var viewModelFactory: IMessageListActivityViewModelFactory;
@@ -33,7 +33,6 @@ class MessageListActivity : DaggerAppCompatActivity(), IMessageListActivity {
     lateinit var appExecutors: AppExecutors;
 
     private lateinit var binding: ActivityMessageListBinding;
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
     private lateinit var roomId: String;
 
     private lateinit var session: MXSession;

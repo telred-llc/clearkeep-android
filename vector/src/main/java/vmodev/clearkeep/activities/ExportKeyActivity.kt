@@ -28,12 +28,11 @@ import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
 
-class ExportKeyActivity : DaggerAppCompatActivity(), IExportKeyActivity, ExportKeyDialogFragment.OnFragmentInteractionListener {
+class ExportKeyActivity : DataBindingDaggerActivity(), IExportKeyActivity, ExportKeyDialogFragment.OnFragmentInteractionListener {
 
     @Inject
     lateinit var viewModelFactory: IExportKeyActivityViewModeFactory;
 
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
     private lateinit var binding: ActivityExportKeyBinding;
     private var exportStatus = false;
     private var backupKeyContent: String = "";

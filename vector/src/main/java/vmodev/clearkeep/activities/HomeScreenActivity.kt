@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
+import android.support.v7.app.AppCompatDelegate
 import android.view.View
 import android.widget.Toast
 import im.vector.Matrix
@@ -91,7 +92,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         switchFragment(HomeScreenFragment.newInstance());
 
         binding.frameLayoutSearch.setOnClickListener { v ->
-//            val intent = Intent(this, SearchActivity::class.java);
+            //            val intent = Intent(this, SearchActivity::class.java);
             val intent = Intent(this, UnifiedSearchActivity::class.java)
             startActivity(intent);
         }
@@ -116,6 +117,8 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
 //                mSharedFilesIntent = sharedFilesIntent
             }
         }
+
+
     }
 
     private fun switchFragment(fragment: Fragment) {

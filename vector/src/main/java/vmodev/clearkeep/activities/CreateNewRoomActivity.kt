@@ -30,7 +30,7 @@ import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
 
-class CreateNewRoomActivity : DaggerAppCompatActivity(), LifecycleOwner {
+class CreateNewRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
@@ -38,8 +38,6 @@ class CreateNewRoomActivity : DaggerAppCompatActivity(), LifecycleOwner {
     lateinit var appExecutors: AppExecutors;
 
     lateinit var mxSession: MXSession;
-
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
 
     @SuppressLint("CheckResult", "ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -13,14 +13,14 @@ import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.factories.viewmodels.interfaces.IProfileSettingsActivityViewModelFactory
 import javax.inject.Inject
 
-class ProfileSettingsActivity : DaggerAppCompatActivity(), IProfileSettingsActivity {
+class ProfileSettingsActivity : DataBindingDaggerActivity(), IProfileSettingsActivity {
 
     @Inject
     lateinit var profileSettingsActivityViewModelFactory: IProfileSettingsActivityViewModelFactory;
 
     private lateinit var binding: ActivityProfileSettingsBinding;
     private lateinit var userId: String;
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
+//    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +52,11 @@ class ProfileSettingsActivity : DaggerAppCompatActivity(), IProfileSettingsActiv
         binding.securityGroup.setOnClickListener {
             val intentSecurity = Intent(this, ExportKeyActivity::class.java);
             startActivity(intentSecurity);
+        }
+        binding.themeGroup.setOnClickListener {
+            val intentTheme = Intent(this, ChangeThemeActivity::class.java);
+            intentTheme.putExtra(ChangeThemeActivity.USER_ID, userId);
+            startActivity(intentTheme);
         }
     }
 

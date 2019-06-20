@@ -92,7 +92,7 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDriectMessageFragmen
                         }
 
                         dialog?.dismiss();
-                    }.create();
+                    }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create();
             bottomDialog.show();
         }
         binding.rooms = directMessageViewModelFactory.getViewModel().getListRoomByType();
