@@ -49,7 +49,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/dark_theme" />
+                    android:text="@string/dark_theme"
+                    android:textSize="@dimen/text_20_sp"/>
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/switch_dark_theme"
