@@ -171,7 +171,8 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
 
         binding.recyclerViewListDirectChat.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewListGroupChat.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
-
+        binding.recyclerViewListDirectChat.isNestedScrollingEnabled = false;
+        binding.recyclerViewListGroupChat.isNestedScrollingEnabled = false;
         binding.recyclerViewListDirectChat.adapter = listDirectRoomAdapter.getAdapter();
         binding.recyclerViewListGroupChat.adapter = listGroupRoomAdapter.getAdapter();
 
@@ -193,6 +194,14 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
         }
         binding.buttonStartGroupChat.setOnClickListener {
             val intentNewChat = Intent(context, CreateNewRoomActivity::class.java);
+            startActivity(intentNewChat);
+        }
+        binding.imageViewCreateNewRoom.setOnClickListener {
+            val intentNewChat = Intent(context, CreateNewRoomActivity::class.java);
+            startActivity(intentNewChat);
+        }
+        binding.imageViewCreateNewDirect.setOnClickListener {
+            val intentNewChat = Intent(context, FindAndCreateNewConversationActivity::class.java);
             startActivity(intentNewChat);
         }
         binding.lifecycleOwner = this.viewLifecycleOwner;
