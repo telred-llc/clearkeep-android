@@ -13,13 +13,12 @@ import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.factories.viewmodels.interfaces.ICallSettingsActivityViewModelFactory
 import javax.inject.Inject
 
-class CallSettingsActivity : DaggerAppCompatActivity(), ICallSettingsActivity {
+class CallSettingsActivity : DataBindingDaggerActivity(), ICallSettingsActivity {
 
     @Inject
     lateinit var viewModelFactory: ICallSettingsActivityViewModelFactory;
 
     private lateinit var binding: ActivityCallSettingsBinding;
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
     private lateinit var userId: String;
 
     override fun onCreate(savedInstanceState: Bundle?) {

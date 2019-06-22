@@ -11,8 +11,8 @@ import im.vector.R
 
 class BottomDialogRoomLongClick : BaseAdapter() {
 
-    private var arrayTitles: Array<Int> = arrayOf(R.string.turn_on_room_notification, R.string.add_to_favourite, R.string.setting, R.string.leave/*, R.string.preview_message*/)
-    private var arrayIcons: Array<Int> = arrayOf(R.drawable.ic_notifications_none_black_24dp, R.drawable.ic_star_black_24dp, R.drawable.ic_settings_black_24dp, R.drawable.ic_exit_to_app_black_24dp/*, R.drawable.ic_forward_black_24dp*/)
+    private var arrayTitles: Array<Int> = arrayOf(R.string.turn_on_room_notification, R.string.add_to_favourite, R.string.setting, R.string.leave, R.string.preview_message)
+    private var arrayIcons: Array<Int> = arrayOf(R.drawable.ic_notifications_none_black_24dp, R.drawable.ic_star_24dp, R.drawable.ic_settings_black_24dp, R.drawable.ic_exit_to_app_black_24dp, R.drawable.ic_forward_black_24dp)
 
     @SuppressLint("ViewHolder")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {

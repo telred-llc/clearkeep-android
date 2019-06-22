@@ -2,7 +2,6 @@ package vmodev.clearkeep.di
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import android.view.View
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -103,6 +102,21 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AbstractUserInformationActivityViewModel::class)
     abstract fun bindUserInformationActivityViewModel(viewModel: UserInformationActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractChangeThemeActivityViewModel::class)
+    abstract fun bindChangeThemeActivityViewModel(viewModel: ChangeThemeActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractDataBindingDaggerActivityViewModel::class)
+    abstract fun bindDataBindingDaggerActivityViewModel(viewModel: DataBindingDaggerActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractListRoomFragmentViewModel::class)
+    abstract fun bindListRoomFragmentViewModel(viewModel: ListRoomFragmentViewModel): ViewModel;
 
     @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;

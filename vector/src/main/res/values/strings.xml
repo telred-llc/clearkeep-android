@@ -1303,4 +1303,7 @@ Why choose Riot.im?
     <string name="direct_chats">Direct chats</string>
     <string name="room_chats">Room chats</string>
     <string name="online">Online</string>
+    <string name="theme">Theme</string>
+    <string name="directs">Directs</string>
+    <string name="direct_messages">Direct Messages</string>
 </resources>

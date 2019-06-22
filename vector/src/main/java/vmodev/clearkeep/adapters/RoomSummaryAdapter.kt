@@ -697,7 +697,7 @@ class RoomSummaryAdapter
 
         // display the room name
         roomNameTxtView.text = roomName
-        roomNameTxtView.setTextColor(roomNameBlack)
+//        roomNameTxtView.setTextColor(roomNameBlack)
         roomNameTxtView.setTypeface(null, if (0 != unreadMsgCount) Typeface.BOLD else Typeface.NORMAL)
 
         // display the last message

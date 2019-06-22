@@ -24,15 +24,13 @@ import vmodev.clearkeep.fragments.SearchPeopleFragment
 import vmodev.clearkeep.fragments.SearchRoomsFragment
 import javax.inject.Inject
 
-class SearchActivity : DaggerAppCompatActivity(), SearchRoomsFragment.OnFragmentInteractionListener
+class SearchActivity : DataBindingDaggerActivity(), SearchRoomsFragment.OnFragmentInteractionListener
         , SearchFilesFragment.OnFragmentInteractionListener
         , SearchMessagesFragment.OnFragmentInteractionListener
         , SearchPeopleFragment.OnFragmentInteractionListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
-
-    val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
 
     private val publishSubjectSearchView: PublishSubject<String> = PublishSubject.create();
 

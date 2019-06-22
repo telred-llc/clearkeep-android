@@ -40,14 +40,13 @@ import java.util.HashMap
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class InviteUsersToRoomActivity : DaggerAppCompatActivity(), LifecycleOwner {
+class InviteUsersToRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
     @Inject
     lateinit var appExecutors: AppExecutors;
 
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
     private lateinit var roomId: String;
     private var createFromNewRoom: Boolean = true;
     private lateinit var mxSession: MXSession;

@@ -13,5 +13,6 @@ data class DeviceSettings(
         @field:SerializedName("pin_room_with_unread_messages") val pinRoomWithUnreadMessages: Byte,
         @field:SerializedName("integrated_calling") val integratedCalling: Byte,
         @field:SerializedName("send_anon_crash_and_usage_data") val sendAnonCrashAndUsageData: Byte,
-        @field:SerializedName("rage_shake_to_report_bug") val rageShakeToReportBug: Byte
+        @field:SerializedName("rage_shake_to_report_bug") val rageShakeToReportBug: Byte,
+        @field:SerializedName("theme") val theme: Int
 )

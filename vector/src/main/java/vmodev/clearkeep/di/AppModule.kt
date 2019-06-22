@@ -1,28 +1,31 @@
 package vmodev.clearkeep.di
 
-import android.app.Application
 import android.arch.persistence.room.Room
 import android.support.v7.util.DiffUtil
 import dagger.Module
 import dagger.Provides
-import im.vector.Matrix
-import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
+import vmodev.clearkeep.applications.ClearKeepApplication
+import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.databases.*
 import vmodev.clearkeep.executors.AppExecutors
-import vmodev.clearkeep.matrixsdk.MatrixServiceImplmenmt
-import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
 import javax.inject.Named
 import javax.inject.Singleton
 
 @Module(includes = [ViewModelModule::class, MatrixSDKModule::class, AbstractMatrixSDKModule::class])
 class AppModule {
 
+    @Provides
+    @Singleton
+    fun bindApplication(application: ClearKeepApplication): IApplication {
+        return application;
+    }
+
     @Singleton
     @Provides
-    fun provideDB(application: Application): ClearKeepDatabase {
-        return Room.databaseBuilder(application, ClearKeepDatabase::class.java, "clearkeep.db")
+    fun provideDB(application: IApplication): ClearKeepDatabase {
+        return Room.databaseBuilder(application.getApplication(), ClearKeepDatabase::class.java, "clearkeep.db")
                 .fallbackToDestructiveMigration()
                 .build();
     }

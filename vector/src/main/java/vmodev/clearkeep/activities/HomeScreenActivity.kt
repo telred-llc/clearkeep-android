@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
+import android.support.v7.app.AppCompatDelegate
 import android.view.View
 import android.widget.Toast
 import im.vector.Matrix
@@ -38,7 +39,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         FavouritesFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener,
         IListRoomOnFragmentInteractionListener, RoomFragment.OnFragmentInteractionListener
         , SearchFragment.OnFragmentInteractionListener
-        , PreviewFragment.OnFragmentInteractionListener, IHomeScreenActivity {
+        , PreviewFragment.OnFragmentInteractionListener, ListRoomFragment.OnFragmentInteractionListener, IHomeScreenActivity {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
@@ -51,6 +52,9 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     @Inject
     @field:Named(IFragmentFactory.CONTACTS_FRAGMENT)
     lateinit var contactsFragmentFactory: IFragmentFactory;
+    @Inject
+    @field:Named(IFragmentFactory.LIST_ROOM_FRAGMENT)
+    lateinit var listRoomFragmentFactory: IFragmentFactory;
     @Inject
     lateinit var homeScreenViewModelFactory: IHomeScreenViewModelFactory;
 
@@ -68,7 +72,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
             kotlin.run {
                 when (menuItem.itemId) {
                     R.id.action_home -> {
-                        switchFragment(homeScreenFragmentFactory.createNewInstance().getFragment());
+                        switchFragment(listRoomFragmentFactory.createNewInstance().getFragment());
                     };
                     R.id.action_favorites -> {
                         switchFragment(favouritesFragmentFactory.createNewInstance().getFragment());
@@ -88,10 +92,10 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         }
         homeRoomViewModel = HomeRoomsViewModel(mxSession);
 
-        switchFragment(HomeScreenFragment.newInstance());
+        switchFragment(listRoomFragmentFactory.createNewInstance().getFragment());
 
         binding.frameLayoutSearch.setOnClickListener { v ->
-//            val intent = Intent(this, SearchActivity::class.java);
+            //            val intent = Intent(this, SearchActivity::class.java);
             val intent = Intent(this, UnifiedSearchActivity::class.java)
             startActivity(intent);
         }
@@ -116,6 +120,8 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
 //                mSharedFilesIntent = sharedFilesIntent
             }
         }
+
+
     }
 
     private fun switchFragment(fragment: Fragment) {

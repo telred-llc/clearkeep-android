@@ -28,14 +28,13 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
 
-class EditProfileActivity : DaggerAppCompatActivity(), IEditProfileActivity {
+class EditProfileActivity : DataBindingDaggerActivity(), IEditProfileActivity {
 
     @Inject
     lateinit var viewModelFactory: IEditProfileActivityViewModelFactory;
 
     private lateinit var binding: ActivityEditProfileBinding;
     private lateinit var userId: String;
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
     private var avatarImage: InputStream? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {

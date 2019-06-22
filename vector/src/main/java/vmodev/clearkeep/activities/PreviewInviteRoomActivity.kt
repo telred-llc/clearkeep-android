@@ -22,12 +22,11 @@ import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import java.util.HashMap
 import javax.inject.Inject
 
-class PreviewInviteRoomActivity : DaggerAppCompatActivity(), LifecycleOwner {
+class PreviewInviteRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    var dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
     private lateinit var mxSession: MXSession;
 
     override fun onCreate(savedInstanceState: Bundle?) {

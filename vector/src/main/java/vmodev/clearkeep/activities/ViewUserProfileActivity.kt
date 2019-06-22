@@ -24,13 +24,12 @@ import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import java.util.HashMap
 import javax.inject.Inject
 
-class ViewUserProfileActivity : DaggerAppCompatActivity(), IViewUserProfileActivity {
+class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileActivity {
 
     @Inject
     lateinit var viewModelFactory: IViewUserProfileActivityViewModelFactory;
 
     private lateinit var binding: ActivityViewUserProfileBinding;
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
     private lateinit var session: MXSession;
 
     override fun onCreate(savedInstanceState: Bundle?) {
