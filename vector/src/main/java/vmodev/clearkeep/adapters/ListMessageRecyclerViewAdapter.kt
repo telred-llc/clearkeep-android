@@ -29,10 +29,10 @@ class ListMessageRecyclerViewAdapter constructor(private val ownerUserId: String
     }
 
     override fun onBindViewHolder(p0: DataBoundViewHolder<ViewDataBinding>, p1: Int) {
-        android.util.Log.d("Position", p1.toString());
         when (getItemViewType(p1)) {
             0 -> {
                 (p0.binding as ItemMessageReceivedWithAvatarBinding).message = getItem(p1)
+                val userId = getItem(p1).userId;
                 members[getItem(p1).userId]?.let { p0.binding.user = it }
             };
             1 -> (p0.binding as ItemMessageReceivedWithNoAvatarBinding).message = getItem(p1);
@@ -55,9 +55,9 @@ class ListMessageRecyclerViewAdapter constructor(private val ownerUserId: String
             }
             getItem(position).userId.compareTo(getItem(position - 1).userId) == 0 -> {
                 return if (getItem(position).userId.compareTo(ownerUserId) == 0)
-                    1;
-                else
                     2;
+                else
+                    1;
             }
             else -> {
                 return if (getItem(position).userId.compareTo(ownerUserId) == 0)

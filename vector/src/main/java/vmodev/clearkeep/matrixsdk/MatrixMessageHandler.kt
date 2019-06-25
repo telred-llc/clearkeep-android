@@ -32,6 +32,7 @@ class MatrixMessageHandler constructor(private val roomId: String, context: Cont
     private lateinit var room: Room;
     private val eventTimeLineListener = object : EventTimeline.Listener {
         override fun onEvent(p0: Event?, p1: EventTimeline.Direction?, p2: RoomState?) {
+            Log.d("Message", p0?.contentAsJsonObject.toString());
 //            Log.d("Message Event", p0?.contentAsJsonObject.toString())
 //            Log.d("Message Raw", p0?.contentAsJsonObject.toString());
 
@@ -98,9 +99,9 @@ class MatrixMessageHandler constructor(private val roomId: String, context: Cont
                             if (it.type.compareTo("m.room.encrypted") == 0) {
                                 val message = Message(id = it.eventId, roomId = it.roomId, userId = it.userId, messageType = it.type, encryptedContent = it.contentAsJsonObject.toString());
                                 listMessage.add(message);
-                                Log.d("MessageEvent", it.contentAsJsonObject.toString());
-                                Log.d("MessageEvent", it.type);
-                                Log.d("MessageEvent", it.wireType);
+//                                Log.d("MessageEvent", it.contentAsJsonObject.toString());
+//                                Log.d("MessageEvent", it.type);
+//                                Log.d("MessageEvent", it.wireType);
                             }
                         }
                     }

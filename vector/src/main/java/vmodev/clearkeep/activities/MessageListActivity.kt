@@ -55,11 +55,6 @@ class MessageListActivity : DataBindingDaggerActivity(), IMessageListActivity {
         session = Matrix.getInstance(applicationContext).defaultSession;
         binding.messages = viewModelFactory.getViewModel().getListMessageResult();
         binding.room = viewModelFactory.getViewModel().getRoomResult();
-        viewModelFactory.getViewModel().getRoomResult().observe(this, Observer {
-            it?.data?.let {
-                Log.d("RoomChange", it.avatarUrl)
-            }
-        })
         val adapter = ListMessageRecyclerViewAdapter(session.myUserId, members, appExecutors, dataBindingComponent, object : DiffUtil.ItemCallback<Message>() {
             override fun areItemsTheSame(p0: Message, p1: Message): Boolean {
                 return p0.id == p1.id;
@@ -71,7 +66,7 @@ class MessageListActivity : DataBindingDaggerActivity(), IMessageListActivity {
         });
         binding.recyclerViewListMessage.adapter = adapter;
         binding.messagesUpdate = viewModelFactory.getViewModel().registerMatrixMessageHandlerResult();
-        viewModelFactory.getViewModel().getUsersByRoomIdResult().observe(this, Observer {
+        viewModelFactory.getViewModel().getUsersByRoomIdResult()!!.observe(this, Observer {
             it?.data?.let {
                 it.forEach { t: User? ->
                     t?.let {
@@ -84,7 +79,6 @@ class MessageListActivity : DataBindingDaggerActivity(), IMessageListActivity {
         viewModelFactory.getViewModel().getListMessageResult().observe(this, Observer {
             adapter.submitList(it?.data);
             it?.data?.let {
-                Log.d("List Size", it.size.toString());
                 if (it.isNotEmpty())
                     binding.recyclerViewListMessage.smoothScrollToPosition(it.size - 1);
             }

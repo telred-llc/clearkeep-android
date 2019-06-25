@@ -55,7 +55,7 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
         return object : AbstractNetworkBoundSourceWithCondition<List<Message>, List<Message>>() {
             override fun saveCallResult(item: List<Message>) {
                 item.forEach {
-                    Log.d("List Insert", it.roomId)
+                    Log.d("ListInsert", it.roomId + "---" + it.id + "---" + it.userId)
                     messageDao.insert(it);
                 }
             }
