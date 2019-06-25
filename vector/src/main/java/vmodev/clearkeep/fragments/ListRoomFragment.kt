@@ -204,6 +204,24 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
             val intentNewChat = Intent(context, FindAndCreateNewConversationActivity::class.java);
             startActivity(intentNewChat);
         }
+        binding.linearLayoutGroup.setOnClickListener {
+            binding.expandableLayoutListGroup.isExpanded = !binding.expandableLayoutListGroup.isExpanded;
+            if (binding.expandableLayoutListGroup.isExpanded){
+                binding.imageViewDirectionGroup.rotation = 0f;
+            }
+            else{
+                binding.imageViewDirectionGroup.rotation = 270f;
+            }
+        }
+        binding.linearLayoutDirect.setOnClickListener {
+            binding.expandableLayoutListDirect.isExpanded = !binding.expandableLayoutListDirect.isExpanded;
+            if (binding.expandableLayoutListDirect.isExpanded){
+                binding.imageViewDirectionDirect.rotation = 0f;
+            }
+            else{
+                binding.imageViewDirectionDirect.rotation = 270f;
+            }
+        }
         binding.lifecycleOwner = this.viewLifecycleOwner;
 
         viewModelFactory.getViewModel().setFiltersDirectRoom(arrayOf(1, 65));

@@ -4,9 +4,11 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.util.Log
 import io.reactivex.BackpressureStrategy
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractMessageDao
 import vmodev.clearkeep.factories.messaghandler.interfaces.IMessageHandlerFactory
+import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
@@ -15,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MessageRepository @Inject constructor(private val messageDao: AbstractMessageDao, private val matrixMessageHandlerFactory: IMessageHandlerFactory) {
+class MessageRepository @Inject constructor(private val messageDao: AbstractMessageDao, private val matrixMessageHandlerFactory: IMessageHandlerFactory, private val matrixService: MatrixService) {
     fun loadListMessageWithRoomId(roomId: String): LiveData<Resource<List<Message>>> {
         return object : AbstractNetworkBoundSourceWithCondition<List<Message>, List<Message>>() {
             override fun saveCallResult(item: List<Message>) {
@@ -127,6 +129,17 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
         return object : AbstractLocalLoadSouce<Room>() {
             override fun loadFromDB(): LiveData<Room> {
                 return messageDao.getRoomByRoomId(roomId);
+            }
+        }.asLiveData();
+    }
+
+    fun sendTextMessage(roomId: String, content: String): LiveData<Resource<Int>> {
+        return object : AbstractNetworkNonBoundSource<Int>() {
+            override fun createCall(): LiveData<Int> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.sendTextMessage(roomId, content)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .toFlowable(BackpressureStrategy.LATEST))
             }
         }.asLiveData();
     }

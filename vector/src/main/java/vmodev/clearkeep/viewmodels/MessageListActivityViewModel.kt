@@ -21,6 +21,8 @@ class MessageListActivityViewModel @Inject constructor(private val messageReposi
     private val _getRoomResult = Transformations.switchMap(_roomIdForGetListMessage) { input -> messageRepository.loadRoomByRoomId(input) }
     private val _registerMatrixMessageHandlerResult = Transformations.switchMap(_roomIdForGetListMessage) { input -> messageRepository.registerMatrixMessageHandler(input) }
     private val _getUsersByRoomId = Transformations.switchMap(_roomIdForGetListMessage) { input -> messageRepository.loadUsersInRoom(input) }
+    private val _setSendMessage = MutableLiveData<SendMessageObject>();
+    private val _getSendMessageResult = Transformations.switchMap(_setSendMessage) { input -> messageRepository.sendTextMessage(input.roomId, input.content) }
 
     override fun getListMessageResult(): LiveData<Resource<List<Message>>> {
         return _getListMessageResult;
@@ -52,5 +54,13 @@ class MessageListActivityViewModel @Inject constructor(private val messageReposi
 
     override fun getUsersByRoomIdResult(): LiveData<Resource<List<User>>> {
         return _getUsersByRoomId;
+    }
+
+    override fun setSendMessage(roomId: String, content: String) {
+        _setSendMessage.value = SendMessageObject(roomId, content);
+    }
+
+    override fun getSendMessageResult(): LiveData<Resource<Int>> {
+        return _getSendMessageResult;
     }
 }

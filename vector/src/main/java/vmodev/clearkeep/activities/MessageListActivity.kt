@@ -75,14 +75,23 @@ class MessageListActivity : DataBindingDaggerActivity(), IMessageListActivity {
                     }
                 }
             }
-        })
+        });
         viewModelFactory.getViewModel().getListMessageResult().observe(this, Observer {
             adapter.submitList(it?.data);
             it?.data?.let {
                 if (it.isNotEmpty())
                     binding.recyclerViewListMessage.smoothScrollToPosition(it.size - 1);
             }
+        });
+        viewModelFactory.getViewModel().getSendMessageResult().observe(this, Observer {
+            it?.data?.let {
+                Log.d("Message", it.toString());
+            }
         })
+        binding.buttonSend.setOnClickListener {
+            viewModelFactory.getViewModel().setSendMessage(roomId, binding.editTextMessageContent.text.toString());
+            binding.editTextMessageContent.setText("");
+        };
         binding.lifecycleOwner = this;
         viewModelFactory.getViewModel().setRoomIdForGetListMessage(roomId);
     }

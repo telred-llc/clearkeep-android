@@ -12,10 +12,10 @@ import vmodev.clearkeep.viewmodelobjects.User
 @Dao
 abstract class AbstractMessageDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    abstract fun insert(message: Message)
+    abstract fun insert(message: Message): Long;
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    abstract fun insertListMessage(messages: List<Message>)
+    abstract fun insertListMessage(messages: List<Message>): List<Long>;
 
     @Query("SELECT message.* FROM message INNER JOIN room ON message.room_id = room.id WHERE room.id =:roomId")
     abstract fun getListMessageWithRoomId(roomId: String): LiveData<List<Message>>
