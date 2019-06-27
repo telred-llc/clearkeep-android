@@ -1306,4 +1306,6 @@ Why choose Riot.im?
     <string name="theme">Theme</string>
     <string name="directs">Directs</string>
     <string name="direct_messages">Direct Messages</string>
+    <string name="password">Password</string>
+    <string name="deativating">Deactivating...</string>
 </resources>

@@ -34,15 +34,15 @@ class MatrixMessageHandler constructor(private val roomId: String, context: Cont
         override fun onEvent(p0: Event?, p1: EventTimeline.Direction?, p2: RoomState?) {
             p0?.let { e ->
                 if (e.isEncrypted) {
-                    e?.contentAsJsonObject?.let {
-                        if (it.get("ciphertext") != null) {
-                            Observable.create<Long> { emmiter ->
-                                val message = Message(id = e.eventId, roomId = e.roomId, userId = e.sender, messageType = e.type, encryptedContent = e.contentAsJsonObject.toString());
-                                val value = messageDao.insert(message);
-                                emmiter.onNext(value);
-                                emmiter.onComplete();
-                            }.subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe()
-                        }
+                    Log.d("Message", e.content.toString());
+
+                    if (e.content.asJsonObject.get("ciphertext") != null) {
+                        Observable.create<Long> { emmiter ->
+                            val message = Message(id = e.eventId, roomId = e.roomId, userId = e.sender, messageType = e.type, encryptedContent = e.content.toString());
+                            val value = messageDao.insert(message);
+                            emmiter.onNext(value);
+                            emmiter.onComplete();
+                        }.subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe()
                     }
                 }
             }
@@ -99,6 +99,7 @@ class MatrixMessageHandler constructor(private val roomId: String, context: Cont
                         }
                     }
                     eventTimeline.handleJoinedRoomSync(roomSync, true);
+                    session.dataHandler.getRoom(roomId).roomSummary?.setIsJoined();
                     emitter.onNext(listMessage);
                     emitter.onComplete();
                 }

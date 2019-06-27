@@ -119,5 +119,10 @@ abstract class ViewModelModule {
     abstract fun bindListRoomFragmentViewModel(viewModel: ListRoomFragmentViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractDeactivateAccountActivityViewModel::class)
+    abstract fun bindDeactivateAccountActivityViewModel(viewModel: DeactivateAccountActivityViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }

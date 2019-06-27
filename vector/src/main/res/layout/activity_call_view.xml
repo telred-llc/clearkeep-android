@@ -43,12 +43,12 @@
                 android:id="@+id/call_switch_camera_view"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:layout_gravity="end"
                 android:layout_marginTop="100dp"
+                android:layout_marginEnd="10dp"
                 android:background="@drawable/circle_background_blue"
                 android:scaleType="center"
-                android:src="@drawable/ic_camera_rear_white"
-                android:layout_gravity="end"
-                android:layout_marginEnd="10dp"/>
+                android:src="@mipmap/camera_switch" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -70,9 +70,8 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/circle_background_gray"
                         android:scaleType="center"
-                        android:src="@drawable/ic_mic_off_white_24dp" />
+                        android:src="@mipmap/call_audio_mute_off_icon" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -87,9 +86,8 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/circle_background_gray"
                         android:scaleType="center"
-                        android:src="@drawable/ic_volume_off_white" />
+                        android:src="@mipmap/call_speaker_off_icon" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -104,9 +102,8 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/circle_background"
                         android:scaleType="center"
-                        android:src="@drawable/ic_call_end_white" />
+                        android:src="@mipmap/call_hangup_icon" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -121,9 +118,8 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/circle_background_gray"
                         android:scaleType="center"
-                        android:src="@drawable/ic_video_cam_off_white" />
+                        android:src="@mipmap/call_video_mute_off_icon" />
                 </FrameLayout>
 
                 <RelativeLayout
@@ -139,9 +135,8 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/circle_background_blue"
                         android:scaleType="center"
-                        android:src="@drawable/ic_message_white" />
+                        android:src="@mipmap/call_chat_icon" />
                 </RelativeLayout>
             </LinearLayout>
         </LinearLayout>
