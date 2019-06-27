@@ -80,6 +80,10 @@ class ProfileSettingsActivity : DataBindingDaggerActivity(), IProfileSettingsAct
             privacyPolicyActivityIntent.putExtra(PrivacyPolicyActivity.URL, "https://riot.im/copyright");
             startActivity(privacyPolicyActivityIntent);
         }
+        binding.reportGroup.setOnClickListener {
+            val reportActivityIntent = Intent(this, ReportActivity::class.java);
+            startActivity(reportActivityIntent);
+        }
     }
 
     override fun getActivity(): FragmentActivity {

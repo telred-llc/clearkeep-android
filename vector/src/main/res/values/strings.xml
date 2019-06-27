@@ -1308,4 +1308,8 @@ Why choose Riot.im?
     <string name="direct_messages">Direct Messages</string>
     <string name="password">Password</string>
     <string name="deativating">Deactivating...</string>
+    <string name="send_anon_crash_and_usage_data"><![CDATA[Send anon crash & usage data]]></string>
+    <string name="rage_shake_to_report_bug">Rage shake to report bug</string>
+    <string name="report_bug">Report bug</string>
+    <string name="send_logs">Send logs</string>
 </resources>
