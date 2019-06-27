@@ -927,11 +927,9 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
         var iconId = 0;
         var backgroundId = 0;
         if (CallSoundsManager.getSharedInstance(this).isMicrophoneMute) {
-            iconId = R.drawable.ic_mic_off_white_24dp
-            backgroundId = R.drawable.circle_background_gray
+            iconId = R.mipmap.call_audio_mute_off_icon
         } else {
-            iconId = R.drawable.ic_mic_white
-            backgroundId = R.drawable.circle_background_blue
+            iconId = R.mipmap.call_audio_mute_on_icon
         }
         mMuteMicImageView!!.setImageResource(iconId)
         mMuteMicImageView!!.setBackgroundResource(backgroundId)
@@ -945,11 +943,9 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
         var iconId: Int = 0;
         var backgroundId: Int = 0;
         if (CallSoundsManager.getSharedInstance(this).isSpeakerphoneOn) {
-            iconId = R.drawable.ic_volume_off_white
-            backgroundId = R.drawable.circle_background_gray;
+            iconId = R.mipmap.call_speaker_off_icon
         } else {
-            iconId = R.drawable.ic_volume_white
-            backgroundId = R.drawable.circle_background_blue;
+            iconId = R.mipmap.call_speaker_on_icon
         }
         mSpeakerSelectionView!!.setImageResource(iconId)
         mSpeakerSelectionView!!.setBackgroundResource(backgroundId);
@@ -969,11 +965,9 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
             var iconId = 0
             var backgroundId = 0
             if (isMuted) {
-                iconId = R.drawable.ic_video_cam_off_white
-                backgroundId = R.drawable.circle_background_gray
+                iconId = R.mipmap.call_video_mute_off_icon
             } else {
-                iconId = R.drawable.ic_video_cam_white
-                backgroundId = R.drawable.circle_background_blue
+                iconId = R.mipmap.call_video_mute_on_icon
             }
             mMuteLocalCameraView!!.setImageResource(iconId)
             mMuteMicImageView!!.setImageResource(backgroundId)
@@ -999,11 +993,9 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
             var iconId = 0
             var backgroundId = 0
             if (isSwitched) {
-                iconId = R.drawable.ic_camera_front_white
-                backgroundId = R.drawable.circle_background_blue
+                iconId = R.mipmap.camera_switch
             } else {
-                iconId = R.drawable.ic_camera_rear_white
-                backgroundId = R.drawable.circle_background_blue
+                iconId = R.mipmap.camera_switch
             }
             mSwitchRearFrontCameraImageView!!.setImageResource(iconId)
             mSwitchRearFrontCameraImageView!!.setBackgroundResource(backgroundId)

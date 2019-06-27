@@ -20,6 +20,7 @@ import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.crypto.MXCRYPTO_ALGORITHM_MEGOLM
 import org.matrix.androidsdk.crypto.keysbackup.MegolmBackupCreationInfo
 import org.matrix.androidsdk.data.Room
+import org.matrix.androidsdk.data.RoomMediaMessage
 import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.data.RoomTag
 import org.matrix.androidsdk.listeners.IMXMediaUploadListener
@@ -958,6 +959,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: ClearK
     override fun getUsersInRoomAndAddToRoomUserJoin(roomId: String): Observable<RoomAndRoomUserJoin> {
         return Observable.create<RoomAndRoomUserJoin> { emitter ->
             val room = session!!.dataHandler.getRoom(roomId);
+            Log.d("UpdateRoom", room.avatarUrl)
             val users = ArrayList<User>();
             val roomUserJoin = ArrayList<RoomUserJoin>();
             room.getMembersAsync(object : ApiCallback<List<RoomMember>> {
@@ -1153,6 +1155,53 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: ClearK
                 //                emitter.onError(Throwable("Crypto is null"));
 //                emitter.onComplete();
             }
+        }
+    }
+
+    override fun sendTextMessage(roomId: String, content: String): Observable<Int> {
+        setMXSession();
+        return Observable.create<Int> { emmiter ->
+            val room = session!!.dataHandler.getRoom(roomId);
+            room.sendTextMessage(content, null, org.matrix.androidsdk.rest.model.message.Message.FORMAT_MATRIX_HTML, null, object : RoomMediaMessage.EventCreationListener {
+                override fun onEventCreated(roomMediaMessage: RoomMediaMessage?) {
+                    roomMediaMessage?.setEventSendingCallback(object : ApiCallback<Void> {
+                        override fun onSuccess(info: Void?) {
+                            Log.d("Message", roomMediaMessage.event.contentAsJsonObject.toString());
+                            emmiter.onNext(1);
+                            emmiter.onComplete();
+                        }
+
+                        override fun onUnexpectedError(e: Exception?) {
+                            Log.d("Message", e?.message);
+                            emmiter.onError(Throwable(e?.message));
+                            emmiter.onComplete();
+                        }
+
+                        override fun onNetworkError(e: Exception?) {
+                            Log.d("Message", e?.message)
+                            emmiter.onError(Throwable(e?.message));
+                            emmiter.onComplete();
+                        }
+
+                        override fun onMatrixError(e: MatrixError?) {
+                            Log.d("Message", e?.message)
+                            emmiter.onError(Throwable(e?.message));
+                            emmiter.onComplete();
+                        }
+                    })
+                }
+
+                override fun onEventCreationFailed(roomMediaMessage: RoomMediaMessage?, errorMessage: String?) {
+                    emmiter.onError(Throwable(errorMessage));
+                    emmiter.onComplete();
+                }
+
+                override fun onEncryptionFailed(roomMediaMessage: RoomMediaMessage?) {
+                    emmiter.onError(Throwable("Encrypt Fail"));
+                    emmiter.onComplete();
+                }
+            })
+
         }
     }
 }

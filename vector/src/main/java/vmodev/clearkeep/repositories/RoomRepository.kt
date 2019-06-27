@@ -157,6 +157,7 @@ class RoomRepository @Inject constructor(
                         roomDao.updateRoom(r.room);
                         userDao.updateUsers(r.users);
                         roomUserJoinDao.updateRoomUserJoin(r.roomUserJoins);
+                        Log.d("UpdateRoom", room.id + "---" + room.avatarUrl)
                         it.onNext(1);
                         it.onComplete();
                     }.subscribeOn(Schedulers.io()).subscribe();

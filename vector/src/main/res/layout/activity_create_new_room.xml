@@ -56,8 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:text="@string/room_name_required"
-                android:textColor="@android:color/darker_gray" />
+                android:text="@string/room_name_required" />
 
             <EditText
                 android:id="@+id/edit_text_room_name"
@@ -69,8 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:text="@string/room_topic_optional"
-                android:textColor="@android:color/darker_gray" />
+                android:text="@string/room_topic_optional" />
 
             <EditText
                 android:id="@+id/edit_text_room_topic"
@@ -99,7 +97,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/room_public_content"
-                        android:textColor="@android:color/darker_gray" />
+                        android:textColor="?android:attr/textColorHint" />
                 </LinearLayout>
 
                 <Switch

@@ -12,7 +12,7 @@ import im.vector.R
 class BottomDialogFavouriteRoomLongClick : BaseAdapter() {
 
     private val arrayTitles: Array<Int> = arrayOf(R.string.turn_on_room_notification, R.string.remove_from_favourite, R.string.setting, R.string.leave)
-    private val arrayIcons: Array<Int> = arrayOf(R.drawable.ic_notifications_none_black_24dp, R.drawable.ic_star_border_black_24dp, R.drawable.ic_settings_black_24dp, R.drawable.ic_exit_to_app_black_24dp)
+    private var arrayIcons: Array<Int> = arrayOf(R.drawable.ic_notification_setting, R.drawable.ic_room_unfavourite, R.drawable.ic_room_settings, R.drawable.ic_leave_room, R.drawable.ic_forward_black_24dp)
 
     @SuppressLint("ViewHolder")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {

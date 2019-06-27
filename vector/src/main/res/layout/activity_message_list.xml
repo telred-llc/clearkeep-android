@@ -85,25 +85,20 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_margin="5dp"
-                        android:background="@drawable/circle_background_blue"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_videocam_white_24dp" />
+                        android:src="@mipmap/ic_video_call_new" />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="5dp"
+                        android:src="@mipmap/ic_room_call" />
 
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_margin="5dp"
                         android:background="@drawable/circle_background_blue"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_call_white_24dp" />
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_margin="5dp"
-                        android:background="@drawable/circle_background_blue"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_search_white_24dp" />
+                        android:src="@mipmap/ic_global_search" />
                 </LinearLayout>
             </android.support.v7.widget.Toolbar>
 
@@ -139,6 +134,7 @@
                 android:orientation="vertical">
 
                 <EditText
+                    android:id="@+id/edit_text_message_content"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@android:color/transparent"

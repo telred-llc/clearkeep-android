@@ -32,26 +32,20 @@ class MatrixMessageHandler constructor(private val roomId: String, context: Cont
     private lateinit var room: Room;
     private val eventTimeLineListener = object : EventTimeline.Listener {
         override fun onEvent(p0: Event?, p1: EventTimeline.Direction?, p2: RoomState?) {
-//            Log.d("Message Event", p0?.contentAsJsonObject.toString())
-//            Log.d("Message Raw", p0?.contentAsJsonObject.toString());
+            p0?.let { e ->
+                if (e.isEncrypted) {
+                    Log.d("Message", e.content.toString());
 
-//            p0?.let {
-//                Log.d("Message Type", p0.type)
-//                val event = Event(it.type, it.contentAsJsonObject, p0.userId, p0.roomId);
-//                val result = session.dataHandler.crypto.decryptEvent(p0, null);
-//                Log.d("Message Decrypt", result?.mClearEvent.toString());
-//
-//
-//                if (it.type.compareTo("m.room.encrypted") != 0)
-//                    return;
-//                val message = Message(messageId = it.eventId, roomId = it.roomId, userId = it.userId, messageType = it.type, encryptedContent = it.contentAsJsonObject.toString())
-//                Observable.create<Int> { emitter ->
-//                    messageDao.insert(message);
-//                    emitter.onNext(1);
-//                    Log.d("Message Raw", message.messageId);
-//                    emitter.onComplete();
-//                }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe();
-//            }
+                    if (e.content.asJsonObject.get("ciphertext") != null) {
+                        Observable.create<Long> { emmiter ->
+                            val message = Message(id = e.eventId, roomId = e.roomId, userId = e.sender, messageType = e.type, encryptedContent = e.content.toString());
+                            val value = messageDao.insert(message);
+                            emmiter.onNext(value);
+                            emmiter.onComplete();
+                        }.subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe()
+                    }
+                }
+            }
         }
     }
 
@@ -98,13 +92,14 @@ class MatrixMessageHandler constructor(private val roomId: String, context: Cont
                             if (it.type.compareTo("m.room.encrypted") == 0) {
                                 val message = Message(id = it.eventId, roomId = it.roomId, userId = it.userId, messageType = it.type, encryptedContent = it.contentAsJsonObject.toString());
                                 listMessage.add(message);
-                                Log.d("MessageEvent", it.contentAsJsonObject.toString());
-                                Log.d("MessageEvent", it.type);
-                                Log.d("MessageEvent", it.wireType);
+//                                Log.d("MessageEvent", it.contentAsJsonObject.toString());
+//                                Log.d("MessageEvent", it.type);
+//                                Log.d("MessageEvent", it.wireType);
                             }
                         }
                     }
                     eventTimeline.handleJoinedRoomSync(roomSync, true);
+                    session.dataHandler.getRoom(roomId).roomSummary?.setIsJoined();
                     emitter.onNext(listMessage);
                     emitter.onComplete();
                 }

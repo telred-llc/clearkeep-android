@@ -58,6 +58,28 @@ class ProfileSettingsActivity : DataBindingDaggerActivity(), IProfileSettingsAct
             intentTheme.putExtra(ChangeThemeActivity.USER_ID, userId);
             startActivity(intentTheme);
         }
+        binding.textViewDeactivateAccount.setOnClickListener {
+            val deactivateAccountIntent = Intent(this, DeactivateAccountActivity::class.java);
+            startActivity(deactivateAccountIntent);
+        }
+        binding.privacyPolicyGroup.setOnClickListener {
+            val privacyPolicyActivityIntent = Intent(this, PrivacyPolicyActivity::class.java);
+            privacyPolicyActivityIntent.putExtra(PrivacyPolicyActivity.TITLE, resources.getString(R.string.privacy_and_policy));
+            privacyPolicyActivityIntent.putExtra(PrivacyPolicyActivity.URL, "https://riot.im/privacy");
+            startActivity(privacyPolicyActivityIntent);
+        }
+        binding.termAndConditions.setOnClickListener {
+            val privacyPolicyActivityIntent = Intent(this, PrivacyPolicyActivity::class.java);
+            privacyPolicyActivityIntent.putExtra(PrivacyPolicyActivity.TITLE, resources.getString(R.string.term_and_conditions));
+            privacyPolicyActivityIntent.putExtra(PrivacyPolicyActivity.URL, "https://matrix.org/legal/terms-and-conditions/");
+            startActivity(privacyPolicyActivityIntent);
+        }
+        binding.copyrightGroup.setOnClickListener {
+            val privacyPolicyActivityIntent = Intent(this, PrivacyPolicyActivity::class.java);
+            privacyPolicyActivityIntent.putExtra(PrivacyPolicyActivity.TITLE, resources.getString(R.string.copyright));
+            privacyPolicyActivityIntent.putExtra(PrivacyPolicyActivity.URL, "https://riot.im/copyright");
+            startActivity(privacyPolicyActivityIntent);
+        }
     }
 
     override fun getActivity(): FragmentActivity {
