@@ -124,5 +124,10 @@ abstract class ViewModelModule {
     abstract fun bindDeactivateAccountActivityViewModel(viewModel: DeactivateAccountActivityViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractReportActivityViewModel::class)
+    abstract fun bindReportActivityViewModel(viewModel: ReportActivityViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }

@@ -925,14 +925,12 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
     private fun refreshMuteMicButton() {
         // update icon
         var iconId = 0;
-        var backgroundId = 0;
         if (CallSoundsManager.getSharedInstance(this).isMicrophoneMute) {
             iconId = R.mipmap.call_audio_mute_off_icon
         } else {
             iconId = R.mipmap.call_audio_mute_on_icon
         }
         mMuteMicImageView!!.setImageResource(iconId)
-        mMuteMicImageView!!.setBackgroundResource(backgroundId)
     }
 
     /**
@@ -941,14 +939,12 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
     fun refreshSpeakerButton() {
         // update icon
         var iconId: Int = 0;
-        var backgroundId: Int = 0;
         if (CallSoundsManager.getSharedInstance(this).isSpeakerphoneOn) {
             iconId = R.mipmap.call_speaker_off_icon
         } else {
             iconId = R.mipmap.call_speaker_on_icon
         }
         mSpeakerSelectionView!!.setImageResource(iconId)
-        mSpeakerSelectionView!!.setBackgroundResource(backgroundId);
     }
 
     /**
@@ -963,14 +959,12 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
 
             // update icon
             var iconId = 0
-            var backgroundId = 0
             if (isMuted) {
                 iconId = R.mipmap.call_video_mute_off_icon
             } else {
                 iconId = R.mipmap.call_video_mute_on_icon
             }
             mMuteLocalCameraView!!.setImageResource(iconId)
-            mMuteMicImageView!!.setImageResource(backgroundId)
         } else {
             Log.d(LOG_TAG, "## refreshMuteVideoButton(): View.INVISIBLE")
             mMuteLocalCameraView!!.visibility = View.INVISIBLE
