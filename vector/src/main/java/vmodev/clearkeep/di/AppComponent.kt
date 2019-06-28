@@ -34,7 +34,8 @@ import javax.inject.Singleton
     , AbstractOtherRoomSettingsActivityModule::class
     , AbstractDeactivateAccountActivityModule::class
     , AbstractPrivacyPolicyActivityModule::class
-    , AbstractReportActivityModule::class])
+    , AbstractReportActivityModule::class
+    , AbstractCreateNewCallActivityModule::class])
 interface AppComponent : AndroidInjector<ClearKeepApplication> {
     override fun inject(instance: ClearKeepApplication?)
 //    fun inject(application: Application)

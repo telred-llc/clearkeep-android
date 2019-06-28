@@ -110,6 +110,11 @@ class FindAndCreateNewConversationActivity : DataBindingDaggerActivity(), Lifecy
             val intent = Intent(this, CreateNewRoomActivity::class.java);
             startActivity(intent);
         }
+        binding.newCall.setOnClickListener {
+            val intent = Intent(this, CreateNewCallActivity::class.java);
+            intent.putExtra(CreateNewCallActivity.USER_ID, mxSession.myUserId);
+            startActivity(intent);
+        }
     }
 
     private fun joinRoom(roomId: String) {
@@ -144,5 +149,9 @@ class FindAndCreateNewConversationActivity : DataBindingDaggerActivity(), Lifecy
                 onError(e.localizedMessage)
             }
         })
+    }
+
+    companion object {
+        const val USER_ID = "USER_ID";
     }
 }
