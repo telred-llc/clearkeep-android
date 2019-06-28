@@ -960,7 +960,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: ClearK
         setMXSession();
         return Observable.create<RoomAndRoomUserJoin> { emitter ->
             val room = session!!.dataHandler.getRoom(roomId);
-            Log.d("UpdateRoom", room.avatarUrl)
+//            Log.d("UpdateRoom", room.avatarUrl)
             val users = ArrayList<User>();
             val roomUserJoin = ArrayList<RoomUserJoin>();
             room.getMembersAsync(object : ApiCallback<List<RoomMember>> {
