@@ -82,6 +82,7 @@ class ProfileSettingsActivity : DataBindingDaggerActivity(), IProfileSettingsAct
         }
         binding.reportGroup.setOnClickListener {
             val reportActivityIntent = Intent(this, ReportActivity::class.java);
+            reportActivityIntent.putExtra(ReportActivity.USER_ID, userId);
             startActivity(reportActivityIntent);
         }
     }

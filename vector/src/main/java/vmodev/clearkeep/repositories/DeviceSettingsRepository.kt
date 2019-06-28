@@ -188,4 +188,54 @@ class DeviceSettingsRepository @Inject constructor(private val deviceSettingsDao
             }
         }.asLiveData();
     }
+
+    fun changeSendAnonCrashAndUsageData(id: String, value: Byte): LiveData<Resource<DeviceSettings>> {
+        return object : AbstractNetworkBoundSource<DeviceSettings, DeviceSettings>() {
+            override fun saveCallResult(item: DeviceSettings) {
+                deviceSettingsDao.updateSendAnonCrashAndUsageData(item.id, item.sendAnonCrashAndUsageData);
+            }
+
+            override fun shouldFetch(data: DeviceSettings?): Boolean {
+                return true;
+            }
+
+            override fun loadFromDb(): LiveData<DeviceSettings> {
+                return deviceSettingsDao.findById(id);
+            }
+
+            override fun createCall(): LiveData<DeviceSettings> {
+                return LiveDataReactiveStreams.fromPublisher(Observable.create<DeviceSettings> { emitter ->
+                    val deviceSettings = DeviceSettings(id = id, integratedCalling = 1, showDecryptedContent = 1, sendAnonCrashAndUsageData = value, rageShakeToReportBug = 1, pinRoomWithUnreadMessages = 1
+                            , pinRoomWithMissedNotifications = 1, notificationOnThisDevice = 1, theme = R.style.LightTheme);
+                    emitter.onNext(deviceSettings);
+                    emitter.onComplete();
+                }.observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).toFlowable(BackpressureStrategy.LATEST));
+            }
+        }.asLiveData();
+    }
+
+    fun changeRageShakeAndReportBug(id: String, value: Byte): LiveData<Resource<DeviceSettings>> {
+        return object : AbstractNetworkBoundSource<DeviceSettings, DeviceSettings>() {
+            override fun saveCallResult(item: DeviceSettings) {
+                deviceSettingsDao.updateRageShakeToReportBug(item.id, item.rageShakeToReportBug);
+            }
+
+            override fun shouldFetch(data: DeviceSettings?): Boolean {
+                return true;
+            }
+
+            override fun loadFromDb(): LiveData<DeviceSettings> {
+                return deviceSettingsDao.findById(id);
+            }
+
+            override fun createCall(): LiveData<DeviceSettings> {
+                return LiveDataReactiveStreams.fromPublisher(Observable.create<DeviceSettings> { emitter ->
+                    val deviceSettings = DeviceSettings(id = id, integratedCalling = 1, showDecryptedContent = 1, sendAnonCrashAndUsageData = 1, rageShakeToReportBug = value, pinRoomWithUnreadMessages = 1
+                            , pinRoomWithMissedNotifications = 1, notificationOnThisDevice = 1, theme = R.style.LightTheme);
+                    emitter.onNext(deviceSettings);
+                    emitter.onComplete();
+                }.observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).toFlowable(BackpressureStrategy.LATEST));
+            }
+        }.asLiveData();
+    }
 }

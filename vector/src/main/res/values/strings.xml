@@ -1312,4 +1312,7 @@ Why choose Riot.im?
     <string name="rage_shake_to_report_bug">Rage shake to report bug</string>
     <string name="report_bug">Report bug</string>
     <string name="send_logs">Send logs</string>
+    <string name="uploading_report">Uploading report</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="successed">Successed</string>
 </resources>

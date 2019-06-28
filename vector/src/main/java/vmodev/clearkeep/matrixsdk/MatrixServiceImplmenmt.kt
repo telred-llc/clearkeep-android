@@ -957,6 +957,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: ClearK
     }
 
     override fun getUsersInRoomAndAddToRoomUserJoin(roomId: String): Observable<RoomAndRoomUserJoin> {
+        setMXSession();
         return Observable.create<RoomAndRoomUserJoin> { emitter ->
             val room = session!!.dataHandler.getRoom(roomId);
             Log.d("UpdateRoom", room.avatarUrl)
