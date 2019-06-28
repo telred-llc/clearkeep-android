@@ -91,7 +91,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         tools:replace="allowBackup,label">
-        <activity android:name="vmodev.clearkeep.activities.ReportActivity"></activity>
+        <activity android:name="vmodev.clearkeep.activities.CreateNewCallActivity"></activity>
+        <activity android:name="vmodev.clearkeep.activities.ReportActivity" />
         <activity android:name="vmodev.clearkeep.activities.PrivacyPolicyActivity" />
         <activity android:name="vmodev.clearkeep.activities.DeactivateAccountActivity" />
         <activity android:name="vmodev.clearkeep.activities.ChangeThemeActivity" />

@@ -1315,4 +1315,5 @@ Why choose Riot.im?
     <string name="uploading_report">Uploading report</string>
     <string name="cancelled">Cancelled</string>
     <string name="successed">Successed</string>
+    <string name="suggested_user">Suggested</string>
 </resources>

@@ -129,5 +129,10 @@ abstract class ViewModelModule {
     abstract fun bindReportActivityViewModel(viewModel: ReportActivityViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractCreateNewCallActivityViewModel::class)
+    abstract fun bindCreateNewCallActivityViewModel(viewModel: CreateNewCallActivityViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }
