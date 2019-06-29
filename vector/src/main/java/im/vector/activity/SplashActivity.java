@@ -74,7 +74,7 @@ public class SplashActivity extends MXCActionBarActivity {
      * ========================================================================================== */
 
     @BindView(R.id.animated_logo_image_view)
-    GifImageView animatedLogo;
+    ImageView animatedLogo;
 
     /**
      * @return true if a store is corrupted.

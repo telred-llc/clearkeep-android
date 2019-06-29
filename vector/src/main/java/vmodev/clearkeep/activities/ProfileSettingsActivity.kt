@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import dagger.android.support.DaggerAppCompatActivity
+import im.vector.Matrix
 import im.vector.R
 import im.vector.databinding.ActivityProfileSettingsBinding
 import vmodev.clearkeep.activities.interfaces.IProfileSettingsActivity
@@ -84,6 +85,9 @@ class ProfileSettingsActivity : DataBindingDaggerActivity(), IProfileSettingsAct
             val reportActivityIntent = Intent(this, ReportActivity::class.java);
             reportActivityIntent.putExtra(ReportActivity.USER_ID, userId);
             startActivity(reportActivityIntent);
+        }
+        binding.textViewClearCache.setOnClickListener {
+            Matrix.getInstance(applicationContext).reloadSessions(applicationContext);
         }
     }
 
