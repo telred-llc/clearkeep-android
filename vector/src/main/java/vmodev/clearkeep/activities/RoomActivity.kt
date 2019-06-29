@@ -3846,6 +3846,12 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     internal fun onStartVoiceCall() {
         onCallItemClicked(0);
     }
+    @OnClick(R.id.image_view_search)
+    internal fun onRoomSearch(){
+        val intentSearch = Intent(this, UnifiedSearchActivity::class.java);
+        intentSearch.putExtra(UnifiedSearchActivity.EXTRA_ROOM_ID, currentRoom?.roomId);
+        startActivity(intentSearch);
+    }
 
     @OnClick(R.id.room_end_call_image_view)
     internal fun onStopCallClick() {
