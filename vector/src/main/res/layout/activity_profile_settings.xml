@@ -16,14 +16,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/lb_details_description_body_color"
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white" />
+            android:layout_height="wrap_content" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -49,7 +47,6 @@
                     android:id="@+id/edit_profile_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/white"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -58,7 +55,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_edit_black_24dp" />
+                        android:src="@drawable/ic_edit_profile_setting"
+                        android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -91,7 +89,6 @@
                     android:id="@+id/notification_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/white"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -100,7 +97,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_notifications_black_24dp" />
+                        android:src="@drawable/ic_notification_setting"
+                        android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -129,7 +127,6 @@
                     android:id="@+id/call_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/white"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -138,7 +135,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_call_black_24dp" />
+                        android:src="@drawable/ic_calls_setting"
+                        android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -167,7 +165,6 @@
                     android:id="@+id/report_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/white"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -176,7 +173,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_list_report_black_24dp" />
+                        android:src="@drawable/ic_report_setting"
+                        android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -210,7 +208,6 @@
                     android:id="@+id/security_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/white"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -219,7 +216,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_security_black_24dp" />
+                        android:src="@drawable/ic_security_setting"
+                        android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -250,10 +248,9 @@
                     android:background="@color/lb_grey" />
 
                 <LinearLayout
-                    android:id="@+id/term_and_conditions"
+                    android:id="@+id/theme_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/white"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -262,7 +259,51 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_description_black_24dp" />
+                        android:src="@drawable/ic_format_paint_black_24dp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        android:text="@string/theme"
+                        android:textSize="@dimen/text_20_sp" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="5dp"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
+                </LinearLayout>
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lb_grey" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="50dp"
+                    android:background="@color/lb_grey" />
+
+                <LinearLayout
+                    android:id="@+id/term_and_conditions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="5dp"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_terms_condition_setting"
+                        android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -291,7 +332,6 @@
                     android:id="@+id/privacy_policy_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/white"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -300,7 +340,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_lock_black_24dp" />
+                        android:src="@drawable/ic_privacy_policy_setting"
+                        android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -329,7 +370,6 @@
                     android:id="@+id/copyright_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/white"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -338,7 +378,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_copyright_black_24dp" />
+                        android:src="@drawable/ic_copyright_setting"
+                        android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -371,7 +412,6 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/white"
                     android:orientation="vertical">
 
                     <TextView
@@ -391,6 +431,7 @@
                         android:background="@color/lb_grey" />
 
                     <TextView
+                        android:id="@+id/text_view_clear_cache"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
@@ -399,6 +440,27 @@
                         android:textColor="@color/app_green"
                         android:textSize="@dimen/text_20_sp" />
                 </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lb_grey" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="50dp"
+                    android:background="@color/lb_grey" />
+
+                <TextView
+                    android:id="@+id/text_view_deactivate_account"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/deactivate_account_title"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="@dimen/text_20_sp"
+                    android:layout_margin="10dp"/>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

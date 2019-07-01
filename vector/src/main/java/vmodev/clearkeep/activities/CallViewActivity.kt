@@ -43,6 +43,7 @@ import org.matrix.androidsdk.call.VideoLayoutConfiguration
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo
 import org.matrix.androidsdk.crypto.data.MXUsersDevicesMap
 import org.matrix.androidsdk.util.Log
+import vmodev.clearkeep.applications.IApplication
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -283,7 +284,10 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
         return ActivityOtherThemes.Call
     }
 
+    private lateinit var application: IApplication;
     override fun getLayoutRes(): Int {
+        application = applicationContext as IApplication;
+        setTheme(application.getCurrentTheme());
         return R.layout.activity_call_view
     }
 
@@ -921,16 +925,12 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
     private fun refreshMuteMicButton() {
         // update icon
         var iconId = 0;
-        var backgroundId = 0;
         if (CallSoundsManager.getSharedInstance(this).isMicrophoneMute) {
-            iconId = R.drawable.ic_mic_off_white_24dp
-            backgroundId = R.drawable.circle_background_gray
+            iconId = R.mipmap.call_audio_mute_off_icon
         } else {
-            iconId = R.drawable.ic_mic_white
-            backgroundId = R.drawable.circle_background_blue
+            iconId = R.mipmap.call_audio_mute_on_icon
         }
         mMuteMicImageView!!.setImageResource(iconId)
-        mMuteMicImageView!!.setBackgroundResource(backgroundId)
     }
 
     /**
@@ -939,16 +939,12 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
     fun refreshSpeakerButton() {
         // update icon
         var iconId: Int = 0;
-        var backgroundId: Int = 0;
         if (CallSoundsManager.getSharedInstance(this).isSpeakerphoneOn) {
-            iconId = R.drawable.ic_volume_off_white
-            backgroundId = R.drawable.circle_background_gray;
+            iconId = R.mipmap.call_speaker_off_icon
         } else {
-            iconId = R.drawable.ic_volume_white
-            backgroundId = R.drawable.circle_background_blue;
+            iconId = R.mipmap.call_speaker_on_icon
         }
         mSpeakerSelectionView!!.setImageResource(iconId)
-        mSpeakerSelectionView!!.setBackgroundResource(backgroundId);
     }
 
     /**
@@ -963,16 +959,12 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
 
             // update icon
             var iconId = 0
-            var backgroundId = 0
             if (isMuted) {
-                iconId = R.drawable.ic_video_cam_off_white
-                backgroundId = R.drawable.circle_background_gray
+                iconId = R.mipmap.call_video_mute_off_icon
             } else {
-                iconId = R.drawable.ic_video_cam_white
-                backgroundId = R.drawable.circle_background_blue
+                iconId = R.mipmap.call_video_mute_on_icon
             }
             mMuteLocalCameraView!!.setImageResource(iconId)
-            mMuteMicImageView!!.setImageResource(backgroundId)
         } else {
             Log.d(LOG_TAG, "## refreshMuteVideoButton(): View.INVISIBLE")
             mMuteLocalCameraView!!.visibility = View.INVISIBLE
@@ -995,11 +987,9 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
             var iconId = 0
             var backgroundId = 0
             if (isSwitched) {
-                iconId = R.drawable.ic_camera_front_white
-                backgroundId = R.drawable.circle_background_blue
+                iconId = R.mipmap.camera_switch
             } else {
-                iconId = R.drawable.ic_camera_rear_white
-                backgroundId = R.drawable.circle_background_blue
+                iconId = R.mipmap.camera_switch
             }
             mSwitchRearFrontCameraImageView!!.setImageResource(iconId)
             mSwitchRearFrontCameraImageView!!.setBackgroundResource(backgroundId)

@@ -69,6 +69,9 @@ class SignUpFragment : Fragment() {
                 if (TextUtils.isEmpty(username)) {
                     text_input_edit_text_username.setError(getString(R.string.error_empty_field_enter_user_name_or_email));
                     return@run;
+                } else if (TextUtils.isDigitsOnly(username[0].toString())) {
+                    showAlertDiaglong("Username error", "Numeric user IDs are reserved for guest users");
+                    return@run;
                 } else {
                     val expression = "^[a-z0-9.\\-_=/]+$"
 
@@ -91,7 +94,7 @@ class SignUpFragment : Fragment() {
                     showAlertDiaglong("Password error", getString(R.string.password_too_long));
                     return@run;
                 }
-                if (password.contains(" ")){
+                if (password.contains(" ")) {
                     showAlertDiaglong("Password error", getString(R.string.password_contain_space));
                     return@run;
                 }

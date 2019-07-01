@@ -8,7 +8,7 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import vmodev.clearkeep.databases.UserDao
 import vmodev.clearkeep.executors.AppExecutors
-import vmodev.clearkeep.matrixsdk.MatrixService
+import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.User
 import java.io.InputStream

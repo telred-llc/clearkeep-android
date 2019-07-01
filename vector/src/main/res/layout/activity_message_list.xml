@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="vmodev.clearkeep.activities.MessageListActivity">
+
+    <data>
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Status" />
+
+        <import type="java.util.List" />
+
+        <import type="android.arch.lifecycle.LiveData" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Message" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Room" />
+
+        <variable
+            name="messages"
+            type="LiveData&lt;Resource&lt;List&lt;Message>>>" />
+
+        <variable
+            name="message"
+            type="LiveData&lt;Resource&lt;Message>>" />
+
+        <variable
+            name="messagesUpdate"
+            type="LiveData&lt;Resource&lt;List&lt;Message>>>" />
+
+        <variable
+            name="room"
+            type="LiveData&lt;Resource&lt;Room>>" />
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:visibleGone="@{messages.status == Status.LOADING}" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/linearLayoutRoomSetting"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@{room.data.name}"
+                            android:textSize="@dimen/text_20_sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@{room.data.topic}" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="5dp"
+                        android:src="@mipmap/ic_video_call_new" />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="5dp"
+                        android:src="@mipmap/ic_room_call" />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/circle_background_blue"
+                        android:src="@mipmap/ic_global_search" />
+                </LinearLayout>
+            </android.support.v7.widget.Toolbar>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/lb_grey" />
+
+            <ProgressBar
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                app:visibleGone="@{messagesUpdate.status == Status.LOADING}" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view_list_message"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_message_sent_with_no_avatar" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/lb_grey" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/edit_text_message_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/send_an_encrypted_message" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <FrameLayout
+                        android:id="@+id/frame_layout_special_symbol"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/circle_background_gray">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@string/special_symbol"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/text_40_sp" />
+                    </FrameLayout>
+
+                    <Button
+                        android:id="@+id/button_send"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:background="@drawable/button_border_background_grey_color"
+                        android:text="@string/send"
+                        android:textColor="@android:color/black"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/image_view_send_image"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_toStartOf="@+id/button_send"
+                        android:background="@drawable/circle_background_gray"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_image_white_24dp" />
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+</layout>

@@ -1,13 +1,13 @@
 package vmodev.clearkeep.activities
 
 import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
+import android.support.v7.app.AppCompatDelegate
 import android.view.View
 import android.widget.Toast
 import im.vector.Matrix
@@ -15,7 +15,6 @@ import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorHomeActivity
 import im.vector.activity.VectorRoomActivity
-import im.vector.activity.VectorUnifiedSearchActivity
 import im.vector.databinding.ActivityHomeScreenBinding
 import im.vector.services.EventStreamService
 import im.vector.ui.badge.BadgeProxy
@@ -28,12 +27,10 @@ import org.matrix.androidsdk.rest.callback.SimpleApiCallback
 import org.matrix.androidsdk.rest.model.MatrixError
 import vmodev.clearkeep.activities.interfaces.IHomeScreenActivity
 import vmodev.clearkeep.applications.ClearKeepApplication
-import vmodev.clearkeep.factories.interfaces.IFragmentFactory
+import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IFragmentFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IHomeScreenViewModelFactory
 import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.fragments.Interfaces.IListRoomOnFragmentInteractionListener
-import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -42,7 +39,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         FavouritesFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener,
         IListRoomOnFragmentInteractionListener, RoomFragment.OnFragmentInteractionListener
         , SearchFragment.OnFragmentInteractionListener
-        , PreviewFragment.OnFragmentInteractionListener, IHomeScreenActivity {
+        , PreviewFragment.OnFragmentInteractionListener, ListRoomFragment.OnFragmentInteractionListener, IHomeScreenActivity {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
@@ -55,6 +52,9 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     @Inject
     @field:Named(IFragmentFactory.CONTACTS_FRAGMENT)
     lateinit var contactsFragmentFactory: IFragmentFactory;
+    @Inject
+    @field:Named(IFragmentFactory.LIST_ROOM_FRAGMENT)
+    lateinit var listRoomFragmentFactory: IFragmentFactory;
     @Inject
     lateinit var homeScreenViewModelFactory: IHomeScreenViewModelFactory;
 
@@ -72,7 +72,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
             kotlin.run {
                 when (menuItem.itemId) {
                     R.id.action_home -> {
-                        switchFragment(homeScreenFragmentFactory.createNewInstance().getFragment());
+                        switchFragment(listRoomFragmentFactory.createNewInstance().getFragment());
                     };
                     R.id.action_favorites -> {
                         switchFragment(favouritesFragmentFactory.createNewInstance().getFragment());
@@ -92,10 +92,10 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         }
         homeRoomViewModel = HomeRoomsViewModel(mxSession);
 
-        switchFragment(HomeScreenFragment.newInstance());
+        switchFragment(listRoomFragmentFactory.createNewInstance().getFragment());
 
         binding.frameLayoutSearch.setOnClickListener { v ->
-//            val intent = Intent(this, SearchActivity::class.java);
+            //            val intent = Intent(this, SearchActivity::class.java);
             val intent = Intent(this, UnifiedSearchActivity::class.java)
             startActivity(intent);
         }
@@ -120,6 +120,8 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
 //                mSharedFilesIntent = sharedFilesIntent
             }
         }
+
+
     }
 
     private fun switchFragment(fragment: Fragment) {

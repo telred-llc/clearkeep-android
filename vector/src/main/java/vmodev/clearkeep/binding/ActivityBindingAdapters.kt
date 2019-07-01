@@ -10,8 +10,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestListener
+import com.google.gson.Gson
+import com.google.gson.JsonParser
+import im.vector.Matrix
 import im.vector.R
+import org.matrix.androidsdk.crypto.MXDecryptionException
+import org.matrix.androidsdk.rest.model.Event
+import vmodev.clearkeep.jsonmodels.MessageContent
 import vmodev.clearkeep.ultis.toDateTime
+import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.Room
 
 class ActivityBindingAdapters constructor(val activity: FragmentActivity) : ImageViewBindingAdapters, TextViewBindingAdapters, ISwitchCompatViewBindingAdapters {
@@ -52,5 +59,31 @@ class ActivityBindingAdapters constructor(val activity: FragmentActivity) : Imag
             Log.d("switch Compat", status.toString())
             switchCompat.isChecked = status.compareTo(0) != 0
         }
+    }
+
+    override fun bindDecryptMessage(textView: TextView, message: Message?) {
+        message?.let {
+            val session = Matrix.getInstance(activity.applicationContext).defaultSession;
+            val parser = JsonParser();
+            val gson = Gson();
+            val event = Event(message?.messageType, parser.parse(message.encryptedContent).asJsonObject, message.userId, message.roomId);
+            try {
+                val result = session.dataHandler.crypto.decryptEvent(event, null);
+                result?.let {
+//                    Log.d("MessageType", result.mClearEvent.toString())
+                    val json = result.mClearEvent.asJsonObject;
+                    val type = json.get("type").asString;
+//                    Log.d("MessageType", type);
+                    if (!type.isNullOrEmpty() && type.compareTo("m.room.message") == 0) {
+                        val message = gson.fromJson(result.mClearEvent, MessageContent::class.java);
+                        textView.text = message.getContent().getBody();
+                    }
+                }
+            } catch (e: MXDecryptionException) {
+                android.util.Log.d("Decrypt Error", e.message)
+            }
+
+        }
+
     }
 }

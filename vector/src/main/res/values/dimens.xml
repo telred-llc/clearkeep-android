@@ -22,6 +22,7 @@
     <dimen name="text_main_size">25sp</dimen>
     <dimen name="text_20_sp">20sp</dimen>
     <dimen name="text_15_sp">15sp</dimen>
+    <dimen name="text_40_sp">25sp</dimen>
     <item name="dialog_width_ratio" format="float" type="dimen">0.75</item>
 
 </resources>

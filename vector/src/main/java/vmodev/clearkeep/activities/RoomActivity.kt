@@ -21,6 +21,7 @@ import android.text.TextWatcher
 import android.text.style.ClickableSpan
 import android.text.style.URLSpan
 import android.util.Pair
+import android.util.TypedValue
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -75,6 +76,7 @@ import org.matrix.androidsdk.rest.model.message.Message
 import org.matrix.androidsdk.util.JsonUtils
 import org.matrix.androidsdk.util.Log
 import org.matrix.androidsdk.util.PermalinkUtils
+import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.fragments.MessageListFragment
 import vmodev.clearkeep.ultis.ReadMarkerManager
 import vmodev.clearkeep.ultis.RoomMediasSender
@@ -487,7 +489,11 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     // Activity classes
     //================================================================================
 
+    private lateinit var application: IApplication;
+
     override fun getLayoutRes(): Int {
+        application = applicationContext as IApplication;
+        setTheme(application.getCurrentTheme());
         return R.layout.activity_room
     }
 
@@ -570,7 +576,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         // use a toolbar instead of the actionbar
         // to be able to display an expandable header
         configureToolbar()
-        toolbar.setBackgroundResource(android.R.color.white)
+//        toolbar.setBackgroundResource(android.R.color.white)
         toolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_green)
         mCallId = intent.getStringExtra(EXTRA_START_CALL_ID)
         mEventId = intent.getStringExtra(EXTRA_EVENT_ID)
@@ -2270,7 +2276,10 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             buttonSend.setTextColor(Color.parseColor("#FFFFFF"))
         } else {
             buttonSend.setBackgroundResource(R.drawable.background_border_radius_gray)
-            buttonSend.setTextColor(Color.parseColor("#000000"))
+            val typeValue = TypedValue();
+            theme.resolveAttribute(R.attr.text_not_available_send, typeValue, true);
+//            buttonSend.setTextColor(Color.parseColor("#000000"))
+            buttonSend.setTextColor(typeValue.data);
             when (PreferencesManager.getSelectedDefaultMediaSource(this)) {
                 MEDIA_SOURCE_VOICE -> if (PreferencesManager.isSendVoiceFeatureEnabled(this)) {
                     img = R.drawable.vector_micro_green
@@ -3836,6 +3845,12 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     @OnClick(R.id.image_view_voice_call)
     internal fun onStartVoiceCall() {
         onCallItemClicked(0);
+    }
+    @OnClick(R.id.image_view_search)
+    internal fun onRoomSearch(){
+        val intentSearch = Intent(this, UnifiedSearchActivity::class.java);
+        intentSearch.putExtra(UnifiedSearchActivity.EXTRA_ROOM_ID, currentRoom?.roomId);
+        startActivity(intentSearch);
     }
 
     @OnClick(R.id.room_end_call_image_view)

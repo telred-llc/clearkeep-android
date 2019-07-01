@@ -32,4 +32,7 @@ abstract class AbstractDeviceSettingsDao {
 
     @Query("SELECT * FROM deviceSettings WHERE id =:id")
     abstract fun findById(id: String): LiveData<DeviceSettings>;
+
+    @Query("UPDATE deviceSettings SET theme =:theme WHERE id =:id")
+    abstract fun updateTheme(id: String, theme: Int): Int;
 }

@@ -11,11 +11,11 @@ import android.arch.persistence.room.Index
             ForeignKey(entity = Room::class,
                     parentColumns = ["id"],
                     childColumns = ["room_id"],
-                    onDelete = CASCADE),
+                    onDelete = ForeignKey.CASCADE),
             ForeignKey(entity = User::class,
                     parentColumns = ["id"],
                     childColumns = ["user_id"],
-                    onDelete = CASCADE)
+                    onDelete = ForeignKey.CASCADE)
         ],
         indices = [
             Index(value = ["room_id"]),

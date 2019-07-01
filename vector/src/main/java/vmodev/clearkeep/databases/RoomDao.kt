@@ -3,14 +3,15 @@ package vmodev.clearkeep.databases
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.User
 
 @Dao
 abstract class RoomDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(room: Room);
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    abstract fun insert(room: Room): Long;
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insertRooms(rooms: List<Room>);
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    abstract fun insertRooms(rooms: List<Room>): List<Long>;
 
     @Query("SELECT * FROM room WHERE type = :type")
     abstract fun loadWithType(type: Int): LiveData<List<Room>>;
@@ -53,6 +54,18 @@ abstract class RoomDao {
 
     @Query("UPDATE room SET type =:type WHERE id =:id")
     abstract fun updateType(id: String, type: Int)
+
+    @Query("SELECT * FROM room WHERE id IN (:ids)")
+    abstract fun getListRoomWithListId(ids: List<String>): LiveData<List<Room>>;
+
+    @Update
+    abstract fun updateRooms(rooms: List<Room>): Int;
+
+    @Update
+    abstract fun updateRoom(room: Room): Int;
+
+    @Query("SELECT * FROM room WHERE id =:roomId")
+    abstract fun findByIdSync(roomId: String): Room?;
 
     fun loadWithType(filter: Array<Int>): LiveData<List<Room>> {
         when (filter.size) {

@@ -1,6 +1,8 @@
 package vmodev.clearkeep.viewmodelobjects
 
+import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -12,9 +14,9 @@ import com.google.gson.annotations.SerializedName
  * @property avatarUrl String
  * @constructor
  */
-@Entity(primaryKeys = ["id"])
+@Entity
 data class Room(
-        @field:SerializedName("id") val id: String,
+        @PrimaryKey @ColumnInfo(name = "id") @field:SerializedName("id") val id: String,
         @field:SerializedName("name") val name: String,
         @field:SerializedName("topic") val topic: String,
         @field:SerializedName("type") val type: Int,
@@ -26,5 +28,6 @@ data class Room(
         @field:SerializedName("version") val version: Int,
         @field:SerializedName("highlightCount") val highlightCount: Int,
         @field:SerializedName("lastMessage") val lastMessage: String,
-        @field:SerializedName("encrypted") val encrypted: Byte
+        @field:SerializedName("encrypted") val encrypted: Byte,
+        @field:SerializedName("status") val status: Byte
 )

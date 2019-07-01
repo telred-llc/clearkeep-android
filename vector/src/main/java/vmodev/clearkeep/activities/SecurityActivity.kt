@@ -11,14 +11,12 @@ import im.vector.databinding.ActivitySecurityBinding
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import javax.inject.Inject
 
-class SecurityActivity : DaggerAppCompatActivity() {
+class SecurityActivity : DataBindingDaggerActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
 
     lateinit var binding: ActivitySecurityBinding;
-
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

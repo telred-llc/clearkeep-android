@@ -1,6 +1,7 @@
-include ':vector'
+include ':vector', ':matrix-sdk'//,':matrix-sdk'
 
 // uncomment theses lines to compile matrix SDK as project sources instead of external lib
 // see build.gradle section Matrix SDK management
 //include ':matrix-sdk'
 //project(':matrix-sdk').projectDir = new File(settingsDir, '../matrix-android-sdk/matrix-sdk')
+project(':matrix-sdk').projectDir = new File('matrix-android-sdk/matrix-sdk')

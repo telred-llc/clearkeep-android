@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="vmodev.clearkeep.activities.DeactivateAccountActivity">
+
+    <data>
+
+        <import type="android.arch.lifecycle.LiveData" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Status" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/text_view_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/cancel"
+                    android:textColor="@color/app_green"
+                    android:textSize="@dimen/text_20_sp" />
+            </android.support.v7.widget.Toolbar>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/deactivate_account_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/checkbox_accept"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/deactivate_account_delete_checkbox" />
+            </LinearLayout>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/card_view_deactivate_account"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                app:cardBackgroundColor="@color/app_green"
+                app:cardCornerRadius="10dp">
+
+                <TextView
+                    android:id="@+id/text_view_deactivate_account"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:text="@string/deactivate_account_title"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/text_20_sp" />
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="invisible" />
+    </FrameLayout>
+</layout>

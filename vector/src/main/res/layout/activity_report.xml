@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="vmodev.clearkeep.activities.ReportActivity">
+
+    <data>
+
+        <import type="android.arch.lifecycle.LiveData" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Status" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.DeviceSettings" />
+
+        <variable
+            name="deviceSettings"
+            type="LiveData&lt;Resource&lt;DeviceSettings>>" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:visibleGone="@{deviceSettings.status == Status.LOADING}" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/send_anon_crash_and_usage_data" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switch_compat_send_crash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/rage_shake_to_report_bug" />
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/switch_compat_rage_shake_to_report_bug"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_view_report_bug"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="10dp"
+                android:text="@string/report_bug"
+                android:textColor="@android:color/holo_red_light"
+                android:textSize="@dimen/text_20_sp" />
+
+        </LinearLayout>
+    </FrameLayout>
+</layout>

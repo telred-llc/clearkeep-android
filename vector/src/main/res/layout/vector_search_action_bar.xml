@@ -18,8 +18,6 @@
         android:imeOptions="actionSearch"
         android:inputType="text"
         android:maxLines="1"
-        android:textColor="@android:color/white"
-        android:textColorHint="@android:color/white"
         android:textCursorDrawable="@drawable/searches_cursor_background"
         android:textSize="20sp" />
 

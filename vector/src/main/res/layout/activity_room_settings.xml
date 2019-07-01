@@ -114,7 +114,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_group_black_24dp" />
+                    android:src="@drawable/ic_room_members"
+                    android:tint="?attr/icon_color"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -147,7 +148,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_file_download_black_24dp" />
+                    android:src="@drawable/ic_room_file"
+                    android:tint="?attr/icon_color"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -180,7 +182,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_settings_black_24dp" />
+                    android:src="@drawable/ic_room_settings"
+                    android:tint="?attr/icon_color"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -220,7 +223,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_person_add_black_24dp" />
+                    android:src="@drawable/ic_room_add_user"
+                    android:tint="?attr/icon_color"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -253,7 +257,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_material_exit_to_app" />
+                    android:src="@drawable/ic_leave_room"
+                    android:tint="?attr/icon_color"/>
 
                 <TextView
                     android:layout_width="0dp"

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="android.arch.lifecycle.LiveData" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Status" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/text_view_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/encryption_export_room_keys"
+            android:textSize="@dimen/text_20_sp"
+            android:layout_margin="10dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/text_view_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/encryption_export_room_keys_message_content" />
+
+        <EditText
+            android:id="@+id/edit_text_create_passphrase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/passphrase_create_passphrase"
+            android:singleLine="true"
+            android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/edit_text_confirm_passphrase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/passphrase_confirm_passphrase"
+            android:singleLine="true"
+            android:inputType="textPassword"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/button_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/cancel"
+                android:textAlignment="center"
+                android:textColor="@color/app_green"
+                android:textSize="@dimen/text_20_sp"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/button_export"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/export"
+                android:textAlignment="center"
+                android:textColor="@color/app_green"
+                android:textSize="@dimen/text_20_sp"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+    </LinearLayout>
+</layout>

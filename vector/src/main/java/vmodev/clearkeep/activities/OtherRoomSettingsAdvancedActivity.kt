@@ -13,14 +13,13 @@ import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
 
-class OtherRoomSettingsAdvancedActivity : DaggerAppCompatActivity() {
+class OtherRoomSettingsAdvancedActivity : DataBindingDaggerActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
 
     private lateinit var binding: ActivityOtherRoomSettingsAdvancedBinding;
     private lateinit var roomViewModel: AbstractRoomViewModel;
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

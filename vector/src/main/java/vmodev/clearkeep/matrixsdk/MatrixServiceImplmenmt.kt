@@ -13,23 +13,29 @@ import im.vector.util.RoomUtils
 import im.vector.util.VectorUtils
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
 import io.reactivex.functions.Function
 import io.reactivex.internal.operators.observable.ObservableAll
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.crypto.MXCRYPTO_ALGORITHM_MEGOLM
+import org.matrix.androidsdk.crypto.keysbackup.MegolmBackupCreationInfo
 import org.matrix.androidsdk.data.Room
+import org.matrix.androidsdk.data.RoomMediaMessage
 import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.data.RoomTag
 import org.matrix.androidsdk.listeners.IMXMediaUploadListener
+import org.matrix.androidsdk.listeners.ProgressListener
 import org.matrix.androidsdk.rest.callback.ApiCallback
 import org.matrix.androidsdk.rest.callback.SimpleApiCallback
+import org.matrix.androidsdk.rest.callback.SuccessErrorCallback
 import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.rest.model.RoomMember
+import org.matrix.androidsdk.rest.model.keys.KeysVersion
 import org.matrix.androidsdk.rest.model.search.SearchResponse
 import org.matrix.androidsdk.rest.model.search.SearchResult
 import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
+import vmodev.clearkeep.applications.ClearKeepApplication
+import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.ultis.SearchMessageByTextResult
@@ -42,7 +48,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MatrixServiceImplmenmt @Inject constructor(private val application: Application) : MatrixService {
+class MatrixServiceImplmenmt @Inject constructor(private val application: ClearKeepApplication) : MatrixService {
 
     //    @Inject
     private var session: MXSession? = null;
@@ -389,7 +395,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
                 , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, lastMessage = lastMessage
-                , encrypted = if (room.isEncrypted) 1 else 0);
+                , encrypted = if (room.isEncrypted) 1 else 0, status = if (room.isLeaving || room.isLeft) 0 else 1);
         return roomObj;
     }
 
@@ -446,9 +452,9 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
         return Observable.create<List<User>> { emitter ->
             kotlin.run {
                 session!!.searchUsers(keyword, 100, filter, object : ApiCallback<SearchUsersResponse> {
+                    val users = ArrayList<User>();
                     override fun onSuccess(p0: SearchUsersResponse?) {
                         if (p0 != null) {
-                            val users = ArrayList<User>();
                             p0?.results?.forEach { t: org.matrix.androidsdk.rest.model.User? ->
                                 kotlin.run {
                                     var avatar = "";
@@ -459,30 +465,30 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                                         result?.let { avatar = result }
                                     };
                                     t?.let { user ->
-                                        users.add(User(id = user.user_id, name = if (user.displayname.isNullOrEmpty()) "" else user.displayname, avatarUrl = avatar, status = if (user.isActive) 1 else 0, roomId = ""))
+                                        users.add(User(id = user.user_id, name = if (user.displayname.isNullOrEmpty()) "Riot-bot" else user.displayname, avatarUrl = avatar, status = if (user.isActive) 1 else 0, roomId = ""))
                                     }
                                 }
                             }
                             emitter.onNext(users);
                             emitter.onComplete();
                         } else {
-                            emitter.onError(NullPointerException());
+                            emitter.onNext(users);
                             emitter.onComplete();
                         }
                     }
 
                     override fun onUnexpectedError(p0: Exception?) {
-                        emitter.onError(Throwable(message = p0?.message));
+                        emitter.onNext(users);
                         emitter.onComplete();
                     }
 
                     override fun onMatrixError(p0: MatrixError?) {
-                        emitter.onError(Throwable(message = p0?.message));
+                        emitter.onNext(users);
                         emitter.onComplete();
                     }
 
                     override fun onNetworkError(p0: Exception?) {
-                        emitter.onError(Throwable(message = p0?.message));
+                        emitter.onNext(users);
                         emitter.onComplete();
                     }
                 });
@@ -951,12 +957,14 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
     }
 
     override fun getUsersInRoomAndAddToRoomUserJoin(roomId: String): Observable<RoomAndRoomUserJoin> {
+        setMXSession();
         return Observable.create<RoomAndRoomUserJoin> { emitter ->
             val room = session!!.dataHandler.getRoom(roomId);
-            room.getActiveMembersAsync(object : ApiCallback<List<RoomMember>> {
+//            Log.d("UpdateRoom", room.avatarUrl)
+            val users = ArrayList<User>();
+            val roomUserJoin = ArrayList<RoomUserJoin>();
+            room.getMembersAsync(object : ApiCallback<List<RoomMember>> {
                 override fun onSuccess(p0: List<RoomMember>?) {
-                    val users = ArrayList<User>();
-                    val roomUserJoin = ArrayList<RoomUserJoin>();
                     p0?.forEach { t: RoomMember? ->
                         t?.let { roomMember ->
                             users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0, roomId = roomId))
@@ -968,18 +976,18 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                 }
 
                 override fun onUnexpectedError(p0: Exception?) {
-                    emitter.onError(Throwable(p0?.message))
-                    emitter.onComplete()
+                    emitter.onNext(RoomAndRoomUserJoin(room = matrixRoomToRoom(room), users = users, roomUserJoins = roomUserJoin));
+                    emitter.onComplete();
                 }
 
                 override fun onMatrixError(p0: MatrixError?) {
-                    emitter.onError(Throwable(p0?.message))
-                    emitter.onComplete()
+                    emitter.onNext(RoomAndRoomUserJoin(room = matrixRoomToRoom(room), users = users, roomUserJoins = roomUserJoin));
+                    emitter.onComplete();
                 }
 
                 override fun onNetworkError(p0: Exception?) {
-                    emitter.onError(Throwable(p0?.message))
-                    emitter.onComplete()
+                    emitter.onNext(RoomAndRoomUserJoin(room = matrixRoomToRoom(room), users = users, roomUserJoins = roomUserJoin));
+                    emitter.onComplete();
                 }
             })
         }
@@ -1087,6 +1095,114 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: Applic
                     it.onComplete();
                 }
             })
+        }
+    }
+
+    override fun exportNewBackupKey(passphrase: String): Observable<String> {
+        setMXSession();
+        return Observable.create<String> { emitter ->
+            session!!.dataHandler.crypto?.let { mxCrypto ->
+                mxCrypto.keysBackup.prepareKeysBackupVersion(passphrase, object : ProgressListener {
+                    override fun onProgress(progress: Int, total: Int) {
+
+                    }
+                }, object : SuccessErrorCallback<MegolmBackupCreationInfo> {
+                    override fun onSuccess(p0: MegolmBackupCreationInfo?) {
+                        val keyBackup = mxCrypto.keysBackup;
+                        p0?.let { info ->
+                            keyBackup.createKeysBackupVersion(info, object : ApiCallback<KeysVersion> {
+                                override fun onSuccess(kv: KeysVersion?) {
+                                    kv?.let {
+                                        it.version?.let {
+                                            emitter.onNext(info.recoveryKey);
+                                            emitter.onComplete();
+                                        }?.run {
+                                            emitter.onError(Throwable("KeysVersion Value is null"));
+//                                            emitter.onComplete();
+                                        }
+                                    }?.run {
+                                        emitter.onError(Throwable("KeysVersion is null"));
+//                                        emitter.onComplete();
+                                    }
+                                }
+
+                                override fun onUnexpectedError(p0: Exception?) {
+                                    emitter.onError(Throwable(p0?.message));
+                                    emitter.onComplete();
+                                }
+
+                                override fun onMatrixError(p0: MatrixError?) {
+                                    emitter.onError(Throwable(p0?.message));
+                                    emitter.onComplete();
+                                }
+
+                                override fun onNetworkError(p0: Exception?) {
+                                    emitter.onError(Throwable(p0?.message));
+                                    emitter.onComplete();
+                                }
+                            });
+                        }?.run {
+                            //                            emitter.onError(Throwable("MegolmBackupCreationInfo is null"));
+//                            emitter.onComplete();
+                        }
+                    }
+
+                    override fun onUnexpectedError(p0: Exception?) {
+                        emitter.onError(Throwable(p0?.message));
+//                        emitter.onComplete();
+                    }
+                });
+            }?.run {
+                //                emitter.onError(Throwable("Crypto is null"));
+//                emitter.onComplete();
+            }
+        }
+    }
+
+    override fun sendTextMessage(roomId: String, content: String): Observable<Int> {
+        setMXSession();
+        return Observable.create<Int> { emmiter ->
+            val room = session!!.dataHandler.getRoom(roomId);
+            room.sendTextMessage(content, null, org.matrix.androidsdk.rest.model.message.Message.FORMAT_MATRIX_HTML, null, object : RoomMediaMessage.EventCreationListener {
+                override fun onEventCreated(roomMediaMessage: RoomMediaMessage?) {
+                    roomMediaMessage?.setEventSendingCallback(object : ApiCallback<Void> {
+                        override fun onSuccess(info: Void?) {
+                            Log.d("Message", roomMediaMessage.event.contentAsJsonObject.toString());
+                            emmiter.onNext(1);
+                            emmiter.onComplete();
+                        }
+
+                        override fun onUnexpectedError(e: Exception?) {
+                            Log.d("Message", e?.message);
+                            emmiter.onError(Throwable(e?.message));
+                            emmiter.onComplete();
+                        }
+
+                        override fun onNetworkError(e: Exception?) {
+                            Log.d("Message", e?.message)
+                            emmiter.onError(Throwable(e?.message));
+                            emmiter.onComplete();
+                        }
+
+                        override fun onMatrixError(e: MatrixError?) {
+                            Log.d("Message", e?.message)
+                            emmiter.onError(Throwable(e?.message));
+                            emmiter.onComplete();
+                        }
+                    })
+                }
+
+                override fun onEventCreationFailed(roomMediaMessage: RoomMediaMessage?, errorMessage: String?) {
+                    emmiter.onError(Throwable(errorMessage));
+                    emmiter.onComplete();
+                }
+
+                override fun onEncryptionFailed(roomMediaMessage: RoomMediaMessage?) {
+                    emmiter.onError(Throwable("Encrypt Fail"));
+                    emmiter.onComplete();
+                }
+            })
+
         }
     }
 }

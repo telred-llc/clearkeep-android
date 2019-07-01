@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Message" />
+
+        <variable
+            name="message"
+            type="Message" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="2dp"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/background_radius_gradient"
+            android:minHeight="40dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:text="@string/invite_content"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/text_20_sp"
+                app:decryptMessage="@{message}" />
+        </FrameLayout>
+    </LinearLayout>
+</layout>

@@ -2,7 +2,6 @@ package vmodev.clearkeep.di
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import android.view.View
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -81,8 +80,58 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
+    @ViewModelKey(AbstractMessageListActivityViewModel::class)
+    abstract fun bindMessageListActivityViewModel(viewModel: MessageListActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
     @ViewModelKey(AbstractSplashActivityViewModel::class)
-    abstract fun bindAbstractSplashActivityModule(viewModel: SplashActivityViewModel): ViewModel;
+    abstract fun bindAbstractSplashActivityViewModel(viewModel: SplashActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractViewUserProfileActivityViewModel::class)
+    abstract fun bindViewUserProfileActivityViewModel(viewModel: ViewUserProfileActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractExportKeyActivityViewModel::class)
+    abstract fun bindExportKeyActivityViewModel(viewModel: ExportKeyActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractUserInformationActivityViewModel::class)
+    abstract fun bindUserInformationActivityViewModel(viewModel: UserInformationActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractChangeThemeActivityViewModel::class)
+    abstract fun bindChangeThemeActivityViewModel(viewModel: ChangeThemeActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractDataBindingDaggerActivityViewModel::class)
+    abstract fun bindDataBindingDaggerActivityViewModel(viewModel: DataBindingDaggerActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractListRoomFragmentViewModel::class)
+    abstract fun bindListRoomFragmentViewModel(viewModel: ListRoomFragmentViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractDeactivateAccountActivityViewModel::class)
+    abstract fun bindDeactivateAccountActivityViewModel(viewModel: DeactivateAccountActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractReportActivityViewModel::class)
+    abstract fun bindReportActivityViewModel(viewModel: ReportActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractCreateNewCallActivityViewModel::class)
+    abstract fun bindCreateNewCallActivityViewModel(viewModel: CreateNewCallActivityViewModel): ViewModel;
 
     @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;

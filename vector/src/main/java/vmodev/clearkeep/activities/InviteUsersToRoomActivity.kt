@@ -40,18 +40,17 @@ import java.util.HashMap
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class InviteUsersToRoomActivity : DaggerAppCompatActivity(), LifecycleOwner {
+class InviteUsersToRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
     @Inject
     lateinit var appExecutors: AppExecutors;
 
-    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
     private lateinit var roomId: String;
     private var createFromNewRoom: Boolean = true;
     private lateinit var mxSession: MXSession;
-    private val listSelected = HashMap<String, String>();
+    private val listSelected = HashMap<String, User>();
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,7 +72,7 @@ class InviteUsersToRoomActivity : DaggerAppCompatActivity(), LifecycleOwner {
         createFromNewRoom = intent.getBooleanExtra(CREATE_FROM_NEW_ROOM, true);
         mxSession = Matrix.getInstance(applicationContext).defaultSession;
         val listUserAdapter = ListUserToInviteRecyclerViewAdapter(appExecutors = appExecutors, dataBindingComponent = dataBindingComponent, listSelected = listSelected
-            , diffCallback = object : DiffUtil.ItemCallback<User>() {
+                , diffCallback = object : DiffUtil.ItemCallback<User>() {
             override fun areItemsTheSame(p0: User, p1: User): Boolean {
                 return p0.id == p1.id;
             }
@@ -113,17 +112,17 @@ class InviteUsersToRoomActivity : DaggerAppCompatActivity(), LifecycleOwner {
         })
         var disposable: Disposable? = null;
         RxTextView.textChanges(binding.editTextQuery).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
-            .subscribe { t: CharSequence? ->
-                disposable?.let { disposable -> disposable.dispose(); }
-                disposable = Observable.timer(100, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers
-                    .mainThread()).subscribe { time: Long? ->
-                    run {
-                        t?.let { charSequence ->
-                            userViewModel.setQuery(charSequence.toString())
+                .subscribe { t: CharSequence? ->
+                    disposable?.let { disposable -> disposable.dispose(); }
+                    disposable = Observable.timer(100, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers
+                            .mainThread()).subscribe { time: Long? ->
+                        run {
+                            t?.let { charSequence ->
+                                userViewModel.setQuery(charSequence.toString())
+                            }
                         }
-                    }
-                };
-            }
+                    };
+                }
 
         binding.textViewRightToolbar.setOnClickListener { v ->
             val userIds: ArrayList<String> = ArrayList<String>();

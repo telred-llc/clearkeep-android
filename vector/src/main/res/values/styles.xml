@@ -246,4 +246,42 @@
         <item name="android:textColorTertiary">@color/riot_tertiary_text_color_status</item>
     </style>
 
+    <declare-styleable name="ClearKeep">
+        <attr name="icon_color" format="color" />
+        <attr name="icon_gray_color" format="color" />
+        <attr name="search_view_background" format="color" />
+        <attr name="text_available_send" format="color" />
+        <attr name="text_not_available_send" format="color" />
+        <attr name="background_message_send_color" format="color" />
+    </declare-styleable>
+
+    <style name="DarkTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="icon_color">#FFFFFFFF</item>
+        <item name="icon_gray_color">#C1C1C1</item>
+        <item name="vctr_list_header_background_color">#FF000000</item>
+        <item name="vctr_list_header_primary_text_color">#FFFFFFFF</item>
+        <item name="vctr_message_text_color">#FFFFFFFF</item>
+        <item name="search_view_background">@color/tab_bar_unselected_background_color_light</item>
+        <item name="text_available_send">#FFFFFFFF</item>
+        <item name="text_not_available_send">@color/riot_tertiary_text_color_status</item>
+        <item name="vctr_default_text_hint_color">@color/vector_dark_grey_color</item>
+        <item name="vctr_settings_icon_tint_color">#FFFFFFFF</item>
+        <item name="background_message_send_color">
+            @color/tab_bar_unselected_background_color_light
+        </item>
+    </style>
+
+    <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="icon_color">#FF000000</item>
+        <item name="icon_gray_color">#7B7B7B</item>
+        <item name="vctr_list_header_background_color">#FFFFFFFF</item>
+        <item name="vctr_list_header_primary_text_color">#FF000000</item>
+        <item name="vctr_message_text_color">#FF000000</item>
+        <item name="search_view_background">@color/default_text_hint_color_dark</item>
+        <item name="text_available_send">#FFFFFFFF</item>
+        <item name="text_not_available_send">#FF000000</item>
+        <item name="vctr_default_text_hint_color">@color/riot_secondary_text_color_status</item>
+        <item name="vctr_settings_icon_tint_color">#FF000000</item>
+        <item name="background_message_send_color">@color/default_text_hint_color_dark</item>
+    </style>
 </resources>

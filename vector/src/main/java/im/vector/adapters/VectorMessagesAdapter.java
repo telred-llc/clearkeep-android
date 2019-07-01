@@ -379,7 +379,7 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
         mShowReadReceipts = PreferencesManager.showReadReceipts(VectorApp.getInstance());
 
         mPadlockDrawable = ThemeUtils.INSTANCE.tintDrawable(mContext,
-                ContextCompat.getDrawable(mContext, R.drawable.e2e_unencrypted), R.attr.vctr_settings_icon_tint_color);
+                ContextCompat.getDrawable(mContext, R.drawable.ic_lock_open_black_24dp), R.attr.vctr_settings_icon_tint_color);
     }
 
     /*

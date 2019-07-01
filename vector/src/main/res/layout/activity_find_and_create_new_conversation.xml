@@ -15,6 +15,7 @@
         <import type="android.arch.lifecycle.LiveData" />
 
         <import type="vmodev.clearkeep.viewmodelobjects.User" />
+
         <import type="vmodev.clearkeep.viewmodelobjects.Room" />
 
         <variable
@@ -52,15 +53,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:hint="@string/search"/>
+                android:hint="@string/search" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:text="@string/probably_you_want"
-                android:textAllCaps="true"
-                android:textColor="@android:color/darker_gray" />
+                android:textAllCaps="true" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -75,20 +75,30 @@
                     android:layout_marginHorizontal="10dp"
                     android:orientation="vertical">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_horizontal"
-                        android:src="@drawable/ic_group_add_gray_24dp"
-                        app:civ_border_color="@color/vector_dark_grey_color"
-                        app:civ_border_width="2dp" />
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_check_no"
+                            android:tint="?attr/icon_gray_color" />
+
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_new_group"
+                            android:tint="?attr/icon_gray_color" />
+                    </FrameLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/new_room"
-                        android:textAlignment="center"
-                        android:textColor="@color/vector_dark_grey_color" />
+                        android:textAlignment="center" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -98,20 +108,30 @@
                     android:layout_marginHorizontal="10dp"
                     android:orientation="vertical">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_horizontal"
-                        android:src="@drawable/ic_phone_gray_24dp"
-                        app:civ_border_color="@color/vector_dark_grey_color"
-                        app:civ_border_width="2dp" />
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_check_no"
+                            android:tint="?attr/icon_gray_color" />
+
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_new_call"
+                            android:tint="?attr/icon_gray_color" />
+                    </FrameLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/new_call"
-                        android:textAlignment="center"
-                        android:textColor="@color/vector_dark_grey_color" />
+                        android:textAlignment="center" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -120,8 +140,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:text="@string/suggested"
-                android:textAllCaps="true"
-                android:textColor="@android:color/darker_gray" />
+                android:textAllCaps="true" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view_users"
