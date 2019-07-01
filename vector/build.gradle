@@ -398,6 +398,8 @@ dependencies {
 
     // For developers using the Android Support Library
     implementation 'pub.devrel:easypermissions:2.0.1'
+    implementation 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
+//    implementation project(path: ':matrix-sdk')
 //    implementation project(path: ':matrix-sdk')
 //    implementation project(path: ':matrix-sdk-crypto')
 //    implementation project(path: ':matrix-sdk-core')

@@ -34,7 +34,7 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : Abstra
         roomRepository.createDirectChatRoom(input);
     }
     private val createNewRoom: LiveData<Resource<Room>> = Transformations.switchMap(_createNewRoom) { input ->
-        roomRepository.createNewRoom(input)
+        roomRepository.createNewRoom(input.name, input.topic, input.visibility)
     }
     private val inviteUsersToRoom: LiveData<Resource<Room>> = Transformations.switchMap(_inviteUserToRoom) { input ->
         roomRepository.inviteUsersToRoom(input);

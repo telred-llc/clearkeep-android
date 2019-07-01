@@ -55,7 +55,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_edit_black_24dp" />
+                        android:src="@drawable/ic_edit_profile_setting"
+                        android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -96,7 +97,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_notifications_black_24dp" />
+                        android:src="@drawable/ic_notification_setting"
+                        android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -133,7 +135,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_call_black_24dp" />
+                        android:src="@drawable/ic_calls_setting"
+                        android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -170,7 +173,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_list_report_black_24dp" />
+                        android:src="@drawable/ic_report_setting"
+                        android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -212,7 +216,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_security_black_24dp" />
+                        android:src="@drawable/ic_security_setting"
+                        android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -297,7 +302,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_description_black_24dp" />
+                        android:src="@drawable/ic_terms_condition_setting"
+                        android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -334,7 +340,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_lock_black_24dp" />
+                        android:src="@drawable/ic_privacy_policy_setting"
+                        android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -371,7 +378,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:scaleType="center"
-                        android:src="@drawable/ic_copyright_black_24dp" />
+                        android:src="@drawable/ic_copyright_setting"
+                        android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -423,6 +431,7 @@
                         android:background="@color/lb_grey" />
 
                     <TextView
+                        android:id="@+id/text_view_clear_cache"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
@@ -431,6 +440,27 @@
                         android:textColor="@color/app_green"
                         android:textSize="@dimen/text_20_sp" />
                 </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lb_grey" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="50dp"
+                    android:background="@color/lb_grey" />
+
+                <TextView
+                    android:id="@+id/text_view_deactivate_account"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/deactivate_account_title"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="@dimen/text_20_sp"
+                    android:layout_margin="10dp"/>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

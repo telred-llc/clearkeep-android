@@ -1,0 +1,3 @@
+[submodule "matrix-android-sdk"]
+	path = matrix-android-sdk
+	url = https://github.com/matrix-org/matrix-android-sdk.git

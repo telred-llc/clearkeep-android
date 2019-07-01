@@ -15,11 +15,11 @@ import vmodev.clearkeep.viewmodelobjects.User
 
 class ListUserToInviteRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<User>
                                                       , private val dataBindingComponent: DataBindingComponent
-                                                      , private val listSelected : HashMap<String, String>
+                                                      , private val listSelected: HashMap<String, User>
                                                       , private val itemClick: (User, Boolean) -> Unit?)
     : ListAdapter<User, DataBoundViewHolder<ItemUserWithRadioBinding>>(AsyncDifferConfig.Builder<User>(diffCallback)
-    .setBackgroundThreadExecutor(appExecutors.diskIO())
-    .build()) {
+        .setBackgroundThreadExecutor(appExecutors.diskIO())
+        .build()) {
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DataBoundViewHolder<ItemUserWithRadioBinding> {
         val binding = DataBindingUtil.inflate<ItemUserWithRadioBinding>(LayoutInflater.from(p0.context), R.layout.item_user_with_radio, p0, false, dataBindingComponent);
@@ -42,7 +42,7 @@ class ListUserToInviteRecyclerViewAdapter constructor(appExecutors: AppExecutors
         binding.user?.let {
 
             if (binding.checkbox.isChecked) {
-                listSelected.put(it.id, it.id);
+                listSelected.put(it.id, it);
             } else {
                 listSelected.remove(it.id);
             }

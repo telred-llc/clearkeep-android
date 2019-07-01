@@ -157,6 +157,7 @@ class RoomRepository @Inject constructor(
                         roomDao.updateRoom(r.room);
                         userDao.updateUsers(r.users);
                         roomUserJoinDao.updateRoomUserJoin(r.roomUserJoins);
+                        Log.d("UpdateRoom", room.id + "---" + room.avatarUrl)
                         it.onNext(1);
                         it.onComplete();
                     }.subscribeOn(Schedulers.io()).subscribe();
@@ -221,7 +222,7 @@ class RoomRepository @Inject constructor(
         }.asLiveData()
     }
 
-    fun createNewRoom(data: CreateNewRoomObject): LiveData<Resource<Room>> {
+    fun createNewRoom(name: String, topic: String, visibility: String): LiveData<Resource<Room>> {
         return object : AbstractNetworkBoundSourceWithParams<Room, Room>() {
             override fun saveCallResult(item: Room) {
                 roomDao.insert(item);
@@ -232,7 +233,7 @@ class RoomRepository @Inject constructor(
             }
 
             override fun createCall(): LiveData<Room> {
-                return LiveDataReactiveStreams.fromPublisher(matrixService.createNewRoom(data.name, data.topic, data.visibility)
+                return LiveDataReactiveStreams.fromPublisher(matrixService.createNewRoom(name, topic, visibility)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(Schedulers.newThread())
                         .toFlowable(BackpressureStrategy.LATEST))

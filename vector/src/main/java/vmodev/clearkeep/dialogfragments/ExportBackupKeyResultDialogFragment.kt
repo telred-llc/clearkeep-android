@@ -42,7 +42,7 @@ class ExportBackupKeyResultDialogFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        this.dialog.window.setLayout(-1, -2);
+        dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
