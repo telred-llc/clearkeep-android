@@ -58,7 +58,7 @@
                 android:layout_weight="1"
                 android:singleLine="true"
                 android:text="@{room.name}"
-                android:textSize="@dimen/text_20_sp"
+                android:textSize="@dimen/text_18_sp"
                 android:textStyle="bold" />
 
             <TextView
