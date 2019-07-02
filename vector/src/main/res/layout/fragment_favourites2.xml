@@ -16,15 +16,19 @@
         <import type="vmodev.clearkeep.viewmodelobjects.Room" />
 
         <variable
-            name="rooms"
+            name="roomsDirectMessage"
             type="LiveData&lt;Resource&lt;List&lt;Room>>>" />
 
         <variable
-            name="room"
+            name="roomsGroupMessage"
+            type="LiveData&lt;Resource&lt;List&lt;Room>>>" />
+
+        <variable
+            name="leaveRoom"
             type="LiveData&lt;Resource&lt;String>>" />
 
         <variable
-            name="roomObject"
+            name="room"
             type="LiveData&lt;Resource&lt;Room>>" />
     </data>
 
@@ -32,22 +36,106 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/linear_layout_group"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/image_view_direction_group"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/rooms"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:text="@{`(` + String.valueOf(roomsGroupMessage.data.size) + `)`}" />
+                </LinearLayout>
+
+                <net.cachapa.expandablelayout.ExpandableLayout
+                    android:id="@+id/expandable_layout_list_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:el_expanded="true">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_view_list_group_chat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                        tools:listitem="@layout/room_item" />
+                </net.cachapa.expandablelayout.ExpandableLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_layout_direct"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/image_view_direction_direct"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/direct_messages"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:text="@{`(` + String.valueOf(roomsDirectMessage.data.size) + `)`}" />
+
+                </LinearLayout>
+
+                <net.cachapa.expandablelayout.ExpandableLayout
+                    android:id="@+id/expandable_layout_list_direct"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:el_expanded="true">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_view_list_direct_chat"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                        tools:listitem="@layout/room_item" />
+                </net.cachapa.expandablelayout.ExpandableLayout>
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:visibleGone="@{rooms.status == Status.LOADING || room.status == Status.LOADING || roomObject.status == Status.LOADING}" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view_list_conversation"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-            tools:listitem="@layout/room_item" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{rooms.message}" />
+            app:visibleGone="@{room.status == Status.LOADING || leaveRoom.status == Status.LOADING}" />
     </FrameLayout>
 </layout>

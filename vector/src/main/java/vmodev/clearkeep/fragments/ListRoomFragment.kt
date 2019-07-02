@@ -53,8 +53,6 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
     lateinit var listDirectRoomAdapter: IListRoomRecyclerViewAdapter;
 
-    private lateinit var session: MXSession;
-
     // TODO: Rename and change types of parameters
     private var userId: String? = null
     private var listener: OnFragmentInteractionListener? = null
@@ -66,7 +64,6 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
         arguments?.let {
             userId = it.getString(USER_ID)
         }
-        session = Matrix.getInstance(applcation.getApplication()).defaultSession;
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -206,19 +203,17 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
         }
         binding.linearLayoutGroup.setOnClickListener {
             binding.expandableLayoutListGroup.isExpanded = !binding.expandableLayoutListGroup.isExpanded;
-            if (binding.expandableLayoutListGroup.isExpanded){
+            if (binding.expandableLayoutListGroup.isExpanded) {
                 binding.imageViewDirectionGroup.rotation = 0f;
-            }
-            else{
+            } else {
                 binding.imageViewDirectionGroup.rotation = 270f;
             }
         }
         binding.linearLayoutDirect.setOnClickListener {
             binding.expandableLayoutListDirect.isExpanded = !binding.expandableLayoutListDirect.isExpanded;
-            if (binding.expandableLayoutListDirect.isExpanded){
+            if (binding.expandableLayoutListDirect.isExpanded) {
                 binding.imageViewDirectionDirect.rotation = 0f;
-            }
-            else{
+            } else {
                 binding.imageViewDirectionDirect.rotation = 270f;
             }
         }
@@ -241,7 +236,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
 
     private fun gotoRoom(roomId: String) {
         val intentRoom = Intent(this.context, RoomActivity::class.java);
-        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, session.myUserId);
+        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
         intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
         startActivity(intentRoom);
     }

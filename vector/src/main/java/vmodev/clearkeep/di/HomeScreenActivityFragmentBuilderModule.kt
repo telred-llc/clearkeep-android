@@ -8,6 +8,7 @@ import dagger.android.ContributesAndroidInjector
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomContactRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
+import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.activitiesandfragments.*
 import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IFragmentFactory
@@ -134,22 +135,22 @@ abstract class HomeScreenActivityFragmentBuilderModule {
         @Provides
         @JvmStatic
         @Named(value = IFragmentFactory.FAVOURITES_FRAGMENT)
-        fun provideFavouritesFragmentFactory(): IFragmentFactory {
-            return FavouritesFragmentFactory();
+        fun provideFavouritesFragmentFactory(application: IApplication): IFragmentFactory {
+            return FavouritesFragmentFactory(application);
         }
 
         @Provides
         @JvmStatic
         @Named(value = IFragmentFactory.CONTACTS_FRAGMENT)
-        fun provideContactsFragmentFactory(): IFragmentFactory {
-            return ContactsFragmentFactory();
+        fun provideContactsFragmentFactory(application: IApplication): IFragmentFactory {
+            return ContactsFragmentFactory(application);
         }
 
         @Provides
         @JvmStatic
         @Named(value = IFragmentFactory.LIST_ROOM_FRAGMENT)
-        fun provideListRoomFragmentFactory(): IFragmentFactory {
-            return ListRoomFragmentFactory();
+        fun provideListRoomFragmentFactory(application: IApplication): IFragmentFactory {
+            return ListRoomFragmentFactory(application);
         }
     }
 }
