@@ -57,6 +57,7 @@
                         android:id="@+id/image_view_direction_group"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_marginEnd="10dp"
                         android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
 
@@ -64,20 +65,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/rooms"
+                        android:textSize="@dimen/text_20_sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_marginStart="5dp"
                         android:layout_weight="1"
-                        android:text="@{`(` + String.valueOf(listGroup.data.size) + `)`}" />
+                        android:text="@{`(` + String.valueOf(listGroup.data.size) + `)`}"
+                        android:textSize="@dimen/text_20_sp"/>
 
 
                     <ImageView
                         android:id="@+id/image_view_create_new_room"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:src="@drawable/ic_add_circle_grey_24dp" />
                 </LinearLayout>
 
@@ -132,12 +137,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
-                        android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
+                        android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
+                        android:layout_gravity="center_vertical"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/direct_messages"
+                        android:textSize="@dimen/text_20_sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -145,14 +152,16 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:layout_weight="1"
-                        android:text="@{`(` + String.valueOf(listDirect.data.size) + `)`}" />
+                        android:text="@{`(` + String.valueOf(listDirect.data.size) + `)`}"
+                        android:textSize="@dimen/text_20_sp"/>
 
 
                     <ImageView
                         android:id="@+id/image_view_create_new_direct"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_add_circle_grey_24dp" />
+                        android:src="@drawable/ic_add_circle_grey_24dp"
+                        android:layout_gravity="center_vertical"/>
                 </LinearLayout>
 
                 <LinearLayout
