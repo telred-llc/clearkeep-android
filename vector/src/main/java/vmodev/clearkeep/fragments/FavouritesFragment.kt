@@ -1,46 +1,32 @@
 package vmodev.clearkeep.fragments
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.util.DiffUtil
 import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.orhanobut.dialogplus.DialogPlus
-import com.orhanobut.dialogplus.OnItemClickListener
-import dagger.android.support.DaggerFragment
 import im.vector.R
-import im.vector.databinding.FragmentDirectMessageBinding
+import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.FragmentFavourites2Binding
-import org.matrix.androidsdk.MXSession
-import org.matrix.androidsdk.data.Room
+import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.activities.RoomSettingsActivity
 import vmodev.clearkeep.adapters.BottomDialogFavouriteRoomLongClick
-import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
-import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
-import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
-import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IFavouritesFragmentViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFavouritesFragment
-import vmodev.clearkeep.fragments.Interfaces.IFragment
-import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
 import javax.inject.Named
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val LIST_FAVOURITES = "LIST_FAVOURITES"
+private const val USER_ID = "USER_ID"
 
 /**
  * A simple [Fragment] subclass.
@@ -58,21 +44,25 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment {
     private var listener: OnFragmentInteractionListener? = null
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory;
+    lateinit var viewModelFactory: IFavouritesFragmentViewModelFactory;
     @Inject
     lateinit var appExecutors: AppExecutors;
     @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
-    lateinit var listRoomRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
+    lateinit var listGroupRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
     @Inject
-    lateinit var favouritesFragmentViewModelFactory: IFavouritesFragmentViewModelFactory;
+    @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
+    lateinit var listDirectRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
+
     lateinit var binding: FragmentFavourites2Binding;
+    private lateinit var userId: String;
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             // Deserialize is here
+            userId = it.getString(USER_ID);
         }
     }
 
@@ -85,52 +75,98 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner;
-        listRoomRecyclerViewAdapter.setdataBindingComponent(dataBindingComponent);
-        listRoomRecyclerViewAdapter.setOnItemClick { room, i ->
-            onClickGoRoom(room.id);
+        listGroupRecyclerViewAdapter.setdataBindingComponent(dataBindingComponent);
+        listDirectRecyclerViewAdapter.setdataBindingComponent(dataBindingComponent);
+        listGroupRecyclerViewAdapter.setOnItemClick { room, i ->
+            gotoRoom(room.id);
         }
-        listRoomRecyclerViewAdapter.setOnItemLongClick { room ->
+        listDirectRecyclerViewAdapter.setOnItemClick { room, i ->
+            gotoRoom(room.id);
+        }
+        listGroupRecyclerViewAdapter.setOnItemLongClick { room ->
             val bottomDialog = DialogPlus.newDialog(this.context)
                     .setAdapter(BottomDialogFavouriteRoomLongClick())
                     .setOnItemClickListener { dialog, item, view, position ->
                         when (position) {
-                            1 -> onClickRemoveFromFavourite(room.id);
-                            3 -> onClickLeaveRoom(room.id);
-                            2 -> onClickRoomSettings(room.id);
+                            1 -> removeFromFavourites(room.id);
+                            3 -> declineInvite(room.id);
+                            2 -> gotoRoomSettings(room.id);
                         }
                         dialog?.dismiss();
                     }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create();
             bottomDialog.show();
         }
-        binding.rooms = favouritesFragmentViewModelFactory.getViewModel().getListRoomByType();
-        binding.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
-        binding.recyclerViewListConversation.adapter = listRoomRecyclerViewAdapter.getAdapter();
-        favouritesFragmentViewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
-            listRoomRecyclerViewAdapter.getAdapter().submitList(t?.data);
+        listDirectRecyclerViewAdapter.setOnItemLongClick {
+            val bottomDialog = DialogPlus.newDialog(this.context)
+                    .setAdapter(BottomDialogFavouriteRoomLongClick())
+                    .setOnItemClickListener { dialog, item, view, position ->
+                        when (position) {
+                            1 -> removeFromFavourites(it.id);
+                            3 -> declineInvite(it.id);
+                            2 -> gotoRoomSettings(it.id);
+                        }
+                        dialog?.dismiss();
+                    }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create();
+            bottomDialog.show();
+        }
+        binding.roomsDirectMessage = viewModelFactory.getViewModel().getListTypeFavouritesDirectResult();
+        binding.roomsGroupMessage = viewModelFactory.getViewModel().getListTypeFavouritesGroupResult();
+        binding.recyclerViewListDirectChat.isNestedScrollingEnabled = false;
+        binding.recyclerViewListGroupChat.isNestedScrollingEnabled = false;
+        binding.recyclerViewListDirectChat.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
+        binding.recyclerViewListGroupChat.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
+        binding.recyclerViewListGroupChat.adapter = listGroupRecyclerViewAdapter.getAdapter();
+        binding.recyclerViewListDirectChat.adapter = listDirectRecyclerViewAdapter.getAdapter();
+        binding.linearLayoutGroup.setOnClickListener {
+            binding.expandableLayoutListGroup.isExpanded = !binding.expandableLayoutListGroup.isExpanded;
+            if (binding.expandableLayoutListGroup.isExpanded) {
+                binding.imageViewDirectionGroup.rotation = 0f;
+            } else {
+                binding.imageViewDirectionGroup.rotation = 270f;
+            }
+        }
+        binding.linearLayoutDirect.setOnClickListener {
+            binding.expandableLayoutListDirect.isExpanded = !binding.expandableLayoutListDirect.isExpanded;
+            if (binding.expandableLayoutListDirect.isExpanded) {
+                binding.imageViewDirectionDirect.rotation = 0f;
+            } else {
+                binding.imageViewDirectionDirect.rotation = 270f;
+            }
+        }
+        viewModelFactory.getViewModel().getListTypeFavouritesDirectResult().observe(viewLifecycleOwner, Observer { t ->
+            listDirectRecyclerViewAdapter.getAdapter().submitList(t?.data);
         });
-        favouritesFragmentViewModelFactory.getViewModel().setListType(arrayOf(129, 130))
+        viewModelFactory.getViewModel().getListTypeFavouritesGroupResult().observe(viewLifecycleOwner, Observer {
+            listGroupRecyclerViewAdapter.getAdapter().submitList(it?.data);
+        })
+        viewModelFactory.getViewModel().setListTypeFavouritesDirect(arrayOf(129))
+        viewModelFactory.getViewModel().setListTypeFavouritesGroup(arrayOf(130))
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    private fun onClickRoomSettings(id: String) {
+    private fun gotoRoom(roomId: String) {
+        val intentRoom = Intent(this.context, RoomActivity::class.java);
+        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
+        intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
+        startActivity(intentRoom);
+    }
+
+    private fun declineInvite(roomId: String) {
+        binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoom();
+        viewModelFactory.getViewModel().setLeaveRoom(roomId);
+    }
+
+    private fun gotoRoomSettings(roomId: String) {
         val intent = Intent(this.activity, RoomSettingsActivity::class.java);
-        intent.putExtra(RoomSettingsActivity.ROOM_ID, id);
+        intent.putExtra(RoomSettingsActivity.ROOM_ID, roomId);
         startActivity(intent);
     }
 
-    private fun onClickGoRoom(roomId: String) {
-        listener?.onClickGoRoom(roomId);
+    private fun removeFromFavourites(roomId: String) {
+        binding.room = viewModelFactory.getViewModel().getRemoveFromFavouriteResult();
+        viewModelFactory.getViewModel().setRemoveFromFavourite(roomId);
     }
 
-    private fun onClickLeaveRoom(roomId: String) {
-        binding.room = favouritesFragmentViewModelFactory.getViewModel().getLeaveRoom();
-        favouritesFragmentViewModelFactory.getViewModel().setLeaveRoom(roomId);
-    }
-
-    private fun onClickRemoveFromFavourite(roomId: String) {
-        binding.roomObject = favouritesFragmentViewModelFactory.getViewModel().getRemoveFromFavouriteResult();
-        favouritesFragmentViewModelFactory.getViewModel().setRemoveFromFavourite(roomId);
-    }
+    // TODO: Rename method, update argument and hook method into UI event
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -163,7 +199,6 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment {
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onClickGoRoom(roomId: String);
     }
 
     companion object {
@@ -171,16 +206,16 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
+         * @param userId
          * @return A new instance of fragment Favourites.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance() =
+        fun newInstance(userId: String) =
                 FavouritesFragment().apply {
                     arguments = Bundle().apply {
                         // Put data is here
+                        putString(USER_ID, userId);
                     }
                 }
     }

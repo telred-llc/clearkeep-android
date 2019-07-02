@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
@@ -15,9 +16,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import im.vector.R
+import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.FragmentContactsBinding
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
+import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.factories.viewmodels.interfaces.IContactFragmentViewModelFactory
@@ -31,7 +34,7 @@ import javax.inject.Named
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val LIST_CONTACT = "LIST_CONTACT"
+private const val USER_ID = "USER_ID"
 
 /**
  * A simple [Fragment] subclass.
@@ -52,10 +55,12 @@ class ContactsFragment : DataBindingDaggerFragment(), IContactFragment {
     @Inject
     lateinit var contactViewModelFactory: IContactFragmentViewModelFactory;
     lateinit var binding: FragmentContactsBinding;
+    private lateinit var userId: String;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+            userId = it?.getString(USER_ID);
         }
     }
 
@@ -86,7 +91,10 @@ class ContactsFragment : DataBindingDaggerFragment(), IContactFragment {
 
     // TODO: Rename method, update argument and hook method into UI event
     private fun onClickGoRoom(roomId: String) {
-        listener?.onClickGoRoom(roomId);
+        val intentRoom = Intent(this.context, RoomActivity::class.java);
+        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
+        intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
+        startActivity(intentRoom);
     }
 
     override fun onAttach(context: Context) {
@@ -120,7 +128,6 @@ class ContactsFragment : DataBindingDaggerFragment(), IContactFragment {
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onClickGoRoom(roomId: String);
     }
 
     companion object {
@@ -134,9 +141,10 @@ class ContactsFragment : DataBindingDaggerFragment(), IContactFragment {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance() =
+        fun newInstance(userId: String) =
                 ContactsFragment().apply {
                     arguments = Bundle().apply {
+                        putString(USER_ID, userId);
                     }
                 }
     }
