@@ -126,6 +126,7 @@ class NotificationAreaView @JvmOverloads constructor(
             Log.d(LOG_TAG, "State unchanged")
             return
         }
+        visibility = View.VISIBLE;
         Log.d(LOG_TAG, "Rendering $newState")
         cleanUp()
         state = newState
@@ -169,6 +170,7 @@ class NotificationAreaView @JvmOverloads constructor(
     }
 
     private fun cleanUp() {
+        visibility = View.GONE;
         messageView.setOnClickListener(null)
         imageView.setOnClickListener(null)
         setBackgroundColor(Color.TRANSPARENT)

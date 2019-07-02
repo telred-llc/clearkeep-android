@@ -14,6 +14,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Vibrator
+import android.preference.PreferenceManager
 import android.support.v7.app.AlertDialog
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
@@ -492,6 +493,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     private lateinit var application: IApplication;
 
     override fun getLayoutRes(): Int {
+        val edit = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        edit.putString("SETTINGS_SHOW_INFO_AREA_KEY", "messages_and_errors");
+        edit.commit();
         application = applicationContext as IApplication;
         setTheme(application.getCurrentTheme());
         return R.layout.activity_room
