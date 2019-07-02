@@ -19,4 +19,6 @@ abstract class AbstractListRoomFragmentViewModel : ViewModel() {
     abstract fun joinRoomWithIdResult(): LiveData<Resource<Room>>;
     abstract fun setRoomIdForRemoveFromFavourite(roomId: String);
     abstract fun gerRemoveRoomFromFavouriteResult(): LiveData<Resource<Room>>;
+    abstract fun setIdForUpdateRoomNotify(roomId: String);
+    abstract fun getUpdateRoomNotifyResult(): LiveData<Resource<Room>>;
 }

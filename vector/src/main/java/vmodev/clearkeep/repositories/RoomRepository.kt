@@ -434,6 +434,29 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
+    fun setRoomNotify(roomId: String): LiveData<Resource<Room>> {
+        return object : AbstractNetworkBoundSource<Room, Room>() {
+            override fun saveCallResult(item: Room) {
+                roomDao.updateRoom(item);
+            }
+
+            override fun shouldFetch(data: Room?): Boolean {
+                return true;
+            }
+
+            override fun loadFromDb(): LiveData<Room> {
+                return roomDao.findById(roomId);
+            }
+
+            override fun createCall(): LiveData<Room> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.getRoomWithId(roomId)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .toFlowable(BackpressureStrategy.LATEST))
+            }
+        }.asLiveData();
+    }
+
     class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);
     class InviteUsersToRoomObject constructor(val roomId: String, val userIds: List<String>);
 }

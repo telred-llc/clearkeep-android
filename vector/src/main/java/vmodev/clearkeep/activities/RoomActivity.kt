@@ -118,6 +118,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         val EXTRA_START_CALL_ID = "EXTRA_START_CALL_ID"
 
         const val WAITING_INFORMATION_ACTIVITY = 13275
+
+        const val RESULT_ROOM_ID = "RESULT_ROOM_ID";
     }
 
     private val TAG_FRAGMENT_MATRIX_MESSAGE_LIST = "TAG_FRAGMENT_MATRIX_MESSAGE_LIST"
@@ -582,6 +584,10 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         configureToolbar()
 //        toolbar.setBackgroundResource(android.R.color.white)
         toolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_green)
+        toolbar.setNavigationOnClickListener {
+            finishResult();
+            finish();
+        }
         mCallId = intent.getStringExtra(EXTRA_START_CALL_ID)
         mEventId = intent.getStringExtra(EXTRA_EVENT_ID)
         mDefaultRoomName = intent.getStringExtra(EXTRA_DEFAULT_NAME)
@@ -1228,6 +1234,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     // use a final copy of the event
                     try {
                         if (!isFinishing && (null != latestDisplayedEvent) && mVectorMessageListFragment!!.messageAdapter != null) {
+
                             mVectorMessageListFragment!!.messageAdapter.updateReadMarker(currentRoom!!.getReadMarkerEventId(), latestDisplayedEvent!!.eventId)
                         }
                     } catch (e: Exception) {
@@ -1250,6 +1257,18 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             })
             refreshNotificationsArea()
         }
+    }
+
+    override fun onBackPressed() {
+        finishResult();
+        finish();
+        super.onBackPressed()
+    }
+
+    private fun finishResult() {
+        val intentResult = Intent();
+        intentResult.putExtra(RESULT_ROOM_ID, currentRoom!!.roomId);
+        setResult(Activity.RESULT_OK, intentResult);
     }
 
     override fun onScroll(firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
@@ -3850,8 +3869,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     internal fun onStartVoiceCall() {
         onCallItemClicked(0);
     }
+
     @OnClick(R.id.image_view_search)
-    internal fun onRoomSearch(){
+    internal fun onRoomSearch() {
         val intentSearch = Intent(this, UnifiedSearchActivity::class.java);
         intentSearch.putExtra(UnifiedSearchActivity.EXTRA_ROOM_ID, currentRoom?.roomId);
         startActivity(intentSearch);
