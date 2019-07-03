@@ -22,6 +22,8 @@ import java.io.FileNotFoundException
 import java.io.InputStream
 import javax.inject.Inject
 import android.graphics.Bitmap.CompressFormat
+import android.graphics.Bitmap.createBitmap
+import android.graphics.Matrix
 import android.support.v7.app.AlertDialog
 import im.vector.R
 import java.io.ByteArrayInputStream
@@ -90,7 +92,8 @@ class EditProfileActivity : DataBindingDaggerActivity(), IEditProfileActivity {
                 try {
                     val imageUri = data?.data;
                     val inputStream = contentResolver.openInputStream(imageUri);
-                    val selectedImage = BitmapFactory.decodeStream(inputStream);
+                    var selectedImage = BitmapFactory.decodeStream(inputStream);
+                    selectedImage = getResizedBitmap(selectedImage, 512, 512);
                     val bos = ByteArrayOutputStream();
                     selectedImage.compress(CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
                     val bitmapData = bos.toByteArray();
@@ -103,7 +106,8 @@ class EditProfileActivity : DataBindingDaggerActivity(), IEditProfileActivity {
             }
             if (requestCode == RESULT_TAKE_IMAGE_FROM_CAMERA) {
                 try {
-                    val image: Bitmap = data?.extras?.get("data") as Bitmap
+                    var image: Bitmap = data?.extras?.get("data") as Bitmap
+                    image = getResizedBitmap(image, 512, 512);
                     val bos = ByteArrayOutputStream()
                     image.compress(CompressFormat.PNG, 0 /*ignored for PNG*/, bos)
                     val bitmapData = bos.toByteArray()
@@ -115,6 +119,23 @@ class EditProfileActivity : DataBindingDaggerActivity(), IEditProfileActivity {
                 }
             }
         }
+    }
+
+    private fun getResizedBitmap(bm: Bitmap, newWidth: Int, newHeight: Int): Bitmap {
+        val width = bm.getWidth();
+        val height = bm.getHeight();
+        val scaleWidth: Float = (newWidth.toFloat()) / width;
+        val scaleHeight: Float = (newHeight.toFloat()) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        val matrix: Matrix = Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        // "RECREATE" THE NEW BITMAP
+        val resizedBitmap: Bitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        bm.recycle();
+        return resizedBitmap;
     }
 
     override fun onDestroy() {
