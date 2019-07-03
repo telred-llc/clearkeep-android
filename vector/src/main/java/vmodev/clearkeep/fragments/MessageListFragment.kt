@@ -542,7 +542,7 @@ class MessageListFragment : MatrixMessageListFragment<VectorMessagesAdapter>(), 
                         quotedTextMsg += "\n\n"
                     }
                 }
-                (attachedActivity as VectorRoomActivity).insertQuoteInTextEditor(quotedTextMsg + "\n\n")
+                (attachedActivity as RoomActivity).insertQuoteInTextEditor(quotedTextMsg + "\n\n")
             }
         } else if ((action == R.id.ic_action_vector_share) || (action == R.id.ic_action_vector_forward) || (action == R.id.ic_action_vector_save)) {
             //

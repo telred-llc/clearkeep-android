@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-bold"
                 android:textColor="@android:color/white"
-                android:textSize="14sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 tools:text="Room name - call active" />
 
@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
                 android:textIsSelectable="false"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 tools:text="Elapsed time" />
         </LinearLayout>
     </LinearLayout>
