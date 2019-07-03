@@ -64,6 +64,9 @@ abstract class RoomDao {
     @Update
     abstract fun updateRoom(room: Room): Int;
 
+    @Query("UPDATE room SET notifyCount =:count WHERE room.id =:id")
+    abstract fun updateNotifyCount(id: String, count: Int);
+
     @Query("SELECT * FROM room WHERE id =:roomId")
     abstract fun findByIdSync(roomId: String): Room?;
 

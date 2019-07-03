@@ -1,5 +1,6 @@
 package vmodev.clearkeep.fragments
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
@@ -35,6 +36,7 @@ import javax.inject.Named
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val USER_ID = "USER_ID"
+private const val GO_TO_ROOM_CODE = 12432;
 
 /**
  * A simple [Fragment] subclass.
@@ -48,12 +50,10 @@ private const val USER_ID = "USER_ID"
 class ContactsFragment : DataBindingDaggerFragment(), IContactFragment {
     private var listener: OnFragmentInteractionListener? = null
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory;
+    lateinit var viewModelFactory: IContactFragmentViewModelFactory;
     @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM_CONTACT)
     lateinit var listRoomAdapter: IListRoomRecyclerViewAdapter;
-    @Inject
-    lateinit var contactViewModelFactory: IContactFragmentViewModelFactory;
     lateinit var binding: FragmentContactsBinding;
     private lateinit var userId: String;
 
@@ -80,13 +80,13 @@ class ContactsFragment : DataBindingDaggerFragment(), IContactFragment {
         listRoomAdapter.setOnItemClick { room, i ->
             onClickGoRoom(room.id);
         }
-        binding.rooms = contactViewModelFactory.getViewModel().getListRoomByType();
-        contactViewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
+        binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
+        viewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
             listRoomAdapter.getAdapter().submitList(t?.data)
         })
         binding.lifecycleOwner = viewLifecycleOwner;
 
-        contactViewModelFactory.getViewModel().setListType(arrayOf(1, 129))
+        viewModelFactory.getViewModel().setListType(arrayOf(1, 129))
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -94,7 +94,17 @@ class ContactsFragment : DataBindingDaggerFragment(), IContactFragment {
         val intentRoom = Intent(this.context, RoomActivity::class.java);
         intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
         intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
-        startActivity(intentRoom);
+        startActivityForResult(intentRoom, GO_TO_ROOM_CODE);
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == GO_TO_ROOM_CODE && resultCode == Activity.RESULT_OK) {
+            data?.let {
+                binding.room = viewModelFactory.getViewModel().getUpdateRoomNotifyResult();
+                viewModelFactory.getViewModel().setIdForUpdateRoomNotify(it.getStringExtra(RoomActivity.RESULT_ROOM_ID))
+            }
+        }
     }
 
     override fun onAttach(context: Context) {

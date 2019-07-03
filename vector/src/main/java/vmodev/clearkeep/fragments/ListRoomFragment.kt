@@ -1,5 +1,6 @@
 package vmodev.clearkeep.fragments
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
@@ -8,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +32,7 @@ import javax.inject.Named
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val USER_ID = "USER_ID"
+private const val GO_TO_ROOM_CODE = 12432;
 
 /**
  * A simple [Fragment] subclass.
@@ -238,7 +241,17 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
         val intentRoom = Intent(this.context, RoomActivity::class.java);
         intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
         intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
-        startActivity(intentRoom);
+        startActivityForResult(intentRoom, GO_TO_ROOM_CODE);
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == GO_TO_ROOM_CODE && resultCode == Activity.RESULT_OK) {
+            data?.let {
+                binding.room = viewModelFactory.getViewModel().getUpdateRoomNotifyResult();
+                viewModelFactory.getViewModel().setIdForUpdateRoomNotify(it.getStringExtra(RoomActivity.RESULT_ROOM_ID))
+            }
+        }
     }
 
     private fun declideInvite(roomId: String) {

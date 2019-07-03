@@ -17,6 +17,7 @@ class ListRoomFragmentViewModel @Inject constructor(roomRepository: RoomReposito
     private val _roomIdForAddToFavourite = MutableLiveData<String>();
     private val _roomIdForRemoveFromFavourite = MutableLiveData<String>();
     private val _roomIdForJoinRoom = MutableLiveData<String>();
+    private val _roomIdForUpdateNotify = MutableLiveData<String>();
 
     private val _leaveRoomWithIdResult = Transformations.switchMap(_roomIdForLeave) { input -> roomRepository.leaveRoom(input) }
     private val _addRoomToFavouriteResult = Transformations.switchMap(_roomIdForAddToFavourite) { input -> roomRepository.addToFavourite(input) }
@@ -25,6 +26,8 @@ class ListRoomFragmentViewModel @Inject constructor(roomRepository: RoomReposito
 
     private val _getListDirectRoomResult = Transformations.switchMap(_directRoomFilters) { input -> roomRepository.loadListRoom(input) }
     private val _getListGroupRoomResult = Transformations.switchMap(_groupRoomFilters) { input -> roomRepository.loadListRoom(input) }
+
+    private val _updateRoomNotifyResult = Transformations.switchMap(_roomIdForUpdateNotify) { input -> roomRepository.setRoomNotify(input) }
 
     override fun setFiltersDirectRoom(filters: Array<Int>) {
         _directRoomFilters.value = filters;
@@ -72,5 +75,13 @@ class ListRoomFragmentViewModel @Inject constructor(roomRepository: RoomReposito
 
     override fun gerRemoveRoomFromFavouriteResult(): LiveData<Resource<Room>> {
         return _removeRoomFromFavouriteResult;
+    }
+
+    override fun setIdForUpdateRoomNotify(roomId: String) {
+        _roomIdForUpdateNotify.value = roomId;
+    }
+
+    override fun getUpdateRoomNotifyResult(): LiveData<Resource<Room>> {
+        return _updateRoomNotifyResult;
     }
 }

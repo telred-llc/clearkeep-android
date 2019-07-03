@@ -14,4 +14,6 @@ abstract class AbstractFavouritesFragmentViewModel : ViewModel() {
     abstract fun setLeaveRoom(roomId: String);
     abstract fun setListTypeFavouritesGroup(types: Array<Int>)
     abstract fun getListTypeFavouritesGroupResult(): LiveData<Resource<List<Room>>>
+    abstract fun setIdForUpdateRoomNotify(roomId: String);
+    abstract fun getUpdateRoomNotifyResult(): LiveData<Resource<Room>>;
 }
