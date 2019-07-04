@@ -17,6 +17,7 @@
 
 package im.vector.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 
 import org.matrix.androidsdk.MXSession;
@@ -133,13 +134,20 @@ public class VectorSharedFilesActivity extends VectorAppCompatActivity {
 
         if (isAppLaunched) {
 //            activityIntent = new Intent(this, VectorHomeActivity.class);
-            activityIntent = new Intent(this, HomeScreenActivity.class);
+            activityIntent = new Intent();
+            putCachedFiles(activityIntent, cachedFiles);
+            setResult(Activity.RESULT_OK, activityIntent);
+
+            finish();
         } else {
             activityIntent = new Intent(this, SplashActivity.class);
+            activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            putCachedFiles(intent, cachedFiles);
+            startActivity(activityIntent);
         }
+    }
 
-        activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-
+    private void putCachedFiles(Intent intent, List<RoomMediaMessage> cachedFiles) {
         if (0 != cachedFiles.size()) {
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
@@ -148,9 +156,7 @@ public class VectorSharedFilesActivity extends VectorAppCompatActivity {
             shareIntent.setType("*/*");
 
             // files to share
-            activityIntent.putExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS, shareIntent);
+            intent.putExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS, shareIntent);
         }
-
-        startActivity(activityIntent);
     }
 }

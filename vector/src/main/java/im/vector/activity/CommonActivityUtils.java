@@ -88,6 +88,7 @@ import im.vector.services.EventStreamService;
 import im.vector.ui.badge.BadgeProxy;
 import im.vector.util.PreferencesManager;
 import vmodev.clearkeep.activities.CallViewActivity;
+import vmodev.clearkeep.activities.ExportKeyActivity;
 import vmodev.clearkeep.activities.FindAndCreateNewConversationActivity;
 import vmodev.clearkeep.activities.HomeScreenActivity;
 import vmodev.clearkeep.activities.InviteUsersToRoomActivity;
@@ -797,53 +798,53 @@ public class CommonActivityUtils {
                     @Override
                     public void run() {
                         // if the activity is not the home activity
-                        if (!(fromActivity instanceof HomeScreenActivity) && !(fromActivity instanceof PreviewInviteRoomActivity)
-                                && !(fromActivity instanceof FindAndCreateNewConversationActivity)
-                                && !(fromActivity instanceof InviteUsersToRoomActivity) && !(fromActivity instanceof CallViewActivity)
-                                && !(fromActivity instanceof ViewUserProfileActivity)) {
-                            // pop to the home activity
-                            Log.d(LOG_TAG, "## goToRoomPage(): start VectorHomeActivity..");
-                            Intent intent = new Intent(fromActivity, VectorHomeActivity.class);
-                            intent.setFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//                        if (!(fromActivity instanceof HomeScreenActivity) && !(fromActivity instanceof PreviewInviteRoomActivity)
+//                                && !(fromActivity instanceof FindAndCreateNewConversationActivity)
+//                                && !(fromActivity instanceof InviteUsersToRoomActivity) && !(fromActivity instanceof CallViewActivity)
+//                                && !(fromActivity instanceof ViewUserProfileActivity) && !(fromActivity instanceof ExportKeyActivity)) {
+//                            // pop to the home activity
+//                            Log.d(LOG_TAG, "## goToRoomPage(): start VectorHomeActivity..");
+//                            Intent intent = new Intent(fromActivity, VectorHomeActivity.class);
+//                            intent.setFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//
+//                            intent.putExtra(VectorHomeActivity.EXTRA_JUMP_TO_ROOM_PARAMS, (Serializable) params);
+//                            fromActivity.startActivity(intent);
+//                        } else {
+                        // already to the home activity
+                        // so just need to open the room activity
+                        Log.d(LOG_TAG, "## goToRoomPage(): already in VectorHomeActivity..");
+                        Intent intent = new Intent(fromActivity, vmodev.clearkeep.activities.RoomActivity.class);
 
-                            intent.putExtra(VectorHomeActivity.EXTRA_JUMP_TO_ROOM_PARAMS, (Serializable) params);
-                            fromActivity.startActivity(intent);
-                        } else {
-                            // already to the home activity
-                            // so just need to open the room activity
-                            Log.d(LOG_TAG, "## goToRoomPage(): already in VectorHomeActivity..");
-                            Intent intent = new Intent(fromActivity, vmodev.clearkeep.activities.RoomActivity.class);
+                        for (String key : params.keySet()) {
+                            Object value = params.get(key);
 
-                            for (String key : params.keySet()) {
-                                Object value = params.get(key);
-
-                                if (value instanceof String) {
-                                    intent.putExtra(key, (String) value);
-                                } else if (value instanceof Boolean) {
-                                    intent.putExtra(key, (Boolean) value);
-                                } else if (value instanceof Parcelable) {
-                                    intent.putExtra(key, (Parcelable) value);
-                                }
+                            if (value instanceof String) {
+                                intent.putExtra(key, (String) value);
+                            } else if (value instanceof Boolean) {
+                                intent.putExtra(key, (Boolean) value);
+                            } else if (value instanceof Parcelable) {
+                                intent.putExtra(key, (Parcelable) value);
                             }
-
-                            // try to find a displayed room name
-                            if (null == params.get(VectorRoomActivity.EXTRA_DEFAULT_NAME)) {
-
-                                Room room = finalSession.getDataHandler().getRoom((String) params.get(VectorRoomActivity.EXTRA_ROOM_ID));
-
-                                if ((null != room) && room.isInvited()) {
-                                    String displayName = room.getRoomDisplayName(fromActivity);
-
-                                    if (null != displayName) {
-                                        intent.putExtra(VectorRoomActivity.EXTRA_DEFAULT_NAME, displayName);
-                                    }
-                                }
-                            }
-
-                            fromActivity.startActivity(intent);
                         }
+
+                        // try to find a displayed room name
+                        if (null == params.get(VectorRoomActivity.EXTRA_DEFAULT_NAME)) {
+
+                            Room room = finalSession.getDataHandler().getRoom((String) params.get(VectorRoomActivity.EXTRA_ROOM_ID));
+
+                            if ((null != room) && room.isInvited()) {
+                                String displayName = room.getRoomDisplayName(fromActivity);
+
+                                if (null != displayName) {
+                                    intent.putExtra(VectorRoomActivity.EXTRA_DEFAULT_NAME, displayName);
+                                }
+                            }
+                        }
+
+                        fromActivity.startActivity(intent);
                     }
                 }
+//                }
         );
     }
 

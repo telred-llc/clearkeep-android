@@ -1,11 +1,15 @@
 package vmodev.clearkeep.activities
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import dagger.android.support.DaggerAppCompatActivity
 import im.vector.Matrix
+import im.vector.activity.CommonActivityUtils
+import im.vector.activity.VectorHomeActivity
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
@@ -49,5 +53,30 @@ abstract class DataBindingDaggerActivity : DaggerAppCompatActivity() {
             dataBindingDaggerActivityViewModel.setDeviceSettingsId(it.myUserId);
         }
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RECEIVED_SEND_FILE && resultCode == Activity.RESULT_OK) {
+            data?.let {
+                if (it.hasExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS)) {
+                    showSendFile(it.getParcelableExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS));
+                }
+            }
+        }
+    }
+
+    private fun showSendFile(intentExtra: Intent) {
+        session?.let {
+            if (it.getDataHandler().getStore().isReady()) {
+                runOnUiThread {
+                    CommonActivityUtils.sendFilesTo(this, intentExtra)
+                }
+            }
+        }
+    }
+
+    companion object {
+        const val RECEIVED_SEND_FILE = 11046;
     }
 }
