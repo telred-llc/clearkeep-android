@@ -107,7 +107,7 @@ public class VectorAutoCompleteTextView extends AppCompatMultiAutoCompleteTextVi
         switch (newMode) {
             case USER_MODE:
                 setAdapter(mAdapterUser);
-                setThreshold(3);
+                setThreshold(2);
                 break;
             case COMMAND_MODE:
                 setAdapter(mAdapterCommand);

@@ -156,7 +156,7 @@
     <string name="send_bug_report_sent">The bug report has been successfully sent</string>
     <string name="send_bug_report_failed">The bug report failed to be sent (%s)</string>
     <string name="send_bug_report_progress">Progress (%s%%)</string>
-    <string name="send_files_in">Send into</string>
+    <string name="send_files_in">Send to</string>
     <string name="read_receipt">Read</string>
     <string name="join_room">Join Room</string>
     <string name="username">Username</string>
