@@ -24,6 +24,11 @@ import android.widget.Toast
 import vmodev.clearkeep.ultis.writeToInternalCache
 import java.util.*
 import android.os.StrictMode
+import android.util.Log
+import im.vector.Matrix
+import im.vector.activity.CommonActivityUtils
+import im.vector.activity.VectorHomeActivity
+import org.matrix.androidsdk.MXSession
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -36,6 +41,7 @@ class ExportKeyActivity : DataBindingDaggerActivity(), IExportKeyActivity, Expor
     private lateinit var binding: ActivityExportKeyBinding;
     private var exportStatus = false;
     private var backupKeyContent: String = "";
+    private lateinit var mxSession: MXSession;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_export_key, dataBindingComponent);
@@ -46,6 +52,7 @@ class ExportKeyActivity : DataBindingDaggerActivity(), IExportKeyActivity, Expor
         binding.toolbar.setNavigationOnClickListener {
             onBackPressed();
         }
+        mxSession = Matrix.getInstance(applicationContext).defaultSession;
         binding.frameLayoutExportKeysGroup.setOnClickListener {
             if (exportStatus)
                 return@setOnClickListener;
@@ -74,7 +81,7 @@ class ExportKeyActivity : DataBindingDaggerActivity(), IExportKeyActivity, Expor
                         }
                         shareOrSaveDialog.buttonShare().subscribe {
                             requestReadWriteExternalStorageForShare();
-                            shareOrSaveDialog.dismiss();
+//                            shareOrSaveDialog.dismiss();
                         }
                         shareOrSaveDialog.show(supportFragmentManager, "");
                         binding.textViewExportKeys.setText(R.string.export_keys);
@@ -131,7 +138,7 @@ class ExportKeyActivity : DataBindingDaggerActivity(), IExportKeyActivity, Expor
                     "ClearKeep Export Key");
             intentShareFile.putExtra(Intent.EXTRA_TEXT, "ClearKeep Export Key");
 
-            startActivity(Intent.createChooser(intentShareFile, "Share Backup Key"));
+            startActivityForResult(Intent.createChooser(intentShareFile, "Share Backup Key"), RECEIVED_SEND_FILE);
         }
     }
 
