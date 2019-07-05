@@ -12,4 +12,6 @@ abstract class AbstractDirectMessageFragmentViewModel : ViewModel() {
     abstract fun setAddToFavourite(roomId: String);
     abstract fun getLeaveRoom(): LiveData<Resource<String>>;
     abstract fun setLeaveRoom(roomId: String);
+    abstract fun setQueryForSearch(query: String);
+    abstract fun getSearchResult(): LiveData<Resource<List<Room>>>;
 }
