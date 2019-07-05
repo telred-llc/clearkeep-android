@@ -30,6 +30,9 @@
         <variable
             name="rooms"
             type="LiveData&lt;Resource&lt;List&lt;Room>>>" />
+        <variable
+            name="roomsFavourite"
+            type="LiveData&lt;Resource&lt;List&lt;Room>>>" />
     </data>
 
     <FrameLayout
@@ -64,9 +67,9 @@
                         android:id="@+id/circle_image_view_avatar"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:layout_gravity="center_vertical"
                         android:background="@drawable/ic_launcher_app"
-                        app:imageUrl="@{user.data.avatarUrl}"
-                        android:layout_gravity="center_vertical"/>
+                        app:imageUrl="@{user.data.avatarUrl}" />
 
                     <FrameLayout
                         android:id="@+id/frame_layout_search"
@@ -90,9 +93,9 @@
                         android:layout_height="?attr/actionBarSize"
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="10dp"
+                        android:scaleType="center"
                         android:src="@drawable/ic_new_chat"
-                        android:tint="@color/app_green"
-                        android:scaleType="center"/>
+                        android:tint="@color/app_green" />
                 </LinearLayout>
             </android.support.v7.widget.Toolbar>
 
@@ -141,13 +144,15 @@
                         android:layout_weight="1">
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:layout_gravity="end"
-                            android:layout_marginTop="20dp"
+                            android:layout_marginTop="10dp"
                             android:layout_marginEnd="20dp"
-                            android:text="@string/zero"
-                            android:visibility="gone" />
+                            android:background="@drawable/circle_background"
+                            android:textAlignment="center"
+                            android:textColor="@color/main_text_color"
+                            app:roomsHighlightCount="@{roomsFavourite.data}" />
                     </FrameLayout>
 
                     <FrameLayout

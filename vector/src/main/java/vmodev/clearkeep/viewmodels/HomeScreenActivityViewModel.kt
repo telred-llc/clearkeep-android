@@ -14,9 +14,12 @@ import javax.inject.Inject
 class HomeScreenActivityViewModel @Inject constructor(userRepository: UserRepository, roomRepository: RoomRepository) : AbstractHomeScreenActivityViewModel() {
     private val _userId = MutableLiveData<String>();
     private val _filters = MutableLiveData<Array<Int>>();
+    private val _filtersFavourite = MutableLiveData<Array<Int>>();
 
     private val userById = Transformations.switchMap(_userId) { input -> userRepository.loadUser(input) }
     private val listRoomByType = Transformations.switchMap(_filters) { input -> roomRepository.loadListRoomUserJoin(input) }
+    private val _getListFavouriteResult = Transformations.switchMap(_filtersFavourite) { input -> roomRepository.loadListRoomUserJoin(input) }
+
     override fun getUserById(): LiveData<Resource<User>> {
         return userById;
     }
@@ -31,5 +34,13 @@ class HomeScreenActivityViewModel @Inject constructor(userRepository: UserReposi
 
     override fun setValueForListRoomType(filters: Array<Int>) {
         _filters.value = filters;
+    }
+
+    override fun setValueForListRoomTypeFavourite(filters: Array<Int>) {
+        _filtersFavourite.value = filters;
+    }
+
+    override fun getListRoomTypeFavouriteResult(): LiveData<Resource<List<Room>>> {
+        return _getListFavouriteResult;
     }
 }

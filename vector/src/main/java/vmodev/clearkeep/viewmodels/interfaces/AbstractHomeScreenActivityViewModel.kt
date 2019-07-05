@@ -11,4 +11,6 @@ abstract class AbstractHomeScreenActivityViewModel : ViewModel() {
     abstract fun getListRoomByType(): LiveData<Resource<List<Room>>>;
     abstract fun setValueForUserById(userId: String);
     abstract fun setValueForListRoomType(filters: Array<Int>)
+    abstract fun setValueForListRoomTypeFavourite(filters: Array<Int>);
+    abstract fun getListRoomTypeFavouriteResult(): LiveData<Resource<List<Room>>>;
 }
