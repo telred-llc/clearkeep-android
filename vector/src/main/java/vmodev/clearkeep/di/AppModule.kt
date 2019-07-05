@@ -10,10 +10,13 @@ import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.databases.*
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.factories.activitiesandfragments.DirectMessageFragmentFactory
+import vmodev.clearkeep.factories.activitiesandfragments.RoomMessageFragmentFactory
+import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IShowListRoomFragmentFactory
 import javax.inject.Named
 import javax.inject.Singleton
 
-@Module(includes = [ViewModelModule::class, MatrixSDKModule::class, AbstractMatrixSDKModule::class])
+@Module(includes = [ViewModelModule::class, MatrixSDKModule::class, AbstractMatrixSDKModule::class, AbstractDialogFragmentModules::class])
 class AppModule {
 
     @Provides
@@ -80,5 +83,17 @@ class AppModule {
     @Provides
     fun provideMessageDao(clearKeepDatabase: ClearKeepDatabase): AbstractMessageDao {
         return clearKeepDatabase.messageDao();
+    }
+
+    @Provides
+    @Named(value = IShowListRoomFragmentFactory.DIRECT_MESSAGE_FRAGMENT_FACTORY)
+    fun provideDirectMessageFragmentFactory(): IShowListRoomFragmentFactory {
+        return DirectMessageFragmentFactory();
+    }
+
+    @Provides
+    @Named(value = IShowListRoomFragmentFactory.ROOM_MESSAGE_FRAGMENT_FACTORY)
+    fun provideRoomMessageFragmentFactory(): IShowListRoomFragmentFactory {
+        return RoomMessageFragmentFactory();
     }
 }

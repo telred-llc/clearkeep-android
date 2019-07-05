@@ -31,6 +31,7 @@ import im.vector.activity.VectorHomeActivity
 import org.matrix.androidsdk.MXSession
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
+import vmodev.clearkeep.dialogfragments.ReceivedShareFileDialogFragment
 
 
 class ExportKeyActivity : DataBindingDaggerActivity(), IExportKeyActivity, ExportKeyDialogFragment.OnFragmentInteractionListener {
@@ -58,6 +59,8 @@ class ExportKeyActivity : DataBindingDaggerActivity(), IExportKeyActivity, Expor
                 return@setOnClickListener;
             val fragment = ExportKeyDialogFragment.newInstance();
             fragment.show(supportFragmentManager, "");
+//            val fragment = ReceivedShareFileDialogFragment.newInstance();
+//            fragment.show(supportFragmentManager, "");
         }
         binding.backupKey = viewModelFactory.getViewModel().getExportBackupKeyResult();
         viewModelFactory.getViewModel().getExportBackupKeyResult().observe(this, Observer {

@@ -13,6 +13,7 @@ import im.vector.activity.VectorHomeActivity
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
+import vmodev.clearkeep.dialogfragments.ReceivedShareFileDialogFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractDataBindingDaggerActivityViewModel
 import javax.inject.Inject
 
@@ -70,7 +71,8 @@ abstract class DataBindingDaggerActivity : DaggerAppCompatActivity() {
         session?.let {
             if (it.getDataHandler().getStore().isReady()) {
                 runOnUiThread {
-                    CommonActivityUtils.sendFilesTo(this, intentExtra)
+                    val receivedShareDialogFragment = ReceivedShareFileDialogFragment.newInstance(it.myUserId, intentExtra);
+                    receivedShareDialogFragment.show(supportFragmentManager, "");
                 }
             }
         }

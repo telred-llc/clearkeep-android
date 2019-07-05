@@ -1,4 +1,4 @@
 package vmodev.clearkeep.fragments.Interfaces
 
-interface IRoomFragment : IFragment {
+interface IRoomFragment : ISearchRoomFragment {
 }
