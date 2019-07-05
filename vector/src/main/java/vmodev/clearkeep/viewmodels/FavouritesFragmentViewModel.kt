@@ -11,13 +11,13 @@ import javax.inject.Inject
 
 class FavouritesFragmentViewModel @Inject constructor(roomRepository: RoomRepository) : AbstractFavouritesFragmentViewModel() {
     private val _listType = MutableLiveData<Array<Int>>();
-    private val listRoomByType = Transformations.switchMap(_listType) { input -> roomRepository.loadListRoomUserJoin(input, 1) }
+    private val listRoomByType = Transformations.switchMap(_listType) { input -> roomRepository.loadListRoomUserJoin(input) }
     private val _removeFromFavourite = MutableLiveData<String>();
     private val removeFromFavouriteResult = Transformations.switchMap(_removeFromFavourite) { input -> roomRepository.removeFromFavourite(input) }
     private val _leaveRoom = MutableLiveData<String>();
     private val leaveRoomResult = Transformations.switchMap(_leaveRoom) { input -> roomRepository.leaveRoom(input) }
     private val _listGroupFavourites = MutableLiveData<Array<Int>>();
-    private val _getListGroupFavouritesResult = Transformations.switchMap(_listGroupFavourites) { input -> roomRepository.loadListRoomUserJoin(input, 1) }
+    private val _getListGroupFavouritesResult = Transformations.switchMap(_listGroupFavourites) { input -> roomRepository.loadListRoomUserJoin(input) }
     private val _roomIdForUpdateNotify = MutableLiveData<String>();
     private val _updateRoomNotifyResult = Transformations.switchMap(_roomIdForUpdateNotify) { input -> roomRepository.setRoomNotify(input) }
 
