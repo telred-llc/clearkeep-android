@@ -41,6 +41,8 @@ class ActivityBindingAdapters constructor(val activity: FragmentActivity) : Imag
                 count += it.highlightCount
                 if (it.type == 1 or 64 || it.type == 2 or 64)
                     count++;
+                if (it.notifyCount > 0)
+                    count++;
             }
         }
         textView.text = count.toString();
@@ -56,7 +58,6 @@ class ActivityBindingAdapters constructor(val activity: FragmentActivity) : Imag
 
     override fun bindStatus(switchCompat: SwitchCompat, status: Byte?) {
         status?.let {
-            Log.d("switch Compat", status.toString())
             switchCompat.isChecked = status.compareTo(0) != 0
         }
     }
@@ -70,7 +71,7 @@ class ActivityBindingAdapters constructor(val activity: FragmentActivity) : Imag
             try {
                 val result = session.dataHandler.crypto.decryptEvent(event, null);
                 result?.let {
-//                    Log.d("MessageType", result.mClearEvent.toString())
+                    //                    Log.d("MessageType", result.mClearEvent.toString())
                     val json = result.mClearEvent.asJsonObject;
                     val type = json.get("type").asString;
 //                    Log.d("MessageType", type);

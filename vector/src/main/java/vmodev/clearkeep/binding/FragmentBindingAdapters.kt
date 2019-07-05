@@ -39,6 +39,8 @@ class FragmentBindingAdapters constructor(val fragment: Fragment) : ImageViewBin
                 count += it.highlightCount
                 if (it.type == 1 or 64 || it.type == 2 or 64)
                     count++;
+                if (it.notifyCount > 0)
+                    count++;
             }
         }
         textView.text = count.toString();
