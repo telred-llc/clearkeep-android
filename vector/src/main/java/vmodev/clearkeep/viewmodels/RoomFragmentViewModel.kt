@@ -16,7 +16,8 @@ class RoomFragmentViewModel @Inject constructor(roomRepository: RoomRepository) 
     private val addToFavouriteResult = Transformations.switchMap(_addToFavourite) { input -> roomRepository.addToFavourite(input) }
     private val _leaveRoom = MutableLiveData<String>();
     private val leaveRoomResult = Transformations.switchMap(_leaveRoom) { input -> roomRepository.leaveRoom(input) }
-
+    private val _setQueryForSearchRoom = MutableLiveData<String>();
+    private val _searchRoomResult = Transformations.switchMap(_setQueryForSearchRoom) { input -> roomRepository.searchRoomByDisplayName(arrayOf(2, 130), input) }
     override fun getListRoomByType(): LiveData<Resource<List<Room>>> {
         return listRoomByType;
     }
@@ -39,5 +40,14 @@ class RoomFragmentViewModel @Inject constructor(roomRepository: RoomRepository) 
 
     override fun setLeaveRoom(roomId: String) {
         _leaveRoom.value = roomId;
+    }
+
+    override fun setQueryForSearch(query: String) {
+        if (_setQueryForSearchRoom.value != query)
+            _setQueryForSearchRoom.value = query;
+    }
+
+    override fun getSearchResult(): LiveData<Resource<List<Room>>> {
+        return _searchRoomResult;
     }
 }

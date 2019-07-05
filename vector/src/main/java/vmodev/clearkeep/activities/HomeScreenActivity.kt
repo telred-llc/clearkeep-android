@@ -37,7 +37,7 @@ import javax.inject.Named
 
 class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFragmentInteractionListener,
         FavouritesFragment.OnFragmentInteractionListener, ContactsFragment.OnFragmentInteractionListener,
-        IListRoomOnFragmentInteractionListener, RoomFragment.OnFragmentInteractionListener
+        IListRoomOnFragmentInteractionListener
         , SearchFragment.OnFragmentInteractionListener
         , PreviewFragment.OnFragmentInteractionListener, ListRoomFragment.OnFragmentInteractionListener, IHomeScreenActivity {
 

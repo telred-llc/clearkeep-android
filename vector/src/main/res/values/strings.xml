@@ -1316,4 +1316,5 @@ Why choose Riot.im?
     <string name="cancelled">Cancelled</string>
     <string name="successed">Successed</string>
     <string name="suggested_user">Suggested</string>
+    <string name="send_to">Send to</string>
 </resources>

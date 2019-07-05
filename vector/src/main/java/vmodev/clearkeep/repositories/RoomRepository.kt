@@ -457,6 +457,14 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
+    fun searchRoomByDisplayName(filters: Array<Int>, query: String): LiveData<Resource<List<Room>>> {
+        return object : AbstractLocalLoadSouce<List<Room>>() {
+            override fun loadFromDB(): LiveData<List<Room>> {
+                return roomDao.searchWithDisplayName(filters[0], filters[1], query);
+            }
+        }.asLiveData();
+    }
+
     class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);
     class InviteUsersToRoomObject constructor(val roomId: String, val userIds: List<String>);
 }

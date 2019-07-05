@@ -27,12 +27,6 @@ abstract class HomeScreenActivityFragmentBuilderModule {
     abstract fun contributeHomeScreenFragment(): HomeScreenFragment;
 
     @ContributesAndroidInjector
-    abstract fun contributeRoomFragment(): RoomFragment;
-
-    @ContributesAndroidInjector
-    abstract fun contributeDirectMessageFragment(): DirectMessageFragment;
-
-    @ContributesAndroidInjector
     abstract fun contributeFavouriteFragment(): FavouritesFragment;
 
     @ContributesAndroidInjector
@@ -42,13 +36,7 @@ abstract class HomeScreenActivityFragmentBuilderModule {
     abstract fun contributeListRoomFragment(): ListRoomFragment;
 
     @Binds
-    abstract fun bindDirectMessageFragment(fragment: DirectMessageFragment): IDriectMessageFragment;
-
-    @Binds
     abstract fun bindHomeScreenFragment(fragment: HomeScreenFragment): IHomeScreenFragment;
-
-    @Binds
-    abstract fun bindRoomFragment(fragment: RoomFragment): IRoomFragment;
 
     @Binds
     abstract fun bindFavouritesFragment(fragment: FavouritesFragment): IFavouritesFragment;
@@ -60,13 +48,7 @@ abstract class HomeScreenActivityFragmentBuilderModule {
     abstract fun bindListRoomFragment(fragment: ListRoomFragment): IListRoomFragment;
 
     @Binds
-    abstract fun bindDirectMessageFragmentViewModelFactory(factory: DirectMessageFragmentViewModelFactory): IDirectMessageFragmentViewModelFactory;
-
-    @Binds
     abstract fun bindHomeScreenFragmentViewModelFactory(factory: HomeScreenFragmentViewModelFactory): IHomeScreenFragmentViewModelFactory;
-
-    @Binds
-    abstract fun bindRoomFragmentViewModelFactory(factory: RoomFragmentViewModelFactory): IRoomFragmentViewModelFactory;
 
     @Binds
     abstract fun bindFavouritesFragmentViewModelFactory(factory: FavouritesFragmentViewModelFactory): IFavouritesFragmentViewModelFactory;
@@ -111,19 +93,6 @@ abstract class HomeScreenActivityFragmentBuilderModule {
             })
         }
 
-        @Provides
-        @JvmStatic
-        @Named(value = IShowListRoomFragmentFactory.DIRECT_MESSAGE_FRAGMENT_FACTORY)
-        fun provideDirectMessageFragmentFactory(): IShowListRoomFragmentFactory {
-            return DirectMessageFragmentFactory();
-        }
-
-        @Provides
-        @JvmStatic
-        @Named(value = IShowListRoomFragmentFactory.ROOM_MESSAGE_FRAGMENT_FACTORY)
-        fun provideRoomMessageFragmentFactory(): IShowListRoomFragmentFactory {
-            return RoomMessageFragmentFactory();
-        }
 
         @Provides
         @JvmStatic

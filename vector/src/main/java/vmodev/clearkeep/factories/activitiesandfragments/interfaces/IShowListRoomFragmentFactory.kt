@@ -1,9 +1,10 @@
 package vmodev.clearkeep.factories.activitiesandfragments.interfaces
 
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.fragments.Interfaces.ISearchRoomFragment
 
 interface IShowListRoomFragmentFactory {
-    fun createNewInstance(): IFragment;
+    fun createNewInstance(): ISearchRoomFragment;
 
     companion object {
         const val DIRECT_MESSAGE_FRAGMENT_FACTORY = "DIRECT_MESSAGE_FRAGMENT_FACTORY";
