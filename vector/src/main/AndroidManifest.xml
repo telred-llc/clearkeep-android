@@ -111,6 +111,7 @@
         <activity android:name="vmodev.clearkeep.activities.ViewUserProfileActivity" />
         <activity android:name="vmodev.clearkeep.activities.SecurityActivity" />
         <activity android:name="vmodev.clearkeep.activities.RoomMemberListActivity" />
+        <activity android:name="vmodev.clearkeep.activities.RoomfilesListActivity" />
         <activity android:name="vmodev.clearkeep.activities.RoomSettingsActivity" />
         <activity android:name="vmodev.clearkeep.activities.RoomActivity" />
         <activity android:name="vmodev.clearkeep.activities.CallViewActivity" />

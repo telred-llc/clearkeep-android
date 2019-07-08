@@ -465,6 +465,16 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
+    fun getListFileInRoom(roomId: String): LiveData<Resource<List<String>>> {
+        return object : AbstractNetworkNonBoundSource<List<String>>() {
+            override fun createCall(): LiveData<List<String>> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.getListFileInRoom(roomId)
+                        .observeOn(Schedulers.io())
+                        .subscribeOn(Schedulers.io()).toFlowable(BackpressureStrategy.LATEST));
+            }
+        }.asLiveData();
+    }
+
     class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);
     class InviteUsersToRoomObject constructor(val roomId: String, val userIds: List<String>);
 }

@@ -34,5 +34,6 @@ public interface MatrixService {
     fun updateUser(name: String): Observable<String>;
     fun updateUser(avatar: InputStream): Observable<String>;
     fun exportNewBackupKey(passphrase: String): Observable<String>;
-    fun sendTextMessage(roomId: String, content: String) : Observable<Int>;
+    fun sendTextMessage(roomId: String, content: String): Observable<Int>;
+    fun getListFileInRoom(roomId: String): Observable<List<String>>;
 }

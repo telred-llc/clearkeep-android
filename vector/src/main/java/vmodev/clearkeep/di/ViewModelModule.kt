@@ -134,5 +134,10 @@ abstract class ViewModelModule {
     abstract fun bindCreateNewCallActivityViewModel(viewModel: CreateNewCallActivityViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractRoomFileListActivityViewModel::class)
+    abstract fun bindRoomFileListActivityViewModel(viewModel: RoomFileListActivityViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }

@@ -19,6 +19,7 @@ import javax.inject.Singleton
     , AbstractRoomSettingsActivityModule::class
     , AbstractSecurityActivityModule::class
     , AbstractRoomMemberListActivityModule::class
+    , AbstractRoomFilesListActivityModule::class
     , AbstractViewUserProfileActivityModule::class
     , AbstractOtherRoomSettingsAdvancedActivityModule::class
     , AbstractRolesPermissionActivityModule::class
