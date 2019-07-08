@@ -13,7 +13,7 @@ abstract class RoomDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insertRooms(rooms: List<Room>): List<Long>;
 
-    @Query("SELECT * FROM room WHERE type = :type")
+    @Query("SELECT * FROM room WHERE type = :type ORDER BY updatedDate DESC")
     abstract fun loadWithType(type: Int): LiveData<List<Room>>;
 
     @Query("SELECT * FROM room WHERE id =:id")

@@ -1,13 +1,11 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.ViewModelProvider
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
-import android.support.v7.app.AppCompatDelegate
 import android.view.View
 import android.widget.Toast
 import im.vector.Matrix
@@ -42,8 +40,6 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         , PreviewFragment.OnFragmentInteractionListener, ListRoomFragment.OnFragmentInteractionListener, IHomeScreenActivity {
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory;
-    @Inject
     @field:Named(value = IFragmentFactory.HOME_SCREEN_FRAGMENT)
     lateinit var homeScreenFragmentFactory: IFragmentFactory;
     @Inject
@@ -56,7 +52,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     @field:Named(IFragmentFactory.LIST_ROOM_FRAGMENT)
     lateinit var listRoomFragmentFactory: IFragmentFactory;
     @Inject
-    lateinit var homeScreenViewModelFactory: IHomeScreenViewModelFactory;
+    lateinit var viewModelFactory: IHomeScreenViewModelFactory;
 
 
     lateinit var binding: ActivityHomeScreenBinding;
@@ -99,8 +95,9 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
             val intent = Intent(this, UnifiedSearchActivity::class.java)
             startActivity(intent);
         }
-        binding.user = homeScreenViewModelFactory.getViewModel().getUserById();
-        binding.rooms = homeScreenViewModelFactory.getViewModel().getListRoomByType();
+        binding.user = viewModelFactory.getViewModel().getUserById();
+        binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
+        binding.roomsFavourite = viewModelFactory.getViewModel().getListRoomTypeFavouriteResult();
         binding.lifecycleOwner = this;
         binding.buttonCreateConvention.setOnClickListener { v ->
             kotlin.run {
@@ -108,8 +105,9 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
                 startActivity(intent);
             }
         }
-        homeScreenViewModelFactory.getViewModel().setValueForUserById(mxSession.myUserId);
-        homeScreenViewModelFactory.getViewModel().setValueForListRoomType(arrayOf(1, 2, 65, 66))
+        viewModelFactory.getViewModel().setValueForUserById(mxSession.myUserId);
+        viewModelFactory.getViewModel().setValueForListRoomType(arrayOf(1, 2, 65, 66))
+        viewModelFactory.getViewModel().setValueForListRoomTypeFavourite(arrayOf(129, 130))
         if (intent.hasExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS)) {
             val intentExtra: Intent = intent.getParcelableExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS);
             if (mxSession.getDataHandler().getStore().isReady()) {
