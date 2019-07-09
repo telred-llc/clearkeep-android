@@ -76,6 +76,11 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
             intentAddPeople.putExtra(InviteUsersToRoomActivity.CREATE_FROM_NEW_ROOM, false);
             startActivity(intentAddPeople);
         }
+        binding.filesGroup.setOnClickListener { v ->
+            val filesIntent = Intent(this,RoomfilesListActivity::class.java)
+            filesIntent.putExtra(RoomfilesListActivity.ROOM_ID, roomId);
+            startActivity(filesIntent)
+        }
     }
 
     override fun getActivity(): FragmentActivity {

@@ -39,6 +39,7 @@ import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.ultis.SearchMessageByTextResult
+import vmodev.clearkeep.viewmodelobjects.File
 import vmodev.clearkeep.viewmodelobjects.MessageSearchText
 import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.User
@@ -1203,6 +1204,41 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: ClearK
                 }
             })
 
+        }
+    }
+
+    override fun getListFileInRoom(roomId: String): Observable<List<String>> {
+        setMXSession();
+        return Observable.create<List<String>> { emmiter ->
+            val roomIds = ArrayList<String>()
+            roomIds.add(roomId);
+            session!!.searchMediaByName("img", roomIds, null, object : ApiCallback<SearchResponse> {
+                override fun onSuccess(p0: SearchResponse?) {
+                    val result = ArrayList<String>();
+                    p0?.searchCategories?.roomEvents?.let {
+                        it.results.forEach {
+                            result.add(it.result.content.toString());
+                        }
+                    }
+                    emmiter.onNext(result);
+                    emmiter.onComplete();
+                }
+
+                override fun onUnexpectedError(p0: Exception?) {
+                    emmiter.onError(Throwable(p0?.message));
+                    emmiter.onComplete();
+                }
+
+                override fun onMatrixError(p0: MatrixError?) {
+                    emmiter.onError(Throwable(p0?.message));
+                    emmiter.onComplete();
+                }
+
+                override fun onNetworkError(p0: Exception?) {
+                    emmiter.onError(Throwable(p0?.message));
+                    emmiter.onComplete();
+                }
+            });
         }
     }
 }

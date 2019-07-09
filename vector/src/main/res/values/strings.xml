@@ -468,6 +468,7 @@
     <string name="room_details_title">Room Details</string>
     <string name="room_details_people">People</string>
     <string name="room_details_files">Files</string>
+    <string name="room_list_details_files">List Files</string>
     <string name="room_details_settings">Settings</string>
     <plurals name="room_details_selected">
         <item quantity="one">1 selected</item>
@@ -1317,4 +1318,5 @@ Why choose Riot.im?
     <string name="successed">Successed</string>
     <string name="suggested_user">Suggested</string>
     <string name="send_to">Send to</string>
+    <string name="list_file">List file</string>
 </resources>
