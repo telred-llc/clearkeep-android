@@ -49,7 +49,7 @@ class RoomfilesListActivity : DataBindingDaggerActivity(), IRoomFileListActivity
         roomId = intent.getStringExtra(ROOM_ID);
         session = Matrix.getInstance(applicationContext).defaultSession;
         setSupportActionBar(binding.toolbar);
-        supportActionBar?.setTitle(R.string.list_file)
+        supportActionBar?.setTitle(R.string.file)
         supportActionBar?.setDisplayHomeAsUpEnabled(true);
         supportActionBar?.setDisplayShowHomeEnabled(true);
         binding.toolbar.setNavigationOnClickListener { v ->
