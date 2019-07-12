@@ -2,9 +2,12 @@ package vmodev.clearkeep.matrixsdk.interfaces
 
 import android.arch.lifecycle.LiveData
 import io.reactivex.Observable
+import org.matrix.androidsdk.crypto.data.ImportRoomKeysResult
 import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
+import vmodev.clearkeep.viewmodelobjects.KeyBackup
+import vmodev.clearkeep.viewmodelobjects.Signature
 import vmodev.clearkeep.viewmodelobjects.User
 import java.io.InputStream
 
@@ -36,4 +39,10 @@ public interface MatrixService {
     fun exportNewBackupKey(passphrase: String): Observable<String>;
     fun sendTextMessage(roomId: String, content: String): Observable<Int>;
     fun getListFileInRoom(roomId: String): Observable<List<String>>;
+    fun getListSignature(id: String): Observable<List<Signature>>
+    fun exportRoomKey(passphrase: String): Observable<String>;
+    fun getKeyBackUpData(userId: String): Observable<KeyBackup>;
+    fun restoreBackupFromPassphrase(password: String): Observable<ImportRoomKeysResult>;
+    fun restoreBackupKeyFromRecoveryKey(key: String): Observable<ImportRoomKeysResult>;
+    fun getAuthDataAsMegolmBackupAuthData(): Observable<String>;
 }

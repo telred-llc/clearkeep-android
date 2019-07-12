@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import com.google.gson.JsonParser
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.crypto.keysbackup.KeysBackupStateManager
 import org.matrix.androidsdk.data.MyUser
 import org.matrix.androidsdk.data.RoomState
 import org.matrix.androidsdk.listeners.MXEventListener
@@ -12,6 +13,7 @@ import org.matrix.androidsdk.rest.model.User
 import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
 import vmodev.clearkeep.repositories.RoomRepository
+import vmodev.clearkeep.repositories.SignatureRepository
 import vmodev.clearkeep.repositories.UserRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,8 +21,9 @@ import javax.inject.Singleton
 @Singleton
 class MatrixEventHandler @Inject constructor(private val application: ClearKeepApplication,
                                              private val userRepository: UserRepository,
-                                             private val roomRepository: RoomRepository)
-    : MXEventListener(), IMatrixEventHandler {
+                                             private val roomRepository: RoomRepository,
+                                             private val signatureRepository: SignatureRepository)
+    : MXEventListener(), IMatrixEventHandler, KeysBackupStateManager.KeysBackupStateListener {
     private var mxSession: MXSession? = null;
     override fun onAccountDataUpdated() {
         super.onAccountDataUpdated()
@@ -62,7 +65,7 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
             if (event?.roomId != null) {
                 roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
 //                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
-                Log.d("EventType", event?.userId + "----" +mxSession!!.myUserId);
+                Log.d("EventType", event?.userId + "----" + mxSession!!.myUserId);
             }
         }
         if (event?.type?.compareTo("m.room.name") == 0) {
@@ -73,7 +76,7 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
         if (event?.type?.compareTo("m.room.member") == 0) {
             if (event?.roomId != null)
                 roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
-            Log.d("EventType", event?.userId + "----" +mxSession!!.myUserId);
+            Log.d("EventType", event?.userId + "----" + mxSession!!.myUserId);
 //                roomRepository.insertRoom(event?.roomId);S
         }
         if (event?.type?.compareTo("m.room.message") == 0) {
@@ -98,6 +101,15 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
 
     override fun getMXEventListener(mxSession: MXSession): MXEventListener {
         this.mxSession = mxSession;
+        mxSession.crypto?.keysBackup?.addListener(this);
         return this;
+    }
+
+    protected fun finalize() {
+        mxSession!!.crypto?.keysBackup?.removeListener(this);
+    }
+
+    override fun onStateChange(newState: KeysBackupStateManager.KeysBackupState) {
+        signatureRepository.updateSignature(mxSession!!.myUserId);
     }
 }

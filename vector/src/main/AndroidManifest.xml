@@ -91,7 +91,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         tools:replace="allowBackup,label">
-        <activity android:name="vmodev.clearkeep.activities.CreateNewCallActivity"></activity>
+        <activity android:name="vmodev.clearkeep.activities.PushBackupKeyActivity"></activity>
+        <activity android:name="vmodev.clearkeep.activities.RestoreBackupKeyActivity" />
+        <activity android:name="vmodev.clearkeep.activities.BackupKeyActivity" />
+        <activity android:name="vmodev.clearkeep.activities.CreateNewCallActivity" />
         <activity android:name="vmodev.clearkeep.activities.ReportActivity" />
         <activity android:name="vmodev.clearkeep.activities.PrivacyPolicyActivity" />
         <activity android:name="vmodev.clearkeep.activities.DeactivateAccountActivity" />

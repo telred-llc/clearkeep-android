@@ -14,4 +14,7 @@ interface ImageViewBindingAdapters {
 
     @BindingAdapter(value = ["encrypted"], requireAll = false)
     fun bindEncrypted(imageView: ImageView, encrypted: Byte?)
+
+    @BindingAdapter(value = ["validStatus"], requireAll = false)
+    fun bindStatusValid(imageView: ImageView, validStatus: Byte?)
 }

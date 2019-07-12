@@ -63,6 +63,18 @@ class AppModule {
         return clearKeepDatabase.backupKeyPathDao();
     }
 
+    @Singleton
+    @Provides
+    fun provideSignature(clearKeepDatabase: ClearKeepDatabase): AbstractSignatureDao {
+        return clearKeepDatabase.signatureDao();
+    }
+
+    @Singleton
+    @Provides
+    fun provideKeyBackup(clearKeepDatabase: ClearKeepDatabase): AbstractKeyBackupDao {
+        return clearKeepDatabase.keyBackupDao();
+    }
+
     @Provides
     @Named(value = IListRoomRecyclerViewAdapter.ROOM)
     fun provideListRoomDirectMessageAdapter(appExecutors: AppExecutors): IListRoomRecyclerViewAdapter {

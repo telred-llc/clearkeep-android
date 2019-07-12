@@ -82,7 +82,7 @@ class LoginActivity : AppCompatActivity(), LoginFragment.OnFragmentInteractionLi
     private fun initRegisterScreen() {
         mLoginHandler = LoginHandler();
         mRegistrationManager = RegistrationManager(null);
-        hsConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse(BuildConfig.HOME_SERVER)).withIdentityServerUri(Uri.parse("https://matrix.org")).build();
+        hsConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse(BuildConfig.HOME_SERVER)).withIdentityServerUri(Uri.parse(BuildConfig.IDENTIFY_SERVER)).build();
         mHandler = Handler(mainLooper);
         checkRegistrationFlows();
     }

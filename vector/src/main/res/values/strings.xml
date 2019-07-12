@@ -1319,4 +1319,9 @@ Why choose Riot.im?
     <string name="suggested_user">Suggested</string>
     <string name="send_to">Send to</string>
     <string name="list_file">List file</string>
+    <string name="backup_key">Backup key</string>
+    <string name="restore">Restore</string>
+    <string name="version_number">Version number</string>
+    <string name="keys_backup">Keys backup</string>
+    <string name="device_id_signatures">DeviceId Signatures</string>
 </resources>

@@ -2,12 +2,15 @@ package vmodev.clearkeep.activities
 
 import android.content.Intent
 import android.databinding.DataBindingUtil
+import android.media.JetPlayer
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import dagger.android.support.DaggerAppCompatActivity
 import im.vector.Matrix
 import im.vector.R
+import im.vector.activity.KeysBackupManageActivity
+import im.vector.activity.KeysBackupSetupActivity
 import im.vector.databinding.ActivityProfileSettingsBinding
 import vmodev.clearkeep.activities.interfaces.IProfileSettingsActivity
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
@@ -88,6 +91,15 @@ class ProfileSettingsActivity : DataBindingDaggerActivity(), IProfileSettingsAct
         }
         binding.textViewClearCache.setOnClickListener {
             Matrix.getInstance(applicationContext).reloadSessions(applicationContext);
+        }
+        binding.backupKeyGroup.setOnClickListener {
+            val intentBackup = Intent(this, BackupKeyActivity::class.java);
+            intentBackup.putExtra(BackupKeyActivity.USER_ID, userId);
+            startActivity(intentBackup);
+        }
+        binding.backupKeyOldGroup.setOnClickListener {
+            val intentBackup = Intent(this, KeysBackupManageActivity::class.java);
+            startActivity(intentBackup);
         }
     }
 

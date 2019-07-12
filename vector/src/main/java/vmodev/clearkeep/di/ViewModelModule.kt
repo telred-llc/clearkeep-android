@@ -139,5 +139,30 @@ abstract class ViewModelModule {
     abstract fun bindRoomFileListActivityViewModel(viewModel: RoomFileListActivityViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractBackupKeyManageFragmentViewModel::class)
+    abstract fun bindBackupKeyManageFragmentViewModel(viewModel: BackupKeyManageFragmentViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractRestoreBackupKeyActivityViewModel::class)
+    abstract fun bindRestoreBackupKeyActivityViewModel(viewModel: RestoreBackupKeyActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractPassphraseRestoreBackupKeyFragmentViewModel::class)
+    abstract fun bindPassphraseRestoreBackupKeyFragmentViewModel(viewModel: PassphraseRestoreBackupKeyFragmentViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractTextFileRestoreBackupKeyFragmentViewModel::class)
+    abstract fun bindTextFileRestoreBackupKeyFragmentViewModel(viewModel: TextFileRestoreBackupKeyFragmentViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractPushBackupKeyActivityViewModel::class)
+    abstract fun bindPushBackupKeyActivityViewModel(viewModel: PushBackupKeyViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }

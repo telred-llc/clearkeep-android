@@ -81,6 +81,7 @@ android {
             minifyEnabled false
             buildConfigField "String", "HOME_SERVER", "\"https://study.sinbadflyce.com\""
             buildConfigField "String", "PUSH_GATEWAY", "\"https://matrix.org/_matrix/push/v1/notify\""
+            buildConfigField "String", "IDENTIFY_SERVER", "\"https://id.clearkeep.me\""
         }
 
         release {
@@ -94,6 +95,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "String", "HOME_SERVER", "\"https://ck.furoute.com\""
             buildConfigField "String", "PUSH_GATEWAY", "\"http://ck.furoute.com:5000\""
+            buildConfigField "String", "IDENTIFY_SERVER", "\"https://id.clearkeep.me\""
         }
 
         matrixorg.initWith(buildTypes.release)
