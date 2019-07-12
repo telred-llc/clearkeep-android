@@ -44,6 +44,8 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.call.MXCallsManager;
 import org.matrix.androidsdk.data.Room;
@@ -54,6 +56,7 @@ import org.matrix.androidsdk.rest.callback.SimpleApiCallback;
 import org.matrix.androidsdk.rest.model.MatrixError;
 import org.matrix.androidsdk.rest.model.RoomMember;
 import org.matrix.androidsdk.rest.model.User;
+import org.matrix.androidsdk.rest.model.crypto.EncryptedFileInfo;
 import org.matrix.androidsdk.rest.model.group.Group;
 import org.matrix.androidsdk.rest.model.publicroom.PublicRoom;
 import org.matrix.androidsdk.util.ImageUtils;
@@ -77,6 +80,7 @@ import im.vector.settings.VectorLocale;
 public class VectorUtils {
 
     private static final String LOG_TAG = VectorUtils.class.getSimpleName();
+    private static final String LINK  = "https://study.sinbadflyce.com/_matrix/media/v1/download/";
 
     //public static final int REQUEST_FILES = 0;
     public static final int TAKE_IMAGE = 1;
@@ -403,21 +407,24 @@ public class VectorUtils {
                 }
             }
 
-            // if the avatar is already cached, use it
-            if (session.getMediaCache().isAvatarThumbnailCached(callAvatarUrl, context.getResources().getDimensionPixelSize(R.dimen.profile_avatar_size))) {
-                session.getMediaCache().loadAvatarThumbnail(session.getHomeServerConfig(),
-                        imageView, callAvatarUrl, context.getResources().getDimensionPixelSize(R.dimen.profile_avatar_size));
-            } else {
-                Bitmap bitmap = null;
+            int size = context.getResources().getDimensionPixelSize(R.dimen.profile_avatar_size);
 
+            // if the avatar is already cached, use it
+            if (null!=callAvatarUrl|| session.getMediaCache().isAvatarThumbnailCached(callAvatarUrl, size)) {
+                String url = session.getContentManager().getDownloadableUrl(callAvatarUrl);
+                Glide.with(context).load(url).placeholder(R.drawable.ic_launcher_app).into(imageView);
+
+            } else {
+                Bitmap bitmap;
                 if (pixelsSide > 0) {
                     // get the avatar bitmap.
                     bitmap = VectorUtils.createAvatar(VectorUtils.getAvatarColor(roomId), getInitialLetter(displayName), pixelsSide);
+                    session.getMediaCache().loadAvatarThumbnail(session.getHomeServerConfig(),
+                            imageView, callAvatarUrl, context.getResources().getDimensionPixelSize(R.dimen.profile_avatar_size), bitmap);
                 }
 
                 // until the dedicated avatar is loaded.
-                session.getMediaCache().loadAvatarThumbnail(session.getHomeServerConfig(),
-                        imageView, callAvatarUrl, context.getResources().getDimensionPixelSize(R.dimen.profile_avatar_size), bitmap);
+
             }
         }
     }
