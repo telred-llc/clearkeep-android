@@ -52,21 +52,21 @@
                 android:textColor="@android:color/white"
                 android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="@string/keys_backup_restore_with_passphrase_helper_with_link" />
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_margin="10dp"-->
+                <!--android:text="@string/keys_backup_restore_with_passphrase_helper_with_link" />-->
 
-            <Button
-                android:id="@+id/button_use_backup_file"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@drawable/background_border_radius_green"
-                android:text="@string/keys_backup_restore_use_recovery_key"
-                android:textColor="@color/app_green"
-                android:textStyle="bold" />
+            <!--<Button-->
+                <!--android:id="@+id/button_use_backup_file"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_margin="10dp"-->
+                <!--android:background="@drawable/background_border_radius_green"-->
+                <!--android:text="@string/keys_backup_restore_use_recovery_key"-->
+                <!--android:textColor="@color/app_green"-->
+                <!--android:textStyle="bold" />-->
         </LinearLayout>
 
         <ProgressBar

@@ -97,10 +97,10 @@ class ProfileSettingsActivity : DataBindingDaggerActivity(), IProfileSettingsAct
             intentBackup.putExtra(BackupKeyActivity.USER_ID, userId);
             startActivity(intentBackup);
         }
-        binding.backupKeyOldGroup.setOnClickListener {
-            val intentBackup = Intent(this, KeysBackupManageActivity::class.java);
-            startActivity(intentBackup);
-        }
+//        binding.backupKeyOldGroup.setOnClickListener {
+//            val intentBackup = Intent(this, KeysBackupManageActivity::class.java);
+//            startActivity(intentBackup);
+//        }
     }
 
     override fun getActivity(): FragmentActivity {

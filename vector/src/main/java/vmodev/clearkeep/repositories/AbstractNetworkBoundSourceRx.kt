@@ -38,7 +38,7 @@ abstract class AbstractNetworkBoundSourceRx<T, V> @MainThread constructor() {
         result.addSource(dbSource) {
             setValue(Resource.loading(null));
         }
-        createCall().subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe({
+        createCall().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
             result.removeSource(dbSource)
             if (it != null) {
                 Observable.create<Int> { emitter ->

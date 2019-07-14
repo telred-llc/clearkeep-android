@@ -14,6 +14,8 @@ import javax.inject.Inject
 class BackupKeyManageFragmentViewModel @Inject constructor(signatureRepository: SignatureRepository, keyBackupRepository: KeyBackupRepository) : AbstractBackupKeyManageFragmentViewModel() {
 
     private val _setIdForGetKeyBackup = MutableLiveData<String>();
+    private val _setIdForDeleteKeyBackup = MutableLiveData<String>();
+
     private val _setIdForGetListSignature = MutableLiveData<String>();
     private val _getListSignatureResult = Transformations.switchMap(_setIdForGetListSignature) { input ->
         signatureRepository.getAllSignature(input);
@@ -21,6 +23,8 @@ class BackupKeyManageFragmentViewModel @Inject constructor(signatureRepository: 
     private val _getKeyBackupResult = Transformations.switchMap(_setIdForGetKeyBackup) { input ->
         keyBackupRepository.getKeyBackup(input);
     }
+    private val _getDeleteBackupKeyResult = Transformations.switchMap(_setIdForDeleteKeyBackup) { input -> keyBackupRepository.deleteBackupKey(input) }
+
 
     override fun getSignatureListResult(): LiveData<Resource<List<Signature>>> {
         return _getListSignatureResult;
@@ -36,5 +40,13 @@ class BackupKeyManageFragmentViewModel @Inject constructor(signatureRepository: 
 
     override fun getKeyBackupResult(): LiveData<Resource<KeyBackup>> {
         return _getKeyBackupResult;
+    }
+
+    override fun setIdForDeleteKeyBackup(id: String) {
+        _setIdForDeleteKeyBackup.value = id;
+    }
+
+    override fun getDeleteKeyBackupResult(): LiveData<Resource<KeyBackup>> {
+        return _getDeleteBackupKeyResult;
     }
 }

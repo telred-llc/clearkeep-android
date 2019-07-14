@@ -7,11 +7,13 @@ import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.support.v7.util.DiffUtil
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 
 import im.vector.R
 import im.vector.databinding.FragmentBackupKeyManageBinding
@@ -21,6 +23,7 @@ import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IBackupKeyManageFragment
 import vmodev.clearkeep.viewmodelobjects.Signature
+import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractBackupKeyManageFragmentViewModel
 import javax.inject.Inject
 
@@ -80,11 +83,35 @@ class BackupKeyManageFragment : DataBindingDaggerFragment(), IBackupKeyManageFra
         viewModelFactory.getViewModel().getSignatureListResult().observe(this, Observer {
             adapterListSignature.submitList(it?.data)
         });
+        viewModelFactory.getViewModel().getDeleteKeyBackupResult().observe(this, Observer {
+            it?.let {
+                if (it.status == Status.SUCCESS) {
+                    Toast.makeText(this.context, R.string.delete_success, Toast.LENGTH_LONG).show();
+                } else if (it.status == Status.ERROR) {
+                    Toast.makeText(this.context, it.message, Toast.LENGTH_LONG).show();
+                }
+            }
+        })
 
         binding.buttonRestore.setOnClickListener {
             val intentRestore = Intent(this.activity, RestoreBackupKeyActivity::class.java);
             intentRestore.putExtra(RestoreBackupKeyActivity.USER_ID, userId);
             startActivity(intentRestore);
+        }
+        binding.buttonDelete.setOnClickListener {
+            activity?.let {
+                AlertDialog.Builder(it)
+                        .setTitle(R.string.keys_backup_settings_delete_confirm_title)
+                        .setMessage(R.string.keys_backup_settings_delete_confirm_message)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.keys_backup_settings_delete_confirm_title) { _, _ ->
+                            binding.keyBackup = viewModelFactory.getViewModel().getDeleteKeyBackupResult();
+                            viewModelFactory.getViewModel().setIdForDeleteKeyBackup(userId);
+                        }
+                        .setNegativeButton(R.string.cancel, null)
+                        .setCancelable(true)
+                        .show()
+            }
         }
 
         binding.lifecycleOwner = viewLifecycleOwner;

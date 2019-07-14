@@ -14,4 +14,6 @@ abstract class AbstractBackupKeyManageFragmentViewModel : ViewModel() {
     abstract fun getSignatureListResult(): LiveData<Resource<List<Signature>>>;
     abstract fun setIdForGetSignature(id: String);
     abstract fun getKeyBackupResult(): LiveData<Resource<KeyBackup>>;
+    abstract fun setIdForDeleteKeyBackup(id: String);
+    abstract fun getDeleteKeyBackupResult(): LiveData<Resource<KeyBackup>>;
 }

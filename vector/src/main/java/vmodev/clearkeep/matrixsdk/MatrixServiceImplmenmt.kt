@@ -1326,8 +1326,8 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: ClearK
     override fun getKeyBackUpData(userId: String): Observable<KeyBackup> {
         setMXSession();
         return Observable.create { emitter ->
-            session!!.crypto?.let {
-                it.keysBackup.mKeysBackupVersion?.let {
+            session!!.crypto?.let { mxCrypto ->
+                mxCrypto.keysBackup.mKeysBackupVersion?.let {
                     var algorithm = "";
                     var count = 0;
                     var version = "";
@@ -1340,11 +1340,12 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: ClearK
                     it.count?.let {
                         count = it;
                     }
-                    val keyBackup = KeyBackup(id = session!!.myUserId, algorithm = algorithm, version = version, count = count)
+                    val keyBackup = KeyBackup(id = userId, algorithm = algorithm, version = version, count = count, state = mxCrypto.keysBackup.state.ordinal)
                     emitter.onNext(keyBackup);
                     emitter.onComplete();
                 } ?: kotlin.run {
-                    emitter.onError(NullPointerException());
+                    val keyBackup = KeyBackup(id = userId, algorithm = "", version = "", count = 0, state = mxCrypto.keysBackup.state.ordinal);
+                    emitter.onNext(keyBackup);
                     emitter.onComplete();
                 }
             } ?: kotlin.run {
@@ -1513,6 +1514,44 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: ClearK
                 })
             } ?: kotlin.run {
                 Toast.makeText(application, "No crypto", Toast.LENGTH_SHORT).show();
+                emitter.onComplete();
+            }
+        }
+    }
+
+    override fun deleteKeyBackup(userId: String): Observable<KeyBackup> {
+        setMXSession();
+        return Observable.create { emitter ->
+            session!!.crypto?.let { mxCrypto ->
+                mxCrypto.keysBackup.currentBackupVersion?.let {
+                    mxCrypto.keysBackup.deleteBackup(it, object : ApiCallback<Void> {
+                        override fun onSuccess(p0: Void?) {
+                            val keyBackup = KeyBackup(id = userId, algorithm = "", version = "", count = 0, state = mxCrypto.keysBackup.state.ordinal);
+                            emitter.onNext(keyBackup);
+                            emitter.onComplete();
+                        }
+
+                        override fun onUnexpectedError(p0: Exception?) {
+                            emitter.onError(Throwable(p0?.message));
+                            emitter.onComplete();
+                        }
+
+                        override fun onMatrixError(p0: MatrixError?) {
+                            emitter.onError(Throwable(p0?.message));
+                            emitter.onComplete();
+                        }
+
+                        override fun onNetworkError(p0: Exception?) {
+                            emitter.onError(Throwable(p0?.message));
+                            emitter.onComplete();
+                        }
+                    })
+                } ?: kotlin.run {
+                    emitter.onError(NullPointerException("Current backup version is null"));
+                    emitter.onComplete();
+                }
+            } ?: kotlin.run {
+                emitter.onError(NullPointerException("Crypto is null"));
                 emitter.onComplete();
             }
         }

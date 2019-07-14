@@ -164,5 +164,10 @@ abstract class ViewModelModule {
     abstract fun bindPushBackupKeyActivityViewModel(viewModel: PushBackupKeyViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractBackupKeyActivityViewModel::class)
+    abstract fun bindBackupKeyActivityViewModel(viewModel: BackupKeyActivityViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }

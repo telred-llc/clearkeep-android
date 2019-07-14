@@ -45,4 +45,5 @@ public interface MatrixService {
     fun restoreBackupFromPassphrase(password: String): Observable<ImportRoomKeysResult>;
     fun restoreBackupKeyFromRecoveryKey(key: String): Observable<ImportRoomKeysResult>;
     fun getAuthDataAsMegolmBackupAuthData(): Observable<String>;
+    fun deleteKeyBackup(userId: String): Observable<KeyBackup>;
 }

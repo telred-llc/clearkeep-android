@@ -39,6 +39,7 @@ class PassphraseRestoreBackupKeyFragment : DataBindingDaggerFragment(), IFragmen
     private lateinit var userId: String;
     private var listener: OnFragmentInteractionListener? = null
     private lateinit var binding: FragmentPassphraseRestoreBackupKeyBinding;
+    private var restoreStatus = false;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,14 +58,20 @@ class PassphraseRestoreBackupKeyFragment : DataBindingDaggerFragment(), IFragmen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.result = viewModelFactory.getViewModel().getPassphraseRestoreResult();
-        binding.buttonUseBackupFile.setOnClickListener {
-            onSwitchToUseFileBackup();
-        }
+//        binding.buttonUseBackupFile.setOnClickListener {
+//            onSwitchToUseFileBackup();
+//        }
         binding.buttonRestore.setOnClickListener {
+            if (restoreStatus)
+                return@setOnClickListener;
+            restoreStatus = true;
+            binding.buttonRestore.setText(R.string.resotring);
             viewModelFactory.getViewModel().setPassphraseForRestore(binding.editTextPassphrase.text.toString());
         }
         viewModelFactory.getViewModel().getPassphraseRestoreResult().observe(viewLifecycleOwner, Observer {
             it?.data?.let {
+                restoreStatus = false;
+                binding.buttonRestore.setText(R.string.restore);
                 Toast.makeText(this.context, "Success restore " + it.successfullyNumberOfImportedKeys + "/" + it.totalNumberOfKeys + " total number keys", Toast.LENGTH_LONG).show();
                 activity?.finish();
             }

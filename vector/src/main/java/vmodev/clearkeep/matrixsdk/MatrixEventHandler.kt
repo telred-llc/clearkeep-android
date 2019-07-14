@@ -12,6 +12,7 @@ import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.User
 import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
+import vmodev.clearkeep.repositories.KeyBackupRepository
 import vmodev.clearkeep.repositories.RoomRepository
 import vmodev.clearkeep.repositories.SignatureRepository
 import vmodev.clearkeep.repositories.UserRepository
@@ -22,7 +23,8 @@ import javax.inject.Singleton
 class MatrixEventHandler @Inject constructor(private val application: ClearKeepApplication,
                                              private val userRepository: UserRepository,
                                              private val roomRepository: RoomRepository,
-                                             private val signatureRepository: SignatureRepository)
+                                             private val signatureRepository: SignatureRepository,
+                                             private val keyBackupRepository: KeyBackupRepository)
     : MXEventListener(), IMatrixEventHandler, KeysBackupStateManager.KeysBackupStateListener {
     private var mxSession: MXSession? = null;
     override fun onAccountDataUpdated() {
@@ -110,6 +112,7 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
     }
 
     override fun onStateChange(newState: KeysBackupStateManager.KeysBackupState) {
+        keyBackupRepository.updateKeyBackup(mxSession!!.myUserId);
         signatureRepository.updateSignature(mxSession!!.myUserId);
     }
 }

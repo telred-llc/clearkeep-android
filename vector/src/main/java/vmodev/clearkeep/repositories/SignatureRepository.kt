@@ -37,7 +37,7 @@ class SignatureRepository @Inject constructor(private val matrixService: MatrixS
     fun updateSignature(id: String): LiveData<Resource<List<Signature>>> {
         return object : AbstractNetworkBoundSourceRx<List<Signature>, List<Signature>>() {
             override fun saveCallResult(item: List<Signature>) {
-                signatureDao.insertList(item);
+                signatureDao.updateList(item);
             }
 
             override fun shouldFetch(data: List<Signature>?): Boolean {
