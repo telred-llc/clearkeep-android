@@ -19,7 +19,7 @@ class KeyBackupRepository @Inject constructor(private val matrixService: MatrixS
     fun getKeyBackup(id: String): LiveData<Resource<KeyBackup>> {
         return object : AbstractNetworkBoundSourceRx<KeyBackup, KeyBackup>() {
             override fun saveCallResult(item: KeyBackup) {
-                keyBackupDao.update(item);
+                keyBackupDao.insert(item);
             }
 
             override fun shouldFetch(data: KeyBackup?): Boolean {
@@ -57,12 +57,9 @@ class KeyBackupRepository @Inject constructor(private val matrixService: MatrixS
     }
 
     fun restoreWithPassphrase(passphrase: String): LiveData<Resource<ImportRoomKeysResult>> {
-        return object : AbstractNetworkNonBoundSource<ImportRoomKeysResult>() {
-            override fun createCall(): LiveData<ImportRoomKeysResult> {
-                return LiveDataReactiveStreams.fromPublisher(matrixService.restoreBackupFromPassphrase(passphrase)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.io())
-                        .toFlowable(BackpressureStrategy.LATEST));
+        return object : AbstractNetworkNonBoundSourceRx<ImportRoomKeysResult>() {
+            override fun createCall(): Observable<ImportRoomKeysResult> {
+                return matrixService.restoreBackupFromPassphrase(passphrase);
             }
         }.asLiveData();
     }

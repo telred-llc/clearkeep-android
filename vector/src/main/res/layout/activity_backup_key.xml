@@ -41,7 +41,7 @@
                     android:id="@+id/container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:visibleGone="@{keyBackup.data.state == 6 || keyBackup.data.state == 7}" />
+                    app:visibleGone="@{keyBackup.data.state == 6 || keyBackup.data.state == 7 || keyBackup.data.state == 4}" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

@@ -55,6 +55,7 @@ class ProfileSettingsActivity : DataBindingDaggerActivity(), IProfileSettingsAct
         }
         binding.securityGroup.setOnClickListener {
             val intentSecurity = Intent(this, ExportKeyActivity::class.java);
+            intentSecurity.putExtra(ExportKeyActivity.USER_ID, userId);
             startActivity(intentSecurity);
         }
         binding.themeGroup.setOnClickListener {
@@ -92,15 +93,6 @@ class ProfileSettingsActivity : DataBindingDaggerActivity(), IProfileSettingsAct
         binding.textViewClearCache.setOnClickListener {
             Matrix.getInstance(applicationContext).reloadSessions(applicationContext);
         }
-        binding.backupKeyGroup.setOnClickListener {
-            val intentBackup = Intent(this, BackupKeyActivity::class.java);
-            intentBackup.putExtra(BackupKeyActivity.USER_ID, userId);
-            startActivity(intentBackup);
-        }
-//        binding.backupKeyOldGroup.setOnClickListener {
-//            val intentBackup = Intent(this, KeysBackupManageActivity::class.java);
-//            startActivity(intentBackup);
-//        }
     }
 
     override fun getActivity(): FragmentActivity {

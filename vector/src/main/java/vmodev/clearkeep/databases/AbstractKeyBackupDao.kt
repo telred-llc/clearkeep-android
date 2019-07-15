@@ -7,7 +7,7 @@ import vmodev.clearkeep.viewmodelobjects.Signature
 
 @Dao
 abstract class AbstractKeyBackupDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insert(item: KeyBackup): Long;
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

@@ -1359,8 +1359,8 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: ClearK
         setMXSession();
         return Observable.create { emitter ->
             session!!.crypto?.let { mxCrypto ->
-                mxCrypto.keysBackup.mKeysBackupVersion?.let {
-                    mxCrypto.keysBackup.restoreKeyBackupWithPassword(it, password, null, session!!.myUserId, object : StepProgressListener {
+                mxCrypto.keysBackup.mKeysBackupVersion?.let {keyBackupResult ->
+                    mxCrypto.keysBackup.restoreKeyBackupWithPassword(keyBackupResult, password, null, session!!.myUserId, object : StepProgressListener {
                         var isComputingKey = false;
                         override fun onStepProgress(step: StepProgressListener.Step) {
                             when (step) {
@@ -1381,36 +1381,56 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: ClearK
                     }, object : ApiCallback<ImportRoomKeysResult> {
                         override fun onSuccess(p0: ImportRoomKeysResult?) {
                             p0?.let {
-                                Toast.makeText(application, "Success", Toast.LENGTH_SHORT).show();
-                                emitter.onNext(it);
-                                emitter.onComplete();
+                                Toast.makeText(application, "Successfully", Toast.LENGTH_SHORT).show();
+                                mxCrypto.keysBackup.trustKeysBackupVersion(keyBackupResult, true, object : ApiCallback<Void> {
+                                    override fun onSuccess(p0: Void?) {
+                                        emitter.onNext(it);
+                                        emitter.onComplete();
+                                    }
+
+                                    override fun onUnexpectedError(p0: Exception?) {
+                                        emitter.onError(Throwable(p0?.message));
+                                        emitter.onComplete();
+                                    }
+
+                                    override fun onMatrixError(p0: MatrixError?) {
+                                        emitter.onError(Throwable(p0?.message));
+                                        emitter.onComplete();
+                                    }
+
+                                    override fun onNetworkError(p0: Exception?) {
+                                        emitter.onError(Throwable(p0?.message));
+                                        emitter.onComplete();
+                                    }
+                                })
+
                             } ?: kotlin.run {
-                                Toast.makeText(application, "No Import Room Key Result", Toast.LENGTH_LONG).show();
+                                emitter.onError(Throwable("No Import Room Key Result"));
                                 emitter.onComplete();
                             }
                         }
 
                         override fun onUnexpectedError(p0: Exception?) {
-                            Toast.makeText(application, p0?.message, Toast.LENGTH_SHORT).show();
+                            emitter.onError(Throwable(p0?.message));
                             emitter.onComplete();
                         }
 
                         override fun onMatrixError(p0: MatrixError?) {
-                            Toast.makeText(application, p0?.message, Toast.LENGTH_SHORT).show();
+                            emitter.onError(Throwable(p0?.message));
                             emitter.onComplete();
                         }
 
                         override fun onNetworkError(p0: Exception?) {
-                            Toast.makeText(application, p0?.message, Toast.LENGTH_SHORT).show();
+                            emitter.onError(Throwable(p0?.message));
                             emitter.onComplete();
                         }
                     })
                 } ?: kotlin.run {
-                    Toast.makeText(application, "No Key Backup Version", Toast.LENGTH_SHORT).show();
+                    emitter.onError(Throwable("No Key Backup Version"));
                     emitter.onComplete();
                 }
             } ?: kotlin.run {
-                Toast.makeText(application, "No crypto", Toast.LENGTH_SHORT).show();
+                emitter.onError(Throwable("No crypto"));
                 emitter.onComplete();
             }
         }

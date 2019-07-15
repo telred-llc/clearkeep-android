@@ -14,6 +14,7 @@ import im.vector.R
 import im.vector.databinding.FragmentPassphraseRestoreBackupKeyBinding
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractPassphraseRestoreBackupKeyFragmentViewModel
 import javax.inject.Inject
 
@@ -69,11 +70,20 @@ class PassphraseRestoreBackupKeyFragment : DataBindingDaggerFragment(), IFragmen
             viewModelFactory.getViewModel().setPassphraseForRestore(binding.editTextPassphrase.text.toString());
         }
         viewModelFactory.getViewModel().getPassphraseRestoreResult().observe(viewLifecycleOwner, Observer {
-            it?.data?.let {
-                restoreStatus = false;
-                binding.buttonRestore.setText(R.string.restore);
-                Toast.makeText(this.context, "Success restore " + it.successfullyNumberOfImportedKeys + "/" + it.totalNumberOfKeys + " total number keys", Toast.LENGTH_LONG).show();
-                activity?.finish();
+            it?.let {
+                if (it.status == Status.SUCCESS) {
+                    it.data?.let {
+                        restoreStatus = false;
+                        binding.buttonRestore.setText(R.string.restore);
+                        Toast.makeText(this.context, "Success restore " + it.successfullyNumberOfImportedKeys + "/" + it.totalNumberOfKeys + " total number keys", Toast.LENGTH_LONG).show();
+                        activity?.finish();
+                    }
+                }
+                if (it.status == Status.ERROR) {
+                    it.message?.let {
+                        Toast.makeText(this.context, it, Toast.LENGTH_LONG).show();
+                    }
+                }
             }
         })
         binding.lifecycleOwner = viewLifecycleOwner;

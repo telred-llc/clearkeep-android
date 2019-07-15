@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.util.Log
+import android.widget.Toast
 import im.vector.R
 import im.vector.databinding.ActivityBackupKeyBinding
 import vmodev.clearkeep.activities.interfaces.IBackupKeyActivity
@@ -34,12 +35,14 @@ class BackupKeyActivity : DataBindingDaggerActivity(), IBackupKeyActivity, Backu
         viewModelFactory.getViewModel().getKeyBackupResult().observe(this, Observer {
             it?.let {
                 it?.data?.let {
-                    Log.d("State", it.state.toString())
                     when (it.state) {
-                        6, 7 -> {
+                        6, 7, 4 -> {
                             supportFragmentManager.beginTransaction().replace(R.id.container, BackupKeyManageFragment.newInstance(userId)).commitNow();
                         }
                     }
+                }
+                it?.message?.let {
+                    Toast.makeText(this, it, Toast.LENGTH_LONG).show();
                 }
             }
         })
