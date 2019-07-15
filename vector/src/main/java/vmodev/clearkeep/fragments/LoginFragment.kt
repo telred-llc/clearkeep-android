@@ -3,6 +3,7 @@ package vmodev.clearkeep.fragments
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -14,6 +15,7 @@ import android.widget.Button
 import im.vector.BuildConfig
 import im.vector.LoginHandler
 import im.vector.R
+import im.vector.databinding.FragmentLoginBinding
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.matrix.androidsdk.HomeServerConnectionConfig
 import org.matrix.androidsdk.rest.callback.ApiCallback
@@ -21,6 +23,7 @@ import org.matrix.androidsdk.rest.callback.SimpleApiCallback
 import org.matrix.androidsdk.rest.model.MatrixError
 import vmodev.clearkeep.activities.DemoEmptyActivity
 import vmodev.clearkeep.activities.SplashActivity
+import vmodev.clearkeep.fragments.Interfaces.IFragment
 import java.lang.Exception
 
 // TODO: Rename parameter arguments, choose names that match
@@ -37,11 +40,12 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class LoginFragment : Fragment() {
+class LoginFragment : DataBindingDaggerFragment(), IFragment {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
+    private lateinit var binding: FragmentLoginBinding;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,8 +58,13 @@ class LoginFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_login, container, false);
-        view.findViewById<Button>(R.id.button_sign_in).setOnClickListener { v ->
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false, dataBindingComponent);
+        return binding.root;
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.buttonSignIn.setOnClickListener { v ->
             run {
                 val password = edit_text_password.text.toString().trim();
                 val username = edit_text_username.text.toString().trim();
@@ -70,10 +79,10 @@ class LoginFragment : Fragment() {
 
                 onPressedLogin();
                 val homeServerConnectionConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse(BuildConfig.HOME_SERVER))
-                    .withIdentityServerUri(Uri.parse("https://matrix.org")).build();
+                        .withIdentityServerUri(Uri.parse("https://matrix.org")).build();
                 val loginHandler = LoginHandler();
                 loginHandler.login(this.context, homeServerConnectionConfig, edit_text_username.text.toString(), null, null,
-                    edit_text_password.text.toString(), object : ApiCallback<Void> {
+                        edit_text_password.text.toString(), object : ApiCallback<Void> {
                     override fun onSuccess(p0: Void?) {
                         gotoHomeActivity();
                     }
@@ -101,10 +110,11 @@ class LoginFragment : Fragment() {
                 });
             }
         };
-        view.findViewById<Button>(R.id.button_sign_up).setOnClickListener { v -> run {
-            onPressedSignUp();
-        } }
-        return view;
+        binding.buttonSignUp.setOnClickListener { v ->
+            run {
+                onPressedSignUp();
+            }
+        }
     }
 
     private fun showAlertDiaglong(title: String, message: String) {
@@ -129,7 +139,8 @@ class LoginFragment : Fragment() {
     fun onPressedClose() {
         listener?.hideLoading();
     }
-    fun onPressedSignUp(){
+
+    fun onPressedSignUp() {
         listener?.onPressedSignUp();
     }
 
@@ -145,6 +156,10 @@ class LoginFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         listener = null
+    }
+
+    override fun getFragment(): Fragment {
+        return this;
     }
 
     /**

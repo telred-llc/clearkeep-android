@@ -139,5 +139,10 @@ abstract class ViewModelModule {
     abstract fun bindRoomFileListActivityViewModel(viewModel: RoomFileListActivityViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractLoginFragmentViewModel::class)
+    abstract fun bindLoginFragmentViewModel(viewModel: LoginFragmentViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }

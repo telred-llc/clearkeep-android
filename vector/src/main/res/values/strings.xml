@@ -1320,4 +1320,8 @@ Why choose Riot.im?
     <string name="send_to">Send to</string>
     <string name="list_file">FList file</string>
     <string name="file">Files</string>
+    <string name="email">Email</string>
+    <string name="new_password">New password</string>
+    <string name="confirm">Confirm</string>
+    <string name="auth_reset_password_email_validation_message_content">A verification email will be sent to your inbox to confirm setting your new password.</string>
 </resources>

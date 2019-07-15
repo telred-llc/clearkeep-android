@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import im.vector.BuildConfig
@@ -23,12 +24,13 @@ import org.matrix.androidsdk.rest.model.login.RegistrationFlowResponse
 import org.matrix.androidsdk.rest.model.pid.ThreePid
 import org.matrix.androidsdk.util.JsonUtils
 import org.matrix.androidsdk.util.Log
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.fragments.HandlerVerifyEmailFragment
 import vmodev.clearkeep.fragments.LoginFragment
 import vmodev.clearkeep.fragments.SignUpFragment
 import javax.net.ssl.HttpsURLConnection
 
-class LoginActivity : AppCompatActivity(), LoginFragment.OnFragmentInteractionListener, SignUpFragment.OnFragmentInteractionListener,
+class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFragmentInteractionListener, SignUpFragment.OnFragmentInteractionListener,
         RegistrationManager.UsernameValidityListener, RegistrationManager.RegistrationListener, HandlerVerifyEmailFragment.OnFragmentInteractionListener {
     private val LOG_TAG: String = LoginActivity::javaClass.name;
 
@@ -45,6 +47,10 @@ class LoginActivity : AppCompatActivity(), LoginFragment.OnFragmentInteractionLi
 
         val loginFragment = LoginFragment.newInstance("", "");
         changeFragment(loginFragment);
+    }
+
+    override fun getActivity(): FragmentActivity {
+        return this;
     }
 
     override fun onLoginSuccess() {
@@ -194,7 +200,7 @@ class LoginActivity : AppCompatActivity(), LoginFragment.OnFragmentInteractionLi
         mRegistrationManager.setHsConfig(hsConfig);
         mRegistrationManager.addEmailThreePid(ThreePid(email, ThreePid.MEDIUM_EMAIL));
         mRegistrationManager.setAccountData(username, password);
-        if(email.isNullOrEmpty()){
+        if (email.isNullOrEmpty()) {
             mRegistrationManager.clearThreePid();
         }
         mRegistrationManager.checkUsernameAvailability(this, this);

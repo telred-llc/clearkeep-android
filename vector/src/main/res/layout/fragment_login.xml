@@ -2,6 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="vmodev.clearkeep.fragments.LoginFragment">
 
+    <data>
+
+    </data>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -12,39 +16,41 @@
             android:id="@+id/edit_text_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/username_or_email"
-            android:textColorHint="@color/main_text_color_hint"
             android:layout_margin="20dp"
-            android:textColor="@color/main_text_color"
+            android:hint="@string/username_or_email"
+            android:inputType="textEmailAddress"
             android:singleLine="true"
-            android:inputType="textEmailAddress"/>
+            android:textColor="@color/main_text_color"
+            android:textColorHint="@color/main_text_color_hint" />
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/edit_text_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/settings_password"
-            android:textColorHint="@color/main_text_color_hint"
             android:layout_margin="20dp"
-            android:textColor="@color/main_text_color"
+            android:hint="@string/settings_password"
             android:inputType="textPassword"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:textColor="@color/main_text_color"
+            android:textColorHint="@color/main_text_color_hint" />
+
         <Button
             android:id="@+id/button_sign_in"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/sign_in"
-            android:textColor="@color/main_text_color"
+            android:layout_marginHorizontal="20dp"
             android:background="@color/button_login_background_color"
-            android:layout_marginHorizontal="20dp"/>
+            android:text="@string/sign_in"
+            android:textColor="@color/main_text_color" />
+
         <Button
             android:id="@+id/button_sign_up"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/sign_up"
-            android:textColor="@color/main_text_color"
-            android:background="@drawable/button_border_background"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_border_background"
+            android:text="@string/sign_up"
+            android:textColor="@color/main_text_color" />
     </LinearLayout>
 </layout>

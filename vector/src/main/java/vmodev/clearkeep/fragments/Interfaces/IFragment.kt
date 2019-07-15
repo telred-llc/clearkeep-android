@@ -4,4 +4,8 @@ import android.support.v4.app.Fragment
 
 interface IFragment {
     fun getFragment(): Fragment;
+
+    companion object {
+        const val LOGIN_FRAGMENT = "LOGIN_FRAGMENT";
+    }
 }
