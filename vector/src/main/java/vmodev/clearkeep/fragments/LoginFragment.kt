@@ -1,6 +1,7 @@
 package vmodev.clearkeep.fragments
 
 import android.app.AlertDialog
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
@@ -23,13 +24,14 @@ import org.matrix.androidsdk.rest.callback.SimpleApiCallback
 import org.matrix.androidsdk.rest.model.MatrixError
 import vmodev.clearkeep.activities.DemoEmptyActivity
 import vmodev.clearkeep.activities.SplashActivity
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.viewmodels.interfaces.AbstractLoginFragmentViewModel
 import java.lang.Exception
+import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -41,17 +43,17 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 class LoginFragment : DataBindingDaggerFragment(), IFragment {
+
+    @Inject
+    lateinit var viewModelFactory: IViewModelFactory<AbstractLoginFragmentViewModel>;
+
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
     private lateinit var binding: FragmentLoginBinding;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
         }
     }
 
@@ -64,50 +66,26 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.user = viewModelFactory.getViewModel().getLoginResult();
+        viewModelFactory.getViewModel().getLoginResult().observe(viewLifecycleOwner, Observer {
+            it?.data?.let {
+                gotoHomeActivity();
+            }
+        })
         binding.buttonSignIn.setOnClickListener { v ->
             run {
-                val password = edit_text_password.text.toString().trim();
-                val username = edit_text_username.text.toString().trim();
+                val password = binding.editTextPassword.text.toString().trim();
+                val username = binding.editTextUsername.text.toString().trim();
                 if (TextUtils.isEmpty(username)) {
-                    edit_text_username.setError(getString(R.string.error_empty_field_enter_user_name));
+                    binding.editTextUsername.setError(getString(R.string.error_empty_field_enter_user_name));
                     return@run;
                 }
                 if (TextUtils.isEmpty(password)) {
-                    edit_text_password.setError(getString(R.string.error_empty_field_your_password));
+                    binding.editTextPassword.setError(getString(R.string.error_empty_field_your_password));
                     return@run;
                 }
 
-                onPressedLogin();
-                val homeServerConnectionConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse(BuildConfig.HOME_SERVER))
-                        .withIdentityServerUri(Uri.parse("https://matrix.org")).build();
-                val loginHandler = LoginHandler();
-                loginHandler.login(this.context, homeServerConnectionConfig, edit_text_username.text.toString(), null, null,
-                        edit_text_password.text.toString(), object : ApiCallback<Void> {
-                    override fun onSuccess(p0: Void?) {
-                        gotoHomeActivity();
-                    }
-
-                    override fun onNetworkError(e: Exception?) {
-                        onPressedClose();
-                        if (e != null) {
-                            showAlertDiaglong("Sign in error", e.message!!)
-                        }
-                    }
-
-                    override fun onMatrixError(e: MatrixError?) {
-                        onPressedClose();
-                        if (e != null) {
-                            showAlertDiaglong("Sign in error", e.message)
-                        };
-                    }
-
-                    override fun onUnexpectedError(e: Exception?) {
-                        onPressedClose();
-                        if (e != null) {
-                            showAlertDiaglong("Sign in error", e.message!!)
-                        }
-                    }
-                });
+                viewModelFactory.getViewModel().setUserNamePasswordForLogin(binding.editTextUsername.text.toString(), binding.editTextPassword.text.toString());
             }
         };
         binding.buttonSignUp.setOnClickListener { v ->
@@ -115,30 +93,16 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
                 onPressedSignUp();
             }
         }
-    }
-
-    private fun showAlertDiaglong(title: String, message: String) {
-        AlertDialog.Builder(this.context).setTitle(title).setMessage(message).setNegativeButton("Close", null).show();
+        binding.lifecycleOwner = viewLifecycleOwner;
     }
 
     private fun gotoHomeActivity() {
         val intent = Intent(this.context, SplashActivity::class.java);
         startActivity(intent);
-        onLoginSuccess();
+        activity?.finish();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    fun onLoginSuccess() {
-        listener?.onLoginSuccess()
-    }
-
-    fun onPressedLogin() {
-        listener?.showLoading();
-    }
-
-    fun onPressedClose() {
-        listener?.hideLoading();
-    }
 
     fun onPressedSignUp() {
         listener?.onPressedSignUp();
@@ -174,9 +138,6 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
      * for more information.
      */
     interface OnFragmentInteractionListener {
-        fun onLoginSuccess()
-        fun showLoading();
-        fun hideLoading();
         fun onPressedSignUp();
     }
 
@@ -191,11 +152,9 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance() =
                 LoginFragment().apply {
                     arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
                     }
                 }
     }

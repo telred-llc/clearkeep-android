@@ -36,4 +36,6 @@ public interface MatrixService {
     fun exportNewBackupKey(passphrase: String): Observable<String>;
     fun sendTextMessage(roomId: String, content: String): Observable<Int>;
     fun getListFileInRoom(roomId: String): Observable<List<String>>;
+    fun login(username: String, password: String): Observable<String>;
+    fun register(username: String, email: String, password: String): Observable<String>;
 }

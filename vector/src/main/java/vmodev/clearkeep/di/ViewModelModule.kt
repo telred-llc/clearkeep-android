@@ -144,5 +144,10 @@ abstract class ViewModelModule {
     abstract fun bindLoginFragmentViewModel(viewModel: LoginFragmentViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractSignUpFragmentViewModel::class)
+    abstract fun bindSignUpFragmentViewModel(viewModel: SignUpFragmentViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }

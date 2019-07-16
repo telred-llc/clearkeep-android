@@ -4,18 +4,24 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
 import com.google.gson.Gson
+import im.vector.BuildConfig
+import im.vector.LoginHandler
 import im.vector.Matrix
+import im.vector.RegistrationManager
 import im.vector.util.HomeRoomsViewModel
 import im.vector.util.RoomUtils
 import im.vector.util.VectorUtils
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function
 import io.reactivex.internal.operators.observable.ObservableAll
 import io.reactivex.schedulers.Schedulers
+import org.matrix.androidsdk.HomeServerConnectionConfig
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.crypto.MXCRYPTO_ALGORITHM_MEGOLM
 import org.matrix.androidsdk.crypto.keysbackup.MegolmBackupCreationInfo
@@ -31,6 +37,8 @@ import org.matrix.androidsdk.rest.callback.SuccessErrorCallback
 import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.keys.KeysVersion
+import org.matrix.androidsdk.rest.model.login.LocalizedFlowDataLoginTerms
+import org.matrix.androidsdk.rest.model.pid.ThreePid
 import org.matrix.androidsdk.rest.model.search.SearchResponse
 import org.matrix.androidsdk.rest.model.search.SearchResult
 import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
@@ -45,6 +53,7 @@ import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.User
 import java.io.InputStream
 import java.lang.Exception
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -1239,6 +1248,140 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: ClearK
                     emmiter.onComplete();
                 }
             });
+        }
+    }
+
+    override fun login(username: String, password: String): Observable<String> {
+        return Observable.create { emitter ->
+            val homeServerConnectionConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse(BuildConfig.HOME_SERVER))
+                    .withIdentityServerUri(Uri.parse("https://matrix.org")).build();
+            LoginHandler().login(application, homeServerConnectionConfig, username, null, null, password, object : ApiCallback<Void> {
+                override fun onSuccess(p0: Void?) {
+                    setMXSession();
+                    emitter.onNext(username);
+                    emitter.onComplete();
+                }
+
+                override fun onUnexpectedError(p0: Exception?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+
+                override fun onMatrixError(p0: MatrixError?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+
+                override fun onNetworkError(p0: Exception?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+            })
+        }
+    }
+
+    override fun register(username: String, email: String, password: String): Observable<String> {
+        return Observable.create { emitter ->
+            var handleOnWaitingEmailValidation: Disposable? = null;
+            val registrationManager = RegistrationManager(null);
+            val homeServerConnectionConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse(BuildConfig.HOME_SERVER)).withAntiVirusServerUri(Uri.parse("https://matrix.org")).build();
+            registrationManager.setHsConfig(homeServerConnectionConfig);
+            registrationManager.addEmailThreePid(ThreePid(email, ThreePid.MEDIUM_EMAIL));
+            registrationManager.setAccountData(username, password);
+            if (email.isNullOrEmpty()) {
+                registrationManager.clearThreePid();
+            }
+            registrationManager.checkUsernameAvailability(application) {
+                if (!it) {
+                    emitter.onError(Throwable("Username or Email is already in use"));
+                    emitter.onComplete();
+                } else {
+                    registrationManager.attemptRegistration(application, object : RegistrationManager.RegistrationListener {
+                        override fun onRegistrationSuccess(warningMessage: String?) {
+                            warningMessage?.let {
+                                emitter.onNext(it);
+                                emitter.onComplete();
+                            } ?: run {
+                                emitter.onNext("");
+                                emitter.onComplete();
+                            }
+
+                        }
+
+                        override fun onRegistrationFailed(message: String?) {
+                            emitter.onError(Throwable(message));
+                            emitter.onComplete();
+                        }
+
+                        @SuppressLint("CheckResult")
+                        override fun onWaitingEmailValidation() {
+                            emitter.onNext("onWaitingEmailValidation");
+                            handleOnWaitingEmailValidation = Observable.interval(0, 10, TimeUnit.SECONDS).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe {
+                                registrationManager.attemptRegistration(application, object : RegistrationManager.RegistrationListener {
+                                    override fun onRegistrationSuccess(warningMessage: String?) {
+                                        handleOnWaitingEmailValidation?.dispose();
+                                        warningMessage?.let {
+                                            emitter.onNext(it);
+                                            emitter.onComplete();
+                                        } ?: run {
+                                            emitter.onNext("");
+                                            emitter.onComplete();
+                                        }
+                                    }
+
+                                    override fun onRegistrationFailed(message: String?) {
+                                        handleOnWaitingEmailValidation?.dispose();
+                                        emitter.onError(Throwable(message));
+                                        emitter.onComplete();
+                                    }
+
+                                    override fun onWaitingEmailValidation() {
+                                        //Do something
+                                    }
+
+                                    override fun onWaitingCaptcha(publicKey: String?) {
+                                        //Do something
+                                    }
+
+                                    override fun onWaitingTerms(localizedFlowDataLoginTerms: MutableList<LocalizedFlowDataLoginTerms>?) {
+                                        //Do something
+                                    }
+
+                                    override fun onThreePidRequestFailed(message: String?) {
+                                        handleOnWaitingEmailValidation?.dispose();
+                                        emitter.onError(Throwable(message));
+                                        emitter.onComplete();
+                                    }
+
+                                    override fun onResourceLimitExceeded(e: MatrixError?) {
+                                        handleOnWaitingEmailValidation?.dispose();
+                                        emitter.onError(Throwable(e?.message));
+                                        emitter.onComplete();
+                                    }
+                                })
+                            }
+                        }
+
+                        override fun onWaitingCaptcha(publicKey: String?) {
+                            emitter.onComplete();
+                        }
+
+                        override fun onWaitingTerms(localizedFlowDataLoginTerms: MutableList<LocalizedFlowDataLoginTerms>?) {
+                            emitter.onComplete();
+                        }
+
+                        override fun onThreePidRequestFailed(message: String?) {
+                            emitter.onError(Throwable(message));
+                            emitter.onComplete();
+                        }
+
+                        override fun onResourceLimitExceeded(e: MatrixError?) {
+                            emitter.onError(Throwable(e?.message));
+                            emitter.onComplete();
+                        }
+                    })
+                }
+            }
         }
     }
 }

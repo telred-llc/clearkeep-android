@@ -7,5 +7,6 @@ interface IFragment {
 
     companion object {
         const val LOGIN_FRAGMENT = "LOGIN_FRAGMENT";
+        const val SIGNUP_FRAGMENT = "SIGNUP_FRAGMENT";
     }
 }

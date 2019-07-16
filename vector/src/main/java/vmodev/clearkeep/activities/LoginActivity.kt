@@ -32,8 +32,6 @@ import javax.net.ssl.HttpsURLConnection
 
 class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFragmentInteractionListener, SignUpFragment.OnFragmentInteractionListener,
         RegistrationManager.UsernameValidityListener, RegistrationManager.RegistrationListener, HandlerVerifyEmailFragment.OnFragmentInteractionListener {
-    private val LOG_TAG: String = LoginActivity::javaClass.name;
-
     private lateinit var mRegistrationManager: RegistrationManager;
     private lateinit var hsConfig: HomeServerConnectionConfig;
     private lateinit var mLoginHandler: LoginHandler;
@@ -45,7 +43,7 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login);
 
-        val loginFragment = LoginFragment.newInstance("", "");
+        val loginFragment = LoginFragment.newInstance();
         changeFragment(loginFragment);
     }
 
@@ -53,27 +51,12 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
         return this;
     }
 
-    override fun onLoginSuccess() {
-        progress_bar.visibility = View.INVISIBLE;
-
-        finish();
-    }
-
-    override fun showLoading() {
-        progress_bar.visibility = View.VISIBLE;
-    }
-
-    override fun hideLoading() {
-        progress_bar.visibility = View.INVISIBLE;
-    }
-
     override fun onPressedSignUp() {
-        showLoading();
         initRegisterScreen();
     }
 
     override fun onPressedHaveAnAccount() {
-        val loginFragment = LoginFragment.newInstance("", "");
+        val loginFragment = LoginFragment.newInstance();
         changeFragment(loginFragment);
     }
 
@@ -94,21 +77,11 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
     }
 
     private fun checkRegistrationFlows() {
-        // should only check registration flows
-//        if (mMode != MODE_ACCOUNT_CREATION) {
-//            return
-//        }
-
         if (!mRegistrationManager.hasRegistrationResponse()) {
             try {
-//                val hsConfig = getHsConfig()
-
-                // invalid URL
                 if (null == hsConfig) {
                     return;
                 } else {
-//                    enableLoadingScreen(true)
-
                     mLoginHandler.getSupportedRegistrationFlows(this, hsConfig, object : SimpleApiCallback<Void>() {
                         override fun onSuccess(avoid: Void) {
                             // should never be called
@@ -119,7 +92,6 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
                         }
 
                         override fun onNetworkError(e: Exception) {
-                            Log.e(LOG_TAG, "Network Error: " + e.message, e)
                             onError(getString(R.string.login_error_registration_network_error) + " : " + e.localizedMessage)
                         }
 
@@ -134,7 +106,6 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
 
                         override fun onMatrixError(e: MatrixError) {
 
-                            Log.d(LOG_TAG, "## checkRegistrationFlows(): onMatrixError - Resp=" + e.localizedMessage)
                             var registrationFlowResponse: RegistrationFlowResponse? = null
 
                             // when a response is not completed the server returns an error message
@@ -143,7 +114,6 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
                                     try {
                                         registrationFlowResponse = JsonUtils.toRegistrationFlowResponse(e.mErrorBodyAsString)
                                     } catch (castExcept: Exception) {
-                                        Log.e(LOG_TAG, "JsonUtils.toRegistrationFlowResponse " + castExcept.localizedMessage, castExcept)
                                     }
 
                                 } else if (e.mStatus == 403) {
@@ -152,10 +122,9 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
 
                                 if (null != registrationFlowResponse) {
                                     mRegistrationManager.setSupportedRegistrationFlows(registrationFlowResponse)
-                                    hideLoading();
 //                                    onCheckRegistrationFlowsSuccess();
 //                                    onRegistrationFlow()
-                                    val signUpFragment = SignUpFragment.newInstance("", "");
+                                    val signUpFragment = SignUpFragment.newInstance();
                                     changeFragment(signUpFragment)
                                 } else {
 //                                    onFailureDuringAuthRequest(e)
@@ -196,7 +165,6 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
     }
 
     override fun onPressedRegister(username: String, email: String, password: String) {
-        showLoading();
         mRegistrationManager.setHsConfig(hsConfig);
         mRegistrationManager.addEmailThreePid(ThreePid(email, ThreePid.MEDIUM_EMAIL));
         mRegistrationManager.setAccountData(username, password);
@@ -207,7 +175,6 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
     }
 
     override fun onUsernameAvailabilityChecked(isAvailable: Boolean) {
-        hideLoading();
         if (!isAvailable) {
             showAlertDiaglong("Sign up error", "Username or Email is already in use");
         } else {
@@ -225,7 +192,6 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
             val handlerVerifyEmailFragment = HandlerVerifyEmailFragment.newInstance("", "");
             changeFragment(handlerVerifyEmailFragment);
             image_view_logo.visibility = View.GONE;
-            showLoading();
         }
 
         handleVerifyEmail = object : Runnable {
@@ -256,10 +222,9 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
     override fun onPressedCancel() {
         image_view_logo.visibility = View.VISIBLE;
         HANDLING_VERIFY_EMAIL = false;
-        hideLoading();
         if (mHandler != null && handleVerifyEmail != null)
             mHandler!!.removeCallbacks(handleVerifyEmail);
-        val signUpFragment = SignUpFragment.newInstance("", "");
+        val signUpFragment = SignUpFragment.newInstance();
         changeFragment(signUpFragment);
     }
 }

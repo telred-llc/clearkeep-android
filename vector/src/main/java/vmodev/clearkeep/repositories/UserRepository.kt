@@ -118,5 +118,27 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
         }.asLiveData();
     }
 
+    fun login(username: String, password: String): LiveData<Resource<String>> {
+        return object : AbstractNetworkNonBoundSource<String>() {
+            override fun createCall(): LiveData<String> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.login(username, password)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .toFlowable(BackpressureStrategy.LATEST))
+            }
+        }.asLiveData();
+    }
+
+    fun register(username: String, email: String, password: String): LiveData<Resource<String>> {
+        return object : AbstractNetworkNonBoundSource<String>() {
+            override fun createCall(): LiveData<String> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.register(username, email, password)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io())
+                        .toFlowable(BackpressureStrategy.LATEST));
+            }
+        }.asLiveData();
+    }
+
     class UserHandleObject constructor(val userId: String, val name: String, val avatarUrl: String);
 }
