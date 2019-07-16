@@ -70,7 +70,7 @@ class LoginFragment : Fragment() {
 
                 onPressedLogin();
                 val homeServerConnectionConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse(BuildConfig.HOME_SERVER))
-                    .withIdentityServerUri(Uri.parse("https://matrix.org")).build();
+                    .withIdentityServerUri(Uri.parse(BuildConfig.IDENTIFY_SERVER)).build();
                 val loginHandler = LoginHandler();
                 loginHandler.login(this.context, homeServerConnectionConfig, edit_text_username.text.toString(), null, null,
                     edit_text_password.text.toString(), object : ApiCallback<Void> {

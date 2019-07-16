@@ -17,7 +17,7 @@ class BackupKeyPathRepository @Inject constructor(private val backupKeyPathDao: 
     fun createNewBackupKey(passphrase: String): LiveData<Resource<String>> {
         return object : AbstractNetworkNonBoundSource<String>() {
             override fun createCall(): LiveData<String> {
-                return LiveDataReactiveStreams.fromPublisher(matrixService.exportNewBackupKey(passphrase)
+                return LiveDataReactiveStreams.fromPublisher(matrixService.exportRoomKey(passphrase)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .toFlowable(BackpressureStrategy.LATEST));
