@@ -26,7 +26,7 @@ class ProfileActivityViewModel @Inject constructor(userRepository: UserRepositor
         return _getGetCurrentUserResult;
     }
 
-    override fun getNeedBackupWhenLogout(): LiveData<Resource<Boolean>> {
+    override fun getNeedBackupWhenLogout(): LiveData<Resource<Int>> {
         return _getNeedBackupWhenSignOutResult;
     }
 

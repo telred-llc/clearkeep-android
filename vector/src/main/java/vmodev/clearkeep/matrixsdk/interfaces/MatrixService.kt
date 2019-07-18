@@ -46,5 +46,5 @@ public interface MatrixService {
     fun restoreBackupKeyFromRecoveryKey(key: String): Observable<ImportRoomKeysResult>;
     fun getAuthDataAsMegolmBackupAuthData(): Observable<String>;
     fun deleteKeyBackup(userId: String): Observable<KeyBackup>;
-    fun checkNeedBackupWhenSignOut(): Observable<Boolean>;
+    fun checkNeedBackupWhenSignOut(): Observable<Int>;
 }

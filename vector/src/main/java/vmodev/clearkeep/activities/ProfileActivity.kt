@@ -2,19 +2,15 @@ package vmodev.clearkeep.activities
 
 import android.app.Activity
 import android.arch.lifecycle.Observer
-import android.content.DialogInterface
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AlertDialog
-import com.orhanobut.dialogplus.DialogPlus
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.databinding.ActivityProfileBinding
-import im.vector.fragments.signout.SignOutBottomSheetDialogFragment
-import im.vector.fragments.signout.SignOutViewModel
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
@@ -63,11 +59,17 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
         }
         viewModelFactory.getViewModel().getNeedBackupWhenLogout().observe(this, Observer {
             it?.data?.let {
-                if (it) {
+                if (it != 1) {
                     AlertDialog.Builder(this).setTitle(R.string.action_sign_out).setMessage(R.string.sign_out_bottom_sheet_warning_backup_not_active)
                             .setNegativeButton(R.string.backup_key) { dialogInterface, i ->
-                                val intentBackupKey = Intent(this, PushBackupKeyActivity::class.java);
-                                startActivityForResult(intentBackupKey, WAITING_FOR_BACK_UP_KEY);
+                                if (it == 2) {
+                                    val intentBackupKey = Intent(this, PushBackupKeyActivity::class.java);
+                                    startActivityForResult(intentBackupKey, WAITING_FOR_BACK_UP_KEY);
+                                } else {
+                                    val intentBackupKey = Intent(this, RestoreBackupKeyActivity::class.java);
+                                    intentBackupKey.putExtra(RestoreBackupKeyActivity.USER_ID, mxSession.myUserId);
+                                    startActivityForResult(intentBackupKey, WAITING_FOR_BACK_UP_KEY);
+                                }
                             }
                             .setPositiveButton(R.string.keep_sign_out) { dialogInterface, i -> signOut() }
                             .show();

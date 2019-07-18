@@ -1,5 +1,6 @@
 package vmodev.clearkeep.fragments
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.databinding.DataBindingUtil
@@ -76,6 +77,7 @@ class PassphraseRestoreBackupKeyFragment : DataBindingDaggerFragment(), IFragmen
                         restoreStatus = false;
                         binding.buttonRestore.setText(R.string.restore);
                         Toast.makeText(this.context, "Success restore " + it.successfullyNumberOfImportedKeys + "/" + it.totalNumberOfKeys + " total number keys", Toast.LENGTH_LONG).show();
+                        activity?.setResult(Activity.RESULT_OK);
                         activity?.finish();
                     }
                 }

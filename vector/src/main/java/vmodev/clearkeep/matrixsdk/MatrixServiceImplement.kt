@@ -1588,9 +1588,10 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         }
     }
 
-    override fun checkNeedBackupWhenSignOut(): Observable<Boolean> {
+    override fun checkNeedBackupWhenSignOut(): Observable<Int> {
         setMXSession();
         return Observable.create { emitter ->
+            var valueNext: Int = 1;
             val value = session
                     ?.crypto
                     ?.cryptoStore
@@ -1600,7 +1601,16 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                     ?.crypto
                     ?.keysBackup
                     ?.state != KeysBackupStateManager.KeysBackupState.ReadyToBackUp
-            emitter.onNext(value);
+            if (value) {
+                valueNext = 2;
+                session!!.crypto?.let {
+                    it.keysBackup.state?.let {
+                        if (it == KeysBackupStateManager.KeysBackupState.NotTrusted)
+                            valueNext = 4;
+                    }
+                }
+            }
+            emitter.onNext(valueNext);
             emitter.onComplete();
         }
     }
