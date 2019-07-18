@@ -456,11 +456,11 @@
                     android:id="@+id/text_view_deactivate_account"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
                     android:text="@string/deactivate_account_title"
                     android:textAlignment="center"
                     android:textColor="@android:color/holo_red_dark"
-                    android:textSize="@dimen/text_20_sp"
-                    android:layout_margin="10dp"/>
+                    android:textSize="@dimen/text_20_sp" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

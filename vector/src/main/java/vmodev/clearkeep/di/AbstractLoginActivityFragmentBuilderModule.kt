@@ -3,14 +3,12 @@ package vmodev.clearkeep.di
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import vmodev.clearkeep.factories.viewmodels.LoginFragmentViewModelFactory
-import vmodev.clearkeep.factories.viewmodels.SignUpFragmentViewModelFactory
+import vmodev.clearkeep.factories.viewmodels.*
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.fragments.Interfaces.IFragment
-import vmodev.clearkeep.fragments.LoginFragment
-import vmodev.clearkeep.fragments.SignUpFragment
-import vmodev.clearkeep.viewmodels.interfaces.AbstractLoginFragmentViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractSignUpFragmentViewModel
+import vmodev.clearkeep.viewmodels.ForgotPasswordVerifyEmailFragmentViewModel
+import vmodev.clearkeep.viewmodels.interfaces.*
 import javax.inject.Named
 
 @Module
@@ -35,4 +33,34 @@ abstract class AbstractLoginActivityFragmentBuilderModule {
 
     @Binds
     abstract fun bindSignUpFragmentViewModelFactory(factory: SignUpFragmentViewModelFactory): IViewModelFactory<AbstractSignUpFragmentViewModel>;
+
+    @ContributesAndroidInjector
+    abstract fun contributeHandlerVerifyEmailFragment(): HandlerVerifyEmailFragment;
+
+    @Binds
+    @Named(IFragment.HANDLER_VERIFY_EMAIL_FRAGMENT)
+    abstract fun bindHandlerVerifyEmailFragment(fragment: HandlerVerifyEmailFragment): IFragment;
+
+    @Binds
+    abstract fun bindHandlerVerifyEmailFragmentViewModeFactory(factory: HandlerVerifyEmailFragmentViewModelFactory): IViewModelFactory<AbstractHandlerVerifyEmailFragmentViewModel>;
+
+    @ContributesAndroidInjector
+    abstract fun contributeForgotPasswordFragment(): ForgotPasswordFragment;
+
+    @Binds
+    @Named(IFragment.FORGOT_PASSWORD_FRAGMENT)
+    abstract fun bindForgotPasswordFragment(fragment: ForgotPasswordFragment): IFragment;
+
+    @Binds
+    abstract fun bindForgotPasswordFragmentViewModelFactory(factory: ForgotPasswordFragmentViewModelFactory): IViewModelFactory<AbstractForgotPasswordFragmentViewModel>;
+
+    @ContributesAndroidInjector
+    abstract fun contributeForgotPasswordVerifyEmailFragment(): ForgotPasswordVerifyEmailFragment;
+
+    @Binds
+    @Named(IFragment.FORGOT_PASSWORD_VERIFY_EMAIL_FRAGMENT)
+    abstract fun bindForgotPasswordVerifyEmailFragment(fragment: ForgotPasswordVerifyEmailFragment): IFragment;
+
+    @Binds
+    abstract fun bindForgotPasswordVerifyEmailFragmentViewModelFactory(factory: ForgotPasswordVerifyEmailFragmentViewModelFactory): IViewModelFactory<AbstractForgotPasswordVerifyEmailFragmentViewModel>
 }

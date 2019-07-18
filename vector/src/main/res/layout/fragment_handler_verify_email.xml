@@ -2,19 +2,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="vmodev.clearkeep.fragments.HandlerVerifyEmailFragment">
 
+    <data>
+
+    </data>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/button_login_background_color">
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="400dp"
-            android:background="@drawable/background_purple_to_transparent_gradient"
-            android:layout_gravity="bottom"/>
+            android:layout_gravity="bottom"
+            android:background="@drawable/background_purple_to_transparent_gradient" />
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/background_blue_to_transparent_gradient" />
+
         <RelativeLayout
             android:id="@+id/relative_layout_background"
             android:layout_width="match_parent"
@@ -28,6 +35,7 @@
                 android:background="@drawable/ic_launcher_app_white" />
 
             <TextView
+                android:id="@+id/text_view_report"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/image_view_logo"
@@ -35,6 +43,13 @@
                 android:text="@string/verify_email_content"
                 android:textAlignment="center"
                 android:textColor="@color/main_text_color" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_view_report"
+                android:layout_centerInParent="true" />
 
             <Button
                 android:id="@+id/button_cancel"

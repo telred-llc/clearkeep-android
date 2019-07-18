@@ -3,6 +3,7 @@ package vmodev.clearkeep.repositories
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import io.reactivex.BackpressureStrategy
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
@@ -114,28 +115,6 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
                 return LiveDataReactiveStreams.fromPublisher(matrixService.updateUser(name, avatarImage)
                         .subscribeOn(Schedulers.io()).observeOn(Schedulers.io())
                         .toFlowable(BackpressureStrategy.LATEST))
-            }
-        }.asLiveData();
-    }
-
-    fun login(username: String, password: String): LiveData<Resource<String>> {
-        return object : AbstractNetworkNonBoundSource<String>() {
-            override fun createCall(): LiveData<String> {
-                return LiveDataReactiveStreams.fromPublisher(matrixService.login(username, password)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .toFlowable(BackpressureStrategy.LATEST))
-            }
-        }.asLiveData();
-    }
-
-    fun register(username: String, email: String, password: String): LiveData<Resource<String>> {
-        return object : AbstractNetworkNonBoundSource<String>() {
-            override fun createCall(): LiveData<String> {
-                return LiveDataReactiveStreams.fromPublisher(matrixService.register(username, email, password)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.io())
-                        .toFlowable(BackpressureStrategy.LATEST));
             }
         }.asLiveData();
     }

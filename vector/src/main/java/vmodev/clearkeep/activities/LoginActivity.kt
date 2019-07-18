@@ -1,7 +1,9 @@
 package vmodev.clearkeep.activities
 
 import android.app.AlertDialog
+import android.arch.lifecycle.Observer
 import android.content.Intent
+import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -9,10 +11,12 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.Toast
 import im.vector.BuildConfig
 import im.vector.LoginHandler
 import im.vector.R
 import im.vector.RegistrationManager
+import im.vector.databinding.ActivityLoginBinding
 import im.vector.repositories.ServerUrlsRepository
 import kotlinx.android.synthetic.main.activity_login.*
 import org.matrix.androidsdk.HomeServerConnectionConfig
@@ -25,23 +29,24 @@ import org.matrix.androidsdk.rest.model.pid.ThreePid
 import org.matrix.androidsdk.util.JsonUtils
 import org.matrix.androidsdk.util.Log
 import vmodev.clearkeep.activities.interfaces.IActivity
-import vmodev.clearkeep.fragments.HandlerVerifyEmailFragment
-import vmodev.clearkeep.fragments.LoginFragment
-import vmodev.clearkeep.fragments.SignUpFragment
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.fragments.*
+import vmodev.clearkeep.viewmodelobjects.Status
+import vmodev.clearkeep.viewmodels.interfaces.AbstractLoginActivityViewModel
+import javax.inject.Inject
 import javax.net.ssl.HttpsURLConnection
 
-class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFragmentInteractionListener, SignUpFragment.OnFragmentInteractionListener,
-        RegistrationManager.UsernameValidityListener, RegistrationManager.RegistrationListener, HandlerVerifyEmailFragment.OnFragmentInteractionListener {
-    private lateinit var mRegistrationManager: RegistrationManager;
-    private lateinit var hsConfig: HomeServerConnectionConfig;
-    private lateinit var mLoginHandler: LoginHandler;
-    private var handleVerifyEmail: Runnable? = null;
-    private var mHandler: Handler? = null;
-    private var HANDLING_VERIFY_EMAIL: Boolean = false;
+class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFragmentInteractionListener
+        , SignUpFragment.OnFragmentInteractionListener, HandlerVerifyEmailFragment.OnFragmentInteractionListener
+        , ForgotPasswordFragment.OnFragmentInteractionListener, ForgotPasswordVerifyEmailFragment.OnFragmentInteractionListener {
+
+    @Inject
+    lateinit var viewModelFactory: IViewModelFactory<AbstractLoginActivityViewModel>;
+    private lateinit var binding: ActivityLoginBinding;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_login, dataBindingComponent);
 
         val loginFragment = LoginFragment.newInstance();
         changeFragment(loginFragment);
@@ -52,12 +57,50 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
     }
 
     override fun onPressedSignUp() {
-        initRegisterScreen();
+        viewModelFactory.getViewModel().getRegistrationFlowsResponseResult().observe(this, Observer {
+            it?.let {
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        it?.data?.let {
+                            changeFragment(SignUpFragment.newInstance());
+                            binding.progressBar.visibility = View.GONE;
+                        }
+                    }
+                    Status.ERROR -> {
+                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
+                        binding.progressBar.visibility = View.GONE;
+                    }
+                    Status.LOADING -> {
+                        binding.progressBar.visibility = View.VISIBLE;
+                    }
+                }
+            }
+        })
+    }
+
+    override fun onPressSendToEmail(email: String, password: String) {
+        changeFragment(ForgotPasswordVerifyEmailFragment.newInstance(email, password));
+    }
+
+    override fun onPressCancel() {
+        changeFragment(LoginFragment.newInstance());
+    }
+
+    override fun onPressSignIn() {
+        changeFragment(LoginFragment.newInstance());
     }
 
     override fun onPressedHaveAnAccount() {
         val loginFragment = LoginFragment.newInstance();
         changeFragment(loginFragment);
+    }
+
+    override fun onPressForgotPassword() {
+        changeFragment(ForgotPasswordFragment.newInstance());
+    }
+
+    override fun onResetPasswordSuccess() {
+        changeFragment(SignUpFragment.newInstance());
     }
 
     private fun changeFragment(fragment: Fragment) {
@@ -68,163 +111,11 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
         transaction.commit();
     }
 
-    private fun initRegisterScreen() {
-        mLoginHandler = LoginHandler();
-        mRegistrationManager = RegistrationManager(null);
-        hsConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse(BuildConfig.HOME_SERVER)).withIdentityServerUri(Uri.parse("https://matrix.org")).build();
-        mHandler = Handler(mainLooper);
-        checkRegistrationFlows();
-    }
-
-    private fun checkRegistrationFlows() {
-        if (!mRegistrationManager.hasRegistrationResponse()) {
-            try {
-                if (null == hsConfig) {
-                    return;
-                } else {
-                    mLoginHandler.getSupportedRegistrationFlows(this, hsConfig, object : SimpleApiCallback<Void>() {
-                        override fun onSuccess(avoid: Void) {
-                            // should never be called
-                        }
-
-                        private fun onError(errorMessage: String) {
-                            // should not check login flows
-                        }
-
-                        override fun onNetworkError(e: Exception) {
-                            onError(getString(R.string.login_error_registration_network_error) + " : " + e.localizedMessage)
-                        }
-
-                        override fun onUnexpectedError(e: Exception) {
-                            if (e is HttpException && e.httpError.httpCode == HttpsURLConnection.HTTP_BAD_METHOD /* 405 */) {
-                                // Registration is not allowed
-//                                    onRegistrationNotAllowed()
-                            } else {
-                                onError(getString(R.string.login_error_unable_register) + " : " + e.localizedMessage)
-                            }
-                        }
-
-                        override fun onMatrixError(e: MatrixError) {
-
-                            var registrationFlowResponse: RegistrationFlowResponse? = null
-
-                            // when a response is not completed the server returns an error message
-                            if (null != e.mStatus) {
-                                if (e.mStatus == 401) {
-                                    try {
-                                        registrationFlowResponse = JsonUtils.toRegistrationFlowResponse(e.mErrorBodyAsString)
-                                    } catch (castExcept: Exception) {
-                                    }
-
-                                } else if (e.mStatus == 403) {
-//                                        onRegistrationNotAllowed()
-                                }
-
-                                if (null != registrationFlowResponse) {
-                                    mRegistrationManager.setSupportedRegistrationFlows(registrationFlowResponse)
-//                                    onCheckRegistrationFlowsSuccess();
-//                                    onRegistrationFlow()
-                                    val signUpFragment = SignUpFragment.newInstance();
-                                    changeFragment(signUpFragment)
-                                } else {
-//                                    onFailureDuringAuthRequest(e)
-                                }
-
-                                // start Login due to a pending email validation
-//                                checkIfMailValidationPending()
-                            }
-                        }
-                    })
-                }
-            } catch (e: Exception) {
-//                Toast.makeText(getApplicationContext(), getString(R.string.login_error_invalid_home_server), Toast.LENGTH_SHORT).show()
-//                enableLoadingScreen(false)
-            }
-
-        } else {
-//            setActionButtonsEnabled(true)
-        }
-    }
-
-    private fun saveServerUrlsIfCustomValuesHasBeenEntered() {
-        // Save urls if not using default
-        ServerUrlsRepository.saveServerUrls(this, "https://study.sinbadflyce.com", "https://matrix.org");
-    }
-
-    private fun showAlertDiaglong(title: String, message: String) {
-        AlertDialog.Builder(this).setTitle(title).setMessage(message).setNegativeButton("Close", null).show();
-    }
-
-    override fun onRegistrationSuccess(warningMessage: String?) {
-        if (mHandler != null && handleVerifyEmail != null)
-            mHandler!!.removeCallbacks(handleVerifyEmail);
-        saveServerUrlsIfCustomValuesHasBeenEntered();
-        val intent = Intent(this, SplashActivity::class.java);
-        startActivity(intent);
-        finish();
-    }
-
-    override fun onPressedRegister(username: String, email: String, password: String) {
-        mRegistrationManager.setHsConfig(hsConfig);
-        mRegistrationManager.addEmailThreePid(ThreePid(email, ThreePid.MEDIUM_EMAIL));
-        mRegistrationManager.setAccountData(username, password);
-        if (email.isNullOrEmpty()) {
-            mRegistrationManager.clearThreePid();
-        }
-        mRegistrationManager.checkUsernameAvailability(this, this);
-    }
-
-    override fun onUsernameAvailabilityChecked(isAvailable: Boolean) {
-        if (!isAvailable) {
-            showAlertDiaglong("Sign up error", "Username or Email is already in use");
-        } else {
-            mRegistrationManager.attemptRegistration(this, this);
-        }
-    }
-
-    override fun onRegistrationFailed(message: String?) {
-        showAlertDiaglong("Sign up error", message!!);
-    }
-
     override fun onWaitingEmailValidation() {
-        if (!HANDLING_VERIFY_EMAIL) {
-            HANDLING_VERIFY_EMAIL = true;
-            val handlerVerifyEmailFragment = HandlerVerifyEmailFragment.newInstance("", "");
-            changeFragment(handlerVerifyEmailFragment);
-            image_view_logo.visibility = View.GONE;
-        }
-
-        handleVerifyEmail = object : Runnable {
-            override fun run() {
-                mRegistrationManager.attemptRegistration(this@LoginActivity, this@LoginActivity)
-                mHandler!!.postDelayed(handleVerifyEmail, 10000);
-            }
-        }
-        mHandler!!.postDelayed(handleVerifyEmail, 10000);
-    }
-
-    override fun onWaitingCaptcha(publicKey: String?) {
-        //This feature is not implemented in version
-    }
-
-    override fun onWaitingTerms(localizedFlowDataLoginTerms: MutableList<LocalizedFlowDataLoginTerms>?) {
-        //This feature is not implemented in version
-    }
-
-    override fun onThreePidRequestFailed(message: String?) {
-        showAlertDiaglong("Sign up error", message!!);
-    }
-
-    override fun onResourceLimitExceeded(e: MatrixError?) {
-        showAlertDiaglong("Sign up error", e!!.message);
+        changeFragment(HandlerVerifyEmailFragment.newInstance());
     }
 
     override fun onPressedCancel() {
-        image_view_logo.visibility = View.VISIBLE;
-        HANDLING_VERIFY_EMAIL = false;
-        if (mHandler != null && handleVerifyEmail != null)
-            mHandler!!.removeCallbacks(handleVerifyEmail);
-        val signUpFragment = SignUpFragment.newInstance();
-        changeFragment(signUpFragment);
+        changeFragment(SignUpFragment.newInstance());
     }
 }

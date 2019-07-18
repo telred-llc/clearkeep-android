@@ -22,8 +22,10 @@ import im.vector.databinding.FragmentSignUpBinding
 import im.vector.repositories.ServerUrlsRepository
 import kotlinx.android.synthetic.main.fragment_sign_up.*
 import vmodev.clearkeep.activities.SplashActivity
+import vmodev.clearkeep.activities.WaitingForVerifyEmailActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.ultis.isEmailValid
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSignUpFragmentViewModel
 import java.util.regex.Pattern
@@ -71,19 +73,19 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
             onPressedHaveAnAccount();
         };
         binding.buttonRegister.setOnClickListener { v ->
-            var email = text_input_edit_text_username.text.toString().trim();
+            var email = binding.textInputEditTextUsername.text.toString().trim();
             var username: String = "";
-            if (isEmailValid(email)) {
+            if (email.isEmailValid()) {
                 username = email.split("@")[0];
             } else {
                 email = "";
-                username = text_input_edit_text_username.text.toString().trim();
+                username = binding.textInputEditTextUsername.text.toString().trim();
             }
 
-            val password = text_input_edit_text_password.text.toString().trim();
-            val confirmPassword = text_input_edit_text_confirm_password.text.toString().trim();
+            val password = binding.textInputEditTextPassword.text.toString().trim();
+            val confirmPassword = binding.textInputEditTextConfirmPassword.text.toString().trim();
             if (TextUtils.isEmpty(username)) {
-                text_input_edit_text_username.setError(getString(R.string.error_empty_field_enter_user_name_or_email));
+                binding.textInputEditTextUsername.error = getString(R.string.error_empty_field_enter_user_name_or_email);
                 return@setOnClickListener;
             } else if (TextUtils.isDigitsOnly(username[0].toString())) {
                 showAlertDialog("Username error", "Numeric user IDs are reserved for guest users");
@@ -99,7 +101,7 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
                 }
             }
             if (TextUtils.isEmpty(password)) {
-                text_input_edit_text_password.setError(getString(R.string.error_empty_field_your_password));
+                binding.textInputEditTextPassword.error = getString(R.string.error_empty_field_your_password);
                 return@setOnClickListener;
             }
             if (password.length < 6) {
@@ -115,7 +117,7 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
                 return@setOnClickListener;
             }
             if (TextUtils.isEmpty(confirmPassword)) {
-                text_input_edit_text_confirm_password.setError(getString(R.string.error_empty_field_your_password_confirm));
+                binding.textInputEditTextConfirmPassword.error = getString(R.string.error_empty_field_your_password_confirm);
                 return@setOnClickListener;
             }
             if (password.compareTo(confirmPassword) != 0) {
@@ -130,9 +132,9 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
                 if (it.status == Status.SUCCESS) {
                     it.data?.let {
                         if (it.compareTo("onWaitingEmailValidation") == 0) {
-                            Log.d("onWaitingEmail", "onWaitingEmailValidation");
+                            onWaitingEmailValidation();
                         } else {
-                            ServerUrlsRepository.saveServerUrls(this.context!!, BuildConfig.HOME_SERVER, "https://matrix.org");
+                            ServerUrlsRepository.saveServerUrls(this.context!!, BuildConfig.HOME_SERVER, BuildConfig.IDENTIFY_SERVER);
                             val intent = Intent(activity, SplashActivity::class.java);
                             startActivity(intent);
                             activity?.finish();
@@ -145,23 +147,6 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
             }
         })
         binding.lifecycleOwner = viewLifecycleOwner;
-    }
-
-    fun isEmailValid(email: String): Boolean {
-        val regExpn = ("^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
-                + "((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
-                + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
-                + "([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
-                + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
-                + "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$")
-
-        val pattern = Pattern.compile(regExpn, Pattern.CASE_INSENSITIVE)
-        val matcher = pattern.matcher(email)
-
-        return if (matcher.matches())
-            true
-        else
-            false
     }
 
     override fun getFragment(): Fragment {
@@ -201,9 +186,9 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onPressedHaveAnAccount()
+        fun onPressedHaveAnAccount();
 
-        fun onPressedRegister(username: String, email: String, password: String);
+        fun onWaitingEmailValidation();
     }
 
     companion object {
@@ -224,8 +209,8 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
                 }
     }
 
-    private fun onPressedRegister(username: String, email: String, password: String) {
-        listener?.onPressedRegister(username, email, password);
+    private fun onWaitingEmailValidation() {
+        listener?.onWaitingEmailValidation();
     }
 
 

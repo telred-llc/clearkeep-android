@@ -43,9 +43,11 @@ class ExportKeyActivity : DataBindingDaggerActivity(), IExportKeyActivity, Expor
     private var exportStatus = false;
     private var backupKeyContent: String = "";
     private lateinit var mxSession: MXSession;
+    private lateinit var userId: String;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_export_key, dataBindingComponent);
+        userId = intent.getStringExtra(USER_ID);
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setTitle(R.string.security);
         supportActionBar?.setDisplayHomeAsUpEnabled(true);
@@ -55,12 +57,13 @@ class ExportKeyActivity : DataBindingDaggerActivity(), IExportKeyActivity, Expor
         }
         mxSession = Matrix.getInstance(applicationContext).defaultSession;
         binding.frameLayoutExportKeysGroup.setOnClickListener {
-            if (exportStatus)
-                return@setOnClickListener;
-            val fragment = ExportKeyDialogFragment.newInstance();
-            fragment.show(supportFragmentManager, "");
-//            val fragment = ReceivedShareFileDialogFragment.newInstance();
+            //            if (exportStatus)
+//                return@setOnClickListener;
+//            val fragment = ExportKeyDialogFragment.newInstance();
 //            fragment.show(supportFragmentManager, "");
+            val intentBackupKey = Intent(this, BackupKeyActivity::class.java);
+            intentBackupKey.putExtra(BackupKeyActivity.USER_ID, userId);
+            startActivity(intentBackupKey);
         }
         binding.backupKey = viewModelFactory.getViewModel().getExportBackupKeyResult();
         viewModelFactory.getViewModel().getExportBackupKeyResult().observe(this, Observer {
@@ -175,5 +178,6 @@ class ExportKeyActivity : DataBindingDaggerActivity(), IExportKeyActivity, Expor
         const val REQUEST_READ_WRITE_EXTERNAL_STORAGE_FOR_SHARE = 1;
         const val REQUEST_READ_WRITE_EXTERNAL_STORAGE_FOR_SAVE_TO_FILE = 2;
         const val CHOOSE_FOLDER_FOR_SAVE_FILE = 13425;
+        const val USER_ID = "USER_ID";
     }
 }

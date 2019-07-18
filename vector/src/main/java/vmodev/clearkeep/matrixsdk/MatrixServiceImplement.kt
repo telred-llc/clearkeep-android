@@ -7,11 +7,14 @@ import android.arch.lifecycle.MutableLiveData
 import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
+import android.widget.Toast
 import com.google.gson.Gson
 import im.vector.BuildConfig
 import im.vector.LoginHandler
 import im.vector.Matrix
 import im.vector.RegistrationManager
+import im.vector.R
+import im.vector.activity.util.WaitingViewData
 import im.vector.util.HomeRoomsViewModel
 import im.vector.util.RoomUtils
 import im.vector.util.VectorUtils
@@ -24,6 +27,9 @@ import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.HomeServerConnectionConfig
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.crypto.MXCRYPTO_ALGORITHM_MEGOLM
+import org.matrix.androidsdk.crypto.data.ImportRoomKeysResult
+import org.matrix.androidsdk.crypto.keysbackup.KeysBackupStateManager
+import org.matrix.androidsdk.crypto.keysbackup.KeysBackupVersionTrust
 import org.matrix.androidsdk.crypto.keysbackup.MegolmBackupCreationInfo
 import org.matrix.androidsdk.data.Room
 import org.matrix.androidsdk.data.RoomMediaMessage
@@ -31,26 +37,30 @@ import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.data.RoomTag
 import org.matrix.androidsdk.listeners.IMXMediaUploadListener
 import org.matrix.androidsdk.listeners.ProgressListener
+import org.matrix.androidsdk.listeners.StepProgressListener
 import org.matrix.androidsdk.rest.callback.ApiCallback
 import org.matrix.androidsdk.rest.callback.SimpleApiCallback
+import org.matrix.androidsdk.rest.callback.SuccessCallback
 import org.matrix.androidsdk.rest.callback.SuccessErrorCallback
 import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.keys.KeysVersion
 import org.matrix.androidsdk.rest.model.login.LocalizedFlowDataLoginTerms
 import org.matrix.androidsdk.rest.model.pid.ThreePid
+import org.matrix.androidsdk.rest.model.keys.KeysVersionResult
+import org.matrix.androidsdk.rest.model.login.LoginFlow
+import org.matrix.androidsdk.rest.model.login.RegistrationFlowResponse
 import org.matrix.androidsdk.rest.model.search.SearchResponse
 import org.matrix.androidsdk.rest.model.search.SearchResult
 import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
+import org.matrix.androidsdk.util.JsonUtils
 import vmodev.clearkeep.applications.ClearKeepApplication
+import vmodev.clearkeep.fragments.SignUpFragment
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.ultis.SearchMessageByTextResult
-import vmodev.clearkeep.viewmodelobjects.File
-import vmodev.clearkeep.viewmodelobjects.MessageSearchText
-import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
-import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.viewmodelobjects.*
 import java.io.InputStream
 import java.lang.Exception
 import java.util.concurrent.TimeUnit
@@ -58,7 +68,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MatrixServiceImplmenmt @Inject constructor(private val application: ClearKeepApplication) : MatrixService {
+class MatrixServiceImplement @Inject constructor(private val application: ClearKeepApplication) : MatrixService {
 
     //    @Inject
     private var session: MXSession? = null;
@@ -1126,13 +1136,13 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: ClearK
                                         it.version?.let {
                                             emitter.onNext(info.recoveryKey);
                                             emitter.onComplete();
-                                        }?.run {
+                                        } ?: run {
                                             emitter.onError(Throwable("KeysVersion Value is null"));
-//                                            emitter.onComplete();
+                                            emitter.onComplete();
                                         }
-                                    }?.run {
+                                    } ?: run {
                                         emitter.onError(Throwable("KeysVersion is null"));
-//                                        emitter.onComplete();
+                                        emitter.onComplete();
                                     }
                                 }
 
@@ -1151,20 +1161,58 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: ClearK
                                     emitter.onComplete();
                                 }
                             });
-                        }?.run {
-                            //                            emitter.onError(Throwable("MegolmBackupCreationInfo is null"));
-//                            emitter.onComplete();
+                        } ?: run {
+                            emitter.onError(Throwable("MegolmBackupCreationInfo is null"));
+                            emitter.onComplete();
                         }
                     }
 
                     override fun onUnexpectedError(p0: Exception?) {
                         emitter.onError(Throwable(p0?.message));
-//                        emitter.onComplete();
+                        emitter.onComplete();
                     }
                 });
-            }?.run {
-                //                emitter.onError(Throwable("Crypto is null"));
-//                emitter.onComplete();
+            } ?: run {
+                emitter.onError(Throwable("Crypto is null"));
+                emitter.onComplete();
+            }
+        }
+    }
+
+    override fun exportRoomKey(passphrase: String): Observable<String> {
+        setMXSession();
+        return Observable.create<String> { emitter ->
+            session!!.crypto?.let {
+                it.exportRoomKeys(passphrase, object : ApiCallback<ByteArray> {
+                    override fun onSuccess(p0: ByteArray?) {
+                        p0?.let {
+                            val info = String(it);
+                            emitter.onNext(info);
+                            emitter.onComplete();
+                        } ?: run {
+                            emitter.onError(NullPointerException());
+                            emitter.onComplete();
+                        }
+                    }
+
+                    override fun onUnexpectedError(p0: Exception?) {
+                        emitter.onError(Throwable(p0?.message));
+                        emitter.onComplete();
+                    }
+
+                    override fun onMatrixError(p0: MatrixError?) {
+                        emitter.onError(Throwable(p0?.message));
+                        emitter.onComplete();
+                    }
+
+                    override fun onNetworkError(p0: Exception?) {
+                        emitter.onError(Throwable(p0?.message));
+                        emitter.onComplete();
+                    }
+                })
+            } ?: kotlin.run {
+                emitter.onError(NullPointerException());
+                emitter.onComplete();
             }
         }
     }
@@ -1251,136 +1299,293 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: ClearK
         }
     }
 
-    override fun login(username: String, password: String): Observable<String> {
+    override fun getListSignature(id: String): Observable<List<Signature>> {
+        setMXSession();
         return Observable.create { emitter ->
-            val homeServerConnectionConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse(BuildConfig.HOME_SERVER))
-                    .withIdentityServerUri(Uri.parse("https://matrix.org")).build();
-            LoginHandler().login(application, homeServerConnectionConfig, username, null, null, password, object : ApiCallback<Void> {
-                override fun onSuccess(p0: Void?) {
-                    setMXSession();
-                    emitter.onNext(username);
-                    emitter.onComplete();
-                }
-
-                override fun onUnexpectedError(p0: Exception?) {
-                    emitter.onError(Throwable(p0?.message));
-                    emitter.onComplete();
-                }
-
-                override fun onMatrixError(p0: MatrixError?) {
-                    emitter.onError(Throwable(p0?.message));
-                    emitter.onComplete();
-                }
-
-                override fun onNetworkError(p0: Exception?) {
-                    emitter.onError(Throwable(p0?.message));
-                    emitter.onComplete();
-                }
-            })
-        }
-    }
-
-    override fun register(username: String, email: String, password: String): Observable<String> {
-        return Observable.create { emitter ->
-            var handleOnWaitingEmailValidation: Disposable? = null;
-            val registrationManager = RegistrationManager(null);
-            val homeServerConnectionConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse(BuildConfig.HOME_SERVER)).withAntiVirusServerUri(Uri.parse("https://matrix.org")).build();
-            registrationManager.setHsConfig(homeServerConnectionConfig);
-            registrationManager.addEmailThreePid(ThreePid(email, ThreePid.MEDIUM_EMAIL));
-            registrationManager.setAccountData(username, password);
-            if (email.isNullOrEmpty()) {
-                registrationManager.clearThreePid();
-            }
-            registrationManager.checkUsernameAvailability(application) {
-                if (!it) {
-                    emitter.onError(Throwable("Username or Email is already in use"));
-                    emitter.onComplete();
-                } else {
-                    registrationManager.attemptRegistration(application, object : RegistrationManager.RegistrationListener {
-                        override fun onRegistrationSuccess(warningMessage: String?) {
-                            warningMessage?.let {
-                                emitter.onNext(it);
-                                emitter.onComplete();
-                            } ?: run {
-                                emitter.onNext("");
-                                emitter.onComplete();
+            session!!.crypto?.let { mxCrypt ->
+                mxCrypt?.keysBackup.mKeysBackupVersion?.let {
+                    mxCrypt.keysBackup.getKeysBackupTrust(it, SuccessCallback { p0 ->
+                        p0?.let {
+                            val signatures = ArrayList<Signature>();
+                            it.signatures.forEach {
+                                var deviceId = "";
+                                it.deviceId?.let {
+                                    deviceId = it;
+                                }
+                                val signature = Signature(id = deviceId, status = if (it.valid) 1 else 0
+                                        , description = if (deviceId.compareTo(mxCrypt.myDevice.deviceId) == 0) application.resources.getString(im.vector.R.string.keys_backup_settings_valid_signature_from_this_device)
+                                else application.resources.getString(im.vector.R.string.keys_backup_settings_valid_signature_from_verified_device), keyBackup = id)
+                                signatures.add(signature);
                             }
-
-                        }
-
-                        override fun onRegistrationFailed(message: String?) {
-                            emitter.onError(Throwable(message));
+                            emitter.onNext(signatures);
                             emitter.onComplete();
-                        }
-
-                        @SuppressLint("CheckResult")
-                        override fun onWaitingEmailValidation() {
-                            emitter.onNext("onWaitingEmailValidation");
-                            handleOnWaitingEmailValidation = Observable.interval(0, 10, TimeUnit.SECONDS).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe {
-                                registrationManager.attemptRegistration(application, object : RegistrationManager.RegistrationListener {
-                                    override fun onRegistrationSuccess(warningMessage: String?) {
-                                        handleOnWaitingEmailValidation?.dispose();
-                                        warningMessage?.let {
-                                            emitter.onNext(it);
-                                            emitter.onComplete();
-                                        } ?: run {
-                                            emitter.onNext("");
-                                            emitter.onComplete();
-                                        }
-                                    }
-
-                                    override fun onRegistrationFailed(message: String?) {
-                                        handleOnWaitingEmailValidation?.dispose();
-                                        emitter.onError(Throwable(message));
-                                        emitter.onComplete();
-                                    }
-
-                                    override fun onWaitingEmailValidation() {
-                                        //Do something
-                                    }
-
-                                    override fun onWaitingCaptcha(publicKey: String?) {
-                                        //Do something
-                                    }
-
-                                    override fun onWaitingTerms(localizedFlowDataLoginTerms: MutableList<LocalizedFlowDataLoginTerms>?) {
-                                        //Do something
-                                    }
-
-                                    override fun onThreePidRequestFailed(message: String?) {
-                                        handleOnWaitingEmailValidation?.dispose();
-                                        emitter.onError(Throwable(message));
-                                        emitter.onComplete();
-                                    }
-
-                                    override fun onResourceLimitExceeded(e: MatrixError?) {
-                                        handleOnWaitingEmailValidation?.dispose();
-                                        emitter.onError(Throwable(e?.message));
-                                        emitter.onComplete();
-                                    }
-                                })
-                            }
-                        }
-
-                        override fun onWaitingCaptcha(publicKey: String?) {
-                            emitter.onComplete();
-                        }
-
-                        override fun onWaitingTerms(localizedFlowDataLoginTerms: MutableList<LocalizedFlowDataLoginTerms>?) {
-                            emitter.onComplete();
-                        }
-
-                        override fun onThreePidRequestFailed(message: String?) {
-                            emitter.onError(Throwable(message));
-                            emitter.onComplete();
-                        }
-
-                        override fun onResourceLimitExceeded(e: MatrixError?) {
-                            emitter.onError(Throwable(e?.message));
+                        } ?: kotlin.run {
+                            emitter.onError(NullPointerException());
                             emitter.onComplete();
                         }
                     })
+
+                } ?: kotlin.run {
+                    emitter.onError(NullPointerException());
+                    emitter.onComplete();
                 }
+            } ?: kotlin.run {
+                emitter.onError(NullPointerException());
+                emitter.onComplete();
+            }
+        }
+    }
+
+    override fun getKeyBackUpData(userId: String): Observable<KeyBackup> {
+        setMXSession();
+        return Observable.create { emitter ->
+            session!!.crypto?.let { mxCrypto ->
+                mxCrypto.keysBackup.mKeysBackupVersion?.let {
+                    var algorithm = "";
+                    var count = 0;
+                    var version = "";
+                    it.algorithm?.let {
+                        algorithm = it;
+                    }
+                    it.version?.let {
+                        version = it;
+                    }
+                    it.count?.let {
+                        count = it;
+                    }
+                    val keyBackup = KeyBackup(id = userId, algorithm = algorithm, version = version, count = count, state = mxCrypto.keysBackup.state.ordinal)
+                    emitter.onNext(keyBackup);
+                    emitter.onComplete();
+                } ?: kotlin.run {
+                    val keyBackup = KeyBackup(id = userId, algorithm = "", version = "", count = 0, state = mxCrypto.keysBackup.state.ordinal);
+                    emitter.onNext(keyBackup);
+                    emitter.onComplete();
+                }
+            } ?: kotlin.run {
+                emitter.onError(NullPointerException());
+                emitter.onComplete();
+            }
+        }
+    }
+
+    override fun restoreBackupFromPassphrase(password: String): Observable<ImportRoomKeysResult> {
+        setMXSession();
+        return Observable.create { emitter ->
+            session!!.crypto?.let { mxCrypto ->
+                mxCrypto.keysBackup.mKeysBackupVersion?.let { keyBackupResult ->
+                    mxCrypto.keysBackup.restoreKeyBackupWithPassword(keyBackupResult, password, null, session!!.myUserId, object : StepProgressListener {
+                        var isComputingKey = false;
+                        override fun onStepProgress(step: StepProgressListener.Step) {
+                            when (step) {
+                                is StepProgressListener.Step.ComputingKey -> {
+                                    if (isComputingKey)
+                                        return;
+                                    isComputingKey = true;
+                                    Toast.makeText(application, "Computing Key", Toast.LENGTH_SHORT).show();
+                                }
+                                is StepProgressListener.Step.DownloadingKey -> {
+                                    Toast.makeText(application, "Downloading Key", Toast.LENGTH_SHORT).show();
+                                }
+                                is StepProgressListener.Step.ImportingKey -> {
+                                    Toast.makeText(application, "Importing Key", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                    }, object : ApiCallback<ImportRoomKeysResult> {
+                        override fun onSuccess(p0: ImportRoomKeysResult?) {
+                            p0?.let {
+                                Toast.makeText(application, "Successfully", Toast.LENGTH_SHORT).show();
+                                mxCrypto.keysBackup.trustKeysBackupVersion(keyBackupResult, true, object : ApiCallback<Void> {
+                                    override fun onSuccess(p0: Void?) {
+                                        emitter.onNext(it);
+                                        emitter.onComplete();
+                                    }
+
+                                    override fun onUnexpectedError(p0: Exception?) {
+                                        emitter.onError(Throwable(p0?.message));
+                                        emitter.onComplete();
+                                    }
+
+                                    override fun onMatrixError(p0: MatrixError?) {
+                                        emitter.onError(Throwable(p0?.message));
+                                        emitter.onComplete();
+                                    }
+
+                                    override fun onNetworkError(p0: Exception?) {
+                                        emitter.onError(Throwable(p0?.message));
+                                        emitter.onComplete();
+                                    }
+                                })
+
+                            } ?: kotlin.run {
+                                emitter.onError(Throwable("No Import Room Key Result"));
+                                emitter.onComplete();
+                            }
+                        }
+
+                        override fun onUnexpectedError(p0: Exception?) {
+                            emitter.onError(Throwable(p0?.message));
+                            emitter.onComplete();
+                        }
+
+                        override fun onMatrixError(p0: MatrixError?) {
+                            emitter.onError(Throwable(p0?.message));
+                            emitter.onComplete();
+                        }
+
+                        override fun onNetworkError(p0: Exception?) {
+                            emitter.onError(Throwable(p0?.message));
+                            emitter.onComplete();
+                        }
+                    })
+                } ?: kotlin.run {
+                    emitter.onError(Throwable("No Key Backup Version"));
+                    emitter.onComplete();
+                }
+            } ?: kotlin.run {
+                emitter.onError(Throwable("No crypto"));
+                emitter.onComplete();
+            }
+        }
+    }
+
+    override fun restoreBackupKeyFromRecoveryKey(key: String): Observable<ImportRoomKeysResult> {
+        setMXSession();
+        return Observable.create { emitter ->
+            session!!.crypto?.let { mxCrypto ->
+                mxCrypto.keysBackup.mKeysBackupVersion?.let {
+                    mxCrypto.keysBackup.restoreKeysWithRecoveryKey(it, key, null, session!!.myUserId, object : StepProgressListener {
+                        var isComputingKey = false;
+                        override fun onStepProgress(step: StepProgressListener.Step) {
+                            when (step) {
+                                is StepProgressListener.Step.ComputingKey -> {
+                                    if (isComputingKey)
+                                        return;
+                                    isComputingKey = true;
+                                    Toast.makeText(application, "Computing Key", Toast.LENGTH_SHORT).show();
+                                }
+                                is StepProgressListener.Step.DownloadingKey -> {
+                                    Toast.makeText(application, "Downloading Key", Toast.LENGTH_SHORT).show();
+                                }
+                                is StepProgressListener.Step.ImportingKey -> {
+                                    Toast.makeText(application, "Importing Key", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                    }, object : ApiCallback<ImportRoomKeysResult> {
+                        override fun onSuccess(p0: ImportRoomKeysResult?) {
+                            p0?.let {
+                                Toast.makeText(application, "Success", Toast.LENGTH_SHORT).show();
+                                emitter.onNext(it);
+                                emitter.onComplete();
+                            } ?: kotlin.run {
+                                Toast.makeText(application, "No Import Room Key Result", Toast.LENGTH_LONG).show();
+                                emitter.onComplete();
+                            }
+                        }
+
+                        override fun onUnexpectedError(p0: Exception?) {
+                            Toast.makeText(application, p0?.message, Toast.LENGTH_SHORT).show();
+                            emitter.onComplete();
+                        }
+
+                        override fun onMatrixError(p0: MatrixError?) {
+                            Toast.makeText(application, p0?.message, Toast.LENGTH_SHORT).show();
+                            emitter.onComplete();
+                        }
+
+                        override fun onNetworkError(p0: Exception?) {
+                            Toast.makeText(application, p0?.message, Toast.LENGTH_SHORT).show();
+                            emitter.onComplete();
+                        }
+                    })
+                } ?: kotlin.run {
+                    Toast.makeText(application, "No Key Backup Version", Toast.LENGTH_SHORT).show();
+                    emitter.onComplete();
+                }
+            } ?: kotlin.run {
+                Toast.makeText(application, "No crypto", Toast.LENGTH_SHORT).show();
+                emitter.onComplete();
+            }
+        }
+    }
+
+    override fun getAuthDataAsMegolmBackupAuthData(): Observable<String> {
+        setMXSession();
+        return Observable.create { emitter ->
+            session!!.crypto?.let { mxCrypto ->
+                mxCrypto?.keysBackup.getCurrentVersion(object : ApiCallback<KeysVersionResult?> {
+                    override fun onSuccess(p0: KeysVersionResult?) {
+                        p0?.let {
+                            it.getAuthDataAsMegolmBackupAuthData().privateKeySalt?.let {
+                                emitter.onNext(it);
+                                emitter.onComplete();
+                            } ?: run {
+                                emitter.onError(Throwable("Null Private Key Salt"));
+                                emitter.onComplete();
+                            }
+                        } ?: run {
+                            emitter.onError(Throwable("Null Keys Version Result"));
+                            emitter.onComplete();
+                        }
+                    }
+
+                    override fun onUnexpectedError(p0: Exception?) {
+                        emitter.onError(Throwable(p0?.message));
+                        emitter.onComplete();
+                    }
+
+                    override fun onMatrixError(p0: MatrixError?) {
+                        emitter.onError(Throwable(p0?.message));
+                        emitter.onComplete();
+                    }
+
+                    override fun onNetworkError(p0: Exception?) {
+                        emitter.onError(Throwable(p0?.message));
+                        emitter.onComplete();
+                    }
+                })
+            } ?: kotlin.run {
+                Toast.makeText(application, "No crypto", Toast.LENGTH_SHORT).show();
+                emitter.onComplete();
+            }
+        }
+    }
+
+    override fun deleteKeyBackup(userId: String): Observable<KeyBackup> {
+        setMXSession();
+        return Observable.create { emitter ->
+            session!!.crypto?.let { mxCrypto ->
+                mxCrypto.keysBackup.currentBackupVersion?.let {
+                    mxCrypto.keysBackup.deleteBackup(it, object : ApiCallback<Void> {
+                        override fun onSuccess(p0: Void?) {
+                            val keyBackup = KeyBackup(id = userId, algorithm = "", version = "", count = 0, state = mxCrypto.keysBackup.state.ordinal);
+                            emitter.onNext(keyBackup);
+                            emitter.onComplete();
+                        }
+
+                        override fun onUnexpectedError(p0: Exception?) {
+                            emitter.onError(Throwable(p0?.message));
+                            emitter.onComplete();
+                        }
+
+                        override fun onMatrixError(p0: MatrixError?) {
+                            emitter.onError(Throwable(p0?.message));
+                            emitter.onComplete();
+                        }
+
+                        override fun onNetworkError(p0: Exception?) {
+                            emitter.onError(Throwable(p0?.message));
+                            emitter.onComplete();
+                        }
+                    })
+                } ?: kotlin.run {
+                    emitter.onError(NullPointerException("Current backup version is null"));
+                    emitter.onComplete();
+                }
+            } ?: kotlin.run {
+                emitter.onError(NullPointerException("Crypto is null"));
+                emitter.onComplete();
             }
         }
     }

@@ -26,6 +26,8 @@ import vmodev.clearkeep.activities.DemoEmptyActivity
 import vmodev.clearkeep.activities.SplashActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.ultis.isEmailValid
+import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractLoginFragmentViewModel
 import java.lang.Exception
 import javax.inject.Inject
@@ -68,10 +70,20 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
         super.onViewCreated(view, savedInstanceState)
         binding.user = viewModelFactory.getViewModel().getLoginResult();
         viewModelFactory.getViewModel().getLoginResult().observe(viewLifecycleOwner, Observer {
-            it?.data?.let {
-                gotoHomeActivity();
+            it?.let {
+                if (it.status == Status.SUCCESS) {
+                    it.data?.let {
+                        gotoHomeActivity();
+                    }
+                }
+                if (it.status == Status.ERROR) {
+                    AlertDialog.Builder(activity).setTitle(R.string.sign_in_error).setMessage(it.message).setNegativeButton(R.string.close, null).show();
+                }
             }
-        })
+        });
+        binding.textForgotPassword.setOnClickListener {
+            onPressForgotPassword();
+        };
         binding.buttonSignIn.setOnClickListener { v ->
             run {
                 val password = binding.editTextPassword.text.toString().trim();
@@ -85,7 +97,10 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
                     return@run;
                 }
 
-                viewModelFactory.getViewModel().setUserNamePasswordForLogin(binding.editTextUsername.text.toString(), binding.editTextPassword.text.toString());
+                if (username.isEmailValid())
+                    viewModelFactory.getViewModel().setUserNamePasswordForLogin(username.split("@")[0], password);
+                else
+                    viewModelFactory.getViewModel().setUserNamePasswordForLogin(username, password);
             }
         };
         binding.buttonSignUp.setOnClickListener { v ->
@@ -104,8 +119,12 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
 
     // TODO: Rename method, update argument and hook method into UI event
 
-    fun onPressedSignUp() {
+    private fun onPressedSignUp() {
         listener?.onPressedSignUp();
+    }
+
+    private fun onPressForgotPassword() {
+        listener?.onPressForgotPassword();
     }
 
     override fun onAttach(context: Context) {
@@ -139,6 +158,7 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
      */
     interface OnFragmentInteractionListener {
         fun onPressedSignUp();
+        fun onPressForgotPassword();
     }
 
     companion object {

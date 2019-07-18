@@ -3,15 +3,16 @@ package vmodev.clearkeep.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
+import vmodev.clearkeep.repositories.LoginRepository
 import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractLoginFragmentViewModel
 import javax.inject.Inject
 
-class LoginFragmentViewModel @Inject constructor(userRepository: UserRepository) : AbstractLoginFragmentViewModel() {
+class LoginFragmentViewModel @Inject constructor(loginRepository: LoginRepository) : AbstractLoginFragmentViewModel() {
     private val _setUserNamePasswordForLogin = MutableLiveData<LoginObject>();
-    private val _getLoginResult = Transformations.switchMap(_setUserNamePasswordForLogin) { input -> userRepository.login(input.username, input.password) }
+    private val _getLoginResult = Transformations.switchMap(_setUserNamePasswordForLogin) { input -> loginRepository.login(input.username, input.password) }
     override fun setUserNamePasswordForLogin(username: String, password: String) {
         _setUserNamePasswordForLogin.value = LoginObject(username, password);
     }

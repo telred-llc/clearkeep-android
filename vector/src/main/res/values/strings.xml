@@ -1318,10 +1318,21 @@ Why choose Riot.im?
     <string name="successed">Successed</string>
     <string name="suggested_user">Suggested</string>
     <string name="send_to">Send to</string>
-    <string name="list_file">FList file</string>
+    <string name="list_file">List file</string>
+    <string name="backup_key">Backup key</string>
+    <string name="restore">Restore</string>
+    <string name="version_number">Version number</string>
+    <string name="keys_backup">Keys backup</string>
+    <string name="device_id_signatures">DeviceId Signatures</string>
+    <string name="start_backup">Start backup</string>
+    <string name="backing_up">Backing up...</string>
+    <string name="delete_success">Delete success</string>
+    <string name="resotring">Restoring...</string>
     <string name="file">Files</string>
     <string name="email">Email</string>
     <string name="new_password">New password</string>
     <string name="confirm">Confirm</string>
     <string name="auth_reset_password_email_validation_message_content">A verification email will be sent to your inbox to confirm setting your new password.</string>
+    <string name="sign_in_error">Sign in error</string>
+    <string name="forgot_password_verify_email_content">We sent you an email verification. Please verify it to complete the reset password</string>
 </resources>

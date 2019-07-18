@@ -28,6 +28,14 @@
             android:background="@color/login_background_main_color"
             android:orientation="vertical">
 
+            <ImageView
+                android:id="@+id/image_view_logo"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="100dp"
+                android:background="@drawable/ic_launcher_app" />
+
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/edit_text_username"
                 android:layout_width="match_parent"
@@ -58,6 +66,15 @@
                 android:background="@color/button_login_background_color"
                 android:text="@string/sign_in"
                 android:textColor="@color/main_text_color" />
+
+            <TextView
+                android:id="@+id/text_forgot_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/auth_forgot_password"
+                android:textAlignment="center"
+                android:textColor="@color/app_green" />
 
             <Button
                 android:id="@+id/button_sign_up"

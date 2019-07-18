@@ -1,14 +1,24 @@
 package vmodev.clearkeep.fragments
 
+import android.app.AlertDialog
 import android.content.Context
+import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
 import im.vector.R
+import im.vector.databinding.FragmentForgotPasswordBinding
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.ultis.isEmailValid
+import vmodev.clearkeep.viewmodels.interfaces.AbstractForgotPasswordFragmentViewModel
+import java.util.regex.Pattern
+import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,29 +34,77 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class ForgotPasswordFragment : Fragment() {
+class ForgotPasswordFragment : DataBindingDaggerFragment(), IFragment {
+
+    @Inject
+    lateinit var viewModelFactory: IViewModelFactory<AbstractForgotPasswordFragmentViewModel>;
+
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
+    private lateinit var binding: FragmentForgotPasswordBinding;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_forgot_password, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_forgot_password, container, false, dataBindingComponent);
+        return binding.root;
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.buttonSendResetEmail.setOnClickListener {
+            var email = binding.textInputEditTextUsername.text.toString().trim();
+
+            val password = binding.textInputEditTextPassword.text.toString().trim();
+            val confirmPassword = binding.textInputEditTextConfirmPassword.text.toString().trim();
+            if (!email.isEmailValid()) {
+                binding.textInputEditTextUsername.error = getString(R.string.error_empty_field_enter_user_name_or_email);
+                return@setOnClickListener;
+            }
+            if (TextUtils.isEmpty(password)) {
+                binding.textInputEditTextPassword.error = getString(R.string.error_empty_field_your_password);
+                return@setOnClickListener;
+            }
+            if (password.length < 6) {
+                showAlertDialog("Password error", getString(R.string.password_too_short));
+                return@setOnClickListener;
+            }
+            if (password.length > 15) {
+                showAlertDialog("Password error", getString(R.string.password_too_long));
+                return@setOnClickListener;
+            }
+            if (password.contains(" ")) {
+                showAlertDialog("Password error", getString(R.string.password_contain_space));
+                return@setOnClickListener;
+            }
+            if (TextUtils.isEmpty(confirmPassword)) {
+                binding.textInputEditTextConfirmPassword.error = getString(R.string.error_empty_field_your_password_confirm);
+                return@setOnClickListener;
+            }
+            if (password.compareTo(confirmPassword) != 0) {
+                showAlertDialog("Password error", "Password don't match");
+                return@setOnClickListener;
+            }
+            onPressSendToEmail(email, password);
+        }
+        binding.buttonSignIn.setOnClickListener {
+            onPressSignIn();
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
+    private fun onPressSendToEmail(email: String, password: String) {
+        listener?.onPressSendToEmail(email, password);
+    }
+
+    private fun onPressSignIn() {
+        listener?.onPressSignIn();
     }
 
     override fun onAttach(context: Context) {
@@ -63,6 +121,14 @@ class ForgotPasswordFragment : Fragment() {
         listener = null
     }
 
+    override fun getFragment(): Fragment {
+        return this;
+    }
+
+    private fun showAlertDialog(title: String, message: String) {
+        AlertDialog.Builder(this.context).setTitle(title).setMessage(message).setNegativeButton("Close", null).show();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -76,7 +142,9 @@ class ForgotPasswordFragment : Fragment() {
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
+        fun onPressSendToEmail(email: String, password: String)
+
+        fun onPressSignIn();
     }
 
     companion object {
@@ -90,11 +158,9 @@ class ForgotPasswordFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance() =
                 ForgotPasswordFragment().apply {
                     arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
                     }
                 }
     }

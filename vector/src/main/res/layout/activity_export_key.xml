@@ -55,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_margin="10dp"
-                    android:text="@string/export_keys"
+                    android:text="@string/backup_key"
                     android:textColor="@color/app_green"
                     android:textSize="@dimen/text_20_sp" />
             </FrameLayout>

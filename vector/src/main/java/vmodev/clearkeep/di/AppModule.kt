@@ -1,9 +1,12 @@
 package vmodev.clearkeep.di
 
 import android.arch.persistence.room.Room
+import android.net.Uri
 import android.support.v7.util.DiffUtil
 import dagger.Module
 import dagger.Provides
+import im.vector.BuildConfig
+import org.matrix.androidsdk.HomeServerConnectionConfig
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.applications.ClearKeepApplication
@@ -61,6 +64,18 @@ class AppModule {
     @Provides
     fun provideBackupKeyPath(clearKeepDatabase: ClearKeepDatabase): AbstractBackupKeyPathDao {
         return clearKeepDatabase.backupKeyPathDao();
+    }
+
+    @Singleton
+    @Provides
+    fun provideSignature(clearKeepDatabase: ClearKeepDatabase): AbstractSignatureDao {
+        return clearKeepDatabase.signatureDao();
+    }
+
+    @Singleton
+    @Provides
+    fun provideKeyBackup(clearKeepDatabase: ClearKeepDatabase): AbstractKeyBackupDao {
+        return clearKeepDatabase.keyBackupDao();
     }
 
     @Provides
