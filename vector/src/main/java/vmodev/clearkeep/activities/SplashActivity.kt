@@ -49,11 +49,13 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
 
     private val mLaunchTime = System.currentTimeMillis()
 
+    private var startFromLogin: Int = 0;
+
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_splash, dataBindingComponent);
-
+        startFromLogin = intent.getIntExtra(START_FROM_LOGIN, 0);
         binding.rooms = viewModelFactory.getViewModel().getAllRoomResult();
         if (!hasCredentials()) {
             val intent = Intent(this, LoginActivity::class.java);
@@ -110,6 +112,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
 //                        context.applicationContext.startActivity(intent)
 
                         val intent = Intent(this@SplashActivity, SplashActivity::class.java);
+                        intent.putExtra(START_FROM_LOGIN, startFromLogin);
                         startActivity(intent);
 //                        finish();
 
@@ -167,7 +170,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
 
         if (!hasCorruptedStore()) {
             val intent = Intent(this, HomeScreenActivity::class.java)
-
+            intent.putExtra(HomeScreenActivity.START_FROM_LOGIN, startFromLogin)
             viewModelFactory.getViewModel().getAllRoomResult().observe(this, Observer { t ->
                 if (t?.status == Status.SUCCESS) {
                     startActivity(intent)
@@ -350,5 +353,6 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
 
     companion object {
         const val NEED_TO_CLEAR_CACHE_BEFORE_81200 = "NEED_TO_CLEAR_CACHE_BEFORE_81200";
+        const val START_FROM_LOGIN = "START_FROM_LOGIN";
     }
 }
