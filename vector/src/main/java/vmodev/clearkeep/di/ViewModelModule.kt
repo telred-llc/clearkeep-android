@@ -169,5 +169,10 @@ abstract class ViewModelModule {
     abstract fun bindBackupKeyActivityViewModel(viewModel: BackupKeyActivityViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractProfileActivityViewModel::class)
+    abstract fun bindProfileActivityViewModel(viewModel: ProfileActivityViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }

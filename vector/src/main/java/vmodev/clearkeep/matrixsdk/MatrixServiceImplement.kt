@@ -187,10 +187,8 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
     override fun getUser(): Observable<User> {
         setMXSession();
         val myUser = session!!.myUser;
-        return Observable.create<User> { emitter ->
-            kotlin.run {
-                //                val myUser = session!!.myUser;
-
+        return Observable.create { emitter ->
+            run {
                 if (myUser != null) {
                     var avatar = "";
                     var result = session!!.contentManager.getDownloadableUrl(myUser.avatarUrl);
@@ -1587,6 +1585,33 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                 emitter.onError(NullPointerException("Crypto is null"));
                 emitter.onComplete();
             }
+        }
+    }
+
+    override fun checkNeedBackupWhenSignOut(): Observable<Int> {
+        setMXSession();
+        return Observable.create { emitter ->
+            var valueNext: Int = 1;
+            val value = session
+                    ?.crypto
+                    ?.cryptoStore
+                    ?.inboundGroupSessionsCount(false)
+                    ?: 0 > 0
+                    && session
+                    ?.crypto
+                    ?.keysBackup
+                    ?.state != KeysBackupStateManager.KeysBackupState.ReadyToBackUp
+            if (value) {
+                valueNext = 2;
+                session!!.crypto?.let {
+                    it.keysBackup.state?.let {
+                        if (it == KeysBackupStateManager.KeysBackupState.NotTrusted)
+                            valueNext = 4;
+                    }
+                }
+            }
+            emitter.onNext(valueNext);
+            emitter.onComplete();
         }
     }
 }

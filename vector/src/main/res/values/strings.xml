@@ -1335,4 +1335,7 @@ Why choose Riot.im?
     <string name="auth_reset_password_email_validation_message_content">A verification email will be sent to your inbox to confirm setting your new password.</string>
     <string name="sign_in_error">Sign in error</string>
     <string name="forgot_password_verify_email_content">We sent you an email verification. Please verify it to complete the reset password</string>
+    <string name="keep_sign_out">Keep Sign Out</string>
+    <string name="backup_error">Backup Error</string>
+    <string name="backup_error_message_sign_out">Backup key error. You want try again?</string>
 </resources>
