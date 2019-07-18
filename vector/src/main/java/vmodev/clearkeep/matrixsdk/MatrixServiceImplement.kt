@@ -4,11 +4,15 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
 import com.google.gson.Gson
+import im.vector.BuildConfig
+import im.vector.LoginHandler
 import im.vector.Matrix
+import im.vector.RegistrationManager
 import im.vector.R
 import im.vector.activity.util.WaitingViewData
 import im.vector.util.HomeRoomsViewModel
@@ -16,9 +20,11 @@ import im.vector.util.RoomUtils
 import im.vector.util.VectorUtils
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function
 import io.reactivex.internal.operators.observable.ObservableAll
 import io.reactivex.schedulers.Schedulers
+import org.matrix.androidsdk.HomeServerConnectionConfig
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.crypto.MXCRYPTO_ALGORITHM_MEGOLM
 import org.matrix.androidsdk.crypto.data.ImportRoomKeysResult
@@ -39,11 +45,17 @@ import org.matrix.androidsdk.rest.callback.SuccessErrorCallback
 import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.keys.KeysVersion
+import org.matrix.androidsdk.rest.model.login.LocalizedFlowDataLoginTerms
+import org.matrix.androidsdk.rest.model.pid.ThreePid
 import org.matrix.androidsdk.rest.model.keys.KeysVersionResult
+import org.matrix.androidsdk.rest.model.login.LoginFlow
+import org.matrix.androidsdk.rest.model.login.RegistrationFlowResponse
 import org.matrix.androidsdk.rest.model.search.SearchResponse
 import org.matrix.androidsdk.rest.model.search.SearchResult
 import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
+import org.matrix.androidsdk.util.JsonUtils
 import vmodev.clearkeep.applications.ClearKeepApplication
+import vmodev.clearkeep.fragments.SignUpFragment
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
@@ -51,11 +63,12 @@ import vmodev.clearkeep.ultis.SearchMessageByTextResult
 import vmodev.clearkeep.viewmodelobjects.*
 import java.io.InputStream
 import java.lang.Exception
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MatrixServiceImplmenmt @Inject constructor(private val application: ClearKeepApplication) : MatrixService {
+class MatrixServiceImplement @Inject constructor(private val application: ClearKeepApplication) : MatrixService {
 
     //    @Inject
     private var session: MXSession? = null;
@@ -1359,7 +1372,7 @@ class MatrixServiceImplmenmt @Inject constructor(private val application: ClearK
         setMXSession();
         return Observable.create { emitter ->
             session!!.crypto?.let { mxCrypto ->
-                mxCrypto.keysBackup.mKeysBackupVersion?.let {keyBackupResult ->
+                mxCrypto.keysBackup.mKeysBackupVersion?.let { keyBackupResult ->
                     mxCrypto.keysBackup.restoreKeyBackupWithPassword(keyBackupResult, password, null, session!!.myUserId, object : StepProgressListener {
                         var isComputingKey = false;
                         override fun onStepProgress(step: StepProgressListener.Step) {

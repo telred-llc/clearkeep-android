@@ -1,9 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="vmodev.clearkeep.fragments.HandlerVerifyEmailFragment">
+    tools:context="vmodev.clearkeep.activities.WaitingForVerifyEmailActivity">
 
     <data>
 
+        <import type="android.arch.lifecycle.LiveData" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Status" />
+
+        <variable
+            name="verifyEmail"
+            type="LiveData&lt;Resource&lt;String>>" />
     </data>
 
     <FrameLayout
@@ -35,7 +46,7 @@
                 android:background="@drawable/ic_launcher_app_white" />
 
             <TextView
-                android:id="@+id/text_view_report"
+                android:id="@+id/text_view_hint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/image_view_logo"
@@ -45,11 +56,11 @@
                 android:textColor="@color/main_text_color" />
 
             <ProgressBar
-                android:id="@+id/progress_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/text_view_report"
-                android:layout_centerInParent="true" />
+                android:layout_below="@id/text_view_hint"
+                android:layout_centerInParent="true"
+                app:visibleGone="@{verifyEmail.status == Status.LOADING}" />
 
             <Button
                 android:id="@+id/button_cancel"

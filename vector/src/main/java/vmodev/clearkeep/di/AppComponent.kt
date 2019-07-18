@@ -37,12 +37,13 @@ import javax.inject.Singleton
     , AbstractPrivacyPolicyActivityModule::class
     , AbstractReportActivityModule::class
     , AbstractCreateNewCallActivityModule::class
+    , AbstractCreateNewCallActivityModule::class
     , AbstractBackupKeyActivityModule::class
     , AbstractRestoreBackupKeyActivityModule::class
-    , AbstractPushBackupKeyActivityModule::class])
+    , AbstractPushBackupKeyActivityModule::class
+    , AbstractLoginActivityModule::class])
 interface AppComponent : AndroidInjector<ClearKeepApplication> {
     override fun inject(instance: ClearKeepApplication?)
-//    fun inject(application: Application)
 
     @Component.Builder
     interface Builder {

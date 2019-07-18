@@ -1,8 +1,12 @@
 package vmodev.clearkeep.fragments
 
 import android.app.AlertDialog
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
+import android.databinding.DataBindingUtil
+import android.databinding.Observable
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -14,6 +18,20 @@ import im.vector.R
 import kotlinx.android.synthetic.main.fragment_handler_verify_email.*
 import android.graphics.drawable.GradientDrawable
 import android.widget.RelativeLayout
+import android.widget.Toast
+import im.vector.BuildConfig
+import im.vector.databinding.FragmentHandlerVerifyEmailBinding
+import im.vector.repositories.ServerUrlsRepository
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
+import vmodev.clearkeep.activities.SplashActivity
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.viewmodelobjects.Status
+import vmodev.clearkeep.viewmodels.interfaces.AbstractHandlerVerifyEmailFragmentViewModel
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -30,41 +48,71 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class HandlerVerifyEmailFragment : Fragment() {
+class HandlerVerifyEmailFragment : DataBindingDaggerFragment(), IFragment {
+
+    @Inject
+    lateinit var viewModelFactory: IViewModelFactory<AbstractHandlerVerifyEmailFragmentViewModel>;
+
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
+
+    private lateinit var binding: FragmentHandlerVerifyEmailBinding;
+    private var disposable: Disposable? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_handler_verify_email, container, false)
-//        val rainbow = GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,
-//                intArrayOf(android.graphics.Color.RED, android.graphics.Color.MAGENTA, android.graphics.Color.BLUE, android.graphics.Color.CYAN, android.graphics.Color.GREEN, android.graphics.Color.YELLOW, android.graphics.Color.RED))
-//        view.findViewById<RelativeLayout>(R.id.relative_layout_background).background = rainbow;
-        view.findViewById<Button>(R.id.button_cancel).setOnClickListener { v ->
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_handler_verify_email, container, false, dataBindingComponent);
+        return binding.root;
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        disposable = io.reactivex.Observable.interval(0, 10, TimeUnit.SECONDS).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    viewModelFactory.getViewModel().getRegistrationFlowsResponseResult().observe(viewLifecycleOwner, Observer {
+                        it?.let {
+                            when (it.status) {
+                                Status.SUCCESS -> {
+                                    binding.progressBar.visibility = View.GONE;
+                                    ServerUrlsRepository.saveServerUrls(this.context!!, BuildConfig.HOME_SERVER, BuildConfig.IDENTIFY_SERVER);
+                                    val intent = Intent(activity, SplashActivity::class.java);
+                                    startActivity(intent);
+                                    activity?.finish();
+                                }
+                                Status.ERROR -> {
+                                    binding.progressBar.visibility = View.GONE;
+                                    Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show();
+                                    onButtonPressed();
+                                }
+                                Status.LOADING -> {
+                                    binding.progressBar.visibility = View.VISIBLE;
+                                }
+                            }
+                        }
+                    });
+                }
+        binding.buttonCancel.setOnClickListener { v ->
             run {
-                AlertDialog.Builder(this.context).setTitle("Cancel Registration").setMessage("Are you sure to cancel this registration?").setPositiveButton("Yes", { dialog, which ->
+                AlertDialog.Builder(this.context).setTitle("Cancel Registration").setMessage("Are you sure to cancel this registration?").setPositiveButton("Yes") { dialog, which ->
                     run {
+                        disposable?.dispose();
                         onButtonPressed()
                     }
-                }).setNegativeButton("No", null).show();
+                }.setNegativeButton("No", null).show();
             }
         };
-        return view;
+        binding.lifecycleOwner = viewLifecycleOwner;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    fun onButtonPressed() {
+    private fun onButtonPressed() {
         listener?.onPressedCancel();
     }
 
@@ -80,6 +128,11 @@ class HandlerVerifyEmailFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         listener = null
+        disposable?.dispose();
+    }
+
+    override fun getFragment(): Fragment {
+        return this;
     }
 
     /**
@@ -109,16 +162,10 @@ class HandlerVerifyEmailFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance() =
                 HandlerVerifyEmailFragment().apply {
                     arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
                     }
                 }
-    }
-
-    private fun showAlertDiaglong(title: String, message: String) {
-
     }
 }

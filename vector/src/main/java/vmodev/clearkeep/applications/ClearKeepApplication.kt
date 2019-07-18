@@ -6,11 +6,11 @@ import android.util.Log
 import dagger.android.AndroidInjector
 import im.vector.Matrix
 import im.vector.R
+import io.reactivex.plugins.RxJavaPlugins
 import vmodev.clearkeep.databases.ClearKeepDatabase
 import vmodev.clearkeep.di.DaggerAppComponent
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
 import javax.inject.Inject
-import io.reactivex.plugins.RxJavaPlugins
 
 
 class ClearKeepApplication : DaggerVectorApp(), IApplication {

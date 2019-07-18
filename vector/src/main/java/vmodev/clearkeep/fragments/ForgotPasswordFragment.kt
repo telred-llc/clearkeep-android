@@ -1,104 +1,71 @@
 package vmodev.clearkeep.fragments
 
 import android.app.AlertDialog
-import android.arch.lifecycle.Observer
 import android.content.Context
-import android.content.Intent
 import android.databinding.DataBindingUtil
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.Toast
-import im.vector.BuildConfig
 
 import im.vector.R
-import im.vector.databinding.FragmentSignUpBinding
-import im.vector.repositories.ServerUrlsRepository
-import kotlinx.android.synthetic.main.fragment_sign_up.*
-import vmodev.clearkeep.activities.SplashActivity
-import vmodev.clearkeep.activities.WaitingForVerifyEmailActivity
+import im.vector.databinding.FragmentForgotPasswordBinding
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.ultis.isEmailValid
-import vmodev.clearkeep.viewmodelobjects.Status
-import vmodev.clearkeep.viewmodels.interfaces.AbstractSignUpFragmentViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractForgotPasswordFragmentViewModel
 import java.util.regex.Pattern
 import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [SignUpFragment.OnFragmentInteractionListener] interface
+ * [ForgotPasswordFragment.OnFragmentInteractionListener] interface
  * to handle interaction events.
- * Use the [SignUpFragment.newInstance] factory method to
+ * Use the [ForgotPasswordFragment.newInstance] factory method to
  * create an instance of this fragment.
  *
  */
-class SignUpFragment : DataBindingDaggerFragment(), IFragment {
+class ForgotPasswordFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
-    lateinit var viewModelFactory: IViewModelFactory<AbstractSignUpFragmentViewModel>;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractForgotPasswordFragmentViewModel>;
 
     // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
-    private lateinit var binding: FragmentSignUpBinding;
+    private lateinit var binding: FragmentForgotPasswordBinding;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
         }
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_forgot_password, container, false, dataBindingComponent);
         return binding.root;
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.register = viewModelFactory.getViewModel().getRegisterResult();
-        binding.frameLayoutHaveAnAccount.setOnClickListener { v ->
-            onPressedHaveAnAccount();
-        };
-        binding.buttonRegister.setOnClickListener { v ->
+        binding.buttonSendResetEmail.setOnClickListener {
             var email = binding.textInputEditTextUsername.text.toString().trim();
-            var username: String = "";
-            if (email.isEmailValid()) {
-                username = email.split("@")[0];
-            } else {
-                email = "";
-                username = binding.textInputEditTextUsername.text.toString().trim();
-            }
 
             val password = binding.textInputEditTextPassword.text.toString().trim();
             val confirmPassword = binding.textInputEditTextConfirmPassword.text.toString().trim();
-            if (TextUtils.isEmpty(username)) {
+            if (!email.isEmailValid()) {
                 binding.textInputEditTextUsername.error = getString(R.string.error_empty_field_enter_user_name_or_email);
                 return@setOnClickListener;
-            } else if (TextUtils.isDigitsOnly(username[0].toString())) {
-                showAlertDialog("Username error", "Numeric user IDs are reserved for guest users");
-                return@setOnClickListener;
-            } else {
-                val expression = "^[a-z0-9.\\-_=/]+$"
-
-                val pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE)
-                val matcher = pattern.matcher(username)
-                if (!matcher.matches()) {
-                    showAlertDialog("Username error", "User ID can only contain characters a-z,0-9, or '=_-./'");
-                    return@setOnClickListener;
-                }
             }
             if (TextUtils.isEmpty(password)) {
                 binding.textInputEditTextPassword.error = getString(R.string.error_empty_field_your_password);
@@ -124,40 +91,21 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
                 showAlertDialog("Password error", "Password don't match");
                 return@setOnClickListener;
             }
-//            onPressedRegister(username, email, password);
-            viewModelFactory.getViewModel().setDataForRegister(username, email, password);
-        };
-        viewModelFactory.getViewModel().getRegisterResult().observe(viewLifecycleOwner, Observer {
-            it?.let {
-                if (it.status == Status.SUCCESS) {
-                    it.data?.let {
-                        if (it.compareTo("onWaitingEmailValidation") == 0) {
-                            onWaitingEmailValidation();
-                        } else {
-                            ServerUrlsRepository.saveServerUrls(this.context!!, BuildConfig.HOME_SERVER, BuildConfig.IDENTIFY_SERVER);
-                            val intent = Intent(activity, SplashActivity::class.java);
-                            startActivity(intent);
-                            activity?.finish();
-                        }
-                    }
-                }
-                if (it.status == Status.ERROR) {
-                    Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show();
-                }
-            }
-        })
-        binding.lifecycleOwner = viewLifecycleOwner;
-    }
-
-    override fun getFragment(): Fragment {
-        return this;
+            onPressSendToEmail(email, password);
+        }
+        binding.buttonSignIn.setOnClickListener {
+            onPressSignIn();
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    fun onPressedHaveAnAccount() {
-        listener?.onPressedHaveAnAccount()
+    private fun onPressSendToEmail(email: String, password: String) {
+        listener?.onPressSendToEmail(email, password);
     }
 
+    private fun onPressSignIn() {
+        listener?.onPressSignIn();
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -173,6 +121,14 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
         listener = null
     }
 
+    override fun getFragment(): Fragment {
+        return this;
+    }
+
+    private fun showAlertDialog(title: String, message: String) {
+        AlertDialog.Builder(this.context).setTitle(title).setMessage(message).setNegativeButton("Close", null).show();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -186,9 +142,9 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onPressedHaveAnAccount();
+        fun onPressSendToEmail(email: String, password: String)
 
-        fun onWaitingEmailValidation();
+        fun onPressSignIn();
     }
 
     companion object {
@@ -198,23 +154,14 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment SignUpFragment.
+         * @return A new instance of fragment ForgotPasswordFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance() =
-                SignUpFragment().apply {
+                ForgotPasswordFragment().apply {
                     arguments = Bundle().apply {
                     }
                 }
-    }
-
-    private fun onWaitingEmailValidation() {
-        listener?.onWaitingEmailValidation();
-    }
-
-
-    private fun showAlertDialog(title: String, message: String) {
-        AlertDialog.Builder(this.context).setTitle(title).setMessage(message).setNegativeButton("Close", null).show();
     }
 }
