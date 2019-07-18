@@ -1,45 +1,38 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import android.app.Activity
+import android.arch.lifecycle.Observer
 import android.content.DialogInterface
 import android.content.Intent
 import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AlertDialog
-import dagger.android.DaggerActivity
-import dagger.android.support.DaggerAppCompatActivity
+import com.orhanobut.dialogplus.DialogPlus
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.databinding.ActivityProfileBinding
 import im.vector.fragments.signout.SignOutBottomSheetDialogFragment
 import im.vector.fragments.signout.SignOutViewModel
-import im.vector.util.VectorUtils
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
-import vmodev.clearkeep.activities.interfaces.IProfileActivity
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.databases.ClearKeepDatabase
-import vmodev.clearkeep.viewmodels.UserViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.viewmodels.interfaces.AbstractProfileActivityViewModel
+import java.util.*
 import javax.inject.Inject
 
-class ProfileActivity : DataBindingDaggerActivity(), IProfileActivity {
+class ProfileActivity : DataBindingDaggerActivity(), IActivity {
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractProfileActivityViewModel>
     @Inject
     lateinit var clearKeepDatabase: ClearKeepDatabase;
     lateinit var binding: ActivityProfileBinding;
     lateinit var mxSession: MXSession;
-
-    private lateinit var userViewModel: AbstractUserViewModel;
-//    private var dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,12 +45,11 @@ class ProfileActivity : DataBindingDaggerActivity(), IProfileActivity {
         binding.toolbar.setNavigationOnClickListener {
             onBackPressed();
         }
-        userViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractUserViewModel::class.java);
-        userViewModel.setUserId(mxSession.myUserId);
-        binding.user = userViewModel.getUserData();
-        binding.lifecycleOwner = this;
+        binding.user = viewModelFactory.getViewModel().getCurrentUserResult();
+        binding.checkNeedBackup = viewModelFactory.getViewModel().getNeedBackupWhenLogout();
+        viewModelFactory.getViewModel().setIdForGetCurrentUser(mxSession.myUserId);
         binding.buttonSignOut.setOnClickListener {
-            signOut();
+            viewModelFactory.getViewModel().setCheckNeedBackupWhenSignOut(Calendar.getInstance().timeInMillis)
         }
         binding.buttonSetting.setOnClickListener {
             val intentProfileSetting = Intent(this, ProfileSettingsActivity::class.java);
@@ -69,31 +61,60 @@ class ProfileActivity : DataBindingDaggerActivity(), IProfileActivity {
             intentEditProfile.putExtra(EditProfileActivity.USER_ID, mxSession.myUserId)
             startActivity(intentEditProfile)
         }
+        viewModelFactory.getViewModel().getNeedBackupWhenLogout().observe(this, Observer {
+            it?.data?.let {
+                if (it) {
+                    AlertDialog.Builder(this).setTitle(R.string.action_sign_out).setMessage(R.string.sign_out_bottom_sheet_warning_backup_not_active)
+                            .setNegativeButton(R.string.backup_key) { dialogInterface, i ->
+                                val intentBackupKey = Intent(this, PushBackupKeyActivity::class.java);
+                                startActivityForResult(intentBackupKey, WAITING_FOR_BACK_UP_KEY);
+                            }
+                            .setPositiveButton(R.string.keep_sign_out) { dialogInterface, i -> signOut() }
+                            .show();
+                } else {
+                    signOut();
+                }
+            }
+        })
+        binding.lifecycleOwner = this;
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == WAITING_FOR_BACK_UP_KEY) {
+            if (resultCode == Activity.RESULT_OK) {
+                AlertDialog.Builder(this).setTitle(R.string.done).setMessage(R.string.keys_backup_info_keys_all_backup_up).setNegativeButton(R.string.close) { dialogInterface, i ->
+                    signOut();
+                }.show();
+            } else {
+                AlertDialog.Builder(this).setTitle(R.string.backup_error).setMessage(R.string.backup_error_message_sign_out)
+                        .setPositiveButton(R.string.no) { dialogInterface, i -> signOut() }
+                        .setNegativeButton(R.string.yes) { dialogInterface, i ->
+                            val intentBackupKey = Intent(this, PushBackupKeyActivity::class.java);
+                            startActivityForResult(intentBackupKey, WAITING_FOR_BACK_UP_KEY);
+                        }.show();
+            }
+        }
     }
 
     private fun signOut() {
-
-        if (SignOutViewModel.doYouNeedToBeDisplayed(mxSession)) {
-            val signoutDialog = SignOutBottomSheetDialogFragment.newInstance(mxSession.getMyUserId())
-            signoutDialog.onSignOut = Runnable { CommonActivityUtils.logout(this@ProfileActivity) }
-
-            signoutDialog.show(supportFragmentManager, "SO")
-        } else {
-            // Display a simple confirmation dialog
-            AlertDialog.Builder(this)
-                    .setTitle(R.string.action_sign_out)
-                    .setMessage(R.string.action_sign_out_confirmation_simple)
-                    .setPositiveButton(R.string.action_sign_out) { dialog, which ->
-                        Observable.create<Boolean> { emitter -> clearKeepDatabase.clearAllTables() }
-                                .subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe();
-                        CommonActivityUtils.logout(this@ProfileActivity);
-                    }
-                    .setNegativeButton(R.string.cancel, null)
-                    .show()
-        }
+        AlertDialog.Builder(this)
+                .setTitle(R.string.action_sign_out)
+                .setMessage(R.string.action_sign_out_confirmation_simple)
+                .setPositiveButton(R.string.action_sign_out) { dialog, which ->
+                    Observable.create<Boolean> { emitter -> clearKeepDatabase.clearAllTables() }
+                            .subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe();
+                    CommonActivityUtils.logout(this@ProfileActivity);
+                }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
     }
 
     override fun getActivity(): FragmentActivity {
         return this;
+    }
+
+    companion object {
+        const val WAITING_FOR_BACK_UP_KEY = 10343;
     }
 }

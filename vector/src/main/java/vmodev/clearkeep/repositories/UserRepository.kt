@@ -24,7 +24,7 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
     private val handleUpdateUser: PublishSubject<UserHandleObject> = PublishSubject.create();
 
     fun loadUser(userId: String): LiveData<Resource<User>> {
-        return object : AbstractNetworkBoundSource<User, User>() {
+        return object : AbstractNetworkBoundSourceRx<User, User>() {
             override fun saveCallResult(item: User) {
                 userDao.insert(item);
             }
@@ -37,11 +37,8 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
                 return userDao.findById(userId);
             }
 
-            override fun createCall(): LiveData<User> {
-                return LiveDataReactiveStreams.fromPublisher(matrixService.getUser()
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .toFlowable(BackpressureStrategy.LATEST));
+            override fun createCall(): Observable<User> {
+                return matrixService.getUser();
             }
         }.asLiveData();
     }

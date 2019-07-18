@@ -24,7 +24,6 @@ class ProfileSettingsActivity : DataBindingDaggerActivity(), IProfileSettingsAct
 
     private lateinit var binding: ActivityProfileSettingsBinding;
     private lateinit var userId: String;
-//    private val dataBindingComponent: ActivityDataBindingComponent = ActivityDataBindingComponent(this);
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

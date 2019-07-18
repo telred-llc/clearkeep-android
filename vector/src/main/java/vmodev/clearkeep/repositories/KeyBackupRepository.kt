@@ -110,4 +110,12 @@ class KeyBackupRepository @Inject constructor(private val matrixService: MatrixS
             }
         }.asLiveData();
     }
+
+    fun needBackupKeyWhenSignOut(): LiveData<Resource<Boolean>> {
+        return object : AbstractNetworkNonBoundSourceRx<Boolean>() {
+            override fun createCall(): Observable<Boolean> {
+                return matrixService.checkNeedBackupWhenSignOut();
+            }
+        }.asLiveData();
+    }
 }

@@ -22,6 +22,10 @@
         <variable
             name="user"
             type="LiveData&lt;Resource&lt;User>>" />
+
+        <variable
+            name="checkNeedBackup"
+            type="LiveData&lt;Resource&lt;Boolean>>" />
     </data>
 
     <LinearLayout

@@ -11,5 +11,6 @@ interface IActivity {
         const val RESTORE_BACKUP_KEY = "RESTORE_BACKUP_KEY";
         const val PUSH_BACKUP_KEY = "PUSH_BACKUP_KEY";
         const val WAITING_FOR_VERIFY_EMAIL_ACTIVITY = "WAITING_FOR_VERIFY_EMAIL_ACTIVITY";
+        const val PROFILE_ACTIVITY = "PROFILE_ACTIVITY";
     }
 }
