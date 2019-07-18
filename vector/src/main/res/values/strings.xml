@@ -1338,4 +1338,5 @@ Why choose Riot.im?
     <string name="keep_sign_out">Keep Sign Out</string>
     <string name="backup_error">Backup Error</string>
     <string name="backup_error_message_sign_out">Backup key error. You want try again?</string>
+    <string name="first_sign_in_maybe_you_need_backup">First sign in, maybe you need backup</string>
 </resources>

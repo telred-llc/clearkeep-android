@@ -1,5 +1,6 @@
 package vmodev.clearkeep.activities
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.net.Uri
@@ -54,7 +55,6 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     @Inject
     lateinit var viewModelFactory: IHomeScreenViewModelFactory;
 
-
     lateinit var binding: ActivityHomeScreenBinding;
     lateinit var mxSession: MXSession;
     private lateinit var homeRoomViewModel: HomeRoomsViewModel;
@@ -62,6 +62,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen, dataBindingComponent);
+        val startFromLogin = intent.getIntExtra(START_FROM_LOGIN, 0);
         mxSession = Matrix.getInstance(this.applicationContext).defaultSession;
         (application as ClearKeepApplication).setEventHandler();
         binding.bottomNavigationViewHomeScreen.setOnNavigationItemSelectedListener { menuItem ->
@@ -119,6 +120,16 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
             }
         }
 
+        if (startFromLogin != 0) {
+            AlertDialog.Builder(this).setTitle(R.string.backup).setMessage(R.string.first_sign_in_maybe_you_need_backup)
+                    .setPositiveButton(R.string.close, null)
+                    .setNegativeButton(R.string.backup) { dialogInterface, i ->
+                        val intentBackupKey = Intent(this, BackupKeyActivity::class.java);
+                        intentBackupKey.putExtra(BackupKeyActivity.USER_ID, mxSession.myUserId);
+                        startActivity(intentBackupKey);
+                    }
+                    .show();
+        }
 
     }
 
@@ -300,5 +311,9 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
 
     override fun getActivity(): FragmentActivity {
         return this;
+    }
+
+    companion object {
+        const val START_FROM_LOGIN = "START_FROM_LOGIN";
     }
 }
