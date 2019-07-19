@@ -84,6 +84,9 @@ class PassphraseRestoreBackupKeyFragment : DataBindingDaggerFragment(), IFragmen
                 if (it.status == Status.ERROR) {
                     it.message?.let {
                         Toast.makeText(this.context, it, Toast.LENGTH_LONG).show();
+                        restoreStatus = false;
+                        binding.buttonRestore.setText(R.string.restore);
+                        binding.editTextPassphrase.setText("");
                     }
                 }
             }
