@@ -36,7 +36,7 @@ android {
     }
 
     defaultConfig {
-        applicationId 'com.vmodev.clearkeep'
+        applicationId 'com.telred.clearkeep'
         minSdkVersion 21
         targetSdkVersion 28
         // use the version code
@@ -112,7 +112,7 @@ android {
 
     productFlavors {
         app {
-            applicationId 'com.vmodev.clearkeep'
+            applicationId 'com.telred.clearkeep'
             // use the version name
             versionCode rootProject.ext.versionCodeProp
             versionName rootProject.ext.versionNameProp
@@ -121,7 +121,7 @@ android {
             buildConfigField "String", "FLAVOR_DESCRIPTION", "\"GooglePlay\""
         }
         appfdroid {
-            applicationId 'com.vmodev.clearkeep'
+            applicationId 'com.telred.clearkeep'
             // use the version name
             versionCode rootProject.ext.versionCodeProp
             versionName rootProject.ext.versionNameProp
