@@ -406,9 +406,12 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         room.roomSummary?.let { roomSummary ->
             timeUpdateLong = roomSummary.latestReceivedEvent.originServerTs
             lastMessage = RoomUtils.getRoomMessageToDisplay(application, session!!, roomSummary).toString();
+            if (lastMessage.compareTo("** Unable to decrypt: The sender's device has not sent us the keys for this message. **") == 0) {
+                lastMessage = "";
+            }
         }
-        var notificationState : Byte = 0x02;
-        when(session!!.dataHandler.bingRulesManager.getRoomNotificationState(room.roomId)){
+        var notificationState: Byte = 0x02;
+        when (session!!.dataHandler.bingRulesManager.getRoomNotificationState(room.roomId)) {
             BingRulesManager.RoomNotificationState.ALL_MESSAGES_NOISY -> notificationState = 0x01;
             BingRulesManager.RoomNotificationState.ALL_MESSAGES -> notificationState = 0x02;
             BingRulesManager.RoomNotificationState.MENTIONS_ONLY -> notificationState = 0x04;

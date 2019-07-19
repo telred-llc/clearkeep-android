@@ -1002,7 +1002,10 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
 
         // never cache the view type of the encrypted messages
         if (Event.EVENT_TYPE_MESSAGE_ENCRYPTED.equals(eventType)) {
-            return ROW_TYPE_TEXT;
+            //Hide message when this message is encrypted
+//            return ROW_TYPE_TEXT;
+            //Hide message when this message is encrypted
+            return ROW_TYPE_HIDDEN;
         }
 
         if (event instanceof EventGroup) {
