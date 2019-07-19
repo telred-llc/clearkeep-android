@@ -99,7 +99,7 @@ class UserInformationActivity : DataBindingDaggerActivity(), IUserInformationAct
         listDirectChatRoomAdapter.setOnItemLongClick {
             if (it.type == 129) {
                 val bottomDialog = DialogPlus.newDialog(this)
-                        .setAdapter(BottomDialogFavouriteRoomLongClick())
+                        .setAdapter(BottomDialogFavouriteRoomLongClick(it.notificationState))
                         .setOnItemClickListener { dialog, item, view, position ->
                             when (position) {
                                 1 -> {
@@ -115,13 +115,14 @@ class UserInformationActivity : DataBindingDaggerActivity(), IUserInformationAct
                                     binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult();
                                     viewModelFactory.getViewModel().setLeaveRoomId(it.id);
                                 }
+                                0 -> changeNotificationState(it.id, it.notificationState);
                             }
                             dialog?.dismiss();
                         }.create();
                 bottomDialog.show();
             } else {
                 val bottomDialog = DialogPlus.newDialog(this)
-                        .setAdapter(BottomDialogRoomLongClick())
+                        .setAdapter(BottomDialogRoomLongClick(it.notificationState))
                         .setOnItemClickListener { dialog, item, view, position ->
                             when (position) {
                                 1 -> {
@@ -137,6 +138,7 @@ class UserInformationActivity : DataBindingDaggerActivity(), IUserInformationAct
                                     binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult();
                                     viewModelFactory.getViewModel().setLeaveRoomId(it.id);
                                 }
+                                0 -> changeNotificationState(it.id, it.notificationState);
                             }
 
                             dialog?.dismiss();
@@ -210,6 +212,14 @@ class UserInformationActivity : DataBindingDaggerActivity(), IUserInformationAct
         viewModelFactory.getViewModel().getRoomChatByUserIdResult().observe(this, Observer {
             listRoomChatRoomAdapter.getAdapter().submitList(it?.data);
         });
+    }
+
+    private fun changeNotificationState(roomId: String, state: Byte) {
+        binding.room = viewModelFactory.getViewModel().getChangeNotificationStateResult();
+        when (state) {
+            0x01.toByte(), 0x02.toByte() -> viewModelFactory.getViewModel().setChangeNotificationState(roomId, 0x04);
+            0x04.toByte() -> viewModelFactory.getViewModel().setChangeNotificationState(roomId, 0x02);
+        }
     }
 
     override fun getActivity(): FragmentActivity {

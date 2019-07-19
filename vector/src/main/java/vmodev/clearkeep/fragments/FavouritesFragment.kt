@@ -93,6 +93,7 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment {
                             1 -> removeFromFavourites(room.id);
                             3 -> declineInvite(room.id);
                             2 -> gotoRoomSettings(room.id);
+                            0 -> changeNotificationState(room.id, room.notificationState);
                         }
                         dialog?.dismiss();
                     }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create();
@@ -106,6 +107,7 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment {
                             1 -> removeFromFavourites(it.id);
                             3 -> declineInvite(it.id);
                             2 -> gotoRoomSettings(it.id);
+                            0 -> changeNotificationState(it.id, it.notificationState);
                         }
                         dialog?.dismiss();
                     }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create();
@@ -176,6 +178,14 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment {
     private fun removeFromFavourites(roomId: String) {
         binding.room = viewModelFactory.getViewModel().getRemoveFromFavouriteResult();
         viewModelFactory.getViewModel().setRemoveFromFavourite(roomId);
+    }
+
+    private fun changeNotificationState(roomId: String, state: Byte) {
+        binding.room = viewModelFactory.getViewModel().getChangeNotificationStateResult();
+        when (state) {
+            0x01.toByte(), 0x02.toByte() -> viewModelFactory.getViewModel().setChangeNotificationState(roomId, 0x04);
+            0x04.toByte() -> viewModelFactory.getViewModel().setChangeNotificationState(roomId, 0x02);
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -10,6 +10,7 @@ import org.matrix.androidsdk.data.RoomState
 import org.matrix.androidsdk.listeners.MXEventListener
 import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.User
+import org.matrix.androidsdk.rest.model.bingrules.BingRule
 import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
 import vmodev.clearkeep.repositories.KeyBackupRepository
@@ -99,6 +100,11 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
     override fun onPresenceUpdate(event: Event?, user: User?) {
         super.onPresenceUpdate(event, user)
         user?.let { roomRepository.updateRoomMemberStatus(it.user_id, if (it.presence.compareTo("online") == 0) 1 else 0) }
+    }
+
+    override fun onBingEvent(event: Event?, roomState: RoomState?, bingRule: BingRule?) {
+        super.onBingEvent(event, roomState, bingRule)
+        Log.d("EventType", event?.type + "-----" + roomState?.roomId + "---" + bingRule?.ruleId)
     }
 
     override fun getMXEventListener(mxSession: MXSession): MXEventListener {
