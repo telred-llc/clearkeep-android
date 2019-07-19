@@ -1614,8 +1614,10 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                     ?.state != KeysBackupStateManager.KeysBackupState.ReadyToBackUp
             if (value) {
                 valueNext = 2;
+
                 session!!.crypto?.let {
                     it.keysBackup.state?.let {
+
                         if (it == KeysBackupStateManager.KeysBackupState.NotTrusted)
                             valueNext = 4;
                     }
@@ -1623,6 +1625,34 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             }
             emitter.onNext(valueNext);
             emitter.onComplete();
+        }
+    }
+
+    override fun checkBackupKeyTypeWhenSignIn(): Observable<Int> {
+        setMXSession();
+        return Observable.create { emitter ->
+            session!!.crypto?.let { mxCrypto ->
+                var valueNext: Int = 1;
+                var listener: KeysBackupStateManager.KeysBackupStateListener? = null;
+                listener = object : KeysBackupStateManager.KeysBackupStateListener {
+                    override fun onStateChange(newState: KeysBackupStateManager.KeysBackupState) {
+                        if (newState != KeysBackupStateManager.KeysBackupState.CheckingBackUpOnHomeserver) {
+                            when (newState) {
+                                KeysBackupStateManager.KeysBackupState.NotTrusted -> valueNext = 4;
+                                KeysBackupStateManager.KeysBackupState.Disabled -> valueNext = 2;
+                            }
+                            emitter.onNext(valueNext);
+                            emitter.onComplete();
+                            listener?.let { mxCrypto.keysBackup.removeListener(it) }
+                        }
+                    }
+                }
+                mxCrypto.keysBackup.addListener(listener);
+            } ?: run {
+                emitter.onError(Throwable("Crypto is null"))
+                emitter.onComplete();
+            }
+
         }
     }
 

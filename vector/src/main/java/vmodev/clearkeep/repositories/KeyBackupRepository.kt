@@ -118,4 +118,12 @@ class KeyBackupRepository @Inject constructor(private val matrixService: MatrixS
             }
         }.asLiveData();
     }
+
+    fun getBackupKeyStatusWhenSignIn(): LiveData<Resource<Int>> {
+        return object : AbstractNetworkNonBoundSourceRx<Int>() {
+            override fun createCall(): Observable<Int> {
+                return matrixService.checkBackupKeyTypeWhenSignIn();
+            }
+        }.asLiveData();
+    }
 }

@@ -47,5 +47,6 @@ public interface MatrixService {
     fun getAuthDataAsMegolmBackupAuthData(): Observable<String>;
     fun deleteKeyBackup(userId: String): Observable<KeyBackup>;
     fun checkNeedBackupWhenSignOut(): Observable<Int>;
-    fun changeRoomNotificationState(roomId : String, state: Byte): Observable<Byte>;
+    fun changeRoomNotificationState(roomId: String, state: Byte): Observable<Byte>;
+    fun checkBackupKeyTypeWhenSignIn(): Observable<Int>;
 }
