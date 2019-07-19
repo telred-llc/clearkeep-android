@@ -407,8 +407,8 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             timeUpdateLong = roomSummary.latestReceivedEvent.originServerTs
             lastMessage = RoomUtils.getRoomMessageToDisplay(application, session!!, roomSummary).toString();
         }
-        var notificationState : Byte = 0x02;
-        when(session!!.dataHandler.bingRulesManager.getRoomNotificationState(room.roomId)){
+        var notificationState: Byte = 0x02;
+        when (session!!.dataHandler.bingRulesManager.getRoomNotificationState(room.roomId)) {
             BingRulesManager.RoomNotificationState.ALL_MESSAGES_NOISY -> notificationState = 0x01;
             BingRulesManager.RoomNotificationState.ALL_MESSAGES -> notificationState = 0x02;
             BingRulesManager.RoomNotificationState.MENTIONS_ONLY -> notificationState = 0x04;
@@ -1611,8 +1611,10 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                     ?.state != KeysBackupStateManager.KeysBackupState.ReadyToBackUp
             if (value) {
                 valueNext = 2;
+
                 session!!.crypto?.let {
                     it.keysBackup.state?.let {
+
                         if (it == KeysBackupStateManager.KeysBackupState.NotTrusted)
                             valueNext = 4;
                     }
@@ -1620,6 +1622,34 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             }
             emitter.onNext(valueNext);
             emitter.onComplete();
+        }
+    }
+
+    override fun checkBackupKeyTypeWhenSignIn(): Observable<Int> {
+        setMXSession();
+        return Observable.create { emitter ->
+            session!!.crypto?.let { mxCrypto ->
+                var valueNext: Int = 1;
+                var listener: KeysBackupStateManager.KeysBackupStateListener? = null;
+                listener = object : KeysBackupStateManager.KeysBackupStateListener {
+                    override fun onStateChange(newState: KeysBackupStateManager.KeysBackupState) {
+                        if (newState != KeysBackupStateManager.KeysBackupState.CheckingBackUpOnHomeserver) {
+                            when (newState) {
+                                KeysBackupStateManager.KeysBackupState.NotTrusted -> valueNext = 4;
+                                KeysBackupStateManager.KeysBackupState.Disabled -> valueNext = 2;
+                            }
+                            emitter.onNext(valueNext);
+                            emitter.onComplete();
+                            listener?.let { mxCrypto.keysBackup.removeListener(it) }
+                        }
+                    }
+                }
+                mxCrypto.keysBackup.addListener(listener);
+            } ?: run {
+                emitter.onError(Throwable("Crypto is null"))
+                emitter.onComplete();
+            }
+
         }
     }
 

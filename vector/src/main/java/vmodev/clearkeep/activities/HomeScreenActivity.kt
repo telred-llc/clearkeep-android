@@ -1,5 +1,7 @@
 package vmodev.clearkeep.activities
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.databinding.DataBindingUtil
@@ -18,6 +20,9 @@ import im.vector.databinding.ActivityHomeScreenBinding
 import im.vector.services.EventStreamService
 import im.vector.ui.badge.BadgeProxy
 import im.vector.util.HomeRoomsViewModel
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_home_screen.*
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.data.Room
@@ -31,6 +36,7 @@ import vmodev.clearkeep.factories.viewmodels.interfaces.IHomeScreenViewModelFact
 import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.fragments.Interfaces.IListRoomOnFragmentInteractionListener
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -59,6 +65,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     lateinit var mxSession: MXSession;
     private lateinit var homeRoomViewModel: HomeRoomsViewModel;
 
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen, dataBindingComponent);
@@ -121,14 +128,33 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         }
 
         if (startFromLogin != 0) {
-            AlertDialog.Builder(this).setTitle(R.string.backup).setMessage(R.string.first_sign_in_maybe_you_need_backup)
-                    .setPositiveButton(R.string.close, null)
-                    .setNegativeButton(R.string.backup) { dialogInterface, i ->
-                        val intentBackupKey = Intent(this, BackupKeyActivity::class.java);
-                        intentBackupKey.putExtra(BackupKeyActivity.USER_ID, mxSession.myUserId);
-                        startActivity(intentBackupKey);
+            viewModelFactory.getViewModel().getBackupKeyStatusResult().observe(this, android.arch.lifecycle.Observer {
+                it?.data?.let {
+                    binding.progressBar.visibility = View.GONE;
+                    if (it == 2) {
+                        AlertDialog.Builder(this).setTitle(R.string.backup).setMessage(R.string.have_not_create_backup_key_content)
+                                .setPositiveButton(R.string.close, null)
+                                .setNegativeButton(R.string.start_using_backup_key) { dialogInterface, i ->
+                                    val intentBackupKey = Intent(this, PushBackupKeyActivity::class.java);
+                                    startActivityForResult(intentBackupKey, WAITING_FOR_BACK_UP_KEY);
+                                }
+                                .show();
+                    } else if (it == 4) {
+                        AlertDialog.Builder(this).setTitle(R.string.backup).setMessage(R.string.have_had_backup_key_content)
+                                .setPositiveButton(R.string.close, null)
+                                .setNegativeButton(R.string.start_using_backup_key) { dialogInterface, i ->
+                                    val intentBackupKey = Intent(this, RestoreBackupKeyActivity::class.java);
+                                    intentBackupKey.putExtra(RestoreBackupKeyActivity.USER_ID, mxSession.myUserId);
+                                    startActivityForResult(intentBackupKey, WAITING_FOR_BACK_UP_KEY);
+                                }
+                                .show();
+                    } else {
+
                     }
-                    .show();
+                }
+            });
+            binding.progressBar.visibility = View.VISIBLE;
+            viewModelFactory.getViewModel().setValueForGetBackupStatus(Calendar.getInstance().timeInMillis);
         }
 
     }
@@ -313,7 +339,15 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         return this;
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == WAITING_FOR_BACK_UP_KEY && resultCode == Activity.RESULT_OK) {
+            Toast.makeText(this, "Successfully", Toast.LENGTH_LONG).show();
+        }
+    }
+
     companion object {
         const val START_FROM_LOGIN = "START_FROM_LOGIN";
+        const val WAITING_FOR_BACK_UP_KEY = 11352;
     }
 }
