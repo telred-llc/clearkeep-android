@@ -474,6 +474,26 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
+    fun changeNotificationState(roomId: String, state: Byte): LiveData<Resource<Room>> {
+        return object : AbstractNetworkBoundSourceRx<Room, Byte>() {
+            override fun saveCallResult(item: Byte) {
+                roomDao.updateNotificationState(roomId, item);
+            }
+
+            override fun shouldFetch(data: Room?): Boolean {
+                return true;
+            }
+
+            override fun loadFromDb(): LiveData<Room> {
+                return roomDao.findById(roomId);
+            }
+
+            override fun createCall(): Observable<Byte> {
+                return matrixService.changeRoomNotificationState(roomId, state);
+            }
+        }.asLiveData();
+    }
+
     class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);
     class InviteUsersToRoomObject constructor(val roomId: String, val userIds: List<String>);
 }

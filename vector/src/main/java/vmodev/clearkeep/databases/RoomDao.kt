@@ -73,6 +73,9 @@ abstract class RoomDao {
     @Query("SELECT * FROM room WHERE (type =:filterOne OR type =:filterTwo) AND name LIKE :query")
     abstract fun searchWithDisplayName(filterOne: Int, filterTwo: Int, query: String): LiveData<List<Room>>
 
+    @Query("UPDATE room SET notificationState =:state WHERE room.id =:id")
+    abstract fun updateNotificationState(id: String, state: Byte): Int;
+
     fun loadWithType(filter: Array<Int>): LiveData<List<Room>> {
         when (filter.size) {
             1 -> return loadWithType(filter[0]);

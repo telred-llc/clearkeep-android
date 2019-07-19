@@ -20,5 +20,9 @@ abstract class AbstractUserInformationActivityViewModel : ViewModel() {
     abstract fun setRoomIdForRemoveFromFavourite(roomId: String);
     abstract fun gerRemoveRoomFromFavouriteResult(): LiveData<Resource<Room>>;
     abstract fun setUserIdForCreateNewConversation(userId: String);
-    abstract fun getCreateNewConversationResult() : LiveData<Resource<Room>>;
+    abstract fun getCreateNewConversationResult(): LiveData<Resource<Room>>;
+    abstract fun setChangeNotificationState(roomId: String, state: Byte);
+    abstract fun getChangeNotificationStateResult(): LiveData<Resource<Room>>;
+
+    data class ChangeNotificationStateObject(val roomId: String, val state: Byte)
 }

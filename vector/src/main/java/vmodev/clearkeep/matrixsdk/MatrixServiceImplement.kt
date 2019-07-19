@@ -53,6 +53,7 @@ import org.matrix.androidsdk.rest.model.login.RegistrationFlowResponse
 import org.matrix.androidsdk.rest.model.search.SearchResponse
 import org.matrix.androidsdk.rest.model.search.SearchResult
 import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
+import org.matrix.androidsdk.util.BingRulesManager
 import org.matrix.androidsdk.util.JsonUtils
 import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.fragments.SignUpFragment
@@ -406,6 +407,13 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             timeUpdateLong = roomSummary.latestReceivedEvent.originServerTs
             lastMessage = RoomUtils.getRoomMessageToDisplay(application, session!!, roomSummary).toString();
         }
+        var notificationState : Byte = 0x02;
+        when(session!!.dataHandler.bingRulesManager.getRoomNotificationState(room.roomId)){
+            BingRulesManager.RoomNotificationState.ALL_MESSAGES_NOISY -> notificationState = 0x01;
+            BingRulesManager.RoomNotificationState.ALL_MESSAGES -> notificationState = 0x02;
+            BingRulesManager.RoomNotificationState.MENTIONS_ONLY -> notificationState = 0x04;
+            BingRulesManager.RoomNotificationState.MUTE -> notificationState = 0x08;
+        }
         val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
 
         val rooMemberOnlineStatus: Byte = if (roomMemberId.isNullOrEmpty()) 0 else if (VectorUtils.getUserOnlineStatus(application, session!!, roomMemberId, null).compareTo("Online now") == 0) 1 else 0;
@@ -413,7 +421,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
                 , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, lastMessage = lastMessage
-                , encrypted = if (room.isEncrypted) 1 else 0, status = if (room.isLeaving || room.isLeft) 0 else 1);
+                , encrypted = if (room.isEncrypted) 1 else 0, status = if (room.isLeaving || room.isLeft) 0 else 1, notificationState = notificationState);
         return roomObj;
     }
 
@@ -1613,5 +1621,29 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             emitter.onNext(valueNext);
             emitter.onComplete();
         }
+    }
+
+    override fun changeRoomNotificationState(roomId: String, state: Byte): Observable<Byte> {
+        setMXSession();
+        return Observable.create { emitter ->
+            var enumState: BingRulesManager.RoomNotificationState? = BingRulesManager.RoomNotificationState.ALL_MESSAGES_NOISY;
+            when (state) {
+                0x01.toByte() -> enumState = BingRulesManager.RoomNotificationState.ALL_MESSAGES_NOISY;
+                0x02.toByte() -> enumState = BingRulesManager.RoomNotificationState.ALL_MESSAGES;
+                0x04.toByte() -> enumState = BingRulesManager.RoomNotificationState.MENTIONS_ONLY;
+                0x08.toByte() -> enumState = BingRulesManager.RoomNotificationState.MUTE;
+            }
+            session!!.dataHandler.bingRulesManager.updateRoomNotificationState(roomId, enumState, object : BingRulesManager.onBingRuleUpdateListener {
+                override fun onBingRuleUpdateSuccess() {
+                    emitter.onNext(state);
+                    emitter.onComplete();
+                }
+
+                override fun onBingRuleUpdateFailure(p0: String?) {
+                    emitter.onError(Throwable(p0));
+                    emitter.onComplete();
+                }
+            })
+        };
     }
 }

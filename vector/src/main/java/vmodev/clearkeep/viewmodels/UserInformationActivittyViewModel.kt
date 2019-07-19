@@ -9,6 +9,7 @@ import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.viewmodels.interfaces.AbstractFavouritesFragmentViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserInformationActivityViewModel
 import javax.inject.Inject
 
@@ -28,6 +29,8 @@ class UserInformationActivityViewModel @Inject constructor(userRepository: UserR
     private val _removeRoomFromFavouriteResult = Transformations.switchMap(_roomIdForRemoveFromFavourite) { input -> roomRepository.removeFromFavourite(input) }
     private val _joinRoomResult = Transformations.switchMap(_roomIdForJoinRoom) { input -> roomRepository.joinRoom(input) }
     private val _createNewConversationResult = Transformations.switchMap(_userIdForCreateNewConversation) { input -> roomRepository.createDirectChatRoom(input) }
+    private val _setChangeNotificationState = MutableLiveData<ChangeNotificationStateObject>();
+    private val _changeNotificationStateResult = Transformations.switchMap(_setChangeNotificationState) { input -> roomRepository.changeNotificationState(input.roomId, input.state) }
 
     override fun setUserId(userId: String) {
         _userId.value = userId;
@@ -83,5 +86,13 @@ class UserInformationActivityViewModel @Inject constructor(userRepository: UserR
 
     override fun getCreateNewConversationResult(): LiveData<Resource<Room>> {
         return _createNewConversationResult;
+    }
+
+    override fun setChangeNotificationState(roomId: String, state: Byte) {
+        _setChangeNotificationState.value = ChangeNotificationStateObject(roomId, state);
+    }
+
+    override fun getChangeNotificationStateResult(): LiveData<Resource<Room>> {
+        return _changeNotificationStateResult;
     }
 }

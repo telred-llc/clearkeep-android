@@ -7,6 +7,7 @@ import vmodev.clearkeep.repositories.RoomRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodels.interfaces.AbstractFavouritesFragmentViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractListRoomFragmentViewModel
 import javax.inject.Inject
 
 class FavouritesFragmentViewModel @Inject constructor(roomRepository: RoomRepository) : AbstractFavouritesFragmentViewModel() {
@@ -20,7 +21,8 @@ class FavouritesFragmentViewModel @Inject constructor(roomRepository: RoomReposi
     private val _getListGroupFavouritesResult = Transformations.switchMap(_listGroupFavourites) { input -> roomRepository.loadListRoomUserJoin(input) }
     private val _roomIdForUpdateNotify = MutableLiveData<String>();
     private val _updateRoomNotifyResult = Transformations.switchMap(_roomIdForUpdateNotify) { input -> roomRepository.setRoomNotify(input) }
-
+    private val _setChangeNotificationState = MutableLiveData<ChangeNotificationStateObject>();
+    private val _changeNotificationStateResult = Transformations.switchMap(_setChangeNotificationState) { input -> roomRepository.changeNotificationState(input.roomId, input.state) }
     override fun getListTypeFavouritesDirectResult(): LiveData<Resource<List<Room>>> {
         return listRoomByType;
     }
@@ -59,5 +61,12 @@ class FavouritesFragmentViewModel @Inject constructor(roomRepository: RoomReposi
 
     override fun getUpdateRoomNotifyResult(): LiveData<Resource<Room>> {
         return _updateRoomNotifyResult;
+    }
+    override fun setChangeNotificationState(roomId: String, state: Byte) {
+        _setChangeNotificationState.value = ChangeNotificationStateObject(roomId, state);
+    }
+
+    override fun getChangeNotificationStateResult(): LiveData<Resource<Room>> {
+        return _changeNotificationStateResult;
     }
 }

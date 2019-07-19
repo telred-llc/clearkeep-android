@@ -98,7 +98,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
         }
         listDirectRoomAdapter.setOnItemLongClick { room ->
             val bottomDialog = DialogPlus.newDialog(this.context)
-                    .setAdapter(BottomDialogRoomLongClick())
+                    .setAdapter(BottomDialogRoomLongClick(room.notificationState))
                     .setOnItemClickListener { dialog, item, view, position ->
                         when (position) {
                             3 -> {
@@ -117,6 +117,9 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
                                 val intentGoRoom = Intent(activity, MessageListActivity::class.java);
                                 intentGoRoom.putExtra(MessageListActivity.ROOM_ID, room.id);
                                 startActivity(intentGoRoom);
+                            }
+                            0 -> {
+                                changeNotificationState(room.id, room.notificationState);
                             }
                         }
 
@@ -126,7 +129,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
         }
         listGroupRoomAdapter.setOnItemLongClick { room ->
             val bottomDialog = DialogPlus.newDialog(this.context)
-                    .setAdapter(BottomDialogRoomLongClick())
+                    .setAdapter(BottomDialogRoomLongClick(room.notificationState))
                     .setOnItemClickListener { dialog, item, view, position ->
                         when (position) {
                             3 -> {
@@ -145,6 +148,9 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
                                 val intentGoRoom = Intent(activity, MessageListActivity::class.java);
                                 intentGoRoom.putExtra(MessageListActivity.ROOM_ID, room.id);
                                 startActivity(intentGoRoom);
+                            }
+                            0 -> {
+                                changeNotificationState(room.id, room.notificationState);
                             }
                         }
 
@@ -242,6 +248,14 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
         intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
         intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
         startActivityForResult(intentRoom, GO_TO_ROOM_CODE);
+    }
+
+    private fun changeNotificationState(roomId: String, state: Byte) {
+        binding.room = viewModelFactory.getViewModel().getChangeNotificationStateResult();
+        when (state) {
+            0x01.toByte(), 0x02.toByte() -> viewModelFactory.getViewModel().setChangeNotificationState(roomId, 0x04);
+            0x04.toByte() -> viewModelFactory.getViewModel().setChangeNotificationState(roomId, 0x02);
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
