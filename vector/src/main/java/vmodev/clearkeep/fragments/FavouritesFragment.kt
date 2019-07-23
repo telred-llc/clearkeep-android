@@ -58,7 +58,7 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment {
 
     lateinit var binding: FragmentFavourites2Binding;
     private lateinit var userId: String;
-
+    private var onGoingRoom = false;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,10 +80,16 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment {
         listGroupRecyclerViewAdapter.setdataBindingComponent(dataBindingComponent);
         listDirectRecyclerViewAdapter.setdataBindingComponent(dataBindingComponent);
         listGroupRecyclerViewAdapter.setOnItemClick { room, i ->
-            gotoRoom(room.id);
+            if (!onGoingRoom) {
+                onGoingRoom = true;
+                gotoRoom(room.id);
+            }
         }
         listDirectRecyclerViewAdapter.setOnItemClick { room, i ->
-            gotoRoom(room.id);
+            if (!onGoingRoom) {
+                onGoingRoom = true;
+                gotoRoom(room.id);
+            }
         }
         listGroupRecyclerViewAdapter.setOnItemLongClick { room ->
             val bottomDialog = DialogPlus.newDialog(this.context)
@@ -152,6 +158,7 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment {
         intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
         intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
         startActivityForResult(intentRoom, GO_TO_ROOM_CODE);
+        onGoingRoom = false;
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
