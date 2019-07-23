@@ -52,9 +52,9 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
     private val LOG_TAG = VectorCallViewActivity::class.java.simpleName
 
     companion object {
-        val EXTRA_MATRIX_ID = "CallViewActivity.EXTRA_MATRIX_ID"
-        val EXTRA_CALL_ID = "CallViewActivity.EXTRA_CALL_ID"
-        val EXTRA_UNKNOWN_DEVICES = "CallViewActivity.EXTRA_UNKNOWN_DEVICES"
+        const val EXTRA_MATRIX_ID = "CallViewActivity.EXTRA_MATRIX_ID"
+        const val EXTRA_CALL_ID = "CallViewActivity.EXTRA_CALL_ID"
+        const val EXTRA_UNKNOWN_DEVICES = "CallViewActivity.EXTRA_UNKNOWN_DEVICES"
     }
 
     private val EXTRA_LOCAL_FRAME_LAYOUT = "EXTRA_LOCAL_FRAME_LAYOUT"

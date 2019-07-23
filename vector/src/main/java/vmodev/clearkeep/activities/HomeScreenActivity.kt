@@ -70,6 +70,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen, dataBindingComponent);
         val startFromLogin = intent.getIntExtra(START_FROM_LOGIN, 0);
+        startIncomingCall();
         mxSession = Matrix.getInstance(this.applicationContext).defaultSession;
         (application as ClearKeepApplication).setEventHandler();
         binding.bottomNavigationViewHomeScreen.setOnNavigationItemSelectedListener { menuItem ->
@@ -157,6 +158,15 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
             viewModelFactory.getViewModel().setValueForGetBackupStatus(Calendar.getInstance().timeInMillis);
         }
 
+    }
+
+    private fun startIncomingCall() {
+        if (intent.getStringExtra(EXTRA_CALL_SESSION_ID).isNullOrEmpty() || intent.getStringExtra(EXTRA_CALL_ID).isNullOrEmpty())
+            return;
+        val intentCall = Intent(this, CallViewActivity::class.java);
+        intentCall.putExtra(CallViewActivity.EXTRA_MATRIX_ID, intent.getStringExtra(EXTRA_CALL_SESSION_ID));
+        intentCall.putExtra(CallViewActivity.EXTRA_CALL_ID, intent.getStringExtra(EXTRA_CALL_ID));
+        startActivity(intentCall);
     }
 
     private fun switchFragment(fragment: Fragment) {
@@ -349,5 +359,8 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     companion object {
         const val START_FROM_LOGIN = "START_FROM_LOGIN";
         const val WAITING_FOR_BACK_UP_KEY = 11352;
+        const val EXTRA_MATRIX_ID = "EXTRA_MATRIX_ID"
+        const val EXTRA_CALL_ID = "EXTRA_CALL_ID"
+        const val EXTRA_CALL_SESSION_ID = "EXTRA_CALL_SESSION_ID";
     }
 }

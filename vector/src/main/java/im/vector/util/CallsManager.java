@@ -109,8 +109,8 @@ public class CallsManager {
                     }
                 }
 
-                if (mCallActivity instanceof VectorCallViewActivity) {
-                    ((VectorCallViewActivity) mCallActivity).refreshSpeakerButton();
+                if (mCallActivity instanceof CallViewActivity) {
+                    ((CallViewActivity) mCallActivity).refreshSpeakerButton();
                 }
             }
         }
@@ -412,8 +412,8 @@ public class CallsManager {
 
                             Intent intentStartCall = new Intent(context, CallViewActivity.class);
                             intentStartCall.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intentStartCall.putExtra(VectorCallViewActivity.EXTRA_MATRIX_ID, mActiveCall.getSession().getMyUserId());
-                            intentStartCall.putExtra(VectorCallViewActivity.EXTRA_CALL_ID,  mActiveCall.getCallId());
+                            intentStartCall.putExtra(CallViewActivity.EXTRA_MATRIX_ID, mActiveCall.getSession().getMyUserId());
+                            intentStartCall.putExtra(CallViewActivity.EXTRA_CALL_ID,  mActiveCall.getCallId());
                             context.startActivity(intentStartCall);
 
                         } else {
