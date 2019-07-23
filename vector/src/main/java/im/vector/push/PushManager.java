@@ -69,7 +69,7 @@ public final class PushManager {
     private static final String PREFS_SYNC_TIMEOUT = "GcmRegistrationManager.PREFS_SYNC_TIMEOUT";
     private static final String PREFS_SYNC_DELAY = "GcmRegistrationManager.PREFS_SYNC_DELAY";
 
-    private static final String DEFAULT_PUSHER_APP_ID = "im.vector.app.android";
+    private static final String DEFAULT_PUSHER_APP_ID = "com.telred.clearkeep";
     private static final String DEFAULT_PUSHER_URL = BuildConfig.PUSH_GATEWAY;
     private static final String DEFAULT_PUSHER_FILE_TAG = "mobile";
 
