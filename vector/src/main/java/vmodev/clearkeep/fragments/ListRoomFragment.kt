@@ -59,9 +59,8 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
     // TODO: Rename and change types of parameters
     private var userId: String? = null
     private var listener: OnFragmentInteractionListener? = null
-
     private lateinit var binding: FragmentListRoomBinding;
-
+    private var onGoingRoom = false;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -83,7 +82,10 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
         listDirectRoomAdapter.setOnItemClick { room, i ->
             when (i) {
                 3 -> {
-                    gotoRoom(room.id);
+                    if (!onGoingRoom) {
+                        onGoingRoom = true;
+                        gotoRoom(room.id);
+                    }
                 }
                 0 -> {
                     previewRoom(room.id);
@@ -161,7 +163,10 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
         listGroupRoomAdapter.setOnItemClick { room, i ->
             when (i) {
                 3 -> {
-                    gotoRoom(room.id);
+                    if (!onGoingRoom) {
+                        onGoingRoom = true;
+                        gotoRoom(room.id);
+                    }
                 }
                 0 -> {
                     previewRoom(room.id);
@@ -248,6 +253,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
         intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
         intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
         startActivityForResult(intentRoom, GO_TO_ROOM_CODE);
+        onGoingRoom = false;
     }
 
     private fun changeNotificationState(roomId: String, state: Byte) {

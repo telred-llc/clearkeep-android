@@ -56,6 +56,7 @@ class ContactsFragment : DataBindingDaggerFragment(), IContactFragment {
     lateinit var listRoomAdapter: IListRoomRecyclerViewAdapter;
     lateinit var binding: FragmentContactsBinding;
     private lateinit var userId: String;
+    private var onGoingRoom = false;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +79,10 @@ class ContactsFragment : DataBindingDaggerFragment(), IContactFragment {
         binding.recyclerViewListContact.addItemDecoration(dividerItemDecoration);
         binding.recyclerViewListContact.adapter = listRoomAdapter.getAdapter();
         listRoomAdapter.setOnItemClick { room, i ->
-            onClickGoRoom(room.id);
+            if (!onGoingRoom) {
+                onGoingRoom = true;
+                onClickGoRoom(room.id);
+            }
         }
         binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
         viewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
@@ -95,6 +99,7 @@ class ContactsFragment : DataBindingDaggerFragment(), IContactFragment {
         intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
         intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
         startActivityForResult(intentRoom, GO_TO_ROOM_CODE);
+        onGoingRoom = false;
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
