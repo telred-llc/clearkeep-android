@@ -65,6 +65,7 @@ import org.matrix.androidsdk.crypto.data.MXDeviceInfo;
 import org.matrix.androidsdk.data.Room;
 import org.matrix.androidsdk.db.MXMediaCache;
 import org.matrix.androidsdk.interfaces.HtmlToolbox;
+import org.matrix.androidsdk.rest.callback.SimpleApiCallback;
 import org.matrix.androidsdk.rest.model.Event;
 import org.matrix.androidsdk.rest.model.EventContent;
 import org.matrix.androidsdk.rest.model.PowerLevels;
@@ -2221,7 +2222,7 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
 
                 // oneself event
                 if (event.mSentState != Event.SentState.SENT) {
-                    e2eIconByEventId.put(event.eventId, R.drawable.e2e_verified);
+//                    e2eIconByEventId.put(event.eventId, R.drawable.e2e_verified);
                 }
                 // not encrypted event
                 else if (!event.isEncrypted()) {
@@ -2229,13 +2230,13 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
                 }
                 // in error cases, do not display
                 else if (null != event.getCryptoError()) {
-                    e2eIconByEventId.put(event.eventId, R.drawable.e2e_blocked);
+//                    e2eIconByEventId.put(event.eventId, R.drawable.e2e_blocked);
                 } else {
                     EncryptedEventContent encryptedEventContent = JsonUtils.toEncryptedEventContent(event.getWireContent().getAsJsonObject());
 
                     if (TextUtils.equals(mSession.getCredentials().deviceId, encryptedEventContent.device_id)
                             && TextUtils.equals(mSession.getMyUserId(), event.getSender())) {
-                        e2eIconByEventId.put(event.eventId, R.drawable.e2e_verified);
+//                        e2eIconByEventId.put(event.eventId, R.drawable.e2e_verified);
                         MXDeviceInfo deviceInfo = mSession.getCrypto()
                                 .deviceWithIdentityKey(encryptedEventContent.sender_key, encryptedEventContent.algorithm);
 
@@ -2250,14 +2251,20 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
                         if (null != deviceInfo) {
                             e2eDeviceInfoByEventId.put(event.eventId, deviceInfo);
                             if (deviceInfo.isVerified()) {
-                                e2eIconByEventId.put(event.eventId, R.drawable.e2e_verified);
+//                                e2eIconByEventId.put(event.eventId, R.drawable.e2e_verified);
                             } else if (deviceInfo.isBlocked()) {
-                                e2eIconByEventId.put(event.eventId, R.drawable.e2e_blocked);
+//                                e2eIconByEventId.put(event.eventId, R.drawable.e2e_blocked);
                             } else {
-                                e2eIconByEventId.put(event.eventId, R.drawable.e2e_warning);
+//                                e2eIconByEventId.put(event.eventId, R.drawable.e2e_warning);
+                                mSession.getCrypto().setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, deviceInfo.deviceId, event.sender, new SimpleApiCallback<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+//                                        e2eIconByEventId.put(event.eventId, R.drawable.e2e_verified);
+                                    }
+                                });
                             }
                         } else {
-                            e2eIconByEventId.put(event.eventId, R.drawable.e2e_warning);
+//                            e2eIconByEventId.put(event.eventId, R.drawable.e2e_warning);
                         }
                     }
                 }
