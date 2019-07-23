@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.SwitchCompat
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -14,12 +15,14 @@ import com.google.gson.Gson
 import com.google.gson.JsonParser
 import im.vector.Matrix
 import im.vector.R
+import im.vector.util.VectorUtils
 import org.matrix.androidsdk.crypto.MXDecryptionException
 import org.matrix.androidsdk.rest.model.Event
 import vmodev.clearkeep.jsonmodels.MessageContent
 import vmodev.clearkeep.ultis.toDateTime
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.User
 
 class ActivityBindingAdapters constructor(val activity: FragmentActivity) : ImageViewBindingAdapters, TextViewBindingAdapters, ISwitchCompatViewBindingAdapters {
     override fun bindImage(imageView: ImageView, imageUrl: String?, listener: RequestListener<Drawable?>?) {
@@ -90,5 +93,27 @@ class ActivityBindingAdapters constructor(val activity: FragmentActivity) : Imag
 
     override fun bindStatusValid(imageView: ImageView, validStatus: Byte?) {
         validStatus?.let { imageView.setImageResource(if (it.compareTo(0) == 0) R.drawable.ic_lock_outline_grey_24dp else R.drawable.ic_lock_outline_green_24dp); }
+    }
+
+    override fun bindImage(imageView: ImageView, room: Room?, listener: RequestListener<Drawable?>?) {
+        room?.let {
+            if (room.avatarUrl.isEmpty()) {
+                val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(room.id), if (room.name.isEmpty()) room.id else room.name, true);
+                imageView.setImageBitmap(bitmap);
+            } else {
+                Glide.with(activity).load(room.avatarUrl).listener(listener).placeholder(R.drawable.ic_launcher_app).into(imageView);
+            }
+        }
+    }
+
+    override fun bindImage(imageView: ImageView, user: User?, listener: RequestListener<Drawable?>?) {
+        user?.let {
+            if (user.avatarUrl.isEmpty()) {
+                val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(user.id), if (user.name.isEmpty()) user.id else user.name, true);
+                imageView.setImageBitmap(bitmap);
+            } else {
+                Glide.with(activity).load(user.avatarUrl).listener(listener).placeholder(R.drawable.ic_launcher_app).into(imageView);
+            }
+        }
     }
 }

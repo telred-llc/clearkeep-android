@@ -95,7 +95,7 @@ class EditProfileActivity : DataBindingDaggerActivity(), IEditProfileActivity {
                     var selectedImage = BitmapFactory.decodeStream(inputStream);
                     selectedImage = getResizedBitmap(selectedImage, 512, 512);
                     val bos = ByteArrayOutputStream();
-                    selectedImage.compress(CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+                    selectedImage.compress(CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
                     val bitmapData = bos.toByteArray();
                     avatarImage = ByteArrayInputStream(bitmapData);
                     binding.imageViewTakePhoto.setImageBitmap(selectedImage);
@@ -109,7 +109,7 @@ class EditProfileActivity : DataBindingDaggerActivity(), IEditProfileActivity {
                     var image: Bitmap = data?.extras?.get("data") as Bitmap
                     image = getResizedBitmap(image, 512, 512);
                     val bos = ByteArrayOutputStream()
-                    image.compress(CompressFormat.PNG, 0 /*ignored for PNG*/, bos)
+                    image.compress(CompressFormat.JPEG, 100/*ignored for PNG*/, bos)
                     val bitmapData = bos.toByteArray()
                     avatarImage = ByteArrayInputStream(bitmapData)
                     image?.let { binding.imageViewTakePhoto.setImageBitmap(image) }

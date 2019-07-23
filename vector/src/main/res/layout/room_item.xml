@@ -29,7 +29,7 @@
                 android:src="@drawable/ic_launcher_app"
                 app:civ_border_color="@android:color/darker_gray"
                 app:civ_border_width="2dp"
-                app:imageUrl="@{room.avatarUrl}" />
+                app:room="@{room}" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/circle_image_view_status"

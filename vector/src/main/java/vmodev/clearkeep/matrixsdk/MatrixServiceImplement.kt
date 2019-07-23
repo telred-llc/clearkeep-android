@@ -1079,7 +1079,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
 
     override fun updateUser(avatar: InputStream): Observable<String> {
         return Observable.create<String> {
-            session!!.mediaCache.uploadContent(avatar, "", "PNG", "", object : IMXMediaUploadListener {
+            session!!.mediaCache.uploadContent(avatar, null, "image/jpeg", null, object : IMXMediaUploadListener {
                 override fun onUploadProgress(p0: String?, p1: IMXMediaUploadListener.UploadStats?) {
                     //Do something
                 }
