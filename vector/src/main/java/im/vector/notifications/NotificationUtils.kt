@@ -42,6 +42,9 @@ import im.vector.receiver.NotificationBroadcastReceiver
 import im.vector.util.PreferencesManager
 import im.vector.util.startNotificationChannelSettingsIntent
 import org.matrix.androidsdk.util.Log
+import vmodev.clearkeep.activities.CallViewActivity
+import vmodev.clearkeep.activities.HomeScreenActivity
+import vmodev.clearkeep.activities.RoomActivity
 import java.util.*
 
 
@@ -180,14 +183,14 @@ object NotificationUtils {
     @SuppressLint("NewApi")
     fun buildForegroundServiceNotification(context: Context, @StringRes subTitleResId: Int): Notification {
         // build the pending intent go to the home screen if this is clicked.
-        val i = Intent(context, VectorHomeActivity::class.java)
+        val i = Intent(context, HomeScreenActivity::class.java)
         i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         val pi = PendingIntent.getActivity(context, 0, i, 0)
 
         val builder = NotificationCompat.Builder(context, LISTENING_FOR_EVENTS_NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(context.getString(R.string.riot_app_name))
                 .setContentText(context.getString(subTitleResId))
-                .setSmallIcon(R.drawable.logo_transparent)
+                .setSmallIcon(R.drawable.ic_launcher_app_white)
                 .setContentIntent(pi)
 
         // hide the notification from the status bar
@@ -235,6 +238,11 @@ object NotificationUtils {
     @SuppressLint("NewApi")
     fun buildIncomingCallNotification(context: Context, isVideo: Boolean, roomName: String, matrixId: String, callId: String): Notification {
 
+        val intentCallView = Intent(context, CallViewActivity::class.java);
+        intentCallView.putExtra(CallViewActivity.EXTRA_MATRIX_ID, matrixId);
+        intentCallView.putExtra(CallViewActivity.EXTRA_CALL_ID, callId);
+        val pendingIntentCall = PendingIntent.getActivity(context, 0, intentCallView, PendingIntent.FLAG_UPDATE_CURRENT);
+
         val builder = NotificationCompat.Builder(context, CALL_NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(ensureTitleNotEmpty(context, roomName))
                 .apply {
@@ -245,6 +253,7 @@ object NotificationUtils {
                     }
                 }
                 .setSmallIcon(R.drawable.incoming_call_notification_transparent)
+                .setFullScreenIntent(pendingIntentCall, true)
                 .setCategory(NotificationCompat.CATEGORY_CALL)
                 .setLights(Color.GREEN, 500, 500)
 
@@ -252,14 +261,14 @@ object NotificationUtils {
         builder.priority = NotificationCompat.PRIORITY_MAX
 
         // clear the activity stack to home activity
-        val intent = Intent(context, VectorHomeActivity::class.java)
+        val intent = Intent(context, HomeScreenActivity::class.java)
                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                .putExtra(VectorHomeActivity.EXTRA_CALL_SESSION_ID, matrixId)
-                .putExtra(VectorHomeActivity.EXTRA_CALL_ID, callId)
+                .putExtra(HomeScreenActivity.EXTRA_CALL_SESSION_ID, matrixId)
+                .putExtra(HomeScreenActivity.EXTRA_CALL_ID, callId)
 
         // Recreate the back stack
         val stackBuilder = TaskStackBuilder.create(context)
-                .addParentStack(VectorHomeActivity::class.java)
+                .addParentStack(HomeScreenActivity::class.java)
                 .addNextIntent(intent)
 
 
@@ -306,14 +315,14 @@ object NotificationUtils {
         }
 
         // Build the pending intent for when the notification is clicked
-        val roomIntent = Intent(context, VectorRoomActivity::class.java)
+        val roomIntent = Intent(context, RoomActivity::class.java)
                 .putExtra(VectorRoomActivity.EXTRA_ROOM_ID, roomId)
                 .putExtra(VectorRoomActivity.EXTRA_MATRIX_ID, matrixId)
                 .putExtra(VectorRoomActivity.EXTRA_START_CALL_ID, callId)
 
         // Recreate the back stack
         val stackBuilder = TaskStackBuilder.create(context)
-                .addParentStack(VectorRoomActivity::class.java)
+                .addParentStack(RoomActivity::class.java)
                 .addNextIntent(roomIntent)
 
         // android 4.3 issue
@@ -340,7 +349,7 @@ object NotificationUtils {
         val accentColor = ContextCompat.getColor(context, R.color.notification_accent_color)
         // Build the pending intent for when the notification is clicked
         val openRoomIntent = buildOpenRoomIntent(context, roomInfo.roomId)
-        val smallIcon = if (roomInfo.shouldBing) R.drawable.icon_notif_important else R.drawable.logo_transparent
+        val smallIcon = if (roomInfo.shouldBing) R.drawable.ic_launcher_app_white else R.drawable.ic_launcher_app_white
 
         val channelID = if (roomInfo.shouldBing) NOISY_NOTIFICATION_CHANNEL_ID else SILENT_NOTIFICATION_CHANNEL_ID
         return NotificationCompat.Builder(context, channelID)
@@ -443,7 +452,7 @@ object NotificationUtils {
     fun buildSimpleEventNotification(context: Context, simpleNotifiableEvent: NotifiableEvent, largeIcon: Bitmap?, matrixId: String): Notification? {
         val accentColor = ContextCompat.getColor(context, R.color.notification_accent_color)
         // Build the pending intent for when the notification is clicked
-        val smallIcon = if (simpleNotifiableEvent.noisy) R.drawable.icon_notif_important else R.drawable.logo_transparent
+        val smallIcon = if (simpleNotifiableEvent.noisy) R.drawable.ic_launcher_app_white else R.drawable.ic_launcher_app_white
 
         val channelID = if (simpleNotifiableEvent.noisy) NOISY_NOTIFICATION_CHANNEL_ID else SILENT_NOTIFICATION_CHANNEL_ID
 
@@ -483,7 +492,7 @@ object NotificationUtils {
                         setAutoCancel(true)
                     }
 
-                    val contentIntent = Intent(context, VectorHomeActivity::class.java)
+                    val contentIntent = Intent(context, HomeScreenActivity::class.java)
                     contentIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                     //pending intent get reused by system, this will mess up the extra params, so put unique info to avoid that
                     contentIntent.data = Uri.parse("foobar://" + simpleNotifiableEvent.eventId)
@@ -509,7 +518,7 @@ object NotificationUtils {
     }
 
     private fun buildOpenRoomIntent(context: Context, roomId: String): PendingIntent? {
-        val roomIntentTap = Intent(context, VectorRoomActivity::class.java)
+        val roomIntentTap = Intent(context, RoomActivity::class.java)
         roomIntentTap.putExtra(VectorRoomActivity.EXTRA_ROOM_ID, roomId)
         roomIntentTap.action = TAP_TO_VIEW_ACTION
         //pending intent get reused by system, this will mess up the extra params, so put unique info to avoid that
@@ -517,13 +526,13 @@ object NotificationUtils {
 
         // Recreate the back stack
         return TaskStackBuilder.create(context)
-                .addNextIntentWithParentStack(Intent(context, VectorHomeActivity::class.java))
+                .addNextIntentWithParentStack(Intent(context, HomeScreenActivity::class.java))
                 .addNextIntent(roomIntentTap)
                 .getPendingIntent(System.currentTimeMillis().toInt(), PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     private fun buildOpenHomePendingIntentForSummary(context: Context): PendingIntent {
-        val intent = Intent(context, VectorHomeActivity::class.java)
+        val intent = Intent(context, HomeScreenActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         intent.putExtra(VectorHomeActivity.EXTRA_CLEAR_EXISTING_NOTIFICATION, true)
         intent.data = Uri.parse("foobar://tapSummary")
@@ -572,7 +581,7 @@ object NotificationUtils {
                                      noisy: Boolean,
                                      lastMessageTimestamp: Long): Notification? {
         val accentColor = ContextCompat.getColor(context, R.color.notification_accent_color)
-        val smallIcon = if (noisy) R.drawable.icon_notif_important else R.drawable.logo_transparent
+        val smallIcon = if (noisy) R.drawable.ic_launcher_app_white else R.drawable.ic_launcher_app_white
 
         return NotificationCompat.Builder(context, if (noisy) NOISY_NOTIFICATION_CHANNEL_ID else SILENT_NOTIFICATION_CHANNEL_ID)
                 // used in compat < N, after summary is built based on child notifications

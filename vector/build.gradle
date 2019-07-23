@@ -23,7 +23,7 @@ kapt {
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     packagingOptions {
         exclude 'META-INF/LICENSE'
@@ -38,7 +38,7 @@ android {
     defaultConfig {
         applicationId 'com.telred.clearkeep'
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         // use the version code
         versionName rootProject.ext.versionNameProp
         ndk {
