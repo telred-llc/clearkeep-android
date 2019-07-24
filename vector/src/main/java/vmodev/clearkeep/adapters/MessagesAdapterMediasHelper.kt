@@ -14,17 +14,17 @@ import im.vector.R
 import im.vector.adapters.VectorMessagesAdapter
 import im.vector.listeners.IMessagesAdapterActionsListener
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.JsonUtils
+import org.matrix.androidsdk.core.Log
+import org.matrix.androidsdk.core.model.MatrixError
+import org.matrix.androidsdk.crypto.model.crypto.EncryptedFileInfo
 import org.matrix.androidsdk.db.MXMediaCache
 import org.matrix.androidsdk.listeners.IMXMediaDownloadListener
 import org.matrix.androidsdk.listeners.IMXMediaUploadListener
 import org.matrix.androidsdk.listeners.MXMediaDownloadListener
 import org.matrix.androidsdk.listeners.MXMediaUploadListener
 import org.matrix.androidsdk.rest.model.Event
-import org.matrix.androidsdk.rest.model.MatrixError
-import org.matrix.androidsdk.rest.model.crypto.EncryptedFileInfo
 import org.matrix.androidsdk.rest.model.message.*
-import org.matrix.androidsdk.util.JsonUtils
-import org.matrix.androidsdk.util.Log
 import java.util.HashMap
 
 internal class MessagesAdapterMediasHelper constructor(private val mContext: Context,
@@ -652,16 +652,16 @@ internal class MessagesAdapterMediasHelper constructor(private val mContext: Con
     private fun isMediaDownloading(event: Event): Boolean {
 
         if (TextUtils.equals(event.getType(), Event.EVENT_TYPE_MESSAGE)) {
-            val message = JsonUtils.toMessage(event.getContent())
+            val message = JsonUtils.toMessage(event.content)
 
             var url: String? = null
 
             if (TextUtils.equals(message.msgtype, Message.MSGTYPE_IMAGE)) {
-                url = JsonUtils.toImageMessage(event.getContent()).getUrl()
+                url = JsonUtils.toImageMessage(event.content).getUrl()
             } else if (TextUtils.equals(message.msgtype, Message.MSGTYPE_VIDEO)) {
-                url = JsonUtils.toVideoMessage(event.getContent()).getUrl()
+                url = JsonUtils.toVideoMessage(event.content).getUrl()
             } else if (TextUtils.equals(message.msgtype, Message.MSGTYPE_FILE)) {
-                url = JsonUtils.toFileMessage(event.getContent()).getUrl()
+                url = JsonUtils.toFileMessage(event.content).getUrl()
             }
 
             if (!TextUtils.isEmpty(url)) {

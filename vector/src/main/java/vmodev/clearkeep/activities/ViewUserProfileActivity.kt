@@ -1,27 +1,21 @@
 package vmodev.clearkeep.activities
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.widget.Toast
-import dagger.android.support.DaggerAppCompatActivity
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorRoomActivity
 import im.vector.databinding.ActivityViewUserProfileBinding
 import org.matrix.androidsdk.MXSession
-import org.matrix.androidsdk.rest.callback.ApiCallback
-import org.matrix.androidsdk.rest.model.MatrixError
+import org.matrix.androidsdk.core.callback.ApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
 import vmodev.clearkeep.activities.interfaces.IViewUserProfileActivity
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewUserProfileActivityViewModelFactory
-import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
-import java.util.HashMap
+import java.util.*
 import javax.inject.Inject
 
 class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileActivity {
@@ -69,11 +63,11 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
 
     private fun joinRoom(roomId: String) {
         val room = session.dataHandler.store.getRoom(roomId);
-        session.joinRoom(room!!.getRoomId(), object : ApiCallback<String> {
+        session.joinRoom(room!!.roomId, object : ApiCallback<String> {
             override fun onSuccess(roomId: String) {
                 val params = HashMap<String, Any>()
-                params[VectorRoomActivity.EXTRA_MATRIX_ID] = session.getMyUserId()
-                params[VectorRoomActivity.EXTRA_ROOM_ID] = room!!.getRoomId()
+                params[VectorRoomActivity.EXTRA_MATRIX_ID] = session.myUserId
+                params[VectorRoomActivity.EXTRA_ROOM_ID] = room!!.roomId
 
                 CommonActivityUtils.goToRoomPage(this@ViewUserProfileActivity, session, params)
                 finish();

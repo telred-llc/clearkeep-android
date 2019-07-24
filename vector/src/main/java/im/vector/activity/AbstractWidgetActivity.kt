@@ -36,11 +36,11 @@ import im.vector.util.AssetReader
 import im.vector.util.toJsonMap
 import im.vector.widgets.WidgetsManager
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.JsonUtils
+import org.matrix.androidsdk.core.Log
+import org.matrix.androidsdk.core.callback.ApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.data.Room
-import org.matrix.androidsdk.rest.callback.ApiCallback
-import org.matrix.androidsdk.rest.model.MatrixError
-import org.matrix.androidsdk.util.JsonUtils
-import org.matrix.androidsdk.util.Log
 import java.util.*
 import javax.net.ssl.HttpsURLConnection
 
@@ -159,8 +159,13 @@ abstract class AbstractWidgetActivity : VectorAppCompatActivity() {
                 }
 
                 override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
-                    Log.e(LOG_TAG, "## onConsoleMessage() : " + consoleMessage.message()
-                            + " line " + consoleMessage.lineNumber() + " source Id " + consoleMessage.sourceId())
+                    if (consoleMessage.messageLevel() == ConsoleMessage.MessageLevel.ERROR) {
+                        Log.e(LOG_TAG, "## onConsoleMessage() : " + consoleMessage.message()
+                                + " line " + consoleMessage.lineNumber() + " source Id " + consoleMessage.sourceId())
+                    } else {
+                        Log.d(LOG_TAG, "## onConsoleMessage() : " + consoleMessage.message()
+                                + " line " + consoleMessage.lineNumber() + " source Id " + consoleMessage.sourceId())
+                    }
                     return super.onConsoleMessage(consoleMessage)
                 }
             }
@@ -211,7 +216,7 @@ abstract class AbstractWidgetActivity : VectorAppCompatActivity() {
 
                 override fun onPageFinished(view: WebView, url: String) {
                     // Check that the Activity is still alive
-                    if (isDestroyed) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed) {
                         return
                     }
 

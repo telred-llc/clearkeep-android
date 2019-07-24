@@ -23,7 +23,7 @@ import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.MXCActionBarActivity
 import im.vector.ui.themes.ActivityOtherThemes
-import org.matrix.androidsdk.util.Log
+import org.matrix.androidsdk.core.Log
 import java.util.*
 
 abstract class BaseSearchActivity : MXCActionBarActivity() {

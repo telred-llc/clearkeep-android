@@ -26,11 +26,11 @@ import android.support.v7.preference.PreferenceManager;
 import android.widget.ImageView;
 
 import org.matrix.androidsdk.MXSession;
+import org.matrix.androidsdk.core.Log;
+import org.matrix.androidsdk.core.callback.ApiCallback;
+import org.matrix.androidsdk.core.model.MatrixError;
 import org.matrix.androidsdk.listeners.IMXEventListener;
 import org.matrix.androidsdk.listeners.MXEventListener;
-import org.matrix.androidsdk.rest.callback.ApiCallback;
-import org.matrix.androidsdk.rest.model.MatrixError;
-import org.matrix.androidsdk.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ import im.vector.VectorApp;
 import im.vector.analytics.TrackingEvent;
 import im.vector.push.PushManager;
 import im.vector.receiver.VectorUniversalLinkReceiver;
-import im.vector.services.EventStreamService;
+import im.vector.services.EventStreamServiceX;
 import im.vector.util.PreferencesManager;
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
@@ -171,7 +171,7 @@ public class SplashActivity extends MXCActionBarActivity {
                     .apply();
 
             // Force a clear cache
-            Matrix.getInstance(this).reloadSessions(this);
+            Matrix.getInstance(this).reloadSessions(this, true);
             return;
         }
 
@@ -231,7 +231,7 @@ public class SplashActivity extends MXCActionBarActivity {
                             PreferencesManager.setUseLazyLoading(SplashActivity.this, true);
 
                             // Reload the sessions
-                            Matrix.getInstance(SplashActivity.this).reloadSessions(SplashActivity.this);
+                            Matrix.getInstance(SplashActivity.this).reloadSessions(SplashActivity.this, true);
                         } else {
                             // Maybe in the future this home server will support it
                             startEventStreamService(sessions);
@@ -318,15 +318,7 @@ public class SplashActivity extends MXCActionBarActivity {
             Matrix.getInstance(this).mHasBeenDisconnected = false;
         }
 
-        if (EventStreamService.getInstance() == null) {
-            // Start the event stream service
-            Intent intent = new Intent(this, EventStreamService.class);
-            intent.putExtra(EventStreamService.EXTRA_MATRIX_IDS, matrixIds.toArray(new String[matrixIds.size()]));
-            intent.putExtra(EventStreamService.EXTRA_STREAM_ACTION, EventStreamService.StreamAction.START.ordinal());
-            startService(intent);
-        } else {
-            EventStreamService.getInstance().startAccounts(matrixIds);
-        }
+        EventStreamServiceX.Companion.onApplicationStarted(this);
 
         // trigger the push registration if required
         PushManager pushManager = Matrix.getInstance(getApplicationContext()).getPushManager();

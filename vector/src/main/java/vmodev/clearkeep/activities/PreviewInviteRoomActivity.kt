@@ -57,7 +57,7 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
                                 index++;
                                 val params = HashMap<String, Any>()
 
-                                params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession.getMyUserId()
+                                params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession.myUserId
                                 params[VectorRoomActivity.EXTRA_ROOM_ID] = room.id
 
                                 CommonActivityUtils.goToRoomPage(this@PreviewInviteRoomActivity, mxSession, params)

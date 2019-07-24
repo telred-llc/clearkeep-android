@@ -40,29 +40,14 @@ android {
         minSdkVersion 21
         targetSdkVersion 29
         // use the version code
+        versionCode rootProject.ext.versionCodeProp
         versionName rootProject.ext.versionNameProp
+
         ndk {
-            abiFilters "armeabi-v7a", "x86"
-        }
-        packagingOptions {
-            // The project react-native does not provide 64-bit binaries at the
-            // time of this writing. Unfortunately, packaging any 64-bit
-            // binaries into the .apk will crash the app at runtime on 64-bit
-            // platforms.
-            exclude "lib/x86_64/libjingle_peerconnection_so.so"
-            exclude "lib/arm64-v8a/libjingle_peerconnection_so.so"
+            abiFilters "armeabi-v7a", "x86", 'arm64-v8a', 'x86_64'
         }
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-
-    signingConfigs {
-        release {
-            storeFile file(project.hasProperty("RELEASE_STORE_FILE") ? RELEASE_STORE_FILE : "/dummy/path")
-            storePassword project.hasProperty("RELEASE_STORE_PASSWORD") ? RELEASE_STORE_PASSWORD : "dummy password"
-            keyAlias project.hasProperty("RELEASE_KEY_ALIAS") ? RELEASE_KEY_ALIAS : "dummy alias"
-            keyPassword project.hasProperty("RELEASE_KEY_PASSWORD") ? RELEASE_KEY_PASSWORD : "dummy password"
-        }
     }
 
     dexOptions {
@@ -79,6 +64,7 @@ android {
             resValue "string", "build_number", rootProject.ext.buildNumberProp
             buildConfigField "boolean", "LOW_PRIVACY_LOG_ENABLE", "false"
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "String", "HOME_SERVER", "\"https://study.sinbadflyce.com\""
             buildConfigField "String", "PUSH_GATEWAY", "\"http://study.sinbadflyce.com:5000/_matrix/push/v1/notify\""
             buildConfigField "String", "IDENTIFY_SERVER", "\"https://id.clearkeep.me\""
@@ -96,14 +82,6 @@ android {
             buildConfigField "String", "HOME_SERVER", "\"https://ck.furoute.com\""
             buildConfigField "String", "PUSH_GATEWAY", "\"http://ck.furoute.com:5000/_matrix/push/v1/notify\""
             buildConfigField "String", "IDENTIFY_SERVER", "\"https://id.clearkeep.me\""
-        }
-
-        matrixorg.initWith(buildTypes.release)
-        matrixorg {
-            signingConfig signingConfigs.release
-
-            // When building with source of the SDK, there is no buildType 'matrixorg' in the SDK so fallback to 'release'
-            matchingFallbacks = ['release']
         }
     }
 
@@ -131,54 +109,8 @@ android {
         }
     }
     lintOptions {
+//        lintConfig file("lint.xml")
         checkReleaseBuilds false
-        // Or, if you prefer, you can continue to check for errors in release builds,
-        // but continue the build even when errors are found:
-        abortOnError false
-    }
-//    lintOptions {
-//        warning 'MissingTranslation'
-
-    // Treat some warnings as errors
-    // Resources
-//        error 'TypographyEllipsis'
-//        warning 'ImpliedQuantity'
-//
-//         UX
-//        error 'ButtonOrder'
-//
-//         Layout
-//        error 'StringFormatCount'
-//        error 'HardcodedText'
-//        error 'SpUsage'
-//        error 'ObsoleteLayoutParam'
-//        error 'InefficientWeight'
-//        error 'DisableBaselineAlignment'
-//        error 'ScrollViewSize'
-//
-//         RTL
-//        error 'RtlEnabled'
-//        error 'RtlHardcoded'
-//        error 'RtlSymmetry'
-//
-//         Code
-//        error 'SetTextI18n'
-//        error 'ViewConstructor'
-//        error 'UseValueOf'
-//    }
-
-    repositories {
-        flatDir {
-            dir 'libs'
-        }
-
-        maven {
-            url "https://s3.amazonaws.com/repo.commonsware.com"
-        }
-
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
-        }
     }
 
     testOptions {
@@ -213,7 +145,6 @@ static def gitBranchName() {
 }
 
 dependencies {
-
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
@@ -222,21 +153,28 @@ dependencies {
 
     // Kotlin coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1'
-    implementation 'org.jetbrains.anko:anko-commons:0.10.8'
+    implementation "org.jetbrains.anko:anko-commons:0.10.8"
 
     // Note: do not upgrade to 1.0.3 because it lead to crashes at startup on Android 16
     implementation 'com.android.support:multidex:1.0.0'
     implementation 'me.leolin:ShortcutBadger:1.1.2@aar'
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:design:28.0.0'
-    implementation 'com.android.support:cardview-v7:28.0.0'
-    implementation 'com.android.support:recyclerview-v7:28.0.0'
-    implementation 'com.android.support:preference-v7:28.0.0'
-    implementation 'com.android.support:preference-v14:28.0.0'
+
+    implementation "com.android.support:appcompat-v7:$support_lib_version"
+    implementation "com.android.support:design:$support_lib_version"
+    implementation "com.android.support:cardview-v7:$support_lib_version"
+    implementation "com.android.support:recyclerview-v7:$support_lib_version"
+    implementation "com.android.support:preference-v7:$support_lib_version"
+    implementation "com.android.support:preference-v14:$support_lib_version"
     implementation 'com.jakewharton:butterknife:8.8.1'
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'com.android.support:support-v4:28.0.0'
     kapt 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    // Work manager
+    // (Java only)
+    implementation "android.arch.work:work-runtime:1.0.0"
+    // Kotlin + coroutines
+    implementation "android.arch.work:work-runtime-ktx:1.0.0"
 
     // UI
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
@@ -251,7 +189,7 @@ dependencies {
     // Network
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation "com.google.code.gson:gson:$gson_version"
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'com.squareup.okhttp3:okhttp-urlconnection:3.10.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
@@ -267,63 +205,49 @@ dependencies {
     implementation 'com.nulab-inc:zxcvbn:1.2.5'
     implementation 'com.googlecode.libphonenumber:libphonenumber:8.9.12'
 
+    //Alerter
+    implementation 'com.tapadoo.android:alerter:3.0.2'
+
     /************* Matrix SDK management **************/
-
     // update settings.gradle
-
-    // use the matrix SDK as external lib
-    implementation(name: 'matrix-sdk', ext: 'aar')
-
+    // use the matrix SDK as external dependency
+    implementation 'com.github.matrix-org:matrix-android-sdk:v0.9.24.3'
     // use the matrix SDK as a sub project
-
     // you have to uncomment some lines in settings.gradle
-
     //implementation project(':matrix-sdk')
-    implementation(name: 'olm-sdk', ext: 'aar')
+    //implementation project(':matrix-sdk-crypto')
+    //implementation project(':matrix-sdk-core')
 
     /************* jitsi **************/
-    implementation 'javax.inject:javax.inject:1'
-    implementation 'com.facebook.fbui.textlayoutbuilder:textlayoutbuilder:1.0.0'
-    implementation 'com.facebook.fresco:fresco:1.3.0'
-    implementation 'com.facebook.fresco:imagepipeline-okhttp3:1.3.0'
-    implementation 'com.facebook.soloader:soloader:0.1.0'
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation 'org.webkit:android-jsc:r174650'
-    implementation(name: 'jitsi-sdk', ext: 'aar')
-    implementation(name: 'react-native-background-timer', ext: 'aar')
-    implementation(name: 'react-native-fetch-blob', ext: 'aar')
-    implementation(name: 'react-native-immersive', ext: 'aar')
-    implementation(name: 'react-native-keep-awake', ext: 'aar')
-    implementation(name: 'react-native-vector-icons', ext: 'aar')
-    implementation(name: 'react-native-webrtc', ext: 'aar')
-    implementation(name: 'react-native', ext: 'aar')
-    implementation(name: 'react-native-locale-detector', ext: 'aar')
+    implementation('org.jitsi.react:jitsi-meet-sdk:2.0.0') {
+        transitive = true
+        exclude group: 'com.amplitude', module: 'android-sdk'
+    }
 
+    /************* analytics **************/
     // another tracking than GA
-    implementation 'org.piwik.sdk:piwik-sdk:2.0.0'
-
+    implementation 'org.matomo.sdk:tracker:4.0.2'
 
     /************* flavors management **************/
 
     // app flavor only
-    appImplementation 'com.google.firebase:firebase-core:16.0.8'
-    appImplementation 'com.google.firebase:firebase-messaging:17.4.0'
+    appImplementation('com.google.firebase:firebase-messaging:17.4.0') {
+        exclude group: 'com.google.firebase', module: 'firebase-core'
+        exclude group: 'com.google.firebase', module: 'firebase-analytics'
+        exclude group: 'com.google.firebase', module: 'firebase-measurement-connector'
+    }
 
     // appfdroid flavor only
 
     // Test
-    testImplementation 'junit:junit:4.12'
-
-    // Test
+    testImplementation 'junit:junit:4.12' // Test
     testImplementation 'com.android.support.test:runner:1.0.2'
     testImplementation 'com.android.support.test:rules:1.0.2'
     testImplementation 'org.mockito:mockito-core:2.23.0'
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.hamcrest:hamcrest-library:1.3'
-    testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
-
-    // fixes issue on linux/mac
-    testImplementation 'org.robolectric:robolectric:4.0.2'
+    testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3' // fixes issue on linux/mac
+    testImplementation "org.robolectric:robolectric:4.0.2"
 
     // Robolectric
     androidTestImplementation 'junit:junit:4.12'

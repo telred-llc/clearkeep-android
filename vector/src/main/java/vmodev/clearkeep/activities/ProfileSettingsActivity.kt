@@ -90,7 +90,7 @@ class ProfileSettingsActivity : DataBindingDaggerActivity(), IProfileSettingsAct
             startActivity(reportActivityIntent);
         }
         binding.textViewClearCache.setOnClickListener {
-            Matrix.getInstance(applicationContext).reloadSessions(applicationContext);
+            Matrix.getInstance(applicationContext).reloadSessions(applicationContext, false);
         }
     }
 

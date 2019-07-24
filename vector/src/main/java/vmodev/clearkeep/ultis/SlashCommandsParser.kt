@@ -12,10 +12,9 @@ import im.vector.util.PreferencesManager
 import im.vector.util.SlashCommandsParser
 import im.vector.widgets.WidgetsManager
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.callback.SimpleApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.data.Room
-import org.matrix.androidsdk.rest.callback.SimpleApiCallback
-import org.matrix.androidsdk.rest.model.MatrixError
-import org.matrix.androidsdk.util.Log
 import vmodev.clearkeep.activities.RoomActivity
 import java.util.HashMap
 

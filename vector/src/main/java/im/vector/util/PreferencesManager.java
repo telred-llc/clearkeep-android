@@ -27,7 +27,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
 
-import org.matrix.androidsdk.util.Log;
+import org.matrix.androidsdk.core.Log;
 
 import java.io.File;
 import java.util.Arrays;
@@ -202,8 +202,6 @@ public class PreferencesManager {
             SETTINGS_NOTIFICATION_RINGTONE_PREFERENCE_KEY,
             SETTINGS_NOTIFICATION_RINGTONE_SELECTION_PREFERENCE_KEY,
 
-            SETTINGS_SET_SYNC_TIMEOUT_PREFERENCE_KEY,
-            SETTINGS_SET_SYNC_DELAY_PREFERENCE_KEY,
             SETTINGS_ROOM_SETTINGS_LABS_END_TO_END_PREFERENCE_KEY,
             SETTINGS_CONTACTS_PHONEBOOK_COUNTRY_PREFERENCE_KEY,
             SETTINGS_INTERFACE_LANGUAGE_PREFERENCE_KEY,

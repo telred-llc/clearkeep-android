@@ -1,4 +1,4 @@
-Changes in Riot 0.8.27 (2019-XX-XX)
+Changes in Riot 0.9.3 (2019-XX-XX)
 ===================================================
 
 MatrixSdk:
@@ -21,7 +21,106 @@ Translations:
  -
 
 Build:
- -
+ - Include native libraries for 64 bits processors.
+
+
+Changes in Riot 0.9.2 (2019-07-18)
+===================================================
+
+MatrixSdk:
+ - Upgrade MatrixSdk to version 0.9.24.
+ - Changelog: https://github.com/matrix-org/matrix-android-sdk/releases/tag/v0.9.24
+
+Improvements:
+ - Room upgrade: Use the `server_name` parameter when joining the new room (#3204)
+
+Other changes:
+ - Piwik SDK has been replaced by Matomo SDK (#3163)
+
+Bugfix:
+ - Fix / Illegal States exceptions when starting event stream service X
+ - Fix / Keys Backup can be setup twice #9510
+ - Fix / Infinite logout screen when token invalidated
+ - Fix / Export keys not possible when no network (airplane)
+ - Fix / crash in logout success
+ - Fix / Crash when session store is null in event stream #3158
+
+Build:
+ - Upgrade gradle version from 4.10.1 to 5.4.1
+ - Ensure MatrixSDK library is downloaded from the jitpack repository
+
+Changes in Riot 0.9.1 (2019-05-03)
+===================================================
+
+MatrixSdk:
+ - Upgrade MatrixSdk to version 0.9.23.
+ - Changelog: https://github.com/matrix-org/matrix-android-sdk/releases/tag/v0.9.23
+
+Features:
+ - E2E: SAS Verification
+
+Improvements:
+ - Use heads-up alert UX for key-share and key-verification requests
+
+Other changes:
+ - Olm lib is now only a dependency of Matrix Sdk
+ - Matrix SDK library is now built and hosted by Jitpack (https://jitpack.io/#matrix-org/matrix-android-sdk/) (matrix-org/matrix-android-sdk#241)
+
+Bugfix:
+ - Fix mistake in Arabic translation (#3129)
+
+Changes in Riot 0.9.00 (2019-04-23)
+===================================================
+
+/!\ This version is the first version published with app id "im.vector.app".
+
+Changes in Riot 0.8.99 (2019-04-23)
+===================================================
+
+/!\ This version is the last version published with app id "im.vector.alpha". It contains a screen which introduce the new application "im.vector.app"
+/!\ This release contains security related bugfixes, users should upgrade asap
+
+MatrixSdk:
+ - Upgrade MatrixSdk to version 0.9.22.
+ - Changelog: https://github.com/matrix-org/matrix-android-sdk/releases/tag/v0.9.22
+
+Other changes:
+ - Remove Amplitude tracker and Calendars permissions added by Jitsi lib (jitsi/jitsi-meet#4068, jitsi/jitsi-meet#4080)
+ - Exclude code of Firebase analytics (#2481)
+
+Bugfix:
+ - Fix / Illegal States exceptions when starting event stream service X
+ - Security Fix / Remove obsolete and buggy ContentProvider which could allow a malicious local app to compromise account data. Many thanks to Julien Thomas (twitter.com/@julien_thomas) from Protektoid Project (https://protektoid.com) for identifying this and responsibly disclosing it!
+
+Build:
+ - Exclude Firebase analytics code (#2481)
+
+
+Changes in Riot 0.8.29 (2019-04-04)
+===================================================
+
+MatrixSdk:
+ - Upgrade MatrixSdk to version 0.9.20.
+ - Changelog: https://github.com/matrix-org/matrix-android-sdk/releases/tag/v0.9.20
+
+Improvements:
+ - Fix crash on Jitsi conference by upgrading the lib to version 1.21.0 (#2412)
+ - Finally upgrade Jitsi lib to version 2.0.0 (https://github.com/jitsi/jitsi-meet/releases/tag/android-sdk-2.0.0)
+
+Changes in Riot 0.8.28 (2019-04-01)
+===================================================
+
+Bugfix:
+ - Ensure EventStreamServiceX call startForeground(), even if there is no session, and do not simulate push in this case
+
+Changes in Riot 0.8.27 (2019-04-01)
+===================================================
+
+Improvements:
+ - Deprecate EventStreamService, replaced by EventStreamServiceX and CallService (#2782, #3065)
+
+Other changes:
+ - Scalar URL: Use prod urls in Riot mobile apps (#3077)
 
 Changes in Riot 0.8.26 (2019-03-25)
 ===================================================
@@ -1289,7 +1388,7 @@ Changes in Vector 0.2.0 (2016-04-14)
 =======================================================
 
 
-Changes in Riot 0.8.XX (2019-XX-XX)
+Changes in Riot 0.9.XX (2019-XX-XX)
 ===================================================
 
 MatrixSdk:

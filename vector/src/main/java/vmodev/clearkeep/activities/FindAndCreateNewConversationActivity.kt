@@ -10,6 +10,7 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.DividerItemDecoration
+import android.util.Log
 import android.widget.Toast
 import com.jakewharton.rxbinding2.widget.RxTextView
 import dagger.android.support.DaggerAppCompatActivity
@@ -23,9 +24,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
-import org.matrix.androidsdk.rest.callback.ApiCallback
-import org.matrix.androidsdk.rest.model.MatrixError
-import org.matrix.androidsdk.util.Log
+import org.matrix.androidsdk.core.callback.ApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
 import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapter
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
@@ -119,11 +119,11 @@ class FindAndCreateNewConversationActivity : DataBindingDaggerActivity(), Lifecy
 
     private fun joinRoom(roomId: String) {
         val room = mxSession.dataHandler.store.getRoom(roomId);
-        mxSession.joinRoom(room!!.getRoomId(), object : ApiCallback<String> {
+        mxSession.joinRoom(room!!.roomId, object : ApiCallback<String> {
             override fun onSuccess(roomId: String) {
                 val params = HashMap<String, Any>()
-                params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession.getMyUserId()
-                params[VectorRoomActivity.EXTRA_ROOM_ID] = room!!.getRoomId()
+                params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession.myUserId
+                params[VectorRoomActivity.EXTRA_ROOM_ID] = room!!.roomId
 
                 CommonActivityUtils.goToRoomPage(this@FindAndCreateNewConversationActivity, mxSession, params)
                 finish();

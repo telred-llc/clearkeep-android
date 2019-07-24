@@ -17,8 +17,8 @@ import im.vector.activity.VectorBaseSearchActivity
 import im.vector.contacts.ContactsManager
 import im.vector.util.PERMISSION_REQUEST_CODE
 import im.vector.util.checkPermissions
+import org.matrix.androidsdk.core.Log
 import org.matrix.androidsdk.fragments.MatrixMessageListFragment
-import org.matrix.androidsdk.util.Log
 import vmodev.clearkeep.adapters.UnifiedSearchFragmentPagerAdapter
 import vmodev.clearkeep.applications.IApplication
 

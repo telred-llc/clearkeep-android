@@ -30,18 +30,18 @@ import im.vector.view.UrlPreviewView
 import im.vector.widgets.WidgetsManager
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.adapters.MessageRow
+import org.matrix.androidsdk.core.JsonUtils
+import org.matrix.androidsdk.core.Log
+import org.matrix.androidsdk.core.callback.ApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.data.Room
-import org.matrix.androidsdk.rest.callback.ApiCallback
 import org.matrix.androidsdk.rest.model.Event
-import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.URLPreview
 import org.matrix.androidsdk.rest.model.group.Group
 import org.matrix.androidsdk.rest.model.group.GroupProfile
 import org.matrix.androidsdk.rest.model.message.Message
 import org.matrix.androidsdk.rest.model.message.StickerMessage
-import org.matrix.androidsdk.util.JsonUtils
-import org.matrix.androidsdk.util.Log
 import org.matrix.androidsdk.view.HtmlTagHandler
 import java.lang.ref.WeakReference
 import java.util.*
@@ -841,14 +841,14 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             }
 
             // A message is displayable as long as it has a body, emote can have empty body, formatted message can also have empty body
-            val message = JsonUtils.toMessage(event.getContent())
+            val message = JsonUtils.toMessage(event.content)
             return (!TextUtils.isEmpty(message.body)
                     || TextUtils.equals(message.msgtype, Message.MSGTYPE_EMOTE)
                     || TextUtils.equals(message.format, Message.FORMAT_MATRIX_HTML) && !TextUtils.isEmpty(message.formatted_body))
         } else if (Event.EVENT_TYPE_STICKER == eventType) {
             // A sticker is displayable as long as it has a body
             // Redacted stickers should not be displayed
-            val stickerMessage = JsonUtils.toStickerMessage(event.getContent())
+            val stickerMessage = JsonUtils.toStickerMessage(event.content)
             return !TextUtils.isEmpty(stickerMessage.body) && !event.isRedacted
         } else if (Event.EVENT_TYPE_STATE_ROOM_TOPIC == eventType || Event.EVENT_TYPE_STATE_ROOM_NAME == eventType) {
             val display = RiotEventDisplay(context)
@@ -871,7 +871,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             // Matrix apps are enabled
             return true
         } else if (Event.EVENT_TYPE_STATE_ROOM_CREATE == eventType) {
-            val roomCreateContent = JsonUtils.toRoomCreateContent(event.getContent())
+            val roomCreateContent = JsonUtils.toRoomCreateContent(event.content)
             return roomCreateContent != null && roomCreateContent.predecessor != null
         }
         return false
@@ -1250,14 +1250,14 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
                 }
 
                 // A message is displayable as long as it has a body, emote can have empty body, formatted message can also have empty body
-                val message = JsonUtils.toMessage(event.getContent())
+                val message = JsonUtils.toMessage(event.content)
                 return (!TextUtils.isEmpty(message.body)
                         || TextUtils.equals(message.msgtype, Message.MSGTYPE_EMOTE)
                         || TextUtils.equals(message.format, Message.FORMAT_MATRIX_HTML) && !TextUtils.isEmpty(message.formatted_body))
             } else if (Event.EVENT_TYPE_STICKER == eventType) {
                 // A sticker is displayable as long as it has a body
                 // Redacted stickers should not be displayed
-                val stickerMessage = JsonUtils.toStickerMessage(event.getContent())
+                val stickerMessage = JsonUtils.toStickerMessage(event.content)
                 return !TextUtils.isEmpty(stickerMessage.body) && !event.isRedacted
             } else if (Event.EVENT_TYPE_STATE_ROOM_TOPIC == eventType || Event.EVENT_TYPE_STATE_ROOM_NAME == eventType) {
                 val display = RiotEventDisplay(context)
@@ -1280,7 +1280,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
                 // Matrix apps are enabled
                 return true
             } else if (Event.EVENT_TYPE_STATE_ROOM_CREATE == eventType) {
-                val roomCreateContent = JsonUtils.toRoomCreateContent(event.getContent())
+                val roomCreateContent = JsonUtils.toRoomCreateContent(event.content)
                 return roomCreateContent != null && roomCreateContent.predecessor != null
             }
             return false

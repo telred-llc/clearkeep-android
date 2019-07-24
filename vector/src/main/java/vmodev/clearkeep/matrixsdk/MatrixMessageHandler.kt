@@ -4,26 +4,21 @@ import android.content.Context
 import android.util.Log
 import im.vector.Matrix
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.callback.ApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.data.Room
 import org.matrix.androidsdk.data.RoomState
 import org.matrix.androidsdk.data.timeline.EventTimeline
-import org.matrix.androidsdk.data.timeline.EventTimelineFactory
-import org.matrix.androidsdk.fragments.MatrixMessagesFragment
-import org.matrix.androidsdk.rest.callback.ApiCallback
 import org.matrix.androidsdk.rest.model.Event
-import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.rest.model.sync.RoomResponse
 import org.matrix.androidsdk.rest.model.sync.RoomSync
 import org.matrix.androidsdk.rest.model.sync.RoomSyncState
 import org.matrix.androidsdk.rest.model.sync.RoomSyncTimeline
 import vmodev.clearkeep.databases.AbstractMessageDao
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixMessageHandler
-import vmodev.clearkeep.repositories.MessageRepository
 import vmodev.clearkeep.viewmodelobjects.Message
-import java.lang.Exception
 
 class MatrixMessageHandler constructor(private val roomId: String, context: Context, messageDao: AbstractMessageDao) : IMatrixMessageHandler {
 

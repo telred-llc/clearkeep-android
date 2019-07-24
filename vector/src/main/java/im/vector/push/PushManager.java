@@ -29,13 +29,13 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import org.matrix.androidsdk.MXSession;
+import org.matrix.androidsdk.core.Log;
+import org.matrix.androidsdk.core.callback.ApiCallback;
+import org.matrix.androidsdk.core.callback.SimpleApiCallback;
+import org.matrix.androidsdk.core.listeners.IMXNetworkEventListener;
+import org.matrix.androidsdk.core.model.MatrixError;
 import org.matrix.androidsdk.data.Pusher;
-import org.matrix.androidsdk.listeners.IMXNetworkEventListener;
-import org.matrix.androidsdk.rest.callback.ApiCallback;
-import org.matrix.androidsdk.rest.callback.SimpleApiCallback;
-import org.matrix.androidsdk.rest.model.MatrixError;
 import org.matrix.androidsdk.rest.model.PushersResponse;
-import org.matrix.androidsdk.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +44,9 @@ import java.util.TimerTask;
 
 import im.vector.BuildConfig;
 import im.vector.Matrix;
-import im.vector.activity.CommonActivityUtils;
 import im.vector.push.fcm.FcmHelper;
+import im.vector.services.EventStreamServiceX;
 import im.vector.util.PreferencesManager;
-import im.vector.util.SystemUtilsKt;
 
 /**
  * Helper class to store the FCM registration ID in {@link SharedPreferences}
@@ -246,7 +245,7 @@ public final class PushManager {
                 register(null);
 
                 Log.d(LOG_TAG, "checkRegistrations : reregistered");
-                CommonActivityUtils.onPushUpdate(mContext);
+                EventStreamServiceX.Companion.onPushUpdate(mContext);
             } else {
                 Log.d(LOG_TAG, "checkRegistrations : onPusherRegistrationFailed");
             }
@@ -729,7 +728,7 @@ public final class PushManager {
                 // remove them
                 unregister(null);
             } else {
-                CommonActivityUtils.onPushUpdate(mContext);
+                EventStreamServiceX.Companion.onPushUpdate(mContext);
             }
 
             return;
@@ -821,7 +820,7 @@ public final class PushManager {
             if (useFcm() && areDeviceNotificationsAllowed() && Matrix.hasValidSessions()) {
                 register(null);
             } else {
-                CommonActivityUtils.onPushUpdate(mContext);
+                EventStreamServiceX.Companion.onPushUpdate(mContext);
             }
 
             dispatchUnregisterSuccess();
@@ -1129,7 +1128,7 @@ public final class PushManager {
 
         if (!useFcm()) {
             // when FCM is disabled, enable / disable the "Listen for events" notifications
-            CommonActivityUtils.onPushUpdate(mContext);
+            EventStreamServiceX.Companion.onPushUpdate(mContext);
         }
     }
 
@@ -1155,8 +1154,8 @@ public final class PushManager {
     /**
      * Tell if the application can run in background.
      * It depends on the app settings and the `IgnoringBatteryOptimizations` permission in FCM mode.
-     * In FCM mode return true if token is registred and IgnoringBatteryOptimizations is on
-     * In fdroid mode returns true if user pref for backgroudn sync is on (will use foreground notificaiton to keep alive, no need for battery optimisation).
+     * In FCM mode return true if token is registered and IgnoringBatteryOptimizations is on
+     * In fdroid mode returns true if user pref for background sync is on (will use foreground notification to keep alive, no need for battery optimisation).
      *
      * @return true if the background sync is allowed
      */
@@ -1179,7 +1178,7 @@ public final class PushManager {
                 .apply();
 
         // when FCM is disabled, enable / disable the "Listen for events" notifications
-        CommonActivityUtils.onPushUpdate(mContext);
+        EventStreamServiceX.Companion.onPushUpdate(mContext);
     }
 
     /**
