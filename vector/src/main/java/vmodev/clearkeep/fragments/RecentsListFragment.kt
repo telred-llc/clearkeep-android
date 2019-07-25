@@ -24,16 +24,15 @@ import im.vector.ui.badge.BadgeProxy
 import im.vector.util.RoomUtils
 import im.vector.view.RecentsExpandableListView
 import org.matrix.androidsdk.MXSession
-import org.matrix.androidsdk.data.RoomPreviewData
+import org.matrix.androidsdk.core.BingRulesManager
+import org.matrix.androidsdk.core.Log
+import org.matrix.androidsdk.core.callback.ApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.data.RoomState
 import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.data.RoomTag
 import org.matrix.androidsdk.listeners.MXEventListener
-import org.matrix.androidsdk.rest.callback.ApiCallback
 import org.matrix.androidsdk.rest.model.Event
-import org.matrix.androidsdk.rest.model.MatrixError
-import org.matrix.androidsdk.util.BingRulesManager
-import org.matrix.androidsdk.util.Log
 import vmodev.clearkeep.activities.PreviewInviteRoomActivity
 import vmodev.clearkeep.adapters.RoomSummaryAdapter
 import java.util.HashMap
@@ -189,12 +188,15 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
                     return@OnChildClickListener true
                 }
 
-                var roomId: String? = roomSummary?.roomId
+                var roomId: String = "";
+                roomSummary?.roomId?.let {
+                    roomId = it;
+                }
                 val room = session!!.dataHandler.getRoom(roomId)
 
                 // cannot join a leaving room
                 if ((null == room) || room!!.isLeaving) {
-                    roomId = null
+                    roomId = "";
                 }
 
                 // update the unread messages count
@@ -546,13 +548,13 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
                 refreshOnChunkEnd = true
             }
 
-            override fun onEventDecrypted(event: Event?) {
-                val summary = mSession!!.dataHandler.store.getSummary(event!!.roomId)
+            override fun onEventDecrypted(roomId: String?, eventId: String?) {
+                val summary = mSession!!.dataHandler.store.getSummary(roomId)
 
                 if (null != summary) {
                     // test if the latest event is refreshed
-                    val latestReceivedEvent = summary!!.latestReceivedEvent
-                    if ((null != latestReceivedEvent) && TextUtils.equals(latestReceivedEvent!!.eventId, event!!.eventId)) {
+                    val latestReceivedEvent = summary!!.getLatestReceivedEvent()
+                    if (null != latestReceivedEvent && TextUtils.equals(latestReceivedEvent!!.eventId, eventId)) {
                         activity!!.runOnUiThread { notifyDataSetChanged() }
                     }
                 }

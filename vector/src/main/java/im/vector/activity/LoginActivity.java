@@ -51,15 +51,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.matrix.androidsdk.HomeServerConnectionConfig;
-import org.matrix.androidsdk.MXPatterns;
 import org.matrix.androidsdk.MXSession;
+import org.matrix.androidsdk.core.JsonUtils;
+import org.matrix.androidsdk.core.Log;
+import org.matrix.androidsdk.core.MXPatterns;
+import org.matrix.androidsdk.core.callback.ApiCallback;
+import org.matrix.androidsdk.core.callback.SimpleApiCallback;
+import org.matrix.androidsdk.core.model.HttpException;
+import org.matrix.androidsdk.core.model.MatrixError;
 import org.matrix.androidsdk.login.AutoDiscovery;
-import org.matrix.androidsdk.rest.callback.ApiCallback;
-import org.matrix.androidsdk.rest.callback.SimpleApiCallback;
 import org.matrix.androidsdk.rest.client.LoginRestClient;
 import org.matrix.androidsdk.rest.client.ProfileRestClient;
-import org.matrix.androidsdk.rest.model.HttpException;
-import org.matrix.androidsdk.rest.model.MatrixError;
 import org.matrix.androidsdk.rest.model.login.Credentials;
 import org.matrix.androidsdk.rest.model.login.LocalizedFlowDataLoginTerms;
 import org.matrix.androidsdk.rest.model.login.LoginFlow;
@@ -69,8 +71,6 @@ import org.matrix.androidsdk.rest.model.pid.ThreePid;
 import org.matrix.androidsdk.ssl.CertUtil;
 import org.matrix.androidsdk.ssl.Fingerprint;
 import org.matrix.androidsdk.ssl.UnrecognizedCertificateException;
-import org.matrix.androidsdk.util.JsonUtils;
-import org.matrix.androidsdk.util.Log;
 
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -98,10 +98,7 @@ import im.vector.push.fcm.FcmHelper;
 import im.vector.receiver.VectorRegistrationReceiver;
 import im.vector.receiver.VectorUniversalLinkReceiver;
 import im.vector.repositories.ServerUrlsRepository;
-import im.vector.services.EventStreamService;
 import im.vector.ui.badge.BadgeProxy;
-import im.vector.ui.themes.ActivityOtherThemes;
-import im.vector.ui.themes.ThemeUtils;
 import im.vector.util.PhoneNumberUtils;
 import im.vector.util.ViewUtilKt;
 
@@ -115,6 +112,10 @@ public class LoginActivity extends MXCActionBarActivity implements RegistrationM
 
     private static final int REQUEST_REGISTRATION_COUNTRY = 1245;
     private static final int REQUEST_LOGIN_COUNTRY = 5678;
+
+
+    public static final String EXTRA_RESTART_FROM_INVALID_CREDENTIALS = "EXTRA_RESTART_FROM_INVALID_CREDENTIALS";
+
 
     // activity modes
     // either the user logs in
@@ -480,6 +481,7 @@ public class LoginActivity extends MXCActionBarActivity implements RegistrationM
 
         // already registered
         if (hasCredentials()) {
+            /*
             if (null != intent && (intent.getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) == 0) {
                 Log.d(LOG_TAG, "## onCreate(): goToSplash because the credentials are already provided.");
                 goToSplash();
@@ -492,6 +494,9 @@ public class LoginActivity extends MXCActionBarActivity implements RegistrationM
                     Log.d(LOG_TAG, "## onCreate(): close the login screen because it is a temporary task");
                 }
             }
+            */
+            Log.d(LOG_TAG, "## onCreate(): goToSplash because the credentials are already provided.");
+            goToSplash();
 
             finish();
             return;
@@ -968,6 +973,10 @@ public class LoginActivity extends MXCActionBarActivity implements RegistrationM
     protected void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "## onResume(): IN");
+
+        if (isFirstCreation() && getIntent().getBooleanExtra(EXTRA_RESTART_FROM_INVALID_CREDENTIALS, false)) {
+            mLoginEmailTextViewTil.setError(getString(R.string.invalid_or_expired_credentials));
+        }
 
         // retrieve the home server path
         mHomeServerUrl = getHomeServerUrl();

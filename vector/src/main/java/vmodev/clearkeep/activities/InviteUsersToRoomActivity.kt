@@ -1,21 +1,17 @@
 package vmodev.clearkeep.activities
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.databinding.DataBindingUtil
 import android.graphics.Color
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.DividerItemDecoration
-import android.util.Log
 import android.widget.Toast
 import com.jakewharton.rxbinding2.widget.RxTextView
-import dagger.android.support.DaggerAppCompatActivity
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
@@ -26,19 +22,21 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
-import org.matrix.androidsdk.rest.callback.ApiCallback
-import org.matrix.androidsdk.rest.model.MatrixError
-import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapter
+import org.matrix.androidsdk.core.callback.ApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
 import vmodev.clearkeep.adapters.ListUserToInviteRecyclerViewAdapter
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.viewmodelobjects.User
-import vmodev.clearkeep.viewmodels.UserViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
-import java.util.HashMap
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.collections.ArrayList
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.iterator
+import kotlin.collections.set
 
 class InviteUsersToRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
 
@@ -136,11 +134,11 @@ class InviteUsersToRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
 
     private fun joinRoom(roomId: String) {
         val room = mxSession.dataHandler.store.getRoom(roomId);
-        mxSession.joinRoom(room!!.getRoomId(), object : ApiCallback<String> {
+        mxSession.joinRoom(room!!.roomId, object : ApiCallback<String> {
             override fun onSuccess(roomId: String) {
                 val params = HashMap<String, Any>()
-                params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession.getMyUserId()
-                params[VectorRoomActivity.EXTRA_ROOM_ID] = room!!.getRoomId()
+                params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession.myUserId
+                params[VectorRoomActivity.EXTRA_ROOM_ID] = room!!.roomId
 
                 CommonActivityUtils.goToRoomPage(this@InviteUsersToRoomActivity, mxSession, params)
                 finish();

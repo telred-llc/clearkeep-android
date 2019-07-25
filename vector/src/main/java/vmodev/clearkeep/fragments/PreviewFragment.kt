@@ -29,14 +29,18 @@ private const val ROOM_ID = "ROOM_ID"
  */
 class PreviewFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private var roomId: String? = null
+    private lateinit var roomId: String;
     private var listener: OnFragmentInteractionListener? = null
     private lateinit var room: Room;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            roomId = it.getString(ROOM_ID)
+            it.getString(ROOM_ID)?.let {
+                roomId = it;
+            }?:run {
+                roomId = "";
+            }
         }
         room = onGetMXSession().dataHandler.getRoom(roomId);
     }

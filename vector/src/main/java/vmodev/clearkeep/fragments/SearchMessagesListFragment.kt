@@ -11,14 +11,13 @@ import im.vector.R
 import im.vector.activity.VectorRoomActivity
 import im.vector.adapters.VectorMessagesAdapter
 import im.vector.adapters.VectorSearchMessagesListAdapter
-import im.vector.fragments.VectorMessageListFragment
+import org.matrix.androidsdk.core.Log
 import org.matrix.androidsdk.data.RoomState
 import org.matrix.androidsdk.data.timeline.EventTimeline
 import org.matrix.androidsdk.fragments.MatrixMessageListFragment
 import org.matrix.androidsdk.rest.model.Event
-import org.matrix.androidsdk.util.Log
 import vmodev.clearkeep.activities.RoomActivity
-import java.util.ArrayList
+import java.util.*
 
 open class SearchMessagesListFragment : BaseMessageListFragment() {
 

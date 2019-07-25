@@ -8,7 +8,6 @@ import android.content.Intent
 import android.os.Bundle
 import dagger.android.support.DaggerAppCompatActivity
 import im.vector.Matrix
-import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorHomeActivity
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.applications.IApplication
@@ -69,7 +68,7 @@ abstract class DataBindingDaggerActivity : DaggerAppCompatActivity() {
 
     private fun showSendFile(intentExtra: Intent) {
         session?.let {
-            if (it.getDataHandler().getStore().isReady()) {
+            if (it.dataHandler.store.isReady) {
                 runOnUiThread {
                     val receivedShareDialogFragment = ReceivedShareFileDialogFragment.newInstance(it.myUserId, intentExtra);
                     receivedShareDialogFragment.show(supportFragmentManager, "");

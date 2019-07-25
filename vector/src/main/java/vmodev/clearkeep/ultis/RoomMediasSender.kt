@@ -2,37 +2,32 @@ package vmodev.clearkeep.ultis
 
 import android.content.ClipDescription
 import android.content.Context
-import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
-import android.support.v7.app.AlertDialog
 import android.text.Html
 import android.text.TextUtils
 import android.widget.Toast
 import com.orhanobut.dialogplus.DialogPlus
 import im.vector.R
-import im.vector.activity.VectorRoomActivity
 import im.vector.fragments.ImageSizeSelectionDialogFragment
-import im.vector.fragments.VectorMessageListFragment
 import im.vector.util.PreferencesManager
+import org.matrix.androidsdk.core.ImageUtils
+import org.matrix.androidsdk.core.Log
+import org.matrix.androidsdk.core.ResourceUtils
 import org.matrix.androidsdk.data.RoomMediaMessage
 import org.matrix.androidsdk.db.MXMediaCache
 import org.matrix.androidsdk.rest.model.message.Message
-import org.matrix.androidsdk.util.ImageUtils
-import org.matrix.androidsdk.util.Log
-import org.matrix.androidsdk.util.ResourceUtils
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.BottomDiaglogImageSendFile
-import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.fragments.MessageListFragment
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
-import java.util.ArrayList
+import java.util.*
 
 class RoomMediasSender constructor(val roomActivity: RoomActivity, val vectorMessageListFragment: MessageListFragment, val mediasCache: MXMediaCache) {
     private val LOG_TAG = im.vector.util.VectorRoomMediasSender::class.java.simpleName

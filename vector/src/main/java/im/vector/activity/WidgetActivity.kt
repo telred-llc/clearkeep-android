@@ -40,10 +40,10 @@ import im.vector.R
 import im.vector.widgets.Widget
 import im.vector.widgets.WidgetsManager
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.Log
+import org.matrix.androidsdk.core.callback.ApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.data.Room
-import org.matrix.androidsdk.rest.callback.ApiCallback
-import org.matrix.androidsdk.rest.model.MatrixError
-import org.matrix.androidsdk.util.Log
 import javax.net.ssl.HttpsURLConnection
 
 /*
@@ -287,7 +287,7 @@ class WidgetActivity : VectorAppCompatActivity() {
 
                 override fun onPageFinished(view: WebView?, url: String?) {
                     // Check that the Activity is still alive
-                    if (isDestroyed) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed) {
                         return
                     }
 

@@ -38,10 +38,13 @@ import im.vector.ui.VectorQuoteSpan
 import im.vector.ui.themes.ThemeUtils
 import im.vector.util.*
 import im.vector.widgets.WidgetsManager
-import org.matrix.androidsdk.MXPatterns
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.adapters.AbstractMessagesAdapter
 import org.matrix.androidsdk.adapters.MessageRow
+import org.matrix.androidsdk.core.JsonUtils
+import org.matrix.androidsdk.core.Log
+import org.matrix.androidsdk.core.MXPatterns
+import org.matrix.androidsdk.core.PermalinkUtils
 import org.matrix.androidsdk.crypto.MXCryptoError
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo
 import org.matrix.androidsdk.db.MXMediaCache
@@ -49,9 +52,6 @@ import org.matrix.androidsdk.interfaces.HtmlToolbox
 import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.message.Message
-import org.matrix.androidsdk.util.JsonUtils
-import org.matrix.androidsdk.util.Log
-import org.matrix.androidsdk.util.PermalinkUtils
 import org.matrix.androidsdk.view.HtmlTagHandler
 import java.text.SimpleDateFormat
 import java.util.*
@@ -591,7 +591,9 @@ internal constructor(// session
                     // backup live events
                     mLiveMessagesRowList = ArrayList()
                     for (pos in 0 until count) {
-                        mLiveMessagesRowList!!.add(getItem(pos))
+                        getItem(pos)?.let {
+                            mLiveMessagesRowList!!.add(it)
+                        }
                     }
                 }
             } else if (null != mLiveMessagesRowList) {
@@ -630,7 +632,7 @@ internal constructor(// session
         return getItemViewType(row!!.event)
     }
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var view: View? = null;
         // GA Crash : it seems that some invalid indexes are required
         if (position >= count) {
@@ -689,7 +691,7 @@ internal constructor(// session
         inflatedView?.let {
             displayE2eReRequest(inflatedView, position)
         }
-        return inflatedView
+        return inflatedView!!
     }
 
     override fun notifyDataSetChanged() {
@@ -893,7 +895,7 @@ internal constructor(// session
         val viewType: Int
 
         if (Event.EVENT_TYPE_MESSAGE == eventType) {
-            val message = JsonUtils.toMessage(event.getContent())
+            val message = JsonUtils.toMessage(event.content)
             val msgType = message.msgtype
 
             if (Message.MSGTYPE_TEXT == msgType) {
@@ -1063,7 +1065,7 @@ internal constructor(// session
         try {
             val row = getItem(position)
             val event = row!!.event
-            val message = JsonUtils.toMessage(event.getContent())
+            val message = JsonUtils.toMessage(event.content)
 
             val shouldHighlighted = null != mVectorMessagesAdapterEventsListener && mVectorMessagesAdapterEventsListener!!.shouldHighlightEvent(event)
 
@@ -1217,16 +1219,16 @@ internal constructor(// session
 
             var videoContent = false
             if (type == ROW_TYPE_IMAGE) {
-                val imageMessage = JsonUtils.toImageMessage(event.getContent())
+                val imageMessage = JsonUtils.toImageMessage(event.content)
                 if ("image/gif" == imageMessage.mimeType) {
                     videoContent = true
                 }
                 message = imageMessage
             } else if (type == ROW_TYPE_VIDEO) {
                 videoContent = true
-                message = JsonUtils.toVideoMessage(event.getContent())
+                message = JsonUtils.toVideoMessage(event.content)
             } else if (type == ROW_TYPE_STICKER) {
-                val stickerMessage = JsonUtils.toStickerMessage(event.getContent())
+                val stickerMessage = JsonUtils.toStickerMessage(event.content)
                 message = stickerMessage
             }
 
@@ -1325,7 +1327,7 @@ internal constructor(// session
             noticeTextView.alpha = 1.0f
             noticeTextView.setTextColor(noticeTextColor)
 
-            val message = JsonUtils.toMessage(msg.getContent())
+            val message = JsonUtils.toMessage(msg.content)
             mHelper.manageURLPreviews(message, convertView, msg.eventId)
         } catch (e: Exception) {
             Log.e(LOG_TAG, "## getNoticeRoomMemberView() failed : " + e.message, e)
@@ -1359,7 +1361,7 @@ internal constructor(// session
                 return convertView
             }
 
-            val message = JsonUtils.toMessage(event.getContent())
+            val message = JsonUtils.toMessage(event.content)
 
             var body: CharSequence = "* " + row.senderDisplayName + " " + message.body
 
@@ -1425,7 +1427,7 @@ internal constructor(// session
             val row = getItem(position)
             val event = row!!.event
 
-            val fileMessage = JsonUtils.toFileMessage(event.getContent())
+            val fileMessage = JsonUtils.toFileMessage(event.content)
             val fileTextView = convertView!!.findViewById<TextView>(R.id.messagesAdapter_filename)
 
             if (null == fileTextView) {
@@ -1591,7 +1593,7 @@ internal constructor(// session
             convertView = mLayoutInflater.inflate(mRowTypeToLayoutId[ROW_TYPE_VERSIONED_ROOM]!!, parent, false)
         }
         val row = getItem(position)
-        val roomCreateContent = JsonUtils.toRoomCreateContent(row!!.event.getContent())
+        val roomCreateContent = JsonUtils.toRoomCreateContent(row!!.event.content)
         val roomLink = PermalinkUtils.createPermalink(roomCreateContent.predecessor.roomId)
         val urlSpan = MatrixURLSpan(roomLink, MXPatterns.PATTERN_CONTAIN_APP_LINK_PERMALINK_ROOM_ID, mVectorMessagesAdapterEventsListener)
         val textColorInt = ContextCompat.getColor(mContext, R.color.riot_primary_text_color_light)
@@ -1645,7 +1647,7 @@ internal constructor(// session
         }
 
         if (isSupported && TextUtils.equals(event.getType(), Event.EVENT_TYPE_STATE_ROOM_MEMBER)) {
-            val roomMember = JsonUtils.toRoomMember(event.getContent())
+            val roomMember = JsonUtils.toRoomMember(event.content)
             val membership = roomMember.membership
 
             if (!PreferencesManager.showJoinLeaveMessages(mContext)) {
@@ -1824,7 +1826,7 @@ internal constructor(// session
 
         // Show the description of the sticker only on message row click
         if (Event.EVENT_TYPE_STICKER == event.getType()) {
-            val stickerMessage = JsonUtils.toStickerMessage(event.getContent())
+            val stickerMessage = JsonUtils.toStickerMessage(event.content)
             if (null != stickerMessage && isInSelectionMode && isSelected) {
                 mHelper.showStickerDescription(contentView, stickerMessage)
             }
@@ -1880,7 +1882,7 @@ internal constructor(// session
 
         if (null != contentView) {
             if (ROW_TYPE_CODE == msgType || ROW_TYPE_TEXT == msgType) {
-                val message = JsonUtils.toMessage(event.getContent())
+                val message = JsonUtils.toMessage(event.content)
                 text = message.body
             } else {
                 val bodyTextView = contentView.findViewById<TextView>(R.id.messagesAdapter_body)

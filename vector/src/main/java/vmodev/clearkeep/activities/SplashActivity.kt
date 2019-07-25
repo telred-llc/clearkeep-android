@@ -2,8 +2,6 @@ package vmodev.clearkeep.activities
 
 import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
@@ -11,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v7.preference.PreferenceManager
-import dagger.android.support.DaggerAppCompatActivity
 import im.vector.ErrorListener
 import im.vector.Matrix
 import im.vector.R
@@ -22,19 +19,16 @@ import im.vector.databinding.ActivitySplashBinding
 import im.vector.services.EventStreamService
 import im.vector.util.PreferencesManager
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.Log
+import org.matrix.androidsdk.core.callback.ApiCallback
+import org.matrix.androidsdk.core.callback.SimpleApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.listeners.IMXEventListener
 import org.matrix.androidsdk.listeners.MXEventListener
-import org.matrix.androidsdk.rest.callback.ApiCallback
-import org.matrix.androidsdk.rest.callback.SimpleApiCallback
-import org.matrix.androidsdk.rest.model.MatrixError
-import org.matrix.androidsdk.util.Log
 import vmodev.clearkeep.activities.interfaces.ISplashActivity
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.factories.viewmodels.interfaces.ISplashActivityViewModelFactory
 import vmodev.clearkeep.viewmodelobjects.Status
-import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 import javax.inject.Inject
 
 class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {

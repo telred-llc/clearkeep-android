@@ -12,24 +12,23 @@ import im.vector.R
 import im.vector.activity.MXCActionBarActivity
 import im.vector.activity.VectorRoomActivity
 import im.vector.adapters.VectorMessagesAdapter
-import im.vector.fragments.VectorMessageListFragment
 import im.vector.util.ReadMarkerManager
 import im.vector.util.ReadMarkerManager.LIVE_MODE
 import im.vector.util.ReadMarkerManager.PREVIEW_MODE
-import org.matrix.androidsdk.MXPatterns
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.adapters.MessageRow
+import org.matrix.androidsdk.core.Log
+import org.matrix.androidsdk.core.MXPatterns
+import org.matrix.androidsdk.core.callback.ApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.data.Room
 import org.matrix.androidsdk.data.RoomSummary
-import org.matrix.androidsdk.rest.callback.ApiCallback
 import org.matrix.androidsdk.rest.model.Event
-import org.matrix.androidsdk.rest.model.MatrixError
-import org.matrix.androidsdk.util.Log
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.fragments.MessageListFragment
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
-import java.util.ArrayList
+import java.util.*
 
 class ReadMarkerManager constructor(val activity: RoomActivity, val messageListFragment: MessageListFragment,
                                     val session: MXSession, val room: Room?, @UpdateMode val updateMode: Int,

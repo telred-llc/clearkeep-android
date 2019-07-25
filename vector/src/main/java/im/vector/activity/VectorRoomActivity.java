@@ -63,6 +63,13 @@ import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.call.IMXCall;
 import org.matrix.androidsdk.call.IMXCallListener;
 import org.matrix.androidsdk.call.MXCallListener;
+import org.matrix.androidsdk.core.JsonUtils;
+import org.matrix.androidsdk.core.Log;
+import org.matrix.androidsdk.core.PermalinkUtils;
+import org.matrix.androidsdk.core.callback.ApiCallback;
+import org.matrix.androidsdk.core.callback.SimpleApiCallback;
+import org.matrix.androidsdk.core.listeners.IMXNetworkEventListener;
+import org.matrix.androidsdk.core.model.MatrixError;
 import org.matrix.androidsdk.crypto.MXCryptoError;
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo;
 import org.matrix.androidsdk.crypto.data.MXUsersDevicesMap;
@@ -74,24 +81,19 @@ import org.matrix.androidsdk.data.RoomState;
 import org.matrix.androidsdk.data.RoomSummary;
 import org.matrix.androidsdk.db.MXLatestChatMessageCache;
 import org.matrix.androidsdk.fragments.MatrixMessageListFragment;
-import org.matrix.androidsdk.listeners.IMXNetworkEventListener;
 import org.matrix.androidsdk.listeners.MXEventListener;
-import org.matrix.androidsdk.rest.callback.ApiCallback;
-import org.matrix.androidsdk.rest.callback.SimpleApiCallback;
 import org.matrix.androidsdk.rest.model.Event;
-import org.matrix.androidsdk.rest.model.MatrixError;
 import org.matrix.androidsdk.rest.model.PowerLevels;
 import org.matrix.androidsdk.rest.model.RoomMember;
 import org.matrix.androidsdk.rest.model.RoomTombstoneContent;
 import org.matrix.androidsdk.rest.model.StateEvent;
 import org.matrix.androidsdk.rest.model.User;
 import org.matrix.androidsdk.rest.model.message.Message;
-import org.matrix.androidsdk.util.JsonUtils;
-import org.matrix.androidsdk.util.Log;
-import org.matrix.androidsdk.util.PermalinkUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -114,7 +116,6 @@ import im.vector.fragments.VectorMessageListFragment;
 import im.vector.fragments.VectorReadReceiptsDialogFragment;
 import im.vector.fragments.VectorUnknownDevicesFragment;
 import im.vector.listeners.IMessagesAdapterActionsListener;
-import im.vector.services.EventStreamService;
 import im.vector.ui.themes.ThemeUtils;
 import im.vector.util.CallsManager;
 import im.vector.util.ExternalApplicationsUtilKt;
@@ -785,8 +786,6 @@ public class VectorRoomActivity extends MXCActionBarActivity implements
 
         mMyUserId = mSession.getCredentials().userId;
 
-        CommonActivityUtils.resumeEventStream(this);
-
         FragmentManager fm = getSupportFragmentManager();
         mVectorMessageListFragment = (VectorMessageListFragment) fm.findFragmentByTag(TAG_FRAGMENT_MATRIX_MESSAGE_LIST);
         if (mVectorMessageListFragment == null) {
@@ -1159,10 +1158,6 @@ public class VectorRoomActivity extends MXCActionBarActivity implements
         mSession.getDataHandler().addListener(mResourceLimitEventListener);
 
         Matrix.getInstance(this).addNetworkEventListener(mNetworkEventListener);
-
-        if (null != mRoom) {
-            EventStreamService.cancelNotificationsForRoomId(mSession.getCredentials().userId, mRoom.getRoomId());
-        }
 
         // sanity checks
         if ((null != mRoom) && (null != Matrix.getInstance(this).getDefaultLatestChatMessageCache())) {
@@ -1745,10 +1740,19 @@ public class VectorRoomActivity extends MXCActionBarActivity implements
      * @param aIsVideoCall true if it is a video call
      */
     private void launchJitsiActivity(Widget widget, boolean aIsVideoCall) {
-        final Intent intent = new Intent(this, JitsiCallActivity.class);
-        intent.putExtra(JitsiCallActivity.EXTRA_WIDGET_ID, widget);
-        intent.putExtra(JitsiCallActivity.EXTRA_ENABLE_VIDEO, aIsVideoCall);
-        startActivity(intent);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            // Display a error dialog for old API
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.dialog_title_error)
+                    .setMessage(R.string.error_jitsi_not_supported_on_old_device)
+                    .setPositiveButton(R.string.ok, null)
+                    .show();
+        } else {
+            final Intent intent = new Intent(this, JitsiCallActivity.class);
+            intent.putExtra(JitsiCallActivity.EXTRA_WIDGET_ID, widget);
+            intent.putExtra(JitsiCallActivity.EXTRA_ENABLE_VIDEO, aIsVideoCall);
+            startActivity(intent);
+        }
     }
 
     /**
@@ -1765,9 +1769,7 @@ public class VectorRoomActivity extends MXCActionBarActivity implements
             public void onSuccess(Widget widget) {
                 hideWaitingView();
 
-                final Intent intent = new Intent(VectorRoomActivity.this, JitsiCallActivity.class);
-                intent.putExtra(JitsiCallActivity.EXTRA_WIDGET_ID, widget);
-                startActivity(intent);
+                launchJitsiActivity(widget, aIsVideoCall);
             }
 
             private void onError(String errorMessage) {
@@ -2626,7 +2628,14 @@ public class VectorRoomActivity extends MXCActionBarActivity implements
                 state = new NotificationAreaView.State.Typing(mLatestTypingMessage);
             } else if (mRoom.getState().isVersioned()) {
                 final RoomTombstoneContent roomTombstoneContent = mRoom.getState().getRoomTombstoneContent();
-                state = new NotificationAreaView.State.Tombstone(roomTombstoneContent);
+                final List<Event> events = mRoom.getState().getStateEvents(new HashSet<>(Arrays.asList(Event.EVENT_TYPE_STATE_ROOM_TOMBSTONE)));
+
+                String sender = "";
+                if (events != null && !events.isEmpty()) {
+                    sender = events.get(0).sender;
+                }
+
+                state = new NotificationAreaView.State.Tombstone(roomTombstoneContent, sender);
             }
         }
         mNotificationsArea.render(state);

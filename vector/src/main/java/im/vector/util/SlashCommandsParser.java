@@ -23,13 +23,13 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import org.matrix.androidsdk.MXSession;
+import org.matrix.androidsdk.core.Log;
+import org.matrix.androidsdk.core.callback.ApiCallback;
+import org.matrix.androidsdk.core.callback.SimpleApiCallback;
+import org.matrix.androidsdk.core.model.MatrixError;
 import org.matrix.androidsdk.data.MyUser;
 import org.matrix.androidsdk.data.Room;
 import org.matrix.androidsdk.data.RoomState;
-import org.matrix.androidsdk.rest.callback.ApiCallback;
-import org.matrix.androidsdk.rest.callback.SimpleApiCallback;
-import org.matrix.androidsdk.rest.model.MatrixError;
-import org.matrix.androidsdk.util.Log;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -272,7 +272,7 @@ public class SlashCommandsParser {
                     isIRCCmdValid = true;
 
                     String user = messageParts[1];
-                    String reason = textMessage.substring(SlashCommand.BAN_USER.getCommand().length()
+                    String reason = textMessage.substring(SlashCommand.KICK_USER.getCommand().length()
                             + 1
                             + user.length()).trim();
 

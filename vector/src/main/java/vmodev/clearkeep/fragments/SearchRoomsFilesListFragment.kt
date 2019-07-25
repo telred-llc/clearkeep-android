@@ -9,11 +9,9 @@ import android.widget.AdapterView
 import im.vector.activity.VectorMediaViewerActivity
 import im.vector.adapters.VectorMessagesAdapter
 import im.vector.adapters.VectorSearchFilesListAdapter
-import im.vector.fragments.VectorMessageListFragment
-import im.vector.fragments.VectorSearchMessagesListFragment
+import org.matrix.androidsdk.core.JsonUtils
 import org.matrix.androidsdk.rest.model.message.Message
-import org.matrix.androidsdk.util.JsonUtils
-import java.util.ArrayList
+import java.util.*
 
 class SearchRoomsFilesListFragment : SearchMessagesListFragment() {
 
@@ -35,7 +33,7 @@ class SearchRoomsFilesListFragment : SearchMessagesListFragment() {
                 return@OnItemClickListener
             }
 
-            val message = JsonUtils.toMessage(event.getContent())
+            val message = JsonUtils.toMessage(event.content)
 
             // video and images are displayed inside a medias slider.
             if (Message.MSGTYPE_IMAGE == message.msgtype || Message.MSGTYPE_VIDEO == message.msgtype) {
@@ -54,7 +52,7 @@ class SearchRoomsFilesListFragment : SearchMessagesListFragment() {
                     activity!!.startActivity(viewImageIntent)
                 }
             } else if (Message.MSGTYPE_FILE == message.msgtype) {
-                val fileMessage = JsonUtils.toFileMessage(event.getContent())
+                val fileMessage = JsonUtils.toFileMessage(event.content)
 
                 if (null != fileMessage.getUrl()) {
                     onMediaAction(ACTION_VECTOR_OPEN, fileMessage.getUrl(), fileMessage.mimeType, fileMessage.body, fileMessage.file)

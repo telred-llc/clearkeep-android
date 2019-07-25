@@ -8,6 +8,7 @@ import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,6 @@ import im.vector.R
 import im.vector.databinding.FragmentTextFileRestoreBackupKeyBinding
 import im.vector.fragments.keysbackup.restore.KeysBackupRestoreFromKeyFragment
 import im.vector.util.startImportTextFromFileIntent
-import org.matrix.androidsdk.util.Log
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractTextFileRestoreBackupKeyFragmentViewModel
@@ -48,7 +48,7 @@ class TextFileRestoreBackupKeyFragment : DataBindingDaggerFragment(), IFragment 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            userId = it.getString(USER_ID);
+            userId = it.getString(USER_ID, "");
         }
     }
 

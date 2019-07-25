@@ -31,7 +31,7 @@ import im.vector.R
 import im.vector.VectorApp
 import im.vector.util.SecretStoringUtils
 import org.matrix.androidsdk.MXSession
-import org.matrix.androidsdk.util.Log
+import org.matrix.androidsdk.core.Log
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -131,6 +131,8 @@ class NotificationDrawerManager(val context: Context) {
 
     /** Clear all known message events for this room and refresh the notification drawer */
     fun clearMessageEventOfRoom(roomId: String?) {
+        Log.d(LOG_TAG, "clearMessageEventOfRoom $roomId")
+
         if (roomId != null) {
             eventList.removeAll { e ->
                 if (e is NotifiableMessageEvent) {
@@ -177,8 +179,16 @@ class NotificationDrawerManager(val context: Context) {
         }
     }
 
-
     fun refreshNotificationDrawer(outdatedDetector: OutdatedEventDetector?) {
+        try {
+            _refreshNotificationDrawer(outdatedDetector)
+        } catch (e: Exception) {
+            //defensive coding
+            Log.e(LOG_TAG, "## Failed to refresh drawer", e)
+        }
+    }
+
+    private fun _refreshNotificationDrawer(outdatedDetector: OutdatedEventDetector?) {
         if (myUserDisplayName.isBlank()) {
             initWithSession(Matrix.getInstance(context).defaultSession)
         }
@@ -398,7 +408,9 @@ class NotificationDrawerManager(val context: Context) {
             try {
                 return BitmapFactory.decodeFile(roomAvatarPath, options)
             } catch (oom: OutOfMemoryError) {
-                Log.e(LOG_TAG, "decodeFile failed with an oom", oom)
+                Log.e(LOG_TAG, "## decodeFile failed with an oom", oom)
+            } catch (e: Exception) {
+                Log.e(LOG_TAG, "## decodeFile failed", e)
             }
 
         }

@@ -18,6 +18,7 @@
 
 package im.vector.services;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -38,6 +39,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.matrix.androidsdk.MXSession;
+import org.matrix.androidsdk.core.Log;
 import org.matrix.androidsdk.data.Room;
 import org.matrix.androidsdk.data.RoomState;
 import org.matrix.androidsdk.data.store.IMXStore;
@@ -45,7 +47,6 @@ import org.matrix.androidsdk.data.store.MXStoreListener;
 import org.matrix.androidsdk.listeners.MXEventListener;
 import org.matrix.androidsdk.rest.model.Event;
 import org.matrix.androidsdk.rest.model.bingrules.BingRule;
-import org.matrix.androidsdk.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,7 +71,10 @@ import im.vector.util.SystemUtilsKt;
  * <p>
  * It manages messages notifications displayed to the end user. It can also display foreground
  * notifications in some situations to let the app run in background.
+ *
+ * @Deprecated Use {@link EventStreamServiceX}
  */
+@SuppressLint("Registered")
 public class EventStreamService extends Service {
     private static final String LOG_TAG = EventStreamService.class.getSimpleName();
 
@@ -600,7 +604,7 @@ public class EventStreamService extends Service {
                         startEventStream(session, store);
                     } else {
                         // the data are out of sync
-                        Matrix.getInstance(getApplicationContext()).reloadSessions(getApplicationContext());
+                        Matrix.getInstance(getApplicationContext()).reloadSessions(getApplicationContext(), true);
                     }
                 }
 
@@ -610,7 +614,7 @@ public class EventStreamService extends Service {
 
                     uiHandler.post(() -> {
                         Toast.makeText(getApplicationContext(), accountId + " : " + description, Toast.LENGTH_LONG).show();
-                        Matrix.getInstance(getApplicationContext()).reloadSessions(getApplicationContext());
+                        Matrix.getInstance(getApplicationContext()).reloadSessions(getApplicationContext(), true);
                     });
                 }
             });
@@ -655,7 +659,7 @@ public class EventStreamService extends Service {
 
         for (final MXSession session : mSessions) {
             // session == null has been reported by GA
-            if ((null == session) || (null == session.getDataHandler()) || (null == session.getDataHandler().getStore())) {
+            if ((null == session)) {
                 Log.i(LOG_TAG, "start : the session is not anymore valid.");
                 return;
             }

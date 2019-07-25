@@ -15,9 +15,9 @@ import im.vector.activity.VectorRoomActivity
 import im.vector.adapters.VectorRoomSummaryAdapter
 import im.vector.fragments.VectorRecentsListFragment
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.callback.ApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.fragments.MatrixMessageListFragment
-import org.matrix.androidsdk.rest.callback.ApiCallback
-import org.matrix.androidsdk.rest.model.MatrixError
 import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
 import vmodev.clearkeep.activities.PreviewInviteRoomActivity
 import vmodev.clearkeep.activities.RoomActivity
@@ -110,11 +110,14 @@ class SearchRoomsListFragment : RecentsListFragment() {
                 val roomSummary = mAdapter.getRoomSummaryAt(groupPosition, childPosition)
                 val session = Matrix.getInstance(activity)!!.getSession(roomSummary?.userId)
 
-                var roomId: String? = roomSummary?.roomId
+                var roomId: String = "";
+                roomSummary?.roomId?.let {
+                    roomId = it;
+                }
                 val room = session.dataHandler.getRoom(roomId)
                 // cannot join a leaving room
                 if (null == room || room.isLeaving) {
-                    roomId = null
+                    roomId = "";
                 }
 
                 // update the unread messages count

@@ -30,13 +30,13 @@ import im.vector.util.PERMISSION_REQUEST_CODE
 import im.vector.util.VectorUtils
 import im.vector.util.checkPermissions
 import im.vector.view.VectorAutoCompleteTextView
-import org.matrix.androidsdk.MXPatterns
+import org.matrix.androidsdk.core.Log
+import org.matrix.androidsdk.core.MXPatterns
+import org.matrix.androidsdk.core.callback.SimpleApiCallback
 import org.matrix.androidsdk.listeners.MXEventListener
-import org.matrix.androidsdk.rest.callback.SimpleApiCallback
 import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.User
-import org.matrix.androidsdk.util.Log
 import java.util.*
 import java.util.regex.Pattern
 

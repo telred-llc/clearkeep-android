@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.content.FileProvider
 import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -14,11 +15,11 @@ import android.view.ViewGroup
 import android.widget.*
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
+import im.vector.BuildConfig
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.*
 import im.vector.adapters.VectorMessagesAdapter
-import im.vector.db.VectorContentProvider
 import im.vector.extensions.getFingerprintHumanReadable
 import im.vector.fragments.VectorMessagesFragment
 import im.vector.fragments.VectorReadReceiptsDialogFragment
@@ -31,24 +32,25 @@ import im.vector.util.*
 import im.vector.widgets.WidgetsManager
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.adapters.AbstractMessagesAdapter
+import org.matrix.androidsdk.core.JsonUtils
+import org.matrix.androidsdk.core.Log
+import org.matrix.androidsdk.core.MXPatterns
+import org.matrix.androidsdk.core.PermalinkUtils
+import org.matrix.androidsdk.core.callback.ApiCallback
+import org.matrix.androidsdk.core.callback.SimpleApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo
 import org.matrix.androidsdk.crypto.data.MXUsersDevicesMap
+import org.matrix.androidsdk.crypto.model.crypto.EncryptedFileInfo
 import org.matrix.androidsdk.db.MXMediaCache
 import org.matrix.androidsdk.fragments.MatrixMessageListFragment
 import org.matrix.androidsdk.fragments.MatrixMessagesFragment
 import org.matrix.androidsdk.listeners.MXMediaDownloadListener
-import org.matrix.androidsdk.rest.callback.ApiCallback
-import org.matrix.androidsdk.rest.callback.SimpleApiCallback
 import org.matrix.androidsdk.rest.model.Event
-import org.matrix.androidsdk.rest.model.MatrixError
-import org.matrix.androidsdk.rest.model.crypto.EncryptedFileInfo
 import org.matrix.androidsdk.rest.model.message.FileMessage
 import org.matrix.androidsdk.rest.model.message.ImageMessage
 import org.matrix.androidsdk.rest.model.message.Message
 import org.matrix.androidsdk.rest.model.message.VideoMessage
-import org.matrix.androidsdk.util.JsonUtils
-import org.matrix.androidsdk.util.Log
-import org.matrix.androidsdk.util.PermalinkUtils
 import java.io.File
 import java.util.ArrayList
 import java.util.HashMap
@@ -95,6 +97,50 @@ open class BaseMessageListFragment : MatrixMessageListFragment<VectorMessagesAda
             } else null
 
         }
+
+    override fun onTombstoneLinkClicked(roomId: String?, senderId: String?) {
+        // Join the room and open it
+        showInitLoading()
+
+        // Extract the server name
+        val serverName = MXPatterns.extractServerNameFromId(senderId)
+
+        var viaServers: List<String>? = null
+
+        if (serverName != null) {
+            viaServers = listOf(serverName)
+        }
+
+        mSession.joinRoom(roomId, viaServers, object : ApiCallback<String> {
+            override fun onNetworkError(e: Exception) {
+                hideInitLoading()
+                Toast.makeText(activity, e.localizedMessage, Toast.LENGTH_LONG).show()
+            }
+
+            override fun onMatrixError(e: MatrixError) {
+                hideInitLoading()
+                Toast.makeText(activity, e.localizedMessage, Toast.LENGTH_LONG).show()
+            }
+
+            override fun onUnexpectedError(e: Exception) {
+                hideInitLoading()
+                Toast.makeText(activity, e.localizedMessage, Toast.LENGTH_LONG).show()
+            }
+
+            override fun onSuccess(info: String) {
+                hideInitLoading()
+
+                // Open the room
+                if (isAdded) {
+                    val intent = Intent(activity, VectorRoomActivity::class.java)
+                    intent.putExtra(VectorRoomActivity.EXTRA_ROOM_ID, info)
+                    intent.putExtra(VectorRoomActivity.EXTRA_MATRIX_ID, mSession.credentials.userId)
+                    activity!!.startActivity(intent)
+                    activity!!.finish()
+                }
+            }
+        })
+    }
 
     private val mDeviceVerificationCallback = object : ApiCallback<Void> {
         override fun onSuccess(info: Void) {
@@ -395,8 +441,8 @@ open class BaseMessageListFragment : MatrixMessageListFragment<VectorMessagesAda
             if ((null == event.cryptoError) && (null != deviceInfo)) {
                 if (deviceInfo!!.isUnverified || deviceInfo!!.isUnknown) {
                     builder.setNegativeButton(R.string.encryption_information_verify) { dialog, id ->
-                        CommonActivityUtils.displayDeviceVerificationDialog<Any>(deviceInfo,
-                                event.getSender(), mSession, activity, mYesNoListener)
+                        CommonActivityUtils.displayDeviceVerificationDialog(deviceInfo,
+                                event.getSender(), mSession, activity, this, VERIF_REQ_CODE)
                     }
 
                     builder.setPositiveButton(R.string.encryption_information_block) { dialog, id ->
@@ -415,8 +461,8 @@ open class BaseMessageListFragment : MatrixMessageListFragment<VectorMessagesAda
                     }
                 } else { // BLOCKED
                     builder.setNegativeButton(R.string.encryption_information_verify) { dialog, id ->
-                        CommonActivityUtils.displayDeviceVerificationDialog<Any>(deviceInfo,
-                                event.getSender(), mSession, activity, mYesNoListener)
+                        CommonActivityUtils.displayDeviceVerificationDialog(deviceInfo,
+                                event.getSender(), mSession, activity, this, VERIF_REQ_CODE)
                     }
 
                     builder.setPositiveButton(R.string.encryption_information_unblock) { dialog, id ->
@@ -431,7 +477,7 @@ open class BaseMessageListFragment : MatrixMessageListFragment<VectorMessagesAda
 
         if (null == deviceInfo) {
             mSession.crypto!!
-                    .deviceList
+                    .getDeviceList()
                     .downloadKeys(listOf(event.getSender()), true, object : ApiCallback<MXUsersDevicesMap<MXDeviceInfo>> {
                         override fun onSuccess(info: MXUsersDevicesMap<MXDeviceInfo>) {
                             val activity = activity
@@ -541,7 +587,7 @@ open class BaseMessageListFragment : MatrixMessageListFragment<VectorMessagesAda
             }
         } else if ((action == R.id.ic_action_vector_share) || (action == R.id.ic_action_vector_forward) || (action == R.id.ic_action_vector_save)) {
             //
-            val message = JsonUtils.toMessage(event.getContent())
+            val message = JsonUtils.toMessage(event.content)
 
             var mediaUrl: String? = null
             var mediaMimeType: String? = null
@@ -741,7 +787,7 @@ open class BaseMessageListFragment : MatrixMessageListFragment<VectorMessagesAda
                         // shared / forward
                         var mediaUri: Uri? = null
                         try {
-                            mediaUri = VectorContentProvider.absolutePathToUri(activity, file!!.absolutePath)
+                            mediaUri = FileProvider.getUriForFile(activity!!, BuildConfig.APPLICATION_ID + ".fileProvider", file);
                         } catch (e: Exception) {
                             Log.e(LOG_TAG, "onMediaAction VectorContentProvider.absolutePathToUri: " + e.message, e)
                         }
@@ -854,7 +900,7 @@ open class BaseMessageListFragment : MatrixMessageListFragment<VectorMessagesAda
                 continue
             }
 
-            val message = JsonUtils.toMessage(row!!.event.getContent())
+            val message = JsonUtils.toMessage(row!!.event.content)
 
             if (Message.MSGTYPE_IMAGE == message.msgtype) {
                 val imageMessage = message as ImageMessage
@@ -937,7 +983,7 @@ open class BaseMessageListFragment : MatrixMessageListFragment<VectorMessagesAda
                 return
             }
 
-            val message = JsonUtils.toMessage(event.getContent())
+            val message = JsonUtils.toMessage(event.content)
 
             // video and images are displayed inside a medias slider.
             if (Message.MSGTYPE_IMAGE == message.msgtype || (Message.MSGTYPE_VIDEO == message.msgtype)) {
@@ -956,7 +1002,7 @@ open class BaseMessageListFragment : MatrixMessageListFragment<VectorMessagesAda
                     activity!!.startActivity(viewImageIntent)
                 }
             } else if (Message.MSGTYPE_FILE == message.msgtype || Message.MSGTYPE_AUDIO == message.msgtype) {
-                val fileMessage = JsonUtils.toFileMessage(event.getContent())
+                val fileMessage = JsonUtils.toFileMessage(event.content)
 
                 if (null != fileMessage.getUrl()) {
                     onMediaAction(ACTION_VECTOR_OPEN, fileMessage.getUrl(), fileMessage.mimeType, fileMessage.body, fileMessage.file)
@@ -1187,6 +1233,8 @@ open class BaseMessageListFragment : MatrixMessageListFragment<VectorMessagesAda
 
         private val TAG_FRAGMENT_RECEIPTS_DIALOG = "TAG_FRAGMENT_RECEIPTS_DIALOG"
         private val TAG_FRAGMENT_USER_GROUPS_DIALOG = "TAG_FRAGMENT_USER_GROUPS_DIALOG"
+
+        const val VERIF_REQ_CODE = 12
 
         // onMediaAction actions
         // private static final int ACTION_VECTOR_SHARE = R.id.ic_action_vector_share;

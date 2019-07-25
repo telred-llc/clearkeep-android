@@ -5,31 +5,20 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import im.vector.BuildConfig
-import im.vector.LoginHandler
 import im.vector.R
 import im.vector.databinding.FragmentLoginBinding
-import kotlinx.android.synthetic.main.fragment_login.*
-import org.matrix.androidsdk.HomeServerConnectionConfig
-import org.matrix.androidsdk.rest.callback.ApiCallback
-import org.matrix.androidsdk.rest.callback.SimpleApiCallback
-import org.matrix.androidsdk.rest.model.MatrixError
-import vmodev.clearkeep.activities.DemoEmptyActivity
 import vmodev.clearkeep.activities.SplashActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.ultis.isEmailValid
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractLoginFragmentViewModel
-import java.lang.Exception
 import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match

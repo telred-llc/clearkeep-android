@@ -16,8 +16,8 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
-import org.matrix.androidsdk.rest.callback.SimpleApiCallback
-import org.matrix.androidsdk.rest.model.MatrixError
+import org.matrix.androidsdk.core.callback.SimpleApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
 import vmodev.clearkeep.activities.interfaces.IDeactivateAccountActivity
 import vmodev.clearkeep.databases.ClearKeepDatabase
 import vmodev.clearkeep.dialogfragments.EditTextDialogFragment

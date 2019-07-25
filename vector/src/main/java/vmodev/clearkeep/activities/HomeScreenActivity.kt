@@ -25,10 +25,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_home_screen.*
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.callback.ApiCallback
+import org.matrix.androidsdk.core.callback.SimpleApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.data.Room
-import org.matrix.androidsdk.rest.callback.ApiCallback
-import org.matrix.androidsdk.rest.callback.SimpleApiCallback
-import org.matrix.androidsdk.rest.model.MatrixError
 import vmodev.clearkeep.activities.interfaces.IHomeScreenActivity
 import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IFragmentFactory
@@ -119,7 +119,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         viewModelFactory.getViewModel().setValueForListRoomTypeFavourite(arrayOf(129, 130))
         if (intent.hasExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS)) {
             val intentExtra: Intent = intent.getParcelableExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS);
-            if (mxSession.getDataHandler().getStore().isReady()) {
+            if (mxSession.dataHandler.store.isReady) {
                 runOnUiThread {
                     CommonActivityUtils.sendFilesTo(this@HomeScreenActivity, intentExtra)
                 }
@@ -229,7 +229,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     protected fun openRoom(room: Room?) {
         // sanity checks
         // reported by GA
-        if (null == mxSession.getDataHandler() || null == mxSession.getDataHandler().getStore()) {
+        if (null == mxSession.dataHandler || null == mxSession.dataHandler.store) {
             return
         }
 
@@ -242,7 +242,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         }
 
         if (roomId != null) {
-            val roomSummary = mxSession.getDataHandler().getStore().getSummary(roomId)
+            val roomSummary = mxSession.dataHandler.store.getSummary(roomId)
 
             if (null != roomSummary) {
                 room!!.sendReadReceipt()
@@ -253,7 +253,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
 
             // Launch corresponding room activity
             val params = HashMap<String, Any>()
-            params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession.getMyUserId()
+            params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession.myUserId
             params[VectorRoomActivity.EXTRA_ROOM_ID] = roomId
 
             CommonActivityUtils.goToRoomPage(this, mxSession, params)
@@ -261,7 +261,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     }
 
     fun onRejectInvitation(roomId: String, onSuccessCallback: ApiCallback<Void>?) {
-        val room = mxSession.getDataHandler().getRoom(roomId)
+        val room = mxSession.dataHandler.getRoom(roomId)
 
         if (null != room) {
             room!!.leave(createForgetLeaveCallback(roomId, onSuccessCallback))
@@ -272,7 +272,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         return object : ApiCallback<Void> {
             override fun onSuccess(info: Void) {
                 // clear any pending notification for this room
-                EventStreamService.cancelNotificationsForRoomId(mxSession.getMyUserId(), roomId)
+                EventStreamService.cancelNotificationsForRoomId(mxSession.myUserId, roomId)
 
                 onSuccessCallback?.onSuccess(null)
             }
@@ -302,12 +302,12 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     private fun joinRoom(roomId: String) {
         binding.progressBar.visibility = View.VISIBLE;
         val room = mxSession.dataHandler.store.getRoom(roomId);
-        mxSession.joinRoom(room!!.getRoomId(), object : ApiCallback<String> {
+        mxSession.joinRoom(room!!.roomId, object : ApiCallback<String> {
             override fun onSuccess(roomId: String) {
                 val params = HashMap<String, Any>()
 
-                params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession.getMyUserId()
-                params[VectorRoomActivity.EXTRA_ROOM_ID] = room!!.getRoomId()
+                params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession.myUserId
+                params[VectorRoomActivity.EXTRA_ROOM_ID] = room!!.roomId
                 params[VectorRoomActivity.EXTRA_EXPAND_ROOM_HEADER] = room!!.isDirect;
 
                 CommonActivityUtils.goToRoomPage(this@HomeScreenActivity, mxSession, params)

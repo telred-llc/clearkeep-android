@@ -15,9 +15,8 @@ import im.vector.util.RoomUtils
 import im.vector.util.VectorUtils
 import io.reactivex.subjects.PublishSubject
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.callback.SimpleApiCallback
 import org.matrix.androidsdk.data.Room
-import org.matrix.androidsdk.rest.callback.ApiCallback
-import org.matrix.androidsdk.rest.callback.SimpleApiCallback
 import org.matrix.androidsdk.rest.model.RoomMember
 import kotlin.collections.ArrayList
 

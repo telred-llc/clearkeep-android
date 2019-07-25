@@ -11,7 +11,7 @@
     <string name="status_theme">Status.im Theme</string>
     <!-- permanent notification subtitle -->
     <string name="notification_sync_init">Initializing service</string>
-    <string name="notification_sync_in_progress">Synchronising</string>
+    <string name="notification_sync_in_progress">Synchronising…</string>
     <string name="notification_listening_for_events">Listening for events</string>
     <string name="notification_noisy_notifications">Noisy notifications</string>
     <string name="notification_silent_notifications">Silent notifications</string>
@@ -26,6 +26,8 @@
     <string name="title_activity_choose_sticker">Send a sticker</string>
     <string name="title_activity_keys_backup_setup">Key Backup</string>
     <string name="title_activity_keys_backup_restore">Use Key Backup</string>
+    <string name="title_activity_verify_device">Verify device</string>
+
     <!-- Signing out screen -->
     <string name="keys_backup_is_not_finished_please_wait">Keys backup is not finished, please wait…</string>
     <string name="sign_out_bottom_sheet_warning_no_backup">You’ll lose your encrypted messages if you sign out now</string>
@@ -315,9 +317,10 @@
     <string name="permissions_rationale_msg_camera_explanation">\n\nPlease allow access on the next pop-up to be able to make the call.</string>
     <string name="permissions_rationale_msg_record_audio">ClearKeep needs permission to access your microphone to perform audio calls.</string>
     <string name="permissions_rationale_msg_record_audio_explanation">\n\nPlease allow access on the next pop-up to be able to make the call.</string>
-    <string name="permissions_rationale_msg_camera_and_audio">ClearKeep needs permission to access your camera and your microphone to perform video calls.\n\nPlease allow access on the next pop-ups to be able to make the call.</string>
-    <string name="permissions_rationale_msg_contacts">ClearKeep needs permission to access your address book contacts to find other Matrix users based on their email and phone numbers.\n\nPlease allow access on the next pop-up to discover address book users reachable from ClearKeep.</string>
-    <string name="permissions_msg_contacts_warning_other_androids">ClearKeep needs permission to access your address book contact to find other Matrix users based on their email and phone numbers.\n\nAllow ClearKeep to access your contacts ?</string>
+    <string name="permissions_rationale_msg_camera_and_audio">Riot needs permission to access your camera and your microphone to perform video calls.\n\nPlease allow access on the next pop-ups to be able to make the call.</string>
+    <string name="permissions_rationale_msg_contacts">Riot needs permission to access your address book contacts to find other Matrix users based on their email and phone numbers.\n\nPlease allow access on the next pop-up to discover address book users reachable from Riot.</string>
+    <string name="permissions_msg_contacts_warning_other_androids">Riot needs permission to access your address book contact to find other Matrix users based on their email and phone numbers.\n\nAllow Riot to access your contacts ?</string>
+
     <string name="permissions_action_not_performed_missing_permissions">Sorry. Action not performed, due to missing permissions</string>
     <!-- medias slider string -->
     <string name="media_slider_saved">Saved</string>
@@ -627,6 +630,7 @@
     <string name="settings_invited_to_room">When I’m invited to a room</string>
     <string name="settings_call_invitations">Call invitations</string>
     <string name="settings_messages_sent_by_bot">Messages sent by bot</string>
+
     <string name="settings_background_sync">Background synchronization</string>
     <string name="settings_start_on_boot">Start on boot</string>
     <string name="settings_enable_background_sync">Enable background sync</string>
@@ -819,6 +823,7 @@
     <!-- Directory -->
     <string name="directory_title">Directory</string>
     <string name="settings_theme">Theme</string>
+
     <!-- matrix error -->
     <string name="failed_to_load_timeline_position">%s was trying to load a specific point in this room’s timeline but was unable to find it.</string>
     <!-- encryption dialog -->
@@ -856,6 +861,7 @@
     <string name="encryption_information_verified">Verified</string>
     <string name="encryption_information_blocked">Blacklisted</string>
     <string name="encryption_information_unknown_device">unknown device</string>
+    <string name="encryption_information_unknown_ip">unknown ip</string>
     <string name="encryption_information_none">none</string>
     <string name="encryption_information_verify">Verify</string>
     <string name="encryption_information_unverify">Unverify</string>
@@ -928,6 +934,9 @@
         <item quantity="one">1 active widget</item>
         <item quantity="other">%d active widgets</item>
     </plurals>
+
+    <string name="error_jitsi_not_supported_on_old_device">Sorry, conference calls with Jitsi are not supported on old devices (devices with Android OS below 5.0)</string>
+
     <!-- Widget Integration Manager -->
     <string name="widget_integration_unable_to_create">Unable to create widget.</string>
     <string name="widget_integration_failed_to_send_request">Failed to send request.</string>
@@ -947,10 +956,21 @@
     <string name="settings_labs_enable_send_voice_summary">This option requires a third party application to record the messages.</string>
     <!-- share keys -->
     <string name="you_added_a_new_device">You added a new device \'%s\', which is requesting encryption keys.</string>
+    <string name="you_added_a_new_device_with_info">A new device is requesting encryption keys.\nDevice name: %1$s\nLast seen: %2$s\nIf you didn’t log in on another device, ignore this request.</string>
     <string name="your_unverified_device_requesting">Your unverified device  \'%s\' is requesting encryption keys.</string>
+    <string name="your_unverified_device_requesting_with_info">An unverified device is requesting encryption keys.\nDevice name: %1$s\nLast seen: %2$s\nIf you didn’t log in on another device, ignore this request.</string>
+
     <string name="start_verification">Start verification</string>
+    <!-- Keep the label as small as possible-->
+    <string name="start_verification_short_label">Verify</string>
     <string name="share_without_verifying">Share without verifying</string>
+    <!-- Keep the label as small as possible-->
+    <string name="share_without_verifying_short_label">Share</string>
+    <string name="key_share_request">Key Share Request</string>
     <string name="ignore_request">Ignore request</string>
+    <!-- Keep the label as small as possible-->
+    <string name="ignore_request_short_label">Ignore</string>
+
     <!-- conference call -->
     <string name="conference_call_warning_title">Warning!</string>
     <string name="conference_call_warning_message">Conference calling is in development and may not be reliable.</string>
@@ -1060,7 +1080,7 @@
     <string name="x_plus">%d+</string>
     <string name="no_valid_google_play_services_apk">No valid Google Play Services APK found. Notifications may not work properly.</string>
     <!-- String for Play Store -->
-    <string name="store_title">Riot.im - Communicate, your way.</string>
+    <string name="store_title">Riot.im - Communicate, your way</string>
     <string name="store_whats_new">"We’re always making changes and improvements to Riot.im.
 The complete changelog can be found here: %1$s.
 To make sure you don’t miss a thing, just keep your updates turned on."</string>
@@ -1111,6 +1131,12 @@ Why choose Riot.im?
     <string name="keys_backup_setup_step3_share_recovery_file">Share</string>
     <string name="keys_backup_setup_step3_save_button_title">Save as File</string>
     <string name="recovery_key_export_saved_as_warning">The recovery key has been saved to \'%s\'.\n\nWarning: this file may be deleted if the application is uninstalled.</string>
+
+    <string name="keys_backup_setup_override_backup_prompt_tile">A backup already exist on your HomeServer</string>
+    <string name="keys_backup_setup_override_backup_prompt_description">It looks like you already have setup key backup from another device. Do you want to replace it with the one you’re creating?</string>
+    <string name="keys_backup_setup_override_replace">Replace</string>
+    <string name="keys_backup_setup_override_stop">Stop</string>
+
     <string name="keys_backup_setup_step3_please_make_copy">Please make a copy</string>
     <string name="keys_backup_setup_step3_share_intent_chooser_title">Share recovery key with…</string>
     <string name="keys_backup_setup_step3_generating_key_status">Generating Recovery Key using passphrase, this process can take several seconds.</string>
@@ -1168,6 +1194,8 @@ Why choose Riot.im?
     <string name="keys_backup_settings_untrusted_backup">To use Key Backup on this device, restore with your passphrase or recovery key now.</string>
     <string name="keys_backup_settings_deleting_backup">Deleting backup…</string>
     <string name="keys_backup_settings_delete_backup_error">Failed to delete backup (%s)</string>
+
+    <string name="keys_backup_settings_checking_backup_state">Checking backup state</string>
     <string name="keys_backup_settings_delete_confirm_title">Delete Backup</string>
     <string name="keys_backup_settings_delete_confirm_message">Delete your backed up encryption keys from the server? You will no longer be able to use your recovery key to read encrypted message history.</string>
     <string name="new_recovery_method_popup_title">New Key Backup</string>
@@ -1343,4 +1371,215 @@ Why choose Riot.im?
     <string name="have_not_create_backup_key_content">Your keys are not being backup from this device. Start using Key Backup?</string>
     <string name="have_had_backup_key_content">Never lose encrypted messages</string>
     <string name="start_using_backup_key">Start using Backup key</string>
+
+    <string name="invalid_or_expired_credentials">You have been logged out due to invalid or expired credentials.</string>
+
+    <string name="sas_verify_title">Verify by comparing a short text string.</string>
+    <string name="sas_security_advise">For maximum security, we recommend you do this in person or use another trusted means of communication.</string>
+    <string name="sas_verify_start_button_title">Begin Verifying</string>
+    <string name="sas_incoming_request_title">Incoming Verification Request</string>
+    <string name="sas_incoming_request_description">Verify this device to mark it as trusted. Trusting devices of partners gives you extra peace of mind when using end-to-end encrypted messages."</string>
+    <string name="sas_incoming_request_description_2">Verifying this device will mark it as trusted, and also mark your device as trusted to the partner."</string>
+
+    <string name="sas_emoji_description">Verify this device by confirming the following emoji appear on the screen of the partner"</string>
+    <string name="sas_decimal_description">Verify this device by confirming the following numbers appear on the screen of the partner"</string>
+
+    <string name="sas_incoming_verification_request_dialog">You received an incoming verification request.</string>
+    <string name="sas_view_request_action">View request</string>
+    <string name="sas_waiting_for_partner">Waiting for partner to confirm…</string>
+
+    <string name="sas_verified">Verified!</string>
+    <string name="sas_verified_successful">You\'ve successfully verified this device.</string>
+    <string name="sas_verified_successful_description">Secure messages with this user are end-to-end encrypted and not able to be read by third parties.</string>
+    <string name="sas_got_it">Got it</string>
+
+    <string name="sas_verifying_keys">Nothing appearing? Not all clients supports interactive verification yet. Use legacy verification.</string>
+    <string name="sas_legacy_verification_button_title">Use legacy verification.</string>
+
+    <string name="sas_verification_request_notification_channel_title">Key Verification</string>
+    <string name="sas_cancelled_dialog_title">Request Cancelled</string>
+    <string name="sas_cancelled_by_other">The other party cancelled the verification.\n%s</string>
+    <string name="sas_cancelled_by_me">The verification is canceled.\nReason: %s</string>
+
+    <string name="sas_verification_request_notification_channel">Interactive Device Verification</string>
+    <string name="sas_incoming_request_notif_title">Verification Request</string>
+    <string name="sas_incoming_request_notif_content">%s wants to verify your device</string>
+
+    <!-- SAS Errors -->
+    <string name="sas_error_m_user">The user cancelled the verification</string>
+    <string name="sas_error_m_timeout">The verification process timed out</string>
+    <string name="sas_error_m_unknown_transaction">The device does not know about that transaction</string>
+    <string name="sas_error_m_unknown_method">The device can’t agree on a key agreement, hash, MAC, or SAS method</string>
+    <string name="sas_error_m_mismatched_commitment">The hash commitment did not match</string>
+    <string name="sas_error_m_mismatched_sas">The SAS did not match</string>
+    <string name="sas_error_m_unexpected_message">The device received an unexpected message</string>
+    <string name="sas_error_m_invalid_message">An invalid message was received</string>
+    <string name="sas_error_m_key_mismatch">Key mismatch</string>
+    <string name="sas_error_m_user_error">User mismatch</string>
+    <string name="sas_error_unknown">Unknown Error</string>
+
+
+    <!-- String for RiotX -->
+    <string name="edit">Edit</string>
+    <string name="reply">Reply</string>
+
+    <string name="global_retry">"Retry"</string>
+    <string name="room_list_empty">"Join a room to start using the app."</string>
+    <string name="send_you_invite">"Sent you an invitation"</string>
+    <string name="invited_by">Invited by %s</string>
+
+    <string name="room_list_catchup_empty_title">You’re all caught up!</string>
+    <string name="room_list_catchup_empty_body">You have no more unread messages</string>
+    <string name="room_list_catchup_welcome_title">Welcome home!</string>
+    <string name="room_list_catchup_welcome_body">Catch up on unread messages here</string>
+    <string name="room_list_people_empty_title">Conversations</string>
+    <string name="room_list_people_empty_body">Your direct message conversation will be displayed here</string>
+    <string name="room_list_rooms_empty_title">Rooms</string>
+    <string name="room_list_rooms_empty_body">Your rooms will be displayed here</string>
+
+    <string name="title_activity_emoji_reaction_picker">Reactions</string>
+    <string name="reactions_agree">Agree</string>
+    <string name="reactions_like">Like</string>
+    <string name="message_add_reaction">Add Reaction</string>
+    <string name="message_view_reaction">View Reactions</string>
+    <string name="reactions">Reactions</string>
+
+    <string name="event_redacted_by_user_reason">Event deleted by user</string>
+    <string name="event_redacted_by_admin_reason">Event moderated by room admin</string>
+    <string name="last_edited_info_message">Last edited by %s on %s</string>
+
+
+    <string name="malformed_message">Malformed event, cannot display</string>
+    <string name="create_new_room">Create New Room</string>
+    <string name="error_no_network">No network. Please check your Internet connection.</string>
+    <string name="action_change">"Change"</string>
+    <string name="change_room_directory_network">"Change network"</string>
+    <string name="please_wait">"Please wait…"</string>
+    <string name="group_all_communities">"All Communities"</string>
+
+    <string name="room_preview_no_preview">"This room can't be previewed"</string>
+    <string name="room_preview_world_readable_room_not_supported_yet">"The preview of world-readable room is not supported yet in RiotX"</string>
+
+    <string name="fab_menu_create_room">"Rooms"</string>
+    <string name="fab_menu_create_chat">"Direct Messages"</string>
+
+    <!-- Create room screen -->
+    <string name="create_room_title">"New Room"</string>
+    <string name="create_room_action_create">"CREATE"</string>
+    <string name="create_room_name_hint">"Room name"</string>
+    <string name="create_room_public_title">"Public"</string>
+    <string name="create_room_public_description">"Anyone will be able to join this room"</string>
+    <string name="create_room_directory_title">"Room Directory"</string>
+    <string name="create_room_directory_description">"Publish this room in the room directory"</string>
+
+    <string name="keys_backup_unable_to_get_trust_info">"An error occurred getting trust info"</string>
+    <string name="keys_backup_unable_to_get_keys_backup_data">"An error occurred getting keys backup data"</string>
+
+    <string name="alpha_disclaimer_title">Welcome to the beta!</string>
+    <string name="alpha_disclaimer_content_line_1">"While RiotX is in early development, some features may be missing and you may experience bugs."</string>
+    <!-- The parameter will be replaced by the value of string alpha_disclaimer_content_line_2_gplay_colored_part -->
+    <string name="alpha_disclaimer_content_line_2_gplay">"The latest feature list is always in the %1$s, and if you find bugs please submit a report in the top left menu of Home, and we’ll fix them as quickly as we can."</string>
+    <string name="alpha_disclaimer_content_line_2_gplay_colored_part">"Play Store description"</string>
+    <string name="alpha_disclaimer_content_line_2_fdroid">"If you find bugs please submit a report in the top left menu of Home, and we’ll fix them as quickly as we can."</string>
+
+    <string name="import_e2e_keys_from_file">"Import e2e keys from file \"%1$s\"."</string>
+
+    <string name="settings_sdk_version">Matrix SDK Version</string>
+    <string name="settings_other_third_party_notices">Other third party notices</string>
+    <string name="navigate_to_room_when_already_in_the_room">You are already viewing this room!</string>
+
+    <string name="quick_reactions">Quick Reactions</string>
+
+    <!-- Settings -->
+    <string name="settings_general_title">General</string>
+    <string name="settings_preferences">Preferences</string>
+    <string name="settings_security_and_privacy">Security &amp; Privacy</string>
+    <string name="settings_expert">Expert</string>
+    <string name="settings_push_rules">Push Rules</string>
+    <string name="settings_push_rules_no_rules">No push rules defined</string>
+    <string name="settings_push_gateway_no_pushers">No registered push gateways</string>
+
+    <string name="push_gateway_item_app_id">app_id:</string>
+    <string name="push_gateway_item_push_key">push_key:</string>
+    <string name="push_gateway_item_app_display_name">app_display_name:</string>
+    <string name="push_gateway_item_device_name">device_name:</string>
+    <string name="push_gateway_item_url">Url:</string>
+    <string name="push_gateway_item_format">Format:</string>
+
+    <string name="preference_voice_and_video">Voice &amp; Video</string>
+    <string name="preference_root_help_about">Help &amp; About</string>
+
+
+    <string name="settings_troubleshoot_test_token_registration_quick_fix">Register token</string>
+
+    <string name="send_suggestion">Make a suggestion</string>
+    <string name="send_suggestion_content">Please write your suggestion below.</string>
+    <string name="send_suggestion_report_placeholder">Describe your suggestion here</string>
+    <string name="send_suggestion_sent">Thanks, the suggestion has been successfully sent</string>
+    <string name="send_suggestion_failed">The suggestion failed to be sent (%s)</string>
+
+    <string name="settings_labs_show_hidden_events_in_timeline">Show hidden events in timeline</string>
+
+    <!-- String for Play Store, for RiotX -->
+    <string name="store_riotx_title">RiotX - Next Generation Matrix Client</string>
+    <string name="store_riotx_short_description">A faster and lighter client for Matrix using the latest Android frameworks</string>
+    <string name="store_riotx_full_description">"RiotX is a new client for the Matrix protocol (Matrix.org): an open network for secure, decentralised communication. RiotX is a full rewrite of the Riot Android client, based on a full rewrite of the Matrix Android SDK.
+
+Disclaimer: This is a beta version. RiotX is currently in active development and contains limitations and (we hope not too many) bugs. All feedback is welcome!
+
+RiotX supports:
+• Login to an existing account
+• Create room and join public rooms
+• Accept and reject invitations
+• List users rooms
+• View room details
+• Send text messages
+• Send attachment
+• Read and write messages in encrypted rooms
+• Crypto: E2E keys backup, advance device verification, key share request and answer
+• Push notification
+• Light, Dark and Black themes
+
+Not all features in Riot are implemented in RiotX yet. Main missing (and coming soon!) features:
+• Account creation
+• Room settings (list room members, etc.)
+• Creation of direct chat rooms
+• Calls
+• Widgets
+• …"</string>
+
+    <string name="bottom_action_people_x">Direct Messages</string>
+
+    <string name="send_file_step_idle">Waiting…</string>
+    <string name="send_file_step_encrypting_thumbnail">Encrypting thumbnail…</string>
+    <string name="send_file_step_sending_thumbnail">Sending thumbnail (%1$s / %2$s)</string>
+    <string name="send_file_step_encrypting_file">Encrypting file…</string>
+    <string name="send_file_step_sending_file">Sending file (%1$s / %2$s)</string>
+
+    <string name="downloading_file">Downloading file %1$s…</string>
+    <string name="downloaded_file">File %1$s has been downloaded!</string>
+
+    <string name="edited_suffix">"(edited)"</string>
+
+    <!-- param will be replaced by the value of riotx_no_registration_notice_colored_part -->
+    <string name="riotx_no_registration_notice">%1$s to create an account.</string>
+    <string name="riotx_no_registration_notice_colored_part">Use the old app</string>
+
+
+    <string name="message_edits">Message Edits</string>
+    <string name="no_message_edits_found">No edits found</string>
+
+    <!-- Room filtering -->
+    <string name="room_filtering_filter_hint">Filter conversations…</string>
+    <string name="room_filtering_footer_title">Can’t find what you’re looking for?</string>
+    <string name="room_filtering_footer_create_new_room">Create a new room</string>
+    <string name="room_filtering_footer_create_new_direct_message">Send a new direct message</string>
+    <string name="room_filtering_footer_open_room_directory">View the room directory</string>
+
+    <string name="room_directory_search_hint">Name or ID (#example:matrix.org)</string>
+
+    <string name="labs_swipe_to_reply_in_timeline">Enable swipe to reply in timeline</string>
+
+    <string name="link_copied_to_clipboard">Link copied to clipboard</string>
+
 </resources>

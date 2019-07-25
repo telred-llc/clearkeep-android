@@ -246,12 +246,10 @@ Elnézést a kellemetlenségért.</string>
     <string name="permissions_rationale_msg_camera_and_audio">"A Riot-nak engedély szükséges a mikrofonod  és kamerád eléréséhez, hogy tudj videóhívást kezdeményezni.
 
 Kérlek engedélyezd a hozzáférést a következő felugró ablakban, hogy tudj hívást kezdeményezni."</string>
-    <string name="permissions_rationale_msg_contacts">A Riot-nak engedély szükséges a címjegyzék-kapcsolatok eléréséhez, hogy tudj Matrix felhasználókat találni e-mail és telefonszám alapján.
-
-Kérlek engedélyezd a hozzáférést a következő felugró ablakban, hogy tudj címjegyzék-kapcsolatok találni a Riot-tal.</string>
-    <string name="permissions_msg_contacts_warning_other_androids">A Riot-nak engedély szükséges a címjegyzék-kapcsolatok eléréséhez, hogy tudj Matrix felhasználókat találni e-mail és telefonszám alapján.
-
-Engedélyezed Riot-nak a hozzáférést kapcsolataidhoz?</string>
+    <string name="permissions_rationale_msg_contacts">A Riot a névjegyekben lévő e-mail és telefonszám alapján képes felkutatni más Matrix felhasználókar. Ha egyetértesz a névjegyek ilyen célú megosztásával, kérlek engedélyezd a hozzáférést a következő felugró üzenetben.</string>
+    <string name="permissions_msg_contacts_warning_other_androids">A Riot a névjegyekben lévő e-mail és telefonszám alapján képes felkutatni más Matrix felhasználókar. 
+\n
+\nEgyetértesz a névjegyek ilyen célú megosztásával\?</string>
 
     <string name="permissions_action_not_performed_missing_permissions">"Elnézést.  A művelet nem lett végre hajtva hiányzó engedélyek miatt"</string>
 
@@ -691,7 +689,7 @@ Ismeretlen eszközök:</string>
     <string name="room_add_matrix_apps">Matrix alkalmazás hozzáadása</string>
     <string name="notification_listening_for_events">Események figyelése</string>
 
-    <string name="notification_sync_in_progress">Szinkronizálás</string>
+    <string name="notification_sync_in_progress">Szinkronizálás…</string>
     <string name="call">Hívás</string>
     <string name="settings_containing_my_display_name">Profilnevemet tartalmazó üzenetek</string>
     <string name="settings_containing_my_user_name">Felhasználónevemet tartalmazó üzenetek</string>
@@ -849,7 +847,7 @@ Ismeretlen eszközök:</string>
     <string name="receipt_avatar">Címzett profilképe</string>
     <string name="notice_avatar">Észlelési profilkép</string>
     <string name="settings_notification_privacy_normal">Normál</string>
-    <string name="settings_notification_privacy_fcm">• Az értesítések a Google Cloud Messaging rendszeren keresztül lesznek elküldve</string>
+    <string name="settings_notification_privacy_fcm">• Az értesítések a Firebase Cloud Messaging rendszeren keresztül lesznek elküldve</string>
     <string name="settings_notification_privacy_metadata">• Az értesítések csak metaadatokat tartalmaznak</string>
     <string name="settings_notification_privacy_secure_message_content">• Az értesítés tartalma <b>közvetlenül a Matrix szerverről kerül letöltésre</b></string>
     <string name="settings_notification_privacy_nosecure_message_content">Az értesítések <b>meta- és üzenet adatot is</b> tartalmaznak</string>
@@ -860,7 +858,7 @@ Ismeretlen eszközök:</string>
     <string name="settings_notification_privacy">Értesítés adatvédelme</string>
     <string name="settings_notification_privacy_reduced">Csökkentett adatvédelem</string>
     <string name="settings_notification_privacy_need_permission">"Az alkalmazásnak engedélyre van szüksége háttérben futáshoz "</string>
-    <string name="settings_notification_privacy_message_content_not_shown">• Az értesítések <b>nem mutatják az üzenet tartalmát</b></string>
+    <string name="settings_notification_privacy_message_content_not_shown">• Az értesítések <b>nem fogják mutatni az üzenet tartalmát</b></string>
 
     <string name="startup_notification_privacy_title">Értesítés adatvédelme</string>
     <string name="title_activity_choose_sticker">Matrica küldése</string>
@@ -1148,7 +1146,7 @@ A következő képernyőn el kell fogadnod, hogy a Riot folyamatosan fusson a h�
 
     <string name="no_valid_google_play_services_apk">Érvényes Google Play Services APK nem található. Az értesítések megbízhatatlanul működhetnek.</string>
 
-    <string name="store_title">Riot.im - Beszélgess, ahogy tetszik.</string>
+    <string name="store_title">Riot.im - Beszélgess, ahogy tetszik</string>
     <string name="store_short_description">Egy biztonságos és univerzális csevegő alkalmazás az irányításod alatt.</string>
     <string name="store_full_description">A csevegő alkalmazás ami személyre szabható és az irányításod alatt marad. Riot megteremti a lehetőséget, hogy úgy beszélgess ahogy szeretnél. A [matrix] hálózathoz tervezve - ami egy nyílt és elosztott hálózat.
 \n
@@ -1372,8 +1370,8 @@ Ha nem te állítottad be a visszaállítási metódust, akkor egy támadó pró
 
     <string name="autodiscover_invalid_response">A Matrix szerver felderítésére érvénytelen válasz érkezett</string>
     <string name="autodiscover_well_known_autofill_dialog_title">Szerver beállítások automatikus kiegészítése</string>
-    <string name="autodiscover_well_known_autofill_dialog_message">Riot egyedi szerver beállítást észlelt a felhasználói azonosítód domain-jéhez: \"%s\":
-\n%s</string>
+    <string name="autodiscover_well_known_autofill_dialog_message">Riot egyedi szerver beállítást észlelt a felhasználói azonosítód domain-jéhez: \"%1$s\":
+\n%2$s</string>
     <string name="autodiscover_well_known_autofill_confirm">Beállítás használata</string>
 
     <string name="notification_sync_init">Szolgáltatás indítása</string>
@@ -1383,5 +1381,202 @@ Ha nem te állítottad be a visszaállítási metódust, akkor egy támadó pró
     <string name="settings_default_media_source">Alapértelmezett média forrása</string>
     <string name="media_source_choose">Válassz</string>
     <string name="settings_play_shutter_sound">Exponálás hang lejátszása</string>
+
+    <string name="action_mark_room_read">Olvasottnak jelöl</string>
+    <string name="settings_notification_privacy_no_background_sync">Az alkalmazásnak <b>nem</b> kell a háttérben folyamatosan a Matrix szerverrel tartani a kapcsolatot, ez csökkentheti az akkumulátor használatot</string>
+    <plurals name="notification_compat_summary_line_for_room">
+        <item quantity="one">%1$s: 1 üzenet</item>
+        <item quantity="other">%1$s: %2$d üzenet</item>
+    </plurals>
+    <plurals name="notification_compat_summary_title">
+        <item quantity="one">%d értesítés</item>
+        <item quantity="other">%d értesítés</item>
+    </plurals>
+
+    <string name="notification_unknown_new_event">Új esemény</string>
+    <string name="notification_unknown_room_name">Szoba</string>
+    <string name="notification_new_messages">Új üzenetek</string>
+    <string name="notification_new_invitation">Új meghívók</string>
+    <string name="notification_sender_me">Én</string>
+    <string name="notification_inline_reply_failed">** A küldés nem sikerült - kérlek nyisd meg a szobát</string>
+
+    <string name="error_jitsi_not_supported_on_old_device">Elnézést, Jitsi konferencia hívások a régi eszközökön (Android OS 5.0-nál régebbi) nem támogatottak</string>
+
+    <string name="title_activity_verify_device">Eszköz ellenőrzése</string>
+
+    <string name="encryption_information_unknown_ip">ismeretlen ip</string>
+    <string name="you_added_a_new_device_with_info">Új eszköz kér titkosítási kulcsokat.
+\nEszköz neve: %1$s
+\nUtoljára látszott: %2$s
+\nHa nem jelentkeztél be másik eszközön, hagyd figyelmen kívül a kérést.</string>
+    <string name="your_unverified_device_requesting_with_info">Ellenőrizetlen eszköz kér titkosítási kulcsokat.
+\nEszköz neve: %1$s
+\nUtoljára látszott: %2$s
+\nHa nem jelentkeztél be másik eszközzel, hagyd figyelmen kívül ezt a kérést.</string>
+
+    <string name="start_verification_short_label">Ellenőriz</string>
+    <string name="share_without_verifying_short_label">Megoszt</string>
+    <string name="key_share_request">Kulcs Megosztási Kérés</string>
+    <string name="ignore_request_short_label">Mellőz</string>
+
+    <string name="sas_verify_title">Rövid szöveggel ellenőriz.</string>
+    <string name="sas_security_advise">A maximális biztonság érdekében azt javasoljuk, hogy személyesen vagy más megbízható kommunikációs csatornán tedd meg.</string>
+    <string name="sas_verify_start_button_title">Ellenőrzés megkezdése</string>
+    <string name="sas_incoming_request_title">Ellenőrzési kérés érkezett</string>
+    <string name="sas_incoming_request_description">Eszköz ellenőrzése és beállítás megbízhatónak. A partnerek eszközeiben való megbízás megnyugtató lehet, ha végponttól végpontig titkosítást használsz.</string>
+    <string name="sas_incoming_request_description_2">Az eszköz ellenőrzése megbízhatónak fogja jelezni az eszközt és a partnernél a te eszközödet szintén megbízhatónak fogja jelezni.</string>
+
+    <string name="sas_emoji_description">Eszköz ellenőrzése az alábbi emojik a partner képernyőjén való megjelenésének megerősítésével történik</string>
+    <string name="sas_decimal_description">Eszköz ellenőrzése az alábbi számok a partner képernyőjén való megjelenésének megerősítésével történik</string>
+
+    <string name="sas_incoming_verification_request_dialog">Bejövő ellenőrzési kérés érkezett.</string>
+    <string name="sas_view_request_action">Kérés megjelenítése</string>
+    <string name="sas_waiting_for_partner">Várakozás a partner megerősítésére…</string>
+
+    <string name="sas_verified">Ellenőrizve!</string>
+    <string name="sas_verified_successful">Sikeresen ellenőrizted az eszközt.</string>
+    <string name="sas_verified_successful_description">Biztonságos üzenetek ezzel a felhasználóval végponttól végpontig titkosítva vannak és harmadik fél nem tudja elolvasni.</string>
+    <string name="sas_got_it">Értem</string>
+
+    <string name="sas_verifying_keys">Nem jelenik meg semmi\? Nem minden kliens támogatja az interaktív ellenőrzést. Használd a hagyományos ellenőrzést.</string>
+    <string name="sas_legacy_verification_button_title">Hagyományos ellenőrzés használata.</string>
+
+    <string name="sas_verification_request_notification_channel_title">Kulcs Ellenőrzés</string>
+    <string name="sas_cancelled_dialog_title">Kérés törölve</string>
+    <string name="sas_cancelled_by_other">A másik fél megszakította az ellenőrzést.
+\n%s</string>
+    <string name="sas_cancelled_by_me">Az ellenőrzés megszakítva.
+\nOk: %s</string>
+
+    <string name="sas_verification_request_notification_channel">Interaktív Eszköz Ellenőrzés</string>
+    <string name="sas_incoming_request_notif_title">Ellenőrzési kérés</string>
+    <string name="sas_incoming_request_notif_content">%s szeretné ellenőrizni az eszközödet</string>
+
+    <string name="sas_error_m_user">A felhasználó megszakította az ellenőrzést</string>
+    <string name="sas_error_m_timeout">Az ellenőrzési folyamat időtúllépés miatt megszakadt</string>
+    <string name="sas_error_m_unknown_transaction">Az eszköz nem tud a tranzakcióról</string>
+    <string name="sas_error_m_unknown_method">Az eszköz nem tud megegyezni a kulcs kezelésről, hash, MAC vagy SAS metódus</string>
+    <string name="sas_error_m_mismatched_commitment">A hash nem egyezik</string>
+    <string name="sas_error_m_mismatched_sas">A SAS nem egyezik</string>
+    <string name="sas_error_m_unexpected_message">Az eszköz egy váratlan üzenetet kapott</string>
+    <string name="sas_error_m_invalid_message">Érvénytelen üzenet érkezett</string>
+    <string name="sas_error_m_key_mismatch">Kulcsok nem egyeznek</string>
+    <string name="sas_error_m_user_error">A felhasználó nem egyezik</string>
+    <string name="sas_error_unknown">Ismeretlen Hiba</string>
+
+    <string name="keys_backup_setup_override_backup_prompt_tile">Mentés már létezik a Matrix szervereden</string>
+    <string name="keys_backup_setup_override_backup_prompt_description">Úgy látszik már rendelkezel kulcs mentéssel egy másik eszközön. Lecseréled azzal amit most készítesz\?</string>
+    <string name="keys_backup_setup_override_replace">Csere</string>
+    <string name="keys_backup_setup_override_stop">Állj</string>
+
+    <string name="keys_backup_settings_checking_backup_state">Mentés állapot ellenőrzése</string>
+    <string name="invalid_or_expired_credentials">Érvénytelen vagy lejárt jelszó miatt kiléptél.</string>
+
+    <string name="edit">Szerkeszt</string>
+    <string name="reply">Válasz</string>
+
+    <string name="global_retry">Újra</string>
+    <string name="room_list_empty">Lépj be egy szobába, hogy kezd el használni az alkalmazást.</string>
+    <string name="send_you_invite">Meghívód elküldve</string>
+    <string name="invited_by">Meghívta: %s</string>
+
+    <string name="room_list_catchup_empty_title">Minden megvan!</string>
+    <string name="room_list_catchup_empty_body">Nincs olvasatlan üzeneted</string>
+    <string name="room_list_catchup_welcome_title">Üdvözöllek itthon!</string>
+    <string name="room_list_catchup_welcome_body">Olvasd el az olvasatlan üzeneteket itt</string>
+    <string name="room_list_people_empty_title">Beszélgetések</string>
+    <string name="room_list_people_empty_body">A közvetlen beszélgetéseidet itt láthatod</string>
+    <string name="room_list_rooms_empty_title">Szobák</string>
+    <string name="room_list_rooms_empty_body">A szobáidat itt láthatod</string>
+
+    <string name="title_activity_emoji_reaction_picker">Reakciók</string>
+    <string name="reactions_agree">Egyetértek</string>
+    <string name="reactions_like">Kedvelem</string>
+    <string name="message_add_reaction">Reakció hozzáadása</string>
+    <string name="message_view_reaction">Reakciók megjelenítése</string>
+    <string name="reactions">Reakciók</string>
+
+    <string name="event_redacted_by_user_reason">Az eseményt a felhasználó törölte</string>
+    <string name="event_redacted_by_admin_reason">Az eseményt a szoba adminisztrátora moderálta</string>
+    <string name="last_edited_info_message">Utoljára szerkesztette: %s ekkor: %s</string>
+
+
+    <string name="malformed_message">Hibás esemény, nem lehet megjeleníteni</string>
+    <string name="create_new_room">Új szoba készítése</string>
+    <string name="error_no_network">Nincs hálózat. Ellenőrizd az Internet kapcsolatodat.</string>
+    <string name="action_change">Változtat</string>
+    <string name="change_room_directory_network">Hálózat megváltoztatása</string>
+    <string name="please_wait">Kérlek várj…</string>
+    <string name="group_all_communities">Minden közösség</string>
+
+    <string name="room_preview_no_preview">Ennek a szobának nincs előnézete</string>
+    <string name="room_preview_world_readable_room_not_supported_yet">A RiotX-ben a nyilvános szoba előnézete egyenlőre nem támogatott</string>
+
+    <string name="fab_menu_create_room">Szobák</string>
+    <string name="fab_menu_create_chat">Közvetlen üzenetek</string>
+
+    <string name="create_room_title">Új szoba</string>
+    <string name="create_room_action_create">KÉSZÍT</string>
+    <string name="create_room_name_hint">Szoba neve</string>
+    <string name="create_room_public_title">Nyilvános</string>
+    <string name="create_room_public_description">Bárki csatlakozhat ehhez a szobához</string>
+    <string name="create_room_directory_title">Szobák listája</string>
+    <string name="create_room_directory_description">A szoba közzététele a szobák listájában</string>
+
+    <string name="keys_backup_unable_to_get_trust_info">A megbízhatósági információ beszerzésekor hiba történt</string>
+    <string name="keys_backup_unable_to_get_keys_backup_data">A kulcs mentés adatainak beszerzésekor hiba történt</string>
+
+    <string name="alpha_disclaimer_title">Üdv a béta verzióban!</string>
+    <string name="alpha_disclaimer_content_line_1">Amíg a RiotX újdonsült fejlesztés, néhány funkció hiányozhat és találkozhatsz hibákkal.</string>
+    <string name="alpha_disclaimer_content_line_2_gplay">A legfrissebb funkciók listáját itt találod: %1$s, és ha hibát találsz kérlek küldj egy jelentést róla a Kezdő oldal bal felső sarkában lévő menüvel és ahogy tudjuk javítjuk.</string>
+    <string name="alpha_disclaimer_content_line_2_gplay_colored_part">Play áruház leírás</string>
+    <string name="alpha_disclaimer_content_line_2_fdroid">Ha hibát találsz kérlek küldj egy jelentést róla a Kezdő oldal bal felső sarkában lévő menüvel és ahogy tudjuk javítjuk.</string>
+
+    <string name="import_e2e_keys_from_file">Végponttól végpontig titkosítás kulcsainak betöltése ebből a fájlból: \"%1$s\".</string>
+
+    <string name="settings_sdk_version">Matrix SDK Verzió</string>
+    <string name="settings_other_third_party_notices">Harmadik fél megjegyzések</string>
+    <string name="navigate_to_room_when_already_in_the_room">Már nézed ezt a szobát!</string>
+
+    <string name="quick_reactions">Gyors Reakció</string>
+
+    <string name="settings_general_title">Általános</string>
+    <string name="settings_preferences">Beállítások</string>
+    <string name="settings_security_and_privacy">Biztonság &amp; Adatvédelem</string>
+    <string name="settings_expert">Haladó</string>
+    <string name="settings_push_rules">„Push” szabályok</string>
+    <string name="settings_push_rules_no_rules">„Push” szabályok nincsenek</string>
+    <string name="settings_push_gateway_no_pushers">„Push” átjárók nincsenek regisztrálva</string>
+
+    <string name="push_gateway_item_app_id">app_id:</string>
+    <string name="push_gateway_item_push_key">push_key:</string>
+    <string name="push_gateway_item_app_display_name">app_display_name:</string>
+    <string name="push_gateway_item_device_name">device_name:</string>
+    <string name="push_gateway_item_url">Url:</string>
+    <string name="push_gateway_item_format">Formátum:</string>
+
+    <string name="preference_voice_and_video">Hang &amp; Videó</string>
+    <string name="preference_root_help_about">Segítség &amp; Névjegy</string>
+
+
+    <string name="settings_troubleshoot_test_token_registration_quick_fix">„Token” regisztrálás</string>
+
+    <string name="send_suggestion">Javaslat tétel</string>
+    <string name="send_suggestion_content">A javaslatodat kérlek ír le alulra.</string>
+    <string name="send_suggestion_report_placeholder">Ír le a javaslatodat ide</string>
+    <string name="send_suggestion_sent">Köszönjük, a javaslatodat sikeresen elküldtük</string>
+    <string name="send_suggestion_failed">A javaslatot nem sikerült elküldeni (%s)</string>
+
+    <string name="settings_labs_show_hidden_events_in_timeline">Rejtett események megjelenítése az idővonalon</string>
+
+    <string name="store_riotx_title">RiotX - Matrix Kliens Új Nemzedéke</string>
+    <string name="store_riotx_short_description">A gyorsabb és kisebb Matrix kliens ami a legfrissebb Android keretrendszert használja</string>
+    <string name="store_riotx_full_description">RiotX a Matrix protokollhoz (Matrix.org) készült új kliens: nyílt hálózat biztonságos és decentralizált kommunikációhoz. RiotX a Riot Android kliens teljesen újraírt változata ami a teljesen újraírt Matrix Android SDK-ra épül.
+\n
+\nFigyelmeztetés: Ez egy béta verzió. RiotX aktív fejlesztés alatt áll és vannak korlátai és (reméljük nem olyan sok) hibái. Minden visszajelzést szívesen fogadunk!
+\n
+\nRiotX ezeket támogatja: • Bejelentkezés létező fiókba • Szoba készítés és nyilvános szobába való belépés • Meghívók fogadása és elutasítás • Felhasználók szobáinak listázása • Szoba adatainak megtekintése • Szöveges üzenet küldése • Csatolmány küldése • Titkosított szobákban üzenetek olvasása és írása • Titkosítás: Végponttól végpontig titkosító kulcsok mentése, fejlett eszköz ellenőrzés, kulcs megosztás kérése és válasz • „Push” értesítések • Világos, sötét és fekete téma
+\n
+\nNem minden Riot funkció támogatott a RiotX-ben jelenleg. A fő hiányzó (és hamarosan elérhető!) funkciók: • Felhasználói fiók létrehozása • Szoba beállítások (szoba tagság mutatása, stb…) • Közvetlen beszélgetések indítása • Hívások • Kisalkalmazások • …</string>
 
 </resources>

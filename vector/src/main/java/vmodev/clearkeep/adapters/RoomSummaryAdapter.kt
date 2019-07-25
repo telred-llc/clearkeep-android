@@ -23,12 +23,12 @@ import im.vector.util.RoomUtils
 import im.vector.util.VectorUtils
 import im.vector.util.setRoundBackground
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.EventDisplay
+import org.matrix.androidsdk.core.Log
 import org.matrix.androidsdk.data.Room
 import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.data.RoomTag
 import org.matrix.androidsdk.rest.model.Event
-import org.matrix.androidsdk.util.EventDisplay
-import org.matrix.androidsdk.util.Log
 import java.util.*
 import kotlin.collections.ArrayList
 
