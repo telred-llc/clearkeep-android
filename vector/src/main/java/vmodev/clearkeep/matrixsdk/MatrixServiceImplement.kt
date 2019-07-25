@@ -177,7 +177,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                     var avatar = "";
                     var result = session!!.contentManager.getDownloadableUrl(myUser.avatarUrl);
                     result?.let { avatar = result }
-                    val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = avatar, status = if (myUser.isActive) 1 else 0, roomId = "");
+                    val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = avatar, status = if (myUser.isActive) 1 else 0);
                     emitter.onNext(user);
                     emitter.onComplete();
                 } else {
@@ -205,7 +205,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                             asyncUpdateRoomMember(it).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ mrId ->
                                 kotlin.run {
                                     currentIndex++;
-                                    listRoom.add(matrixRoomToRoom(t, if (mrId.isNotEmpty()) if (mrId[0].id.isNullOrEmpty()) "" else mrId[0].id else ""));
+                                    listRoom.add(matrixRoomToRoom(t));
                                     if (currentIndex == rooms.size) {
                                         emitter.onNext(listRoom);
                                         emitter.onComplete();
@@ -374,7 +374,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         }
     }
 
-    private fun matrixRoomToRoom(room: Room, roomMemberId: String = ""): vmodev.clearkeep.viewmodelobjects.Room {
+    private fun matrixRoomToRoom(room: Room): vmodev.clearkeep.viewmodelobjects.Room {
         var sourcePrimary = 1;// = if (room.isDirect) 0b00000001 else 0b00000010;
         if (room.isInvited) {
             sourcePrimary = if (room.isDirectChatInvitation) 0b00000001 else 0b00000010;
@@ -401,12 +401,9 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             BingRulesManager.RoomNotificationState.MUTE -> notificationState = 0x08;
         }
         val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
-
-        val rooMemberOnlineStatus: Byte = if (roomMemberId.isNullOrEmpty()) 0 else if (VectorUtils.getUserOnlineStatus(application, session!!, roomMemberId, null).compareTo("Online now") == 0) 1 else 0;
-//        Log.d("Room Type: ", (sourcePrimary or sourceSecondary or sourceThird).toString() + "-----" + room.getRoomDisplayName(application))
-        val roomObj: vmodev.clearkeep.viewmodelobjects.Room = vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
+        val roomObj: vmodev.clearkeep.viewmodelobjects.Room = Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
-                , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, lastMessage = lastMessage
+                , updatedDate = timeUpdateLong, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, lastMessage = lastMessage
                 , encrypted = if (room.isEncrypted) 1 else 0, status = if (room.isLeaving || room.isLeft) 0 else 1, notificationState = notificationState);
         return roomObj;
     }
@@ -431,7 +428,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                 var result = session!!.contentManager.getDownloadableUrl(t?.avatarUrl);
                                 result?.let { avatar = result }
                             };
-                            users.add(User(name = t?.name, roomId = "", status = 0, avatarUrl = avatar, id = t?.userId));
+                            users.add(User(name = t?.name, status = 0, avatarUrl = avatar, id = t?.userId));
 //                            }
                         }
                     }
@@ -477,7 +474,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                         result?.let { avatar = result }
                                     };
                                     t?.let { user ->
-                                        users.add(User(id = user.user_id, name = if (user.displayname.isNullOrEmpty()) "Riot-bot" else user.displayname, avatarUrl = avatar, status = if (user.isActive) 1 else 0, roomId = ""))
+                                        users.add(User(id = user.user_id, name = if (user.displayname.isNullOrEmpty()) "Riot-bot" else user.displayname, avatarUrl = avatar, status = if (user.isActive) 1 else 0))
                                     }
                                 }
                             }
@@ -889,8 +886,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                     val users = ArrayList<User>();
                     p0?.forEach { t: RoomMember? ->
                         t?.let { roomMember ->
-                            users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0, roomId = roomId))
-                            Log.d("Add User: ", roomMember.name);
+                            users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0))
                         }
                     }
                     emitter.onNext(users);
@@ -938,7 +934,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                             asyncUpdateRoomMember(it).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ mrId ->
                                 kotlin.run {
                                     currentIndex++;
-                                    listRoom.add(matrixRoomToRoom(t, if (mrId.isNotEmpty()) if (mrId[0].id.isNullOrEmpty()) "" else mrId[0].id else ""));
+                                    listRoom.add(matrixRoomToRoom(t));
                                     mrId.forEach { u: User? ->
                                         u?.let { user ->
                                             listUser.add(user);
@@ -982,7 +978,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                 override fun onSuccess(p0: List<RoomMember>?) {
                     p0?.forEach { t: RoomMember? ->
                         t?.let { roomMember ->
-                            users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0, roomId = roomId))
+                            users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0))
                             roomUserJoin.add(RoomUserJoin(room.roomId, roomMember.userId))
                         }
                     }
@@ -1012,7 +1008,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         if (avatar == null) {
             return Observable.create<User> {
                 updateUser(name).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe({ sn ->
-                    it.onNext(User(name = sn, id = session!!.myUserId, roomId = "", status = 0, avatarUrl = ""))
+                    it.onNext(User(name = sn, id = session!!.myUserId, status = 0, avatarUrl = ""))
                     it.onComplete();
                 }, { en ->
                     it.onError(en);
@@ -1023,7 +1019,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             return Observable.create<User> {
                 updateUser(name).observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe({ sn ->
                     updateUser(avatar).observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe({ sa ->
-                        it.onNext(User(name = sn, id = session!!.myUserId, avatarUrl = sa, status = 0, roomId = ""));
+                        it.onNext(User(name = sn, id = session!!.myUserId, avatarUrl = sa, status = 0));
                         it.onComplete();
                     }, { ea ->
                         it.onError(ea);

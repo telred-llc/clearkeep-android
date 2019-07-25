@@ -4,12 +4,14 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import vmodev.clearkeep.repositories.RoomRepository
+import vmodev.clearkeep.repositories.RoomUserJoinRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractContactFragmentViewModel
 import javax.inject.Inject
 
-class ContactFragmentViewModel @Inject constructor(roomRepository: RoomRepository) : AbstractContactFragmentViewModel() {
+class ContactFragmentViewModel @Inject constructor(roomRepository: RoomRepository, private val roomUserJoinRepository: RoomUserJoinRepository) : AbstractContactFragmentViewModel() {
     private val _listType = MutableLiveData<Array<Int>>();
     private val listRoomByType = Transformations.switchMap(_listType) { input -> roomRepository.loadListRoomUserJoin(input) }
     private val _roomIdForUpdateNotify = MutableLiveData<String>();
@@ -28,5 +30,9 @@ class ContactFragmentViewModel @Inject constructor(roomRepository: RoomRepositor
 
     override fun getUpdateRoomNotifyResult(): LiveData<Resource<Room>> {
         return _updateRoomNotifyResult;
+    }
+
+    override fun getRoomUserJoinResult(roomId: String): LiveData<Resource<List<User>>> {
+        return roomUserJoinRepository.getUsersInRoom(roomId);
     }
 }

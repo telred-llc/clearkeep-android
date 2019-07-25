@@ -68,29 +68,6 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
         }.asLiveData()
     }
 
-    fun getUsersInRoom(roomId: String): LiveData<Resource<List<User>>> {
-        return object : AbstractNetworkBoundSource<List<User>, List<User>>() {
-            override fun saveCallResult(item: List<User>) {
-                userDao.insertUsers(item);
-            }
-
-            override fun shouldFetch(data: List<User>?): Boolean {
-                return data.isNullOrEmpty();
-            }
-
-            override fun loadFromDb(): LiveData<List<User>> {
-                return userDao.getUsersByRoomId(roomId);
-            }
-
-            override fun createCall(): LiveData<List<User>> {
-                return LiveDataReactiveStreams.fromPublisher(matrixService.getUsersInRoom(roomId)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.io())
-                        .toFlowable(BackpressureStrategy.LATEST));
-            }
-        }.asLiveData();
-    }
-
     fun updateUser(userId: String, name: String, avatarImage: InputStream?): LiveData<Resource<User>> {
         return object : AbstractNetworkBoundSource<User, User>() {
             override fun saveCallResult(item: User) {
@@ -114,6 +91,14 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
                         .toFlowable(BackpressureStrategy.LATEST))
             }
         }.asLiveData();
+    }
+
+    fun updateUserStatus(userId: String, status: Byte) {
+        Observable.create<Int> { emitter ->
+            val value = userDao.updateStatus(userId, status);
+            emitter.onNext(value);
+            emitter.onComplete();
+        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe();
     }
 
     class UserHandleObject constructor(val userId: String, val name: String, val avatarUrl: String);

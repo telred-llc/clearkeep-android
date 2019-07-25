@@ -1,5 +1,6 @@
 package vmodev.clearkeep.adapters
 
+import android.arch.lifecycle.LifecycleOwner
 import android.databinding.DataBindingComponent
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
@@ -13,13 +14,14 @@ import android.view.ViewGroup
 import im.vector.R
 import im.vector.databinding.RoomInviteItemBinding
 import im.vector.databinding.RoomItemBinding
+import io.reactivex.subjects.PublishSubject
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.viewmodelobjects.Room
 
 class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<Room>)
 
-    : ListAdapter<Room, DataBoundViewHolder<ViewDataBinding>>(AsyncDifferConfig.Builder<Room>(diffCallback)
+    : ListAdapter<Room, DataBoundViewHolder<ViewDataBinding>>(AsyncDifferConfig.Builder(diffCallback)
         .setBackgroundThreadExecutor(appExecutors.diskIO())
         .build()), IListRoomRecyclerViewAdapter {
 
@@ -27,6 +29,9 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
     private lateinit var itemClick: (Room, Int) -> Unit?
     private lateinit var itemLongClick: (Room) -> Unit?
     private lateinit var dataBindingComponent: DataBindingComponent
+    private var callbackToGetUsers: IListRoomRecyclerViewAdapter.ICallbackToGetUsers? = null;
+    private var lifecycleOwner: LifecycleOwner? = null;
+    private var currentUserId: String? = null;
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DataBoundViewHolder<ViewDataBinding> {
         val binding: ViewDataBinding;
@@ -43,8 +48,14 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
                 return@setOnLongClickListener true
             }
         }
-
+        lifecycleOwner?.let { binding.lifecycleOwner = lifecycleOwner }
         return DataBoundViewHolder(binding);
+    }
+
+    override fun setCallbackToGetUsers(callback: IListRoomRecyclerViewAdapter.ICallbackToGetUsers, lifecycleOwner: LifecycleOwner, currentUserId: String?) {
+        callbackToGetUsers = callback;
+        this.lifecycleOwner = lifecycleOwner;
+        this.currentUserId = currentUserId;
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -58,6 +69,10 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
         } else {
             (p0.binding as RoomItemBinding).room = getItem(p1);
             p0.binding.executePendingBindings();
+            p0.binding.currentUserId = currentUserId;
+            callbackToGetUsers?.let {
+                p0.binding.usersMember = it.getUsers(getItem(p1).id);
+            }
         }
     }
 
@@ -73,7 +88,7 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
         return this;
     }
 
-    override fun setdataBindingComponent(dataBindingComponent: DataBindingComponent) {
+    override fun setDataBindingComponent(dataBindingComponent: DataBindingComponent) {
         this.dataBindingComponent = dataBindingComponent;
     }
 }

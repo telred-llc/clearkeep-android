@@ -35,4 +35,8 @@ abstract class AbstractDeviceSettingsDao {
 
     @Query("UPDATE deviceSettings SET theme =:theme WHERE id =:id")
     abstract fun updateTheme(id: String, theme: Int): Int;
+
+    @Query("DELETE FROM deviceSettings")
+    abstract fun delete();
+
 }

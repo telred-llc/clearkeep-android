@@ -40,7 +40,7 @@ abstract class AbstractSearchActivityFragmentsBuilderModule {
 
                 override fun areContentsTheSame(p0: Room, p1: Room): Boolean {
                     return p0.name == p1.name && p0.updatedDate == p1.updatedDate && p0.avatarUrl == p1.avatarUrl
-                            && p0.notifyCount == p1.notifyCount && p0.roomMemberStatus == p1.roomMemberStatus;
+                            && p0.notifyCount == p1.notifyCount;
                 }
             })
         }

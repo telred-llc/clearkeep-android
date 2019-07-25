@@ -4,12 +4,15 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import vmodev.clearkeep.repositories.RoomRepository
+import vmodev.clearkeep.repositories.RoomUserJoinRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
+import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractListRoomFragmentViewModel
 import javax.inject.Inject
 
-class ListRoomFragmentViewModel @Inject constructor(roomRepository: RoomRepository) : AbstractListRoomFragmentViewModel() {
+class ListRoomFragmentViewModel @Inject constructor(roomRepository: RoomRepository, private val roomUserJoinRepository: RoomUserJoinRepository) : AbstractListRoomFragmentViewModel() {
 
     private val _directRoomFilters = MutableLiveData<Array<Int>>();
     private val _groupRoomFilters = MutableLiveData<Array<Int>>();
@@ -92,5 +95,9 @@ class ListRoomFragmentViewModel @Inject constructor(roomRepository: RoomReposito
 
     override fun getChangeNotificationStateResult(): LiveData<Resource<Room>> {
         return _changeNotificationStateResult;
+    }
+
+    override fun getRoomUserJoinResult(roomId: String): LiveData<Resource<List<User>>> {
+        return roomUserJoinRepository.getListRoomUserJoinWithRoomId(roomId);
     }
 }

@@ -1,26 +1,25 @@
 package vmodev.clearkeep.activities
 
+import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.databinding.DataBindingUtil
-import android.media.JetPlayer
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
-import dagger.android.support.DaggerAppCompatActivity
 import im.vector.Matrix
 import im.vector.R
-import im.vector.activity.KeysBackupManageActivity
-import im.vector.activity.KeysBackupSetupActivity
 import im.vector.databinding.ActivityProfileSettingsBinding
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.activities.interfaces.IProfileSettingsActivity
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
-import vmodev.clearkeep.factories.viewmodels.interfaces.IProfileSettingsActivityViewModelFactory
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.viewmodels.interfaces.AbstractProfileSettingsActivityViewModel
+import java.util.*
 import javax.inject.Inject
+import javax.inject.Named
 
-class ProfileSettingsActivity : DataBindingDaggerActivity(), IProfileSettingsActivity {
+class ProfileSettingsActivity : DataBindingDaggerActivity(), IActivity {
 
     @Inject
-    lateinit var profileSettingsActivityViewModelFactory: IProfileSettingsActivityViewModelFactory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractProfileSettingsActivityViewModel>
 
     private lateinit var binding: ActivityProfileSettingsBinding;
     private lateinit var userId: String;
@@ -57,11 +56,6 @@ class ProfileSettingsActivity : DataBindingDaggerActivity(), IProfileSettingsAct
             intentSecurity.putExtra(ExportKeyActivity.USER_ID, userId);
             startActivity(intentSecurity);
         }
-        binding.themeGroup.setOnClickListener {
-            val intentTheme = Intent(this, ChangeThemeActivity::class.java);
-            intentTheme.putExtra(ChangeThemeActivity.USER_ID, userId);
-            startActivity(intentTheme);
-        }
         binding.textViewDeactivateAccount.setOnClickListener {
             val deactivateAccountIntent = Intent(this, DeactivateAccountActivity::class.java);
             startActivity(deactivateAccountIntent);
@@ -92,6 +86,20 @@ class ProfileSettingsActivity : DataBindingDaggerActivity(), IProfileSettingsAct
         binding.textViewClearCache.setOnClickListener {
             Matrix.getInstance(applicationContext).reloadSessions(applicationContext, false);
         }
+        binding.switchCompatChangeTheme.setOnCheckedChangeListener { compoundButton, b ->
+            if (b) {
+                viewModelFactory.getViewModel().setChangeTheme(R.style.DarkTheme);
+            } else {
+                viewModelFactory.getViewModel().setChangeTheme(R.style.LightTheme)
+            }
+        }
+        viewModelFactory.getViewModel().getThemeResult().observe(this, Observer {
+            it?.data?.let {
+                binding.switchCompatChangeTheme.isChecked = it.theme == R.style.DarkTheme;
+            }
+        })
+        binding.lifecycleOwner = this;
+        viewModelFactory.getViewModel().setTimeToGetTheme(Calendar.getInstance().timeInMillis);
     }
 
     override fun getActivity(): FragmentActivity {

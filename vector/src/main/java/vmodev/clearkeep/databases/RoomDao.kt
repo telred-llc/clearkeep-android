@@ -49,9 +49,6 @@ abstract class RoomDao {
     @Query("DELETE FROM room WHERE id =:id")
     abstract fun deleteRoom(id: String);
 
-    @Query("UPDATE room SET roomMemberStatus =:roomMemberStatus WHERE roomMemberId =:roomMemberId")
-    abstract fun updateRoomMemberStatus(roomMemberId: String, roomMemberStatus: Byte);
-
     @Query("UPDATE room SET type =:type WHERE id =:id")
     abstract fun updateType(id: String, type: Int)
 
@@ -75,6 +72,9 @@ abstract class RoomDao {
 
     @Query("UPDATE room SET notificationState =:state WHERE room.id =:id")
     abstract fun updateNotificationState(id: String, state: Byte): Int;
+
+    @Query("DELETE FROM room")
+    abstract fun delete();
 
     fun loadWithType(filter: Array<Int>): LiveData<List<Room>> {
         when (filter.size) {

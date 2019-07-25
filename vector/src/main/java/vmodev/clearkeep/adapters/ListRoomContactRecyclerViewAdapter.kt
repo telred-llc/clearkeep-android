@@ -1,5 +1,6 @@
 package vmodev.clearkeep.adapters
 
+import android.arch.lifecycle.LifecycleOwner
 import android.databinding.DataBindingComponent
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
@@ -26,6 +27,9 @@ class ListRoomContactRecyclerViewAdapter constructor(appExecutors: AppExecutors,
     private lateinit var itemClick: (Room, Int) -> Unit?
     private lateinit var itemLongClick: (Room) -> Unit?
     private lateinit var dataBindingComponent: DataBindingComponent
+    private var callbackToGetUsers: IListRoomRecyclerViewAdapter.ICallbackToGetUsers? = null;
+    private var lifecycleOwner: LifecycleOwner? = null;
+    private var currentUserId: String? = null;
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DataBoundViewHolder<ItemConversationBinding> {
         val binding: ItemConversationBinding = DataBindingUtil.inflate(LayoutInflater.from(p0.context), R.layout.item_conversation, p0, false, dataBindingComponent);
@@ -34,9 +38,19 @@ class ListRoomContactRecyclerViewAdapter constructor(appExecutors: AppExecutors,
         return DataBoundViewHolder(binding);
     }
 
+    override fun setCallbackToGetUsers(callback: IListRoomRecyclerViewAdapter.ICallbackToGetUsers, lifecycleOwner: LifecycleOwner, currentUserId: String?) {
+        callbackToGetUsers = callback;
+        this.lifecycleOwner = lifecycleOwner;
+        this.currentUserId = currentUserId;
+    }
+
     override fun onBindViewHolder(p0: DataBoundViewHolder<ItemConversationBinding>, p1: Int) {
         p0.binding.room = getItem(p1);
         p0.binding.executePendingBindings();
+        callbackToGetUsers?.let {
+            p0.binding.memberUsers = it.getUsers(getItem(p1).id);
+            p0.binding.currentUserId = currentUserId;
+        }
     }
 
     override fun setOnItemClick(itemClick: (Room, Int) -> Unit?) {
@@ -51,7 +65,7 @@ class ListRoomContactRecyclerViewAdapter constructor(appExecutors: AppExecutors,
         return this;
     }
 
-    override fun setdataBindingComponent(dataBindingComponent: DataBindingComponent) {
+    override fun setDataBindingComponent(dataBindingComponent: DataBindingComponent) {
         this.dataBindingComponent = dataBindingComponent;
     }
 }

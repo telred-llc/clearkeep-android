@@ -61,7 +61,7 @@ class RoomFragment : DataBindingDaggerFragment(), IRoomFragment {
         super.onViewCreated(view, savedInstanceState)
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner;
-        listRoomAdapter.setdataBindingComponent(dataBindingComponent);
+        listRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listRoomAdapter.setOnItemClick { room, i ->
             when (i) {
                 3 -> onClickItem.onNext(room.id)

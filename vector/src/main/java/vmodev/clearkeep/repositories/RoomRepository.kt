@@ -250,15 +250,6 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
-    fun updateRoomMemberStatus(roomMemberId: String, status: Byte) {
-        Observable.create<Int> { emitter ->
-            kotlin.run {
-                roomDao.updateRoomMemberStatus(roomMemberId, status);
-                emitter.onComplete();
-            }
-        }.subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe();
-    }
-
     fun findListRoomWithText(keyword: String): LiveData<Resource<List<Room>>> {
         return object : AbstractNetworkNonBoundSource<List<Room>>() {
             override fun createCall(): LiveData<List<Room>> {

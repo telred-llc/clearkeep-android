@@ -1,34 +1,26 @@
 package vmodev.clearkeep.fragments
 
 import android.app.Activity
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.FragmentContactsBinding
-import org.matrix.androidsdk.MXSession
-import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.activities.RoomActivity
-import vmodev.clearkeep.adapters.DirectMessageRecyclerViewAdapter
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.factories.viewmodels.interfaces.IContactFragmentViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IContactFragment
-import vmodev.clearkeep.fragments.Interfaces.IFragment
-import vmodev.clearkeep.fragments.Interfaces.IListRoomOnFragmentInteractionListener
-import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
+import vmodev.clearkeep.viewmodelobjects.Resource
+import vmodev.clearkeep.viewmodelobjects.User
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -47,7 +39,7 @@ private const val GO_TO_ROOM_CODE = 12432;
  * create an instance of this fragment.
  *
  */
-class ContactsFragment : DataBindingDaggerFragment(), IContactFragment {
+class ContactsFragment : DataBindingDaggerFragment(), IContactFragment, IListRoomRecyclerViewAdapter.ICallbackToGetUsers {
     private var listener: OnFragmentInteractionListener? = null
     @Inject
     lateinit var viewModelFactory: IContactFragmentViewModelFactory;
@@ -61,7 +53,7 @@ class ContactsFragment : DataBindingDaggerFragment(), IContactFragment {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            userId = it?.getString(USER_ID);
+            userId = it?.getString(USER_ID, "");
         }
     }
 
@@ -75,7 +67,8 @@ class ContactsFragment : DataBindingDaggerFragment(), IContactFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val dividerItemDecoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL);
-        listRoomAdapter.setdataBindingComponent(dataBindingComponent)
+        listRoomAdapter.setDataBindingComponent(dataBindingComponent)
+        listRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, userId);
         binding.recyclerViewListContact.addItemDecoration(dividerItemDecoration);
         binding.recyclerViewListContact.adapter = listRoomAdapter.getAdapter();
         listRoomAdapter.setOnItemClick { room, i ->
@@ -91,6 +84,10 @@ class ContactsFragment : DataBindingDaggerFragment(), IContactFragment {
         binding.lifecycleOwner = viewLifecycleOwner;
 
         viewModelFactory.getViewModel().setListType(arrayOf(1, 129))
+    }
+
+    override fun getUsers(roomId: String): LiveData<Resource<List<User>>> {
+        return viewModelFactory.getViewModel().getRoomUserJoinResult(roomId);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

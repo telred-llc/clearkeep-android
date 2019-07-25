@@ -6,9 +6,27 @@
 
         <import type="java.util.List" />
 
+        <import type="vmodev.clearkeep.viewmodelobjects.Room" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.User" />
+
+        <import type="android.arch.lifecycle.LiveData" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Status" />
+
         <variable
             name="room"
             type="vmodev.clearkeep.viewmodelobjects.Room" />
+
+        <variable
+            name="users_member"
+            type="LiveData&lt;Resource&lt;List&lt;User>>>" />
+
+        <variable
+            name="current_user_id"
+            type="String" />
     </data>
 
     <LinearLayout
@@ -39,7 +57,8 @@
                 android:src="@color/lock_background"
                 app:civ_border_color="@android:color/white"
                 app:civ_border_width="2dp"
-                app:status="@{room.roomMemberStatus}"
+                app:currentUserId="@{current_user_id}"
+                app:listUser="@{users_member.data}"
                 app:visibleGone="@{room.type == 1 || room.type == 129}" />
         </FrameLayout>
 

@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.DividerItemDecoration
 import com.orhanobut.dialogplus.DialogPlus
-import dagger.android.support.DaggerAppCompatActivity
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
@@ -17,7 +16,6 @@ import vmodev.clearkeep.activities.interfaces.IUserInformationActivity
 import vmodev.clearkeep.adapters.BottomDialogFavouriteRoomLongClick
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.factories.viewmodels.interfaces.IUserInformationActivityViewModelFactory
 import javax.inject.Inject
 import javax.inject.Named
@@ -84,8 +82,8 @@ class UserInformationActivity : DataBindingDaggerActivity(), IUserInformationAct
     private fun setUpRecyclerView() {
         binding.recyclerViewListDirectChat.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         binding.recyclerViewListRoomChat.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        listDirectChatRoomAdapter.setdataBindingComponent(dataBindingComponent);
-        listRoomChatRoomAdapter.setdataBindingComponent(dataBindingComponent);
+        listDirectChatRoomAdapter.setDataBindingComponent(dataBindingComponent);
+        listRoomChatRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listDirectChatRoomAdapter.setOnItemClick { room, i ->
             when (i) {
                 3 -> {

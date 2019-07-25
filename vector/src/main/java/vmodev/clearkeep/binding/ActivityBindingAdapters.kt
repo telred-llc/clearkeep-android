@@ -116,4 +116,20 @@ class ActivityBindingAdapters constructor(val activity: FragmentActivity) : Imag
             }
         }
     }
+
+    override fun bindStatusFromListUser(imageView: ImageView, users: List<User>?, currentUserId: String?) {
+        users?.let { us ->
+            currentUserId?.let { id ->
+                for (u in us){
+                    if (u.id.compareTo(id) != 0 && u.status.compareTo(0) != 0){
+                        imageView.setImageResource(R.color.app_green);
+                        break;
+                    }
+                    else{
+                        imageView.setImageResource(R.color.main_text_color_hint);
+                    }
+                }
+            }
+        }
+    }
 }

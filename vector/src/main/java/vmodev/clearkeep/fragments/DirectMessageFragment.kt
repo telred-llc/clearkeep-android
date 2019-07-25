@@ -10,7 +10,6 @@ import android.support.v7.widget.DividerItemDecoration
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.orhanobut.dialogplus.DialogPlus
 import im.vector.R
 import im.vector.databinding.FragmentDirectMessageBinding
 import io.reactivex.Observable
@@ -18,7 +17,6 @@ import io.reactivex.subjects.PublishSubject
 import vmodev.clearkeep.activities.MessageListActivity
 import vmodev.clearkeep.activities.FindAndCreateNewConversationActivity
 import vmodev.clearkeep.activities.RoomSettingsActivity
-import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IDirectMessageFragmentViewModelFactory
@@ -67,7 +65,7 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDirectMessageFragmen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner;
-        listRoomAdapter.setdataBindingComponent(dataBindingComponent);
+        listRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listRoomAdapter.setOnItemClick { room, i ->
             when (i) {
                 3 -> onClickItem.onNext(room.id);

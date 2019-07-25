@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.User
 
 abstract class AbstractFavouritesFragmentViewModel : ViewModel() {
     abstract fun getListTypeFavouritesDirectResult(): LiveData<Resource<List<Room>>>;
@@ -18,6 +19,7 @@ abstract class AbstractFavouritesFragmentViewModel : ViewModel() {
     abstract fun getUpdateRoomNotifyResult(): LiveData<Resource<Room>>;
     abstract fun setChangeNotificationState(roomId: String, state: Byte);
     abstract fun getChangeNotificationStateResult(): LiveData<Resource<Room>>;
+    abstract fun getRoomUserJoinResult(roomId: String): LiveData<Resource<List<User>>>;
 
     data class ChangeNotificationStateObject(val roomId: String, val state: Byte)
 }

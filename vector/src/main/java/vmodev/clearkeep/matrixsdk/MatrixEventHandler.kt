@@ -99,12 +99,13 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
      */
     override fun onPresenceUpdate(event: Event?, user: User?) {
         super.onPresenceUpdate(event, user)
-        user?.let { roomRepository.updateRoomMemberStatus(it.user_id, if (it.presence.compareTo("online") == 0) 1 else 0) }
+        user?.let {
+            userRepository.updateUserStatus(it.user_id, if (it.presence.compareTo("online") == 0) 1 else 0)
+        }
     }
 
     override fun onBingEvent(event: Event?, roomState: RoomState?, bingRule: BingRule?) {
         super.onBingEvent(event, roomState, bingRule)
-        Log.d("EventType", event?.type + "-----" + roomState?.roomId + "---" + bingRule?.ruleId)
     }
 
     override fun getMXEventListener(mxSession: MXSession): MXEventListener {

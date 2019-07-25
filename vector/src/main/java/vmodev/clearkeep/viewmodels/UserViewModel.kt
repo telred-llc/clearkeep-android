@@ -3,15 +3,17 @@ package vmodev.clearkeep.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
+import vmodev.clearkeep.repositories.RoomUserJoinRepository
 import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import javax.inject.Inject
 
-class UserViewModel @Inject constructor(userRepository: UserRepository) : AbstractUserViewModel() {
+class UserViewModel @Inject constructor(userRepository: UserRepository, roomUserJoinRepository: RoomUserJoinRepository) : AbstractUserViewModel() {
     private val _userId = MutableLiveData<String>()
     private val _query = MutableLiveData<String>();
     private val _roomIdForGetUsers = MutableLiveData<String>();
@@ -24,7 +26,7 @@ class UserViewModel @Inject constructor(userRepository: UserRepository) : Abstra
     }
 
     private val usersInRoom: LiveData<Resource<List<User>>> = Transformations.switchMap(_roomIdForGetUsers) { input ->
-        userRepository.getUsersInRoom(input);
+        roomUserJoinRepository.getUsersInRoom(input);
     }
 
     override fun setUserId(userId: String) {

@@ -23,13 +23,16 @@ abstract class AbstractRoomUserJoinDao {
 
     @Update
     abstract fun updateRoomUserJoin(items: List<RoomUserJoin>): Int;
-//
-//    @Query("DELETE FROM roomUserJoin WHERE roomUserJoin.room_id =:roomId")
-//    abstract fun deleteRoomUserJoinWithRoomId(roomId: String);
 
     @Query("SELECT room.* FROM room INNER JOIN roomUserJoin ON room.id = roomUserJoin.room_id INNER JOIN user ON user.id = roomUserJoin.user_id WHERE user.id =:userId AND (room.type == 1 OR room.type == 65 OR room.type == 129)")
     abstract fun getDirectChatRoomWithUserId(userId: String): LiveData<List<Room>>;
 
     @Query("SELECT room.* FROM room INNER JOIN roomUserJoin ON room.id = roomUserJoin.room_id INNER JOIN user ON user.id = roomUserJoin.user_id WHERE roomUserJoin.user_id =:userId AND (room.type == 2 OR room.type == 66 OR room.type == 130)")
     abstract fun getRoomChatRoomWithUserId(userId: String): LiveData<List<Room>>;
+
+    @Query("SELECT roomUserJoin.* FROM roomUserJoin INNER JOIN room ON room.id = roomUserJoin.room_id WHERE room.id =:roomId")
+    abstract fun getListRoomUserJoinWithRoomId(roomId: String): LiveData<List<RoomUserJoin>>;
+
+    @Query("DELETE FROM roomUserJoin")
+    abstract fun delete();
 }

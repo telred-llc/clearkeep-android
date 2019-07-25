@@ -78,6 +78,12 @@ class AppModule {
         return clearKeepDatabase.keyBackupDao();
     }
 
+    @Singleton
+    @Provides
+    fun provideLocalSettings(clearKeepDatabase: ClearKeepDatabase) : AbstractLocalSettingsDao{
+        return clearKeepDatabase.localSettingsDao();
+    }
+
     @Provides
     @Named(value = IListRoomRecyclerViewAdapter.ROOM)
     fun provideListRoomDirectMessageAdapter(appExecutors: AppExecutors): IListRoomRecyclerViewAdapter {
@@ -88,7 +94,7 @@ class AppModule {
 
             override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.Room, p1: vmodev.clearkeep.viewmodelobjects.Room): Boolean {
                 return p0.name == p1.name && p0.updatedDate == p1.updatedDate && p0.avatarUrl == p1.avatarUrl
-                        && p0.notifyCount == p1.notifyCount && p0.roomMemberStatus == p1.roomMemberStatus && p0.type == p1.type
+                        && p0.notifyCount == p1.notifyCount && p0.type == p1.type
                         && p0.lastMessage == p1.lastMessage && p0.notificationState == p1.notificationState;
             }
         })

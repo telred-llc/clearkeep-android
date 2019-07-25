@@ -1,6 +1,7 @@
 package vmodev.clearkeep.fragments
 
 import android.app.Activity
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
@@ -14,18 +15,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.orhanobut.dialogplus.DialogPlus
-import im.vector.Matrix
 
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.FragmentListRoomBinding
-import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.activities.*
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.IListRoomFragmentViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IListRoomFragment
+import vmodev.clearkeep.viewmodelobjects.Resource
+import vmodev.clearkeep.viewmodelobjects.User
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -43,7 +44,7 @@ private const val GO_TO_ROOM_CODE = 12432;
  * create an instance of this fragment.
  *
  */
-class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
+class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRoomRecyclerViewAdapter.ICallbackToGetUsers {
 
     @Inject
     lateinit var viewModelFactory: IListRoomFragmentViewModelFactory;
@@ -77,8 +78,10 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        listDirectRoomAdapter.setdataBindingComponent(dataBindingComponent);
-        listGroupRoomAdapter.setdataBindingComponent(dataBindingComponent);
+        listDirectRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, userId);
+        listGroupRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, userId);
+        listDirectRoomAdapter.setDataBindingComponent(dataBindingComponent);
+        listGroupRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listDirectRoomAdapter.setOnItemClick { room, i ->
             when (i) {
                 3 -> {
@@ -191,6 +194,10 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
         binding.listGroup = viewModelFactory.getViewModel().getListGroupRoomResult();
 
         viewModelFactory.getViewModel().getListDirectRoomResult().observe(this.viewLifecycleOwner, Observer {
+            //            it?.data?.let {
+//                Log.d("RoomUserJoin", it[0].id)
+//                viewModelFactory.getViewModel().setRoomIdForGetRoomUserJoin(it[0].id);
+//            }
             listDirectRoomAdapter.getAdapter().submitList(it?.data);
         });
         viewModelFactory.getViewModel().getListGroupRoomResult().observe(this.viewLifecycleOwner, Observer {
@@ -232,9 +239,12 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
             }
         }
         binding.lifecycleOwner = this.viewLifecycleOwner;
-
         viewModelFactory.getViewModel().setFiltersDirectRoom(arrayOf(1, 65));
         viewModelFactory.getViewModel().setFiltersGroupRoom(arrayOf(2, 66));
+    }
+
+    override fun getUsers(roomId: String): LiveData<Resource<List<User>>> {
+        return viewModelFactory.getViewModel().getRoomUserJoinResult(roomId);
     }
 
     private fun previewRoom(roomId: String) {

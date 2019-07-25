@@ -4,13 +4,15 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import vmodev.clearkeep.repositories.RoomRepository
+import vmodev.clearkeep.repositories.RoomUserJoinRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractFavouritesFragmentViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractListRoomFragmentViewModel
 import javax.inject.Inject
 
-class FavouritesFragmentViewModel @Inject constructor(roomRepository: RoomRepository) : AbstractFavouritesFragmentViewModel() {
+class FavouritesFragmentViewModel @Inject constructor(roomRepository: RoomRepository, private val roomUserJoinRepository: RoomUserJoinRepository) : AbstractFavouritesFragmentViewModel() {
     private val _listType = MutableLiveData<Array<Int>>();
     private val listRoomByType = Transformations.switchMap(_listType) { input -> roomRepository.loadListRoomUserJoin(input) }
     private val _removeFromFavourite = MutableLiveData<String>();
@@ -68,5 +70,9 @@ class FavouritesFragmentViewModel @Inject constructor(roomRepository: RoomReposi
 
     override fun getChangeNotificationStateResult(): LiveData<Resource<Room>> {
         return _changeNotificationStateResult;
+    }
+
+    override fun getRoomUserJoinResult(roomId: String): LiveData<Resource<List<User>>> {
+        return roomUserJoinRepository.getUsersInRoom(roomId);
     }
 }

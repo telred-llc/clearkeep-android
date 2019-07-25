@@ -5,11 +5,8 @@ import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.databinding.DataBindingUtil
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.util.DiffUtil
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,18 +15,14 @@ import dagger.android.support.DaggerFragment
 import im.vector.R
 import im.vector.databinding.FragmentSearchRoomsBinding
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
-import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
-import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchViewModel
 import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
@@ -83,7 +76,7 @@ class SearchRoomsFragment : DaggerFragment(), ISearchFragment {
         super.onViewCreated(view, savedInstanceState)
         roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
         binding.rooms = roomViewModel.getFindByTextResult();
-        listRoomRecyclerViewAdapter.setdataBindingComponent(bindingDataComponent)
+        listRoomRecyclerViewAdapter.setDataBindingComponent(bindingDataComponent)
         binding.recyclerView.adapter = listRoomRecyclerViewAdapter.getAdapter();
         roomViewModel.getFindByTextResult().observe(viewLifecycleOwner, Observer { t ->
             listRoomRecyclerViewAdapter.getAdapter().submitList(t?.data);

@@ -13,10 +13,11 @@ import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.databinding.ActivityProfileBinding
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.activities.interfaces.IActivity
-import vmodev.clearkeep.databases.ClearKeepDatabase
+import vmodev.clearkeep.databases.*
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.viewmodels.interfaces.AbstractProfileActivityViewModel
 import java.util.*
@@ -28,6 +29,17 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
     lateinit var viewModelFactory: IViewModelFactory<AbstractProfileActivityViewModel>
     @Inject
     lateinit var clearKeepDatabase: ClearKeepDatabase;
+    @Inject
+    lateinit var userDao: UserDao;
+    @Inject
+    lateinit var roomDao: RoomDao;
+    @Inject
+    lateinit var deviceSettingsDao: AbstractDeviceSettingsDao;
+    @Inject
+    lateinit var backupKeyBackupDao: AbstractKeyBackupDao;
+    @Inject
+    lateinit var roomUserJoinDao: AbstractRoomUserJoinDao;
+
     lateinit var binding: ActivityProfileBinding;
     lateinit var mxSession: MXSession;
 
@@ -105,9 +117,18 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
                 .setTitle(R.string.action_sign_out)
                 .setMessage(R.string.action_sign_out_confirmation_simple)
                 .setPositiveButton(R.string.action_sign_out) { dialog, which ->
-                    Observable.create<Boolean> { emitter -> clearKeepDatabase.clearAllTables() }
-                            .subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe();
-                    CommonActivityUtils.logout(this@ProfileActivity);
+                    Observable.create<Boolean> { emitter ->
+                        clearKeepDatabase.clearAllTables()
+                        roomUserJoinDao.delete();
+                        userDao.delete();
+                        roomDao.delete();
+                        deviceSettingsDao.delete();
+                        backupKeyBackupDao.delete();
+                        emitter.onNext(true);
+                        emitter.onComplete();
+                    }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
+                        CommonActivityUtils.logout(this@ProfileActivity);
+                    };
                 }
                 .setNegativeButton(R.string.cancel, null)
                 .show()

@@ -19,16 +19,13 @@ interface UserDao {
     fun updateUser(id: String, name: String, avatarUrl: String): Int;
 
     @Query("UPDATE user SET status =:status WHERE id=:id")
-    fun updateStatus(id: String, status: Byte)
+    fun updateStatus(id: String, status: Byte) : Int;
 
     @Query("SELECT * FROM user WHERE name =:name")
     fun findUsers(name: String): LiveData<List<User>>
 
     @Query("SELECT name FROM user WHERE id =:id")
     fun getUserNameById(id: String): LiveData<String>
-
-    @Query("SELECT * FROM user WHERE roomId =:roomId")
-    fun getUsersByRoomId(roomId: String): LiveData<List<User>>
 
     @Query("UPDATE user SET name =:name WHERE id =:id")
     fun updateUserName(id: String, name: String)
@@ -41,4 +38,7 @@ interface UserDao {
 
     @Update
     fun updateUser(item: User): Int;
+
+    @Query("DELETE FROM user")
+    fun delete();
 }
