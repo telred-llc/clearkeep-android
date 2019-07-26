@@ -3,14 +3,18 @@ package vmodev.clearkeep.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
+import vmodev.clearkeep.di.AnnotationRepositoryKey
 import vmodev.clearkeep.repositories.KeyBackupRepository
 import vmodev.clearkeep.repositories.RoomRepository
 import vmodev.clearkeep.repositories.UserRepository
+import vmodev.clearkeep.repositories.interfaces.IRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractHomeScreenActivityViewModel
 import javax.inject.Inject
+import javax.inject.Provider
+import kotlin.reflect.KClass
 
 class HomeScreenActivityViewModel @Inject constructor(userRepository: UserRepository, roomRepository: RoomRepository, keyBackupRepository: KeyBackupRepository) : AbstractHomeScreenActivityViewModel() {
     private val _userId = MutableLiveData<String>();

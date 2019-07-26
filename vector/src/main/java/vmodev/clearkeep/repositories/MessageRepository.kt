@@ -9,6 +9,9 @@ import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractMessageDao
 import vmodev.clearkeep.factories.messaghandler.interfaces.IMessageHandlerFactory
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
+import vmodev.clearkeep.repositories.wayloads.AbstractLocalLoadSouce
+import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSourceWithCondition
+import vmodev.clearkeep.repositories.wayloads.AbstractNetworkNonBoundSource
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room

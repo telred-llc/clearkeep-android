@@ -190,46 +190,24 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
 
     override fun getListRoom(filters: Array<Int>): Observable<List<vmodev.clearkeep.viewmodelobjects.Room>> {
         setMXSession();
-        return Observable.create<List<vmodev.clearkeep.viewmodelobjects.Room>> { emitter ->
-            kotlin.run {
-                val listRoom = ArrayList<vmodev.clearkeep.viewmodelobjects.Room>();
-                if (homeRoomsViewModel != null && homeRoomsViewModel!!.result != null) {
-                    homeRoomsViewModel!!.update();
-                    val rooms = ArrayList<Room>();
-                    for (filter in filters) {
-                        rooms.addAll(funcs[filter].apply(homeRoomsViewModel!!.result))
-                    }
-                    var currentIndex: Int = 0;
-                    rooms.forEach { t: Room? ->
-                        t?.let {
-                            asyncUpdateRoomMember(it).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ mrId ->
-                                kotlin.run {
-                                    currentIndex++;
-                                    listRoom.add(matrixRoomToRoom(t));
-                                    if (currentIndex == rooms.size) {
-                                        emitter.onNext(listRoom);
-                                        emitter.onComplete();
-                                    }
-                                }
-                            }
-                                    , { e ->
-                                kotlin.run {
-                                    currentIndex++;
-                                    listRoom.add(matrixRoomToRoom(t));
-                                    if (currentIndex == rooms.size) {
-                                        emitter.onNext(listRoom);
-                                        emitter.onComplete();
-                                    }
-                                }
-                            });
-                        }
-                    }
-//                    emitter.onNext(listRoom);
-//                    emitter.onComplete();
-                } else {
-                    emitter.onError(NullPointerException());
-                    emitter.onComplete();
+        return Observable.create { emitter ->
+            val listRoom = ArrayList<vmodev.clearkeep.viewmodelobjects.Room>();
+            if (homeRoomsViewModel != null && homeRoomsViewModel!!.result != null) {
+                homeRoomsViewModel!!.update();
+                val rooms = ArrayList<Room>();
+                for (filter in filters) {
+                    rooms.addAll(funcs[filter].apply(homeRoomsViewModel!!.result))
                 }
+                rooms.forEach { t: Room? ->
+                    t?.let {
+                        listRoom.add(matrixRoomToRoom(t));
+                    }
+                }
+                emitter.onNext(listRoom);
+                emitter.onComplete();
+            } else {
+                emitter.onError(NullPointerException());
+                emitter.onComplete();
             }
         }
     }
@@ -410,17 +388,12 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
 
     @SuppressLint("CheckResult")
     private fun asyncUpdateRoomMember(room: Room): Observable<List<User>> {
-        return Observable.create<List<User>> { emitter ->
+        return Observable.create { emitter ->
             val users = ArrayList<User>();
-//            if (!room.isDirect || room.isInvited) {
-//                emitter.onError(Throwable("No need check"))
-//                emitter.onComplete();
-//            }
             room.getMembersAsync(object : ApiCallback<List<RoomMember>> {
                 override fun onSuccess(p0: List<RoomMember>?) {
                     p0?.forEach { t: RoomMember? ->
                         t?.userId?.let {
-                            //                            if (t.userId.compareTo(session!!.myUserId) != 0) {
                             var avatar = "";
                             if (t?.avatarUrl.isNullOrEmpty() || t == null) {
                                 avatar = "";
@@ -429,7 +402,6 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                 result?.let { avatar = result }
                             };
                             users.add(User(name = t?.name, status = 0, avatarUrl = avatar, id = t?.userId));
-//                            }
                         }
                     }
                     emitter.onNext(users);
@@ -879,7 +851,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
     }
 
     override fun getUsersInRoom(roomId: String): Observable<List<User>> {
-        return Observable.create<List<User>> { emitter ->
+        return Observable.create { emitter ->
             val room = session!!.dataHandler.getRoom(roomId);
             room.getActiveMembersAsync(object : ApiCallback<List<RoomMember>> {
                 override fun onSuccess(p0: List<RoomMember>?) {

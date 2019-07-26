@@ -1,4 +1,4 @@
-package vmodev.clearkeep.repositories
+package vmodev.clearkeep.repositories.wayloads
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData

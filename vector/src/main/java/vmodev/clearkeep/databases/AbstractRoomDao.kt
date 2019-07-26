@@ -6,7 +6,7 @@ import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
 
 @Dao
-abstract class RoomDao {
+abstract class AbstractRoomDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insert(room: Room): Long;
 

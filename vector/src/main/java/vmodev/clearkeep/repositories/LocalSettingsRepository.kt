@@ -3,10 +3,10 @@ package vmodev.clearkeep.repositories
 import android.arch.lifecycle.LiveData
 import im.vector.R
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractLocalSettingsDao
+import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSourceRx
 import vmodev.clearkeep.viewmodelobjects.LocalSettings
 import vmodev.clearkeep.viewmodelobjects.Resource
 import javax.inject.Inject

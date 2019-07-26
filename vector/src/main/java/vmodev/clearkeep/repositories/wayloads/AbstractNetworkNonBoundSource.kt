@@ -1,9 +1,8 @@
-package vmodev.clearkeep.repositories
+package vmodev.clearkeep.repositories.wayloads
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import android.support.annotation.MainThread
-import io.reactivex.Observable
 import vmodev.clearkeep.viewmodelobjects.Resource
 
 abstract class AbstractNetworkNonBoundSource<T> @MainThread constructor() {

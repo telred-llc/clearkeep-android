@@ -3,14 +3,21 @@ package vmodev.clearkeep.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
+import android.arch.lifecycle.ViewModel
 import vmodev.clearkeep.repositories.KeyBackupRepository
+import vmodev.clearkeep.repositories.RoomRepository
 import vmodev.clearkeep.repositories.UserRepository
+import vmodev.clearkeep.repositories.interfaces.IRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractProfileActivityViewModel
 import javax.inject.Inject
+import javax.inject.Provider
+import kotlin.reflect.KClass
 
-class ProfileActivityViewModel @Inject constructor(userRepository: UserRepository, backupRepository: KeyBackupRepository) : AbstractProfileActivityViewModel() {
+class ProfileActivityViewModel @Inject constructor(userRepository: UserRepository
+                                                   , backupRepository: KeyBackupRepository
+                                                   , roomRepository: RoomRepository) : AbstractProfileActivityViewModel() {
 
     private val _setIdForGetCurrentUser = MutableLiveData<String>();
     private val _setCheckNeedBackupWhenSignOut = MutableLiveData<Long>();

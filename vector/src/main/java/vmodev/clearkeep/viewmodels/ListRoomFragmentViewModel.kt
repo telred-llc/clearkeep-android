@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import vmodev.clearkeep.repositories.RoomRepository
 import vmodev.clearkeep.repositories.RoomUserJoinRepository
+import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
@@ -12,7 +13,7 @@ import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractListRoomFragmentViewModel
 import javax.inject.Inject
 
-class ListRoomFragmentViewModel @Inject constructor(roomRepository: RoomRepository, private val roomUserJoinRepository: RoomUserJoinRepository) : AbstractListRoomFragmentViewModel() {
+class ListRoomFragmentViewModel @Inject constructor(roomRepository: RoomRepository, userRepository: UserRepository, private val roomUserJoinRepository: RoomUserJoinRepository) : AbstractListRoomFragmentViewModel() {
 
     private val _directRoomFilters = MutableLiveData<Array<Int>>();
     private val _groupRoomFilters = MutableLiveData<Array<Int>>();
@@ -27,7 +28,9 @@ class ListRoomFragmentViewModel @Inject constructor(roomRepository: RoomReposito
     private val _addRoomToFavouriteResult = Transformations.switchMap(_roomIdForAddToFavourite) { input -> roomRepository.addToFavourite(input) }
     private val _removeRoomFromFavouriteResult = Transformations.switchMap(_roomIdForRemoveFromFavourite) { input -> roomRepository.removeFromFavourite(input) }
     private val _joinRoomResult = Transformations.switchMap(_roomIdForJoinRoom) { input -> roomRepository.joinRoom(input) }
-    private val _getListDirectRoomResult = Transformations.switchMap(_directRoomFilters) { input -> roomRepository.loadListRoomUserJoin(input) }
+    private val _getListDirectRoomResult = Transformations.switchMap(_directRoomFilters) { input ->
+        roomRepository.loadListRoom(input)
+    }
     private val _getListGroupRoomResult = Transformations.switchMap(_groupRoomFilters) { input -> roomRepository.loadListRoomUserJoin(input) }
     private val _updateRoomNotifyResult = Transformations.switchMap(_roomIdForUpdateNotify) { input -> roomRepository.setRoomNotify(input) }
     private val _changeNotificationStateResult = Transformations.switchMap(_setChangeNotificationState) { input -> roomRepository.changeNotificationState(input.roomId, input.state) }

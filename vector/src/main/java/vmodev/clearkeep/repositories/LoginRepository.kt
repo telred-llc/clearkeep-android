@@ -4,9 +4,8 @@ import android.arch.lifecycle.LiveData
 import io.reactivex.Observable
 import org.matrix.androidsdk.rest.model.pid.ThreePid
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixLoginService
+import vmodev.clearkeep.repositories.wayloads.AbstractNetworkNonBoundSourceRx
 import vmodev.clearkeep.viewmodelobjects.Resource
-import javax.inject.Inject
-import javax.inject.Singleton
 
 class LoginRepository constructor(private val matrixLoginService: IMatrixLoginService) {
     fun login(username: String, password: String): LiveData<Resource<String>> {

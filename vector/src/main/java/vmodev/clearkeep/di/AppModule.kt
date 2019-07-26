@@ -1,12 +1,9 @@
 package vmodev.clearkeep.di
 
 import android.arch.persistence.room.Room
-import android.net.Uri
 import android.support.v7.util.DiffUtil
 import dagger.Module
 import dagger.Provides
-import im.vector.BuildConfig
-import org.matrix.androidsdk.HomeServerConnectionConfig
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.applications.ClearKeepApplication
@@ -16,12 +13,13 @@ import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.activitiesandfragments.DirectMessageFragmentFactory
 import vmodev.clearkeep.factories.activitiesandfragments.RoomMessageFragmentFactory
 import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IShowListRoomFragmentFactory
+import vmodev.clearkeep.repositories.UserRepository
+import vmodev.clearkeep.repositories.interfaces.IRepository
 import javax.inject.Named
 import javax.inject.Singleton
 
-@Module(includes = [ViewModelModule::class, MatrixSDKModule::class, AbstractMatrixSDKModule::class, AbstractDialogFragmentModules::class])
+@Module(includes = [ViewModelModule::class, MatrixSDKModule::class, AbstractMatrixSDKModule::class, AbstractDialogFragmentModules::class, AbstractRepositoryModule::class])
 class AppModule {
-
     @Provides
     @Singleton
     fun bindApplication(application: ClearKeepApplication): IApplication {
@@ -38,13 +36,13 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideUserDao(clearKeepDatabase: ClearKeepDatabase): UserDao {
+    fun provideUserDao(clearKeepDatabase: ClearKeepDatabase): AbstractUserDao {
         return clearKeepDatabase.userDao();
     }
 
     @Singleton
     @Provides
-    fun provideRoomDao(clearKeepDatabase: ClearKeepDatabase): RoomDao {
+    fun provideRoomDao(clearKeepDatabase: ClearKeepDatabase): AbstractRoomDao {
         return clearKeepDatabase.roomDao();
     }
 
@@ -80,7 +78,7 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideLocalSettings(clearKeepDatabase: ClearKeepDatabase) : AbstractLocalSettingsDao{
+    fun provideLocalSettings(clearKeepDatabase: ClearKeepDatabase): AbstractLocalSettingsDao {
         return clearKeepDatabase.localSettingsDao();
     }
 

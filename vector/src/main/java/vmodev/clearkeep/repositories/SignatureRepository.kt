@@ -1,12 +1,10 @@
 package vmodev.clearkeep.repositories
 
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.LiveDataReactiveStreams
-import io.reactivex.BackpressureStrategy
 import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractSignatureDao
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
+import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSourceRx
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Signature
 import javax.inject.Inject
