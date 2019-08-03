@@ -7,6 +7,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
 import com.google.gson.Gson
+import com.google.gson.JsonParser
 import im.vector.Matrix
 import im.vector.R
 import im.vector.util.HomeRoomsViewModel
@@ -27,6 +28,7 @@ import org.matrix.androidsdk.core.listeners.ProgressListener
 import org.matrix.androidsdk.core.listeners.StepProgressListener
 import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.crypto.MXCRYPTO_ALGORITHM_MEGOLM
+import org.matrix.androidsdk.crypto.MXDecryptionException
 import org.matrix.androidsdk.crypto.data.ImportRoomKeysResult
 import org.matrix.androidsdk.crypto.keysbackup.KeysBackupStateManager
 import org.matrix.androidsdk.crypto.keysbackup.MegolmBackupCreationInfo
@@ -37,15 +39,22 @@ import org.matrix.androidsdk.data.RoomMediaMessage
 import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.data.RoomTag
 import org.matrix.androidsdk.listeners.IMXMediaUploadListener
+import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.search.SearchResponse
 import org.matrix.androidsdk.rest.model.search.SearchResult
 import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
+import org.matrix.androidsdk.rest.model.sync.RoomResponse
+import org.matrix.androidsdk.rest.model.sync.RoomSync
+import org.matrix.androidsdk.rest.model.sync.RoomSyncState
+import org.matrix.androidsdk.rest.model.sync.RoomSyncTimeline
 import vmodev.clearkeep.applications.ClearKeepApplication
+import vmodev.clearkeep.jsonmodels.MessageContent
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.ultis.SearchMessageByTextResult
+import vmodev.clearkeep.ultis.getJoinedRoom
 import vmodev.clearkeep.viewmodelobjects.*
 import java.io.InputStream
 import javax.inject.Inject
@@ -214,16 +223,14 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
 
     override fun getRoomWithId(id: String): Observable<vmodev.clearkeep.viewmodelobjects.Room> {
         setMXSession();
-        return ObservableAll.create<vmodev.clearkeep.viewmodelobjects.Room> { emitter ->
-            kotlin.run {
-                val room = session!!.dataHandler!!.getRoom(id);
-                if (room != null) {
-                    emitter.onNext(matrixRoomToRoom(room));
-                    emitter.onComplete();
-                } else {
-                    emitter.onError(NullPointerException());
-                    emitter.onComplete();
-                }
+        return ObservableAll.create { emitter ->
+            val room = session!!.dataHandler!!.getRoom(id);
+            if (room != null) {
+                emitter.onNext(matrixRoomToRoom(room));
+                emitter.onComplete();
+            } else {
+                emitter.onError(NullPointerException());
+                emitter.onComplete();
             }
         }
     }
@@ -1632,5 +1639,92 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                 }
             })
         };
+    }
+
+    override fun getMessagesToSearch(): Observable<List<Message>> {
+        setMXSession();
+        return Observable.create { emitter ->
+            var index = 0;
+            val rooms = session!!.getJoinedRoom();
+            rooms.forEach { r ->
+                session!!.roomsApiClient.initialSync(r.roomId, object : ApiCallback<RoomResponse> {
+                    override fun onSuccess(info: RoomResponse?) {
+                        val roomSync = RoomSync();
+                        roomSync.state = RoomSyncState();
+                        roomSync.state.events = info?.state;
+                        roomSync.timeline = RoomSyncTimeline();
+                        roomSync.timeline.events = info?.messages?.chunk;
+                        val messages = ArrayList<Message>();
+                        roomSync.timeline.events.forEach {
+                            it?.let {
+                                if (it.type.compareTo("m.room.encrypted") == 0) {
+                                    val message = Message(id = it.eventId, roomId = it.roomId, userId = it.sender, messageType = it.type, encryptedContent = it.content.toString());
+                                    messages.add(message);
+                                }
+                            }
+                        }
+                        emitter.onNext(messages);
+                        index++;
+                        if (index >= rooms.size)
+                            emitter.onComplete();
+                    }
+
+                    override fun onUnexpectedError(e: java.lang.Exception?) {
+                        emitter.onError(Throwable(e?.message))
+                        index++;
+                        if (index >= rooms.size)
+                            emitter.onComplete();
+                    }
+
+                    override fun onMatrixError(e: MatrixError?) {
+                        emitter.onError(Throwable(e?.message))
+                        index++;
+                        if (index >= rooms.size)
+                            emitter.onComplete();
+                    }
+
+                    override fun onNetworkError(e: java.lang.Exception?) {
+                        emitter.onError(Throwable(e?.message))
+                        index++;
+                        if (index >= rooms.size)
+                            emitter.onComplete();
+                    }
+                })
+            }
+        }
+    }
+
+    override fun decryptListMessage(messages: List<MessageRoomUser>): Observable<List<MessageRoomUser>> {
+        setMXSession();
+        return Observable.create { emitter ->
+            val messagesResult = ArrayList<MessageRoomUser>();
+            val parser = JsonParser();
+            val gson = Gson();
+            session!!.dataHandler.crypto?.let { mxCrypto ->
+                messages.forEach { item ->
+                    val event = Event(item.message?.messageType, parser.parse(item.message?.encryptedContent).asJsonObject, item.message?.userId, item.message?.roomId);
+                    try {
+                        val result = mxCrypto.decryptEvent(event, null);
+                        result?.let {
+                            val json = result.mClearEvent.asJsonObject;
+                            val type = json.get("type").asString;
+                            if (!type.isNullOrEmpty() && type.compareTo("m.room.message") == 0) {
+                                val message = gson.fromJson(result.mClearEvent, MessageContent::class.java);
+                                var messageResult: Message? = null
+                                item.message?.let {
+                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = message.getContent().getBody())
+                                }
+                                val messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
+                                messagesResult.add(messageRooUser);
+                            }
+                        }
+                    } catch (e: MXDecryptionException) {
+//                        emitter.onError(Throwable(e.message))
+                    }
+                }
+            }
+            emitter.onNext(messagesResult);
+            emitter.onComplete();
+        }
     }
 }

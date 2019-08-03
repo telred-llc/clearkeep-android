@@ -79,7 +79,7 @@ class SearchRoomsFragment : DaggerFragment(), ISearchFragment {
         listRoomRecyclerViewAdapter.setDataBindingComponent(bindingDataComponent)
         binding.recyclerView.adapter = listRoomRecyclerViewAdapter.getAdapter();
         roomViewModel.getFindByTextResult().observe(viewLifecycleOwner, Observer { t ->
-            listRoomRecyclerViewAdapter.getAdapter().submitList(t?.data);
+//            listRoomRecyclerViewAdapter.getAdapter().submitList(t?.data);
         });
         binding.lifecycleOwner = viewLifecycleOwner;
 

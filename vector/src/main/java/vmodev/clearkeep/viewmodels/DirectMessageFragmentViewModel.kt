@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class DirectMessageFragmentViewModel @Inject constructor(roomRepository: RoomRepository) : AbstractDirectMessageFragmentViewModel() {
     private val _listType = MutableLiveData<Array<Int>>();
-    private val listRoomByType = Transformations.switchMap(_listType) { input -> roomRepository.loadListRoomUserJoin(input) }
+    private val listRoomByType = Transformations.switchMap(_listType) { input -> roomRepository.loadListRoom(input) }
     private val _addToFavourite = MutableLiveData<String>();
     private val addToFavouriteResult = Transformations.switchMap(_addToFavourite) { input -> roomRepository.addToFavourite(input) }
     private val _leaveRoom = MutableLiveData<String>();

@@ -1,65 +1,59 @@
 package vmodev.clearkeep.repositories
 
 import android.arch.lifecycle.LiveData
+import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.databases.AbstractRoomDao
 import vmodev.clearkeep.databases.AbstractUserDao
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.wayloads.AbstractLocalBoundSource
+import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSource
 import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSourceRx
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
-import vmodev.clearkeep.viewmodelobjects.Resource
-import vmodev.clearkeep.viewmodelobjects.Room
-import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.viewmodelobjects.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class RoomUserJoinRepository @Inject constructor(private val roomUserJoinDao: AbstractRoomUserJoinDao, private val abstractUserDao: AbstractUserDao, private val abstractRoomDao: AbstractRoomDao, private val matrixService: MatrixService) {
-    fun getDirectChatRoomByUserId(userId: String): LiveData<Resource<List<Room>>> {
-        return object : AbstractLocalBoundSource<List<Room>>() {
-            override fun loadFromDb(): LiveData<List<Room>> {
-                return roomUserJoinDao.getDirectChatRoomWithUserId(userId);
+class RoomUserJoinRepository @Inject constructor(private val roomUserJoinDao: AbstractRoomUserJoinDao, private val matrixService: MatrixService) {
+    fun updateOrCreateRoomUserJoin(roomId: String, userId: String) {
+        object : AbstractNetworkBoundSourceRx<RoomUserJoin, RoomUserJoin>() {
+            override fun saveCallResult(item: RoomUserJoin) {
+                roomUserJoinDao.insert(item);
+            }
+
+            override fun shouldFetch(data: RoomUserJoin?): Boolean {
+                return data == null;
+            }
+
+            override fun loadFromDb(): LiveData<RoomUserJoin> {
+                return roomUserJoinDao.getRoomUserJoinWithRoomIdAndUserId(roomId, userId);
+            }
+
+            override fun createCall(): Observable<RoomUserJoin> {
+                return Observable.create { emitter ->
+                    emitter.onNext(RoomUserJoin(roomId = roomId, userId = userId));
+                    emitter.onComplete();
+                }
+            }
+        }
+    }
+
+    fun insertRoomUserJoin(roomId: String, userId: String) {
+        Completable.fromAction {
+            roomUserJoinDao.insert(RoomUserJoin(roomId, userId))
+        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe();
+    }
+
+    fun getRoomListUser(filters: Array<Int>): LiveData<Resource<List<RoomListUser>>> {
+        return object : AbstractLocalBoundSource<List<RoomListUser>>() {
+            override fun loadFromDb(): LiveData<List<RoomListUser>> {
+                return roomUserJoinDao.getListRoomListUser(filters);
             }
         }.asLiveData();
     }
-
-    fun getRoomChatRoomByUserId(userId: String): LiveData<Resource<List<Room>>> {
-        return object : AbstractLocalBoundSource<List<Room>>() {
-            override fun loadFromDb(): LiveData<List<Room>> {
-                return roomUserJoinDao.getRoomChatRoomWithUserId(userId);
-            }
-        }.asLiveData();
-    }
-
-    fun getListRoomUserJoinWithRoomId(roomId: String): LiveData<Resource<List<User>>> {
-        return object : AbstractLocalBoundSource<List<User>>() {
-            override fun loadFromDb(): LiveData<List<User>> {
-                return roomUserJoinDao.getUsersWithRoomId(roomId);
-            }
-        }.asLiveData();
-    }
-
-     fun getUsersInRoom(roomId: String) : LiveData<Resource<List<User>>>{
-         return object : AbstractNetworkBoundSourceRx<List<User>, RoomAndRoomUserJoin>(){
-             override fun saveCallResult(item: RoomAndRoomUserJoin) {
-                 abstractUserDao.insertUsers(item.users);
-                 abstractRoomDao.insert(item.room);
-                 roomUserJoinDao.insertRoomUserJoins(item.roomUserJoins);
-             }
-
-             override fun shouldFetch(data: List<User>?): Boolean {
-                 return true;
-             }
-
-             override fun loadFromDb(): LiveData<List<User>> {
-                 return roomUserJoinDao.getUsersWithRoomId(roomId);
-             }
-
-             override fun createCall(): Observable<RoomAndRoomUserJoin> {
-                 return matrixService.getUsersInRoomAndAddToRoomUserJoin(roomId);
-             }
-         }.asLiveData();
-     }
 }

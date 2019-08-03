@@ -12,10 +12,7 @@ import vmodev.clearkeep.databases.AbstractUserDao
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.interfaces.IUserRepository
-import vmodev.clearkeep.repositories.wayloads.AbstractLoadFromNetworkRx
-import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSource
-import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSourceRx
-import vmodev.clearkeep.repositories.wayloads.AbstractNetworkNonBoundSource
+import vmodev.clearkeep.repositories.wayloads.*
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
@@ -103,6 +100,58 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
 
             override fun saveCallResult(item: List<User>) {
                 abstractUserDao.insertUsers(item);
+            }
+        }.asLiveData();
+    }
+
+    override fun updateOrCreateNewUserFromRemote(roomId: String) : LiveData<Resource<List<User>>> {
+        return object : AbstractNetworkCreateAndUpdateSourceRx<List<User>, List<User>>() {
+            override fun insertResult(item: List<User>) {
+                abstractUserDao.insertUsers(item);
+            }
+
+            override fun updateResult(item: List<User>) {
+                abstractUserDao.updateUsers(item);
+            }
+
+            override fun loadFromDb(): LiveData<List<User>> {
+                return abstractUserDao.getUsersWithRoomId(roomId);
+            }
+
+            override fun createCall(): Observable<List<User>> {
+                return matrixService.getUsersInRoom(roomId);
+            }
+
+            override fun getItemInsert(localData: List<User>?, remoteData: List<User>?): List<User> {
+                val users = ArrayList<User>();
+                remoteData?.let { r ->
+                    localData?.let { l ->
+                        users.addAll(r);
+                    } ?: run {
+                        users.addAll(r);
+                    }
+                } ?: run {
+                    localData?.let {
+                        users.addAll(it);
+                    }
+                }
+                return users;
+            }
+
+            override fun getItemUpdate(localData: List<User>?, remoteData: List<User>?): List<User> {
+                val users = ArrayList<User>();
+                remoteData?.let { r ->
+                    localData?.let { l ->
+                        users.addAll(r);
+                    } ?: run {
+                        users.addAll(r);
+                    }
+                } ?: run {
+                    localData?.let {
+                        users.addAll(it);
+                    }
+                }
+                return users;
             }
         }.asLiveData();
     }

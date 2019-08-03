@@ -76,6 +76,12 @@ abstract class AbstractRoomDao {
     @Query("DELETE FROM room")
     abstract fun delete();
 
+    @Query("SELECT room.* FROM room INNER JOIN roomUserJoin ON room.id = roomUserJoin.room_id INNER JOIN user ON user.id = roomUserJoin.user_id WHERE user.id =:userId AND (room.type == 1 OR room.type == 65 OR room.type == 129)")
+    abstract fun getDirectChatRoomWithUserId(userId: String): LiveData<List<Room>>;
+
+    @Query("SELECT room.* FROM room INNER JOIN roomUserJoin ON room.id = roomUserJoin.room_id INNER JOIN user ON user.id = roomUserJoin.user_id WHERE roomUserJoin.user_id =:userId AND (room.type == 2 OR room.type == 66 OR room.type == 130)")
+    abstract fun getRoomChatRoomWithUserId(userId: String): LiveData<List<Room>>;
+
     fun loadWithType(filter: Array<Int>): LiveData<List<Room>> {
         when (filter.size) {
             1 -> return loadWithType(filter[0]);

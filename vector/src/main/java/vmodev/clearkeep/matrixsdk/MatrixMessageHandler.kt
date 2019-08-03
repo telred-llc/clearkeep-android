@@ -49,7 +49,7 @@ class MatrixMessageHandler constructor(private val roomId: String, context: Cont
         room = session.dataHandler.getRoom(roomId);
         eventTimeline = room.timeline;
 
-        eventTimeline.addEventTimelineListener(eventTimeLineListener);
+//        eventTimeline.addEventTimelineListener(eventTimeLineListener);
 
         eventTimeline.resetPaginationAroundInitialEvent(60, object : ApiCallback<Void> {
             override fun onSuccess(p0: Void?) {

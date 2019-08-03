@@ -6,7 +6,7 @@
 
         <variable
             name="result"
-            type="vmodev.clearkeep.viewmodelobjects.MessageSearchText" />
+            type="vmodev.clearkeep.viewmodelobjects.MessageRoomUser" />
     </data>
 
     <LinearLayout
@@ -27,7 +27,7 @@
                 android:src="@drawable/ic_launcher_app"
                 app:civ_border_color="@android:color/darker_gray"
                 app:civ_border_width="2dp"
-                app:imageUrl="@{result.avatarUrl}" />
+                app:imageUrl="@{result.room.get(0).avatarUrl}"/>
         </FrameLayout>
 
         <LinearLayout
@@ -43,7 +43,7 @@
                 android:layout_height="0dp"
                 android:layout_marginHorizontal="10dp"
                 android:layout_weight="1"
-                android:text="@{result.name}"
+                android:text="@{result.user.get(0).name}"
                 android:textSize="@dimen/text_20_sp"
                 android:textStyle="bold" />
 
@@ -53,7 +53,7 @@
                 android:layout_height="0dp"
                 android:layout_marginHorizontal="10dp"
                 android:layout_weight="1"
-                android:text="@{result.content}"
+                android:text="@{result.message.encryptedContent}"
                 android:textColor="@color/main_text_color_hint"
                 android:textSize="@dimen/text_15_sp" />
         </LinearLayout>
@@ -63,7 +63,6 @@
             android:id="@+id/text_view_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            app:timeStamp="@{result.updatedDate}" />
+            android:layout_gravity="center_vertical" />
     </LinearLayout>
 </layout>

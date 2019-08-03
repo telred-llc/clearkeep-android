@@ -87,25 +87,25 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment, ILi
         listGroupRecyclerViewAdapter.setOnItemClick { room, i ->
             if (!onGoingRoom) {
                 onGoingRoom = true;
-                gotoRoom(room.id);
+//                gotoRoom(room.id);
             }
         }
         listDirectRecyclerViewAdapter.setOnItemClick { room, i ->
             if (!onGoingRoom) {
                 onGoingRoom = true;
-                gotoRoom(room.id);
+//                gotoRoom(room.id);
             }
         }
         listGroupRecyclerViewAdapter.setOnItemLongClick { room ->
             val bottomDialog = DialogPlus.newDialog(this.context)
                     .setAdapter(BottomDialogFavouriteRoomLongClick())
                     .setOnItemClickListener { dialog, item, view, position ->
-                        when (position) {
-                            1 -> removeFromFavourites(room.id);
-                            3 -> declineInvite(room.id);
-                            2 -> gotoRoomSettings(room.id);
-                            0 -> changeNotificationState(room.id, room.notificationState);
-                        }
+//                        when (position) {
+//                            1 -> removeFromFavourites(room.id);
+//                            3 -> declineInvite(room.id);
+//                            2 -> gotoRoomSettings(room.id);
+//                            0 -> changeNotificationState(room.id, room.notificationState);
+//                        }
                         dialog?.dismiss();
                     }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create();
             bottomDialog.show();
@@ -114,12 +114,12 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment, ILi
             val bottomDialog = DialogPlus.newDialog(this.context)
                     .setAdapter(BottomDialogFavouriteRoomLongClick())
                     .setOnItemClickListener { dialog, item, view, position ->
-                        when (position) {
-                            1 -> removeFromFavourites(it.id);
-                            3 -> declineInvite(it.id);
-                            2 -> gotoRoomSettings(it.id);
-                            0 -> changeNotificationState(it.id, it.notificationState);
-                        }
+//                        when (position) {
+//                            1 -> removeFromFavourites(it.id);
+//                            3 -> declineInvite(it.id);
+//                            2 -> gotoRoomSettings(it.id);
+//                            0 -> changeNotificationState(it.id, it.notificationState);
+//                        }
                         dialog?.dismiss();
                     }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create();
             bottomDialog.show();
@@ -148,10 +148,10 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment, ILi
                 binding.imageViewDirectionDirect.rotation = 270f;
             }
         }
-        viewModelFactory.getViewModel().getListTypeFavouritesDirectResult().observe(viewLifecycleOwner, Observer { t ->
+        viewModelFactory.getViewModel().getListRoomListUserResult().observe(viewLifecycleOwner, Observer { t ->
             listDirectRecyclerViewAdapter.getAdapter().submitList(t?.data);
         });
-        viewModelFactory.getViewModel().getListTypeFavouritesGroupResult().observe(viewLifecycleOwner, Observer {
+        viewModelFactory.getViewModel().getListRoomListUserResult().observe(viewLifecycleOwner, Observer {
             listGroupRecyclerViewAdapter.getAdapter().submitList(it?.data);
         })
         viewModelFactory.getViewModel().setListTypeFavouritesDirect(arrayOf(129))

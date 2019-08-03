@@ -74,12 +74,12 @@ class ContactsFragment : DataBindingDaggerFragment(), IContactFragment, IListRoo
         listRoomAdapter.setOnItemClick { room, i ->
             if (!onGoingRoom) {
                 onGoingRoom = true;
-                onClickGoRoom(room.id);
+//                onClickGoRoom(room.id);
             }
         }
         binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
         viewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
-            listRoomAdapter.getAdapter().submitList(t?.data)
+//            listRoomAdapter.getAdapter().submitList(t?.data)
         })
         binding.lifecycleOwner = viewLifecycleOwner;
 

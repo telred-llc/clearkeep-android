@@ -23,8 +23,8 @@ class HomeScreenActivityViewModel @Inject constructor(userRepository: UserReposi
     private val _setValueForGetBackupKeyStatus = MutableLiveData<Long>();
 
     private val userById = Transformations.switchMap(_userId) { input -> userRepository.loadUser(input) }
-    private val listRoomByType = Transformations.switchMap(_filters) { input -> roomRepository.loadListRoomUserJoin(input) }
-    private val _getListFavouriteResult = Transformations.switchMap(_filtersFavourite) { input -> roomRepository.loadListRoomUserJoin(input) }
+    private val listRoomByType = Transformations.switchMap(_filters) { input -> roomRepository.loadListRoom(input) }
+    private val _getListFavouriteResult = Transformations.switchMap(_filtersFavourite) { input -> roomRepository.loadListRoom(input) }
     private val _getBackupStatusResult = Transformations.switchMap(_setValueForGetBackupKeyStatus) { input -> keyBackupRepository.getBackupKeyStatusWhenSignIn() }
 
     override fun getUserById(): LiveData<Resource<User>> {

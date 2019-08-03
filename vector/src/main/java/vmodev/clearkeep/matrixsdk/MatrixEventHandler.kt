@@ -1,6 +1,8 @@
 package vmodev.clearkeep.matrixsdk
 
 import android.app.Application
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.util.Log
 import com.google.gson.JsonParser
 import org.matrix.androidsdk.MXSession
@@ -13,10 +15,10 @@ import org.matrix.androidsdk.rest.model.User
 import org.matrix.androidsdk.rest.model.bingrules.BingRule
 import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
-import vmodev.clearkeep.repositories.KeyBackupRepository
-import vmodev.clearkeep.repositories.RoomRepository
-import vmodev.clearkeep.repositories.SignatureRepository
-import vmodev.clearkeep.repositories.UserRepository
+import vmodev.clearkeep.repositories.*
+import vmodev.clearkeep.viewmodelobjects.Resource
+import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.Status
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,7 +27,8 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
                                              private val userRepository: UserRepository,
                                              private val roomRepository: RoomRepository,
                                              private val signatureRepository: SignatureRepository,
-                                             private val keyBackupRepository: KeyBackupRepository)
+                                             private val keyBackupRepository: KeyBackupRepository
+                                             , private val roomUserJoinRepository: RoomUserJoinRepository)
     : MXEventListener(), IMatrixEventHandler, KeysBackupStateManager.KeysBackupStateListener {
     private var mxSession: MXSession? = null;
     override fun onAccountDataUpdated() {
@@ -56,42 +59,67 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
         super.onLiveEvent(event, roomState)
 
         Log.d("EventType:", event?.type);
-//        event?.contentAsJsonObject?.let {
-//            val content = it.toString();
-//            val parser = JsonParser();
-//            val contentJson = parser.parse(content).asJsonObject;
-//            Log.d("Event Type Convert", contentJson.toString());
-//        }
-
 
         if (event?.type?.compareTo("m.room.join_rules") == 0) {
-            if (event?.roomId != null) {
-                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
-//                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
-                Log.d("EventType", event?.userId + "----" + mxSession!!.myUserId);
-            }
+            updateOrCreateRoom(roomRepository.updateOrCreateRoomFromRemote(event.roomId))
         }
         if (event?.type?.compareTo("m.room.name") == 0) {
-            if (event?.roomId != null)
-                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
-//                roomRepository.insertRoom(event?.roomId);
+            updateOrCreateRoom(roomRepository.updateOrCreateRoomFromRemote(event.roomId))
+            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event?.roomId))
         }
         if (event?.type?.compareTo("m.room.member") == 0) {
-            if (event?.roomId != null)
-                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
-            Log.d("EventType", event?.userId + "----" + mxSession!!.myUserId);
-//                roomRepository.insertRoom(event?.roomId);S
+            updateOrCreateRoom(roomRepository.updateOrCreateRoomFromRemote(event.roomId))
+            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event?.roomId))
         }
         if (event?.type?.compareTo("m.room.message") == 0) {
-            if (event?.roomId != null) {
-                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
-            }
+            updateOrCreateRoom(roomRepository.updateOrCreateRoomFromRemote(event.roomId))
+            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event?.roomId))
         }
         if (event?.type?.compareTo("m.room.encrypted") == 0) {
-            if (event?.roomId != null) {
-                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
+            updateOrCreateRoom(roomRepository.updateOrCreateRoomFromRemote(event.roomId))
+            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event?.roomId))
+        }
+    }
+
+    private fun updateOrCreateRoom(room: LiveData<Resource<Room>>) {
+        var observer: Observer<Resource<Room>>? = null;
+        observer = Observer { t ->
+            t?.let { obj ->
+                when (obj.status) {
+                    Status.ERROR -> {
+                        observer?.let { room.removeObserver(it) }
+                    }
+                    Status.SUCCESS -> {
+                        observer?.let { room.removeObserver(it) }
+                    }
+                    Status.LOADING -> {
+                    }
+                }
             }
         }
+        room.observeForever { observer }
+    }
+
+    private fun updateOrCreateRoomUserJoin(roomId: String, user: LiveData<Resource<List<vmodev.clearkeep.viewmodelobjects.User>>>) {
+        var observer: Observer<Resource<List<vmodev.clearkeep.viewmodelobjects.User>>>? = null;
+        observer = Observer { t ->
+            t?.let { obj ->
+                when (obj.status) {
+                    Status.ERROR -> observer?.let { user.removeObserver(it) }
+                    Status.SUCCESS -> {
+                        obj.data?.let {
+                            it.forEach {
+                                roomUserJoinRepository.updateOrCreateRoomUserJoin(roomId, it.id);
+                            }
+                        }
+                        observer?.let { user.removeObserver(it) }
+                    }
+                    Status.LOADING -> {
+                    }
+                }
+            }
+        }
+        user.observeForever { observer }
     }
 
     /**

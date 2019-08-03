@@ -5,13 +5,15 @@ import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import vmodev.clearkeep.repositories.RoomRepository
+import vmodev.clearkeep.repositories.RoomUserJoinRepository
+import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
 
-class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : AbstractRoomViewModel() {
+class RoomViewModel @Inject constructor(roomRepository: RoomRepository, roomUserJoinRepository: RoomUserJoinRepository, private val userRepository: UserRepository) : AbstractRoomViewModel() {
     private val _filters = MutableLiveData<RoomFilters>();
     private val _id = MutableLiveData<String>();
     private val _joinRoom = MutableLiveData<String>();
@@ -25,7 +27,7 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : Abstra
     private val _roomIdForGetUser = MutableLiveData<String>();
 
     private val rooms: LiveData<Resource<List<Room>>> = Transformations.switchMap(_filters) { input ->
-        roomRepository.loadListRoomUserJoin(input.filters, input.loadType);
+        roomRepository.loadListRoom(input.filters, input.loadType);
     }
     private val roomFind: LiveData<Resource<Room>> = Transformations.switchMap(_id) { input -> roomRepository.loadRoom(input) }
     private val roomJoin: LiveData<Resource<Room>> = Transformations.switchMap(_joinRoom) { input -> roomRepository.joinRoom(input) }
@@ -48,7 +50,7 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository) : Abstra
         roomRepository.removeFromFavourite(input);
     }
     private val usersFromRoomId: LiveData<Resource<List<User>>> = Transformations.switchMap(_roomIdForGetUser) { input ->
-        roomRepository.loadUsersWithRoomId(input);
+        userRepository.getListUserInRoomFromNetwork(input);
     }
 
     private val roomMerge = MediatorLiveData<Resource<Room>>();

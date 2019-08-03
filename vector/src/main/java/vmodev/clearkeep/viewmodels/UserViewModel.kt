@@ -26,7 +26,7 @@ class UserViewModel @Inject constructor(userRepository: UserRepository, roomUser
     }
 
     private val usersInRoom: LiveData<Resource<List<User>>> = Transformations.switchMap(_roomIdForGetUsers) { input ->
-        roomUserJoinRepository.getUsersInRoom(input);
+        userRepository.getListUserInRoomFromNetwork(input);
     }
 
     override fun setUserId(userId: String) {

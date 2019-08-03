@@ -50,7 +50,6 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_splash, dataBindingComponent);
         startFromLogin = intent.getIntExtra(START_FROM_LOGIN, 0);
-        binding.rooms = viewModelFactory.getViewModel().getAllRoomResult();
         if (!hasCredentials()) {
             val intent = Intent(this, LoginActivity::class.java);
             startActivity(intent);
@@ -165,13 +164,43 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
         if (!hasCorruptedStore()) {
             val intent = Intent(this, HomeScreenActivity::class.java)
             intent.putExtra(HomeScreenActivity.START_FROM_LOGIN, startFromLogin)
-            viewModelFactory.getViewModel().getAllRoomResult().observe(this, Observer { t ->
-                if (t?.status == Status.SUCCESS) {
-                    startActivity(intent)
-                    finish()
+            viewModelFactory.getViewModel().getAllRoomResult(arrayOf(1, 2, 65, 66, 129, 130)).observe(this, Observer { t ->
+                t?.data?.let { rooms ->
+                    var index: Int = 0x01;
+                    rooms.forEach { r ->
+                        viewModelFactory.getViewModel().getUpdateUserResult(r.id).observe(this, Observer {
+                            it?.let {
+                                when (it.status) {
+                                    Status.ERROR -> {
+                                        index++;
+                                        if (index >= rooms.size) {
+                                            startActivity(intent)
+                                            finish()
+                                        } else {
+                                        }
+                                    }
+                                    Status.SUCCESS -> {
+                                        index++;
+                                        it.data?.let {
+                                            it.forEach { u ->
+                                                viewModelFactory.getViewModel().getUpdateRoomUserJoinResult(r.id, u.id)
+                                            }
+                                        }
+                                        if (index >= rooms.size) {
+                                            startActivity(intent)
+                                            finish()
+                                        } else {
+                                        }
+                                    }
+                                    Status.LOADING -> {
+
+                                    }
+                                }
+                            }
+                        })
+                    }
                 }
             })
-            viewModelFactory.getViewModel().setFiltersForGetAllRoom(arrayOf(1, 2, 65, 66, 129, 130));
         } else {
             CommonActivityUtils.logout(this)
         }

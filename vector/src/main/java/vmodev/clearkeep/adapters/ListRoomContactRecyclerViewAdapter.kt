@@ -17,15 +17,16 @@ import im.vector.databinding.RoomItemBinding
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.RoomListUser
 
-class ListRoomContactRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<Room>)
+class ListRoomContactRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<RoomListUser>)
 
-    : ListAdapter<Room, DataBoundViewHolder<ItemConversationBinding>>(AsyncDifferConfig.Builder<Room>(diffCallback)
+    : ListAdapter<RoomListUser, DataBoundViewHolder<ItemConversationBinding>>(AsyncDifferConfig.Builder<RoomListUser>(diffCallback)
         .setBackgroundThreadExecutor(appExecutors.diskIO())
         .build()), IListRoomRecyclerViewAdapter {
 
-    private lateinit var itemClick: (Room, Int) -> Unit?
-    private lateinit var itemLongClick: (Room) -> Unit?
+    private lateinit var itemClick: (RoomListUser, Int) -> Unit?
+    private lateinit var itemLongClick: (RoomListUser) -> Unit?
     private lateinit var dataBindingComponent: DataBindingComponent
     private var callbackToGetUsers: IListRoomRecyclerViewAdapter.ICallbackToGetUsers? = null;
     private var lifecycleOwner: LifecycleOwner? = null;
@@ -33,7 +34,7 @@ class ListRoomContactRecyclerViewAdapter constructor(appExecutors: AppExecutors,
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DataBoundViewHolder<ItemConversationBinding> {
         val binding: ItemConversationBinding = DataBindingUtil.inflate(LayoutInflater.from(p0.context), R.layout.item_conversation, p0, false, dataBindingComponent);
-        binding.root.setOnClickListener { binding.room?.let { itemClick?.invoke(it, 0) } }
+//        binding.root.setOnClickListener { binding.room?.let { itemClick?.invoke(it, 0) } }
 
         return DataBoundViewHolder(binding);
     }
@@ -45,23 +46,23 @@ class ListRoomContactRecyclerViewAdapter constructor(appExecutors: AppExecutors,
     }
 
     override fun onBindViewHolder(p0: DataBoundViewHolder<ItemConversationBinding>, p1: Int) {
-        p0.binding.room = getItem(p1);
-        p0.binding.executePendingBindings();
-        callbackToGetUsers?.let {
-            p0.binding.memberUsers = it.getUsers(getItem(p1).id);
-            p0.binding.currentUserId = currentUserId;
-        }
+//        p0.binding.room = getItem(p1);
+//        p0.binding.executePendingBindings();
+//        callbackToGetUsers?.let {
+//            p0.binding.memberUsers = it.getUsers(getItem(p1).id);
+//            p0.binding.currentUserId = currentUserId;
+//        }
     }
 
-    override fun setOnItemClick(itemClick: (Room, Int) -> Unit?) {
+    override fun setOnItemClick(itemClick: (RoomListUser, Int) -> Unit?) {
         this.itemClick = itemClick;
     }
 
-    override fun setOnItemLongClick(itemLongClick: (Room) -> Unit?) {
+    override fun setOnItemLongClick(itemLongClick: (RoomListUser) -> Unit?) {
         this.itemLongClick = itemLongClick;
     }
 
-    override fun getAdapter(): ListAdapter<Room, *> {
+    override fun getAdapter(): ListAdapter<RoomListUser, *> {
         return this;
     }
 

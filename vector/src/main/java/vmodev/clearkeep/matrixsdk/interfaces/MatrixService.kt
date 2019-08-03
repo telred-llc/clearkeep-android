@@ -6,9 +6,7 @@ import org.matrix.androidsdk.crypto.data.ImportRoomKeysResult
 import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
-import vmodev.clearkeep.viewmodelobjects.KeyBackup
-import vmodev.clearkeep.viewmodelobjects.Signature
-import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.viewmodelobjects.*
 import java.io.InputStream
 
 public interface MatrixService {
@@ -49,4 +47,6 @@ public interface MatrixService {
     fun checkNeedBackupWhenSignOut(): Observable<Int>;
     fun changeRoomNotificationState(roomId: String, state: Byte): Observable<Byte>;
     fun checkBackupKeyTypeWhenSignIn(): Observable<Int>;
+    fun getMessagesToSearch(): Observable<List<Message>>;
+        fun decryptListMessage(messages: List<MessageRoomUser>): Observable<List<MessageRoomUser>>;
 }

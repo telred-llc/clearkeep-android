@@ -1,17 +1,22 @@
 package vmodev.clearkeep.repositories
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.util.Log
 import io.reactivex.BackpressureStrategy
+import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractMessageDao
 import vmodev.clearkeep.factories.messaghandler.interfaces.IMessageHandlerFactory
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
+import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
 import vmodev.clearkeep.repositories.wayloads.AbstractLocalLoadSouce
 import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSourceWithCondition
 import vmodev.clearkeep.repositories.wayloads.AbstractNetworkNonBoundSource
+import vmodev.clearkeep.repositories.wayloads.AbstractNetworkNonBoundSourceRx
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
@@ -143,6 +148,38 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .toFlowable(BackpressureStrategy.LATEST))
+            }
+        }.asLiveData();
+    }
+
+    fun getListMessageInTheRooms(): LiveData<Resource<List<Message>>> {
+        return object : AbstractLocalLoadSouce<List<Message>>() {
+            override fun loadFromDB(): LiveData<List<Message>> {
+                return messageDao.getAllMessage();
+            }
+        }.asLiveData();
+    }
+
+    @SuppressLint("CheckResult")
+    fun updateListMessage() {
+        matrixService.getMessagesToSearch().observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe {
+            Completable.fromAction {
+                messageDao.insertListMessage(it);
+            }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe();
+        }
+    }
+
+    fun decryptMessage(messages: List<MessageRoomUser>): LiveData<Resource<List<MessageRoomUser>>> {
+        return object : AbstractNetworkNonBoundSourceRx<List<MessageRoomUser>>() {
+            override fun createCall(): Observable<List<MessageRoomUser>> {
+                return matrixService.decryptListMessage(messages);
+            }
+        }.asLiveData();
+    }
+    fun getListMessageRoomUser() : LiveData<Resource<List<MessageRoomUser>>>{
+        return object : AbstractLocalLoadSouce<List<MessageRoomUser>>(){
+            override fun loadFromDB(): LiveData<List<MessageRoomUser>> {
+                return messageDao.getAllMessageWithRoomAndUser();
             }
         }.asLiveData();
     }

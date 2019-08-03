@@ -12,14 +12,12 @@ import im.vector.R
 import im.vector.databinding.ItemMessageSearchBinding
 import im.vector.databinding.ItemUserBinding
 import vmodev.clearkeep.executors.AppExecutors
-import vmodev.clearkeep.viewmodelobjects.MessageSearchText
-import vmodev.clearkeep.viewmodelobjects.Room
-import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.viewmodelobjects.*
 
-class ListSearchMessageRecyclerViewAdaptert constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<MessageSearchText>
-                                              , private val dataBindingComponent: DataBindingComponent
-                                              , private val itemClick: (MessageSearchText) -> Unit?)
-    : ListAdapter<MessageSearchText, DataBoundViewHolder<ItemMessageSearchBinding>>(AsyncDifferConfig.Builder<MessageSearchText>(diffCallback)
+class ListSearchMessageRecyclerViewAdapter  constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<MessageRoomUser>
+                                                       , private val dataBindingComponent: DataBindingComponent
+                                                       , private val itemClick: (MessageRoomUser) -> Unit?)
+    : ListAdapter<MessageRoomUser, DataBoundViewHolder<ItemMessageSearchBinding>>(AsyncDifferConfig.Builder(diffCallback)
         .setBackgroundThreadExecutor(appExecutors.diskIO())
         .build()) {
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DataBoundViewHolder<ItemMessageSearchBinding> {

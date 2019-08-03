@@ -83,48 +83,52 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
         listDirectRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listGroupRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listDirectRoomAdapter.setOnItemClick { room, i ->
-            when (i) {
-                3 -> {
-                    if (!onGoingRoom) {
-                        onGoingRoom = true;
-                        gotoRoom(room.id);
+            room.room?.get(0)?.let {
+                when (i) {
+                    3 -> {
+                        if (!onGoingRoom) {
+                            onGoingRoom = true;
+                            gotoRoom(it.id);
+                        }
                     }
-                }
-                0 -> {
-                    previewRoom(room.id);
-                }
-                1 -> {
-                    joinRoom(room.id);
-                }
-                2 -> {
-                    declideInvite(room.id);
+                    0 -> {
+                        previewRoom(it.id);
+                    }
+                    1 -> {
+                        joinRoom(it.id);
+                    }
+                    2 -> {
+                        declideInvite(it.id);
+                    }
                 }
             }
         }
         listDirectRoomAdapter.setOnItemLongClick { room ->
             val bottomDialog = DialogPlus.newDialog(this.context)
-                    .setAdapter(BottomDialogRoomLongClick(room.notificationState))
+                    .setAdapter(BottomDialogRoomLongClick(0x02))
                     .setOnItemClickListener { dialog, item, view, position ->
-                        when (position) {
-                            3 -> {
-                                declideInvite(room.id);
-                            }
-                            1 -> {
-                                binding.room = viewModelFactory.getViewModel().getAddToFavouriteResult();
-                                viewModelFactory.getViewModel().setAddToFavouriteRoomId(room.id);
-                            }
-                            2 -> {
-                                val intent = Intent(this.activity, RoomSettingsActivity::class.java);
-                                intent.putExtra(RoomSettingsActivity.ROOM_ID, room.id);
-                                startActivity(intent);
-                            }
-                            4 -> {
-                                val intentGoRoom = Intent(activity, MessageListActivity::class.java);
-                                intentGoRoom.putExtra(MessageListActivity.ROOM_ID, room.id);
-                                startActivity(intentGoRoom);
-                            }
-                            0 -> {
-                                changeNotificationState(room.id, room.notificationState);
+                        room.room?.get(0)?.let {
+                            when (position) {
+                                3 -> {
+                                    declideInvite(it.id);
+                                }
+                                1 -> {
+                                    binding.room = viewModelFactory.getViewModel().getAddToFavouriteResult();
+                                    viewModelFactory.getViewModel().setAddToFavouriteRoomId(it.id);
+                                }
+                                2 -> {
+                                    val intent = Intent(this.activity, RoomSettingsActivity::class.java);
+                                    intent.putExtra(RoomSettingsActivity.ROOM_ID, it.id);
+                                    startActivity(intent);
+                                }
+                                4 -> {
+                                    val intentGoRoom = Intent(activity, MessageListActivity::class.java);
+                                    intentGoRoom.putExtra(MessageListActivity.ROOM_ID, it.id);
+                                    startActivity(intentGoRoom);
+                                }
+                                0 -> {
+                                    changeNotificationState(it.id, it.notificationState);
+                                }
                             }
                         }
 
@@ -134,28 +138,30 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
         }
         listGroupRoomAdapter.setOnItemLongClick { room ->
             val bottomDialog = DialogPlus.newDialog(this.context)
-                    .setAdapter(BottomDialogRoomLongClick(room.notificationState))
+                    .setAdapter(BottomDialogRoomLongClick(0x02))
                     .setOnItemClickListener { dialog, item, view, position ->
-                        when (position) {
-                            3 -> {
-                                declideInvite(room.id);
-                            }
-                            1 -> {
-                                binding.room = viewModelFactory.getViewModel().getAddToFavouriteResult();
-                                viewModelFactory.getViewModel().setAddToFavouriteRoomId(room.id);
-                            }
-                            2 -> {
-                                val intent = Intent(this.activity, RoomSettingsActivity::class.java);
-                                intent.putExtra(RoomSettingsActivity.ROOM_ID, room.id);
-                                startActivity(intent);
-                            }
-                            4 -> {
-                                val intentGoRoom = Intent(activity, MessageListActivity::class.java);
-                                intentGoRoom.putExtra(MessageListActivity.ROOM_ID, room.id);
-                                startActivity(intentGoRoom);
-                            }
-                            0 -> {
-                                changeNotificationState(room.id, room.notificationState);
+                        room.room?.get(0)?.let {
+                            when (position) {
+                                3 -> {
+                                    declideInvite(it.id);
+                                }
+                                1 -> {
+                                    binding.room = viewModelFactory.getViewModel().getAddToFavouriteResult();
+                                    viewModelFactory.getViewModel().setAddToFavouriteRoomId(it.id);
+                                }
+                                2 -> {
+                                    val intent = Intent(this.activity, RoomSettingsActivity::class.java);
+                                    intent.putExtra(RoomSettingsActivity.ROOM_ID, it.id);
+                                    startActivity(intent);
+                                }
+                                4 -> {
+                                    val intentGoRoom = Intent(activity, MessageListActivity::class.java);
+                                    intentGoRoom.putExtra(MessageListActivity.ROOM_ID, it.id);
+                                    startActivity(intentGoRoom);
+                                }
+                                0 -> {
+                                    changeNotificationState(it.id, it.notificationState);
+                                }
                             }
                         }
 
@@ -164,21 +170,23 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
             bottomDialog.show();
         }
         listGroupRoomAdapter.setOnItemClick { room, i ->
-            when (i) {
-                3 -> {
-                    if (!onGoingRoom) {
-                        onGoingRoom = true;
-                        gotoRoom(room.id);
+            room.room?.get(0)?.let {
+                when (i) {
+                    3 -> {
+                        if (!onGoingRoom) {
+                            onGoingRoom = true;
+                            gotoRoom(it.id);
+                        }
                     }
-                }
-                0 -> {
-                    previewRoom(room.id);
-                }
-                1 -> {
-                    joinRoom(room.id);
-                }
-                2 -> {
-                    declideInvite(room.id);
+                    0 -> {
+                        previewRoom(it.id);
+                    }
+                    1 -> {
+                        joinRoom(it.id);
+                    }
+                    2 -> {
+                        declideInvite(it.id);
+                    }
                 }
             }
         }
@@ -193,14 +201,10 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
         binding.listDirect = viewModelFactory.getViewModel().getListDirectRoomResult();
         binding.listGroup = viewModelFactory.getViewModel().getListGroupRoomResult();
 
-        viewModelFactory.getViewModel().getListDirectRoomResult().observe(this.viewLifecycleOwner, Observer {
-            //            it?.data?.let {
-//                Log.d("RoomUserJoin", it[0].id)
-//                viewModelFactory.getViewModel().setRoomIdForGetRoomUserJoin(it[0].id);
-//            }
+        viewModelFactory.getViewModel().getListRoomListUserDirectResult().observe(this.viewLifecycleOwner, Observer {
             listDirectRoomAdapter.getAdapter().submitList(it?.data);
         });
-        viewModelFactory.getViewModel().getListGroupRoomResult().observe(this.viewLifecycleOwner, Observer {
+        viewModelFactory.getViewModel().getListRoomListUserGroup().observe(this.viewLifecycleOwner, Observer {
             listGroupRoomAdapter.getAdapter().submitList(it?.data)
         });
         viewModelFactory.getViewModel().joinRoomWithIdResult().observe(this.viewLifecycleOwner, Observer {
@@ -238,6 +242,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
                 binding.imageViewDirectionDirect.rotation = 270f;
             }
         }
+
         binding.lifecycleOwner = this.viewLifecycleOwner;
         viewModelFactory.getViewModel().setFiltersDirectRoom(arrayOf(1, 65));
         viewModelFactory.getViewModel().setFiltersGroupRoom(arrayOf(2, 66));

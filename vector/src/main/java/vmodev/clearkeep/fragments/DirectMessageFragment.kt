@@ -68,7 +68,7 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDirectMessageFragmen
         listRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listRoomAdapter.setOnItemClick { room, i ->
             when (i) {
-                3 -> onClickItem.onNext(room.id);
+//                3 -> onClickItem.onNext(room.id);
             }
         }
         listRoomAdapter.setOnItemLongClick { room ->
@@ -81,10 +81,10 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDirectMessageFragmen
         binding.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewListConversation.adapter = listRoomAdapter.getAdapter();
         viewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer {
-            listRoomAdapter!!.getAdapter().submitList(it?.data);
+//            listRoomAdapter!!.getAdapter().submitList(it?.data);
         });
         viewModelFactory.getViewModel().getSearchResult().observe(viewLifecycleOwner, Observer {
-            listRoomAdapter!!.getAdapter().submitList(it?.data);
+//            listRoomAdapter!!.getAdapter().submitList(it?.data);
         })
         viewModelFactory.getViewModel().setListType(arrayOf(1, 129))
     }

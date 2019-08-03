@@ -19,7 +19,7 @@ abstract class AbstractUserDao {
     abstract fun updateUser(id: String, name: String, avatarUrl: String): Int;
 
     @Query("UPDATE user SET status =:status WHERE id=:id")
-    abstract fun updateStatus(id: String, status: Byte) : Int;
+    abstract fun updateStatus(id: String, status: Byte): Int;
 
     @Query("SELECT * FROM user WHERE name =:name")
     abstract fun findUsers(name: String): LiveData<List<User>>
@@ -41,4 +41,7 @@ abstract class AbstractUserDao {
 
     @Query("DELETE FROM user")
     abstract fun delete();
+
+    @Query("SELECT user.* FROM user INNER JOIN roomUserJoin ON user.id = roomUserJoin.user_id INNER JOIN room ON room.id = roomUserJoin.room_id WHERE room.id =:roomId")
+    abstract fun getUsersWithRoomId(roomId: String): LiveData<List<User>>
 }

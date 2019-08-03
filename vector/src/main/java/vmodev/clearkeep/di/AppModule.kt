@@ -85,15 +85,37 @@ class AppModule {
     @Provides
     @Named(value = IListRoomRecyclerViewAdapter.ROOM)
     fun provideListRoomDirectMessageAdapter(appExecutors: AppExecutors): IListRoomRecyclerViewAdapter {
-        return ListRoomRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<vmodev.clearkeep.viewmodelobjects.Room>() {
-            override fun areItemsTheSame(p0: vmodev.clearkeep.viewmodelobjects.Room, p1: vmodev.clearkeep.viewmodelobjects.Room): Boolean {
-                return p0.id == p1.id;
+        return ListRoomRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<vmodev.clearkeep.viewmodelobjects.RoomListUser>() {
+            override fun areItemsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
+                return p0.room?.get(0)?.id == p1.room?.get(0)?.id;
             }
 
-            override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.Room, p1: vmodev.clearkeep.viewmodelobjects.Room): Boolean {
-                return p0.name == p1.name && p0.updatedDate == p1.updatedDate && p0.avatarUrl == p1.avatarUrl
-                        && p0.notifyCount == p1.notifyCount && p0.type == p1.type
-                        && p0.lastMessage == p1.lastMessage && p0.notificationState == p1.notificationState;
+            override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
+                var status = true;
+                if (p0.users?.size != p1.users?.size) {
+                    status = false;
+                } else {
+                    p0.users?.let { p00 ->
+                        p1.users?.let { p11 ->
+                            var index = 0;
+                            while (index < p00.size) {
+                                if (p00[index].status != p11[index].status) {
+                                    status = false;
+                                    index = p00.size;
+                                }
+                                index++;
+                            }
+                        } ?: run {
+                            status = false;
+                        }
+                    } ?: run {
+                        status = false;
+                    }
+                }
+                return p0.room?.get(0)?.name == p1.room?.get(0)?.name && p0.room?.get(0)?.updatedDate == p1.room?.get(0)?.updatedDate && p0.room?.get(0)?.avatarUrl == p1.room?.get(0)?.avatarUrl
+                        && p0.room?.get(0)?.notifyCount == p1.room?.get(0)?.notifyCount && p0.room?.get(0)?.type == p1.room?.get(0)?.type
+                        && p0.room?.get(0)?.lastMessage == p1.room?.get(0)?.lastMessage && p0.room?.get(0)?.notificationState == p1.room?.get(0)?.notificationState
+                        && status;
             }
         })
     }
