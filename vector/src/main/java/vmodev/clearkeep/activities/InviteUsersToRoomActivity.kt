@@ -60,9 +60,9 @@ class InviteUsersToRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
         supportActionBar!!.setDisplayShowHomeEnabled(true);
         binding.toolbar.setNavigationOnClickListener { v ->
             kotlin.run {
-                if (createFromNewRoom)
-                    joinRoom(roomId);
-                else
+//                if (createFromNewRoom)
+//                    joinRoom(roomId);
+//                else
                     finish();
             }
         }

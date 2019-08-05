@@ -39,6 +39,7 @@ class CreateNewRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
 
     lateinit var mxSession: MXSession;
 
+    private var checkDataSuccess : Boolean = false
     @SuppressLint("CheckResult", "ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,10 +60,13 @@ class CreateNewRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
         binding.room = roomViewModel.createNewRoom();
         roomViewModel.createNewRoom().observe(this, Observer { t ->
             t?.data?.let { room ->
-                val intent = Intent(this, InviteUsersToRoomActivity::class.java);
-                intent.putExtra("ROOM_ID", room.id);
-                startActivity(intent);
-                finish();
+               if (!checkDataSuccess){
+                   checkDataSuccess = true
+                   val intent = Intent(this, InviteUsersToRoomActivity::class.java);
+                   intent.putExtra("ROOM_ID", room.id);
+                   startActivity(intent);
+                   finish();
+               }
             }
         })
         RxTextView.textChanges(binding.editTextRoomName).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
@@ -80,5 +84,10 @@ class CreateNewRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
             if (binding.editTextRoomTopic.text.isNullOrEmpty()) binding.editTextRoomTopic.text = binding.editTextRoomName.text;
             roomViewModel.setCreateNewRoom(binding.editTextRoomName.text.toString(), binding.editTextRoomTopic.text.toString(), if (binding.switchRoomVisibility.isChecked) "public" else "private")
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkDataSuccess = false
     }
 }
