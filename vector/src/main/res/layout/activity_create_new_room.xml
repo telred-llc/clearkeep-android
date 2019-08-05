@@ -59,6 +59,7 @@
                 android:text="@string/room_name_required" />
 
             <EditText
+                android:singleLine="true"
                 android:id="@+id/edit_text_room_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -71,6 +72,7 @@
                 android:text="@string/room_topic_optional" />
 
             <EditText
+                android:singleLine="true"
                 android:id="@+id/edit_text_room_topic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

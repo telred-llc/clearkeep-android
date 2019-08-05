@@ -49,6 +49,7 @@
                 android:layout_height="wrap_content" />
 
             <EditText
+                android:singleLine="true"
                 android:id="@+id/edit_query"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
