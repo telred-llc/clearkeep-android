@@ -26,7 +26,6 @@ import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.IListRoomFragmentViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IListRoomFragment
-import vmodev.clearkeep.viewmodelobjects.Status
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -83,15 +82,16 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
         listDirectRoomAdapter.setOnItemClick { room, i ->
             when (i) {
                 3 -> {
-                    gotoRoom(room.id);
+                    if (!onGoingRoom) {
+                        onGoingRoom = true;
+                        gotoRoom(room.id);
+                    }
                 }
                 0 -> {
                     previewRoom(room.id);
                 }
                 1 -> {
-                    if (!onGoingRoom){
-                        onGoingRoom = true;
-                    joinRoom(room.id);}
+                    joinRoom(room.id);
                 }
                 2 -> {
                     declideInvite(room.id);
@@ -163,18 +163,16 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
         listGroupRoomAdapter.setOnItemClick { room, i ->
             when (i) {
                 3 -> {
-
-                    gotoRoom(room.id);
-
+                    if (!onGoingRoom) {
+                        onGoingRoom = true;
+                        gotoRoom(room.id);
+                    }
                 }
                 0 -> {
                     previewRoom(room.id);
                 }
                 1 -> {
-//                    if (!onGoingRoom){
-//                        onGoingRoom = true;
-                        joinRoom(room.id);
-//                }
+                    joinRoom(room.id);
                 }
                 2 -> {
                     declideInvite(room.id);
@@ -199,21 +197,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
             listGroupRoomAdapter.getAdapter().submitList(it?.data)
         });
         viewModelFactory.getViewModel().joinRoomWithIdResult().observe(this.viewLifecycleOwner, Observer {
-            it?.let {
-                when(it.status){
-                    Status.ERROR->{
-                        onGoingRoom = false;
-                    }
-                    Status.SUCCESS->{
-                        if (!onGoingRoom){
-                            onGoingRoom = true;
-                        it.data?.let { gotoRoom(it.id) }
-                        }
-                    }
-                    Status.LOADING->{}
-                }
-            }
-
+            it?.data?.let { gotoRoom(it.id) }
         });
         binding.buttonStartDirectChat.setOnClickListener {
             val intentNewChat = Intent(context, FindAndCreateNewConversationActivity::class.java);
@@ -265,13 +249,11 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
     }
 
     private fun gotoRoom(roomId: String) {
-//        if (!onGoingRoom) {
-//            onGoingRoom = true
-            val intentRoom = Intent(this.context, RoomActivity::class.java);
-            intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
-            intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
-            startActivityForResult(intentRoom, GO_TO_ROOM_CODE);
-//        }
+        val intentRoom = Intent(this.context, RoomActivity::class.java);
+        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
+        intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
+        startActivityForResult(intentRoom, GO_TO_ROOM_CODE);
+        onGoingRoom = false;
     }
 
     private fun changeNotificationState(roomId: String, state: Byte) {
@@ -318,12 +300,6 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
 
     override fun getFragment(): Fragment {
         return this;
-    }
-
-    override fun onResume() {
-        super.onResume()
-        onGoingRoom = false;
-
     }
 
     /**

@@ -1254,9 +1254,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
         finishResult();
         finish();
+        super.onBackPressed()
     }
 
     private fun finishResult() {
