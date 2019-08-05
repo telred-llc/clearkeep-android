@@ -82,10 +82,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
         listDirectRoomAdapter.setOnItemClick { room, i ->
             when (i) {
                 3 -> {
-                    if (!onGoingRoom) {
-                        onGoingRoom = true;
-                        gotoRoom(room.id);
-                    }
+                    gotoRoom(room.id);
                 }
                 0 -> {
                     previewRoom(room.id);
@@ -163,10 +160,9 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
         listGroupRoomAdapter.setOnItemClick { room, i ->
             when (i) {
                 3 -> {
-                    if (!onGoingRoom) {
-                        onGoingRoom = true;
-                        gotoRoom(room.id);
-                    }
+
+                    gotoRoom(room.id);
+
                 }
                 0 -> {
                     previewRoom(room.id);
@@ -249,11 +245,13 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
     }
 
     private fun gotoRoom(roomId: String) {
-        val intentRoom = Intent(this.context, RoomActivity::class.java);
-        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
-        intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
-        startActivityForResult(intentRoom, GO_TO_ROOM_CODE);
-        onGoingRoom = false;
+        if (!onGoingRoom) {
+            onGoingRoom = true
+            val intentRoom = Intent(this.context, RoomActivity::class.java);
+            intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
+            intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
+            startActivityForResult(intentRoom, GO_TO_ROOM_CODE);
+        }
     }
 
     private fun changeNotificationState(roomId: String, state: Byte) {
@@ -300,6 +298,12 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
 
     override fun getFragment(): Fragment {
         return this;
+    }
+
+    override fun onResume() {
+        super.onResume()
+        onGoingRoom = false;
+
     }
 
     /**
