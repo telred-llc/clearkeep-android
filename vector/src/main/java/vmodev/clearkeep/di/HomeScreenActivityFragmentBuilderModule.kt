@@ -84,12 +84,12 @@ abstract class HomeScreenActivityFragmentBuilderModule {
         fun provideListRoomContactAdapter(appExecutors: AppExecutors): IListRoomRecyclerViewAdapter {
             return ListRoomContactRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<RoomListUser>() {
                 override fun areItemsTheSame(p0: RoomListUser, p1: RoomListUser): Boolean {
-                    return p0.room?.get(0)?.id == p1.room?.get(0)?.id;
+                    return p0.room?.id == p1.room?.id;
                 }
 
                 override fun areContentsTheSame(p0: RoomListUser, p1: RoomListUser): Boolean {
-                    return p0.room?.get(0)?.name == p1.room?.get(0)?.name && p0.room?.get(0)?.updatedDate == p1.room?.get(0)?.updatedDate && p0.room?.get(0)?.avatarUrl == p1.room?.get(0)?.avatarUrl
-                            && p0.room?.get(0)?.notifyCount == p1.room?.get(0)?.notifyCount;
+                    return p0.room?.name == p1.room?.name && p0.room?.updatedDate == p1.room?.updatedDate && p0.room?.avatarUrl == p1.room?.avatarUrl
+                            && p0.room?.notifyCount == p1.room?.notifyCount;
                 }
             })
         }

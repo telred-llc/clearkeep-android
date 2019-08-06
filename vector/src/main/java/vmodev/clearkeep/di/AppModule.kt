@@ -87,35 +87,13 @@ class AppModule {
     fun provideListRoomDirectMessageAdapter(appExecutors: AppExecutors): IListRoomRecyclerViewAdapter {
         return ListRoomRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<vmodev.clearkeep.viewmodelobjects.RoomListUser>() {
             override fun areItemsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
-                return p0.room?.get(0)?.id == p1.room?.get(0)?.id;
+                return p0.room?.id == p1.room?.id;
             }
 
             override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
-                var status = true;
-                if (p0.users?.size != p1.users?.size) {
-                    status = false;
-                } else {
-                    p0.users?.let { p00 ->
-                        p1.users?.let { p11 ->
-                            var index = 0;
-                            while (index < p00.size) {
-                                if (p00[index].status != p11[index].status) {
-                                    status = false;
-                                    index = p00.size;
-                                }
-                                index++;
-                            }
-                        } ?: run {
-                            status = false;
-                        }
-                    } ?: run {
-                        status = false;
-                    }
-                }
-                return p0.room?.get(0)?.name == p1.room?.get(0)?.name && p0.room?.get(0)?.updatedDate == p1.room?.get(0)?.updatedDate && p0.room?.get(0)?.avatarUrl == p1.room?.get(0)?.avatarUrl
-                        && p0.room?.get(0)?.notifyCount == p1.room?.get(0)?.notifyCount && p0.room?.get(0)?.type == p1.room?.get(0)?.type
-                        && p0.room?.get(0)?.lastMessage == p1.room?.get(0)?.lastMessage && p0.room?.get(0)?.notificationState == p1.room?.get(0)?.notificationState
-                        && status;
+                return p0.room?.name == p1.room?.name && p0.room?.updatedDate == p1.room?.updatedDate && p0.room?.avatarUrl == p1.room?.avatarUrl
+                        && p0.room?.notifyCount == p1.room?.notifyCount && p0.room?.type == p1.room?.type
+                        && p0.room?.lastMessage == p1.room?.lastMessage && p0.room?.notificationState == p1.room?.notificationState
             }
         })
     }

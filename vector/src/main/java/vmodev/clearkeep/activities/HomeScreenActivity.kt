@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
-import android.database.Cursor
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
@@ -23,7 +22,6 @@ import im.vector.services.EventStreamService
 import im.vector.ui.badge.BadgeProxy
 import im.vector.util.HomeRoomsViewModel
 import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_home_screen.*
@@ -40,7 +38,6 @@ import vmodev.clearkeep.factories.viewmodels.interfaces.IHomeScreenViewModelFact
 import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.fragments.Interfaces.IListRoomOnFragmentInteractionListener
 import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -136,8 +133,10 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
             }
         }
         Completable.fromAction {
-            val curso = roomUserJoinDao.getListRoomWithUsers(1, 65);
-            Log.d("", "");
+            val cursor = roomUserJoinDao.getListRoomWithUsers(1, 65);
+            cursor.observe(this, android.arch.lifecycle.Observer {
+                Log.d("", "");
+            })
         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe();
         if (startFromLogin != 0) {
             viewModelFactory.getViewModel().getBackupKeyStatusResult().observe(this, android.arch.lifecycle.Observer {

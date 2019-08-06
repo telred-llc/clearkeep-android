@@ -29,7 +29,7 @@
                 android:src="@drawable/ic_launcher_app"
                 app:civ_border_color="@android:color/darker_gray"
                 app:civ_border_width="2dp"
-                app:room="@{room_list_user.room.get(0)}" />
+                app:room="@{room_list_user.room}" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/circle_image_view_status"
@@ -39,7 +39,7 @@
                 android:src="@color/lock_background"
                 app:civ_border_color="@android:color/white"
                 app:civ_border_width="2dp"
-                app:visibleGone="@{room_list_user.room.get(0).type == 65}" />
+                app:visibleGone="@{room_list_user.room.type == 65}" />
         </FrameLayout>
 
         <LinearLayout
@@ -56,7 +56,7 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_weight="1"
                 android:singleLine="true"
-                android:text="@{room_list_user.room.get(0).name}"
+                android:text="@{room_list_user.room.name}"
                 android:textSize="@dimen/text_20_sp"
                 android:textStyle="bold" />
 
@@ -109,7 +109,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:textAlignment="textEnd"
-                app:timeStamp="@{room_list_user.room.get(0).updatedDate}" />
+                app:timeStamp="@{room_list_user.room.updatedDate}" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="wrap_content"

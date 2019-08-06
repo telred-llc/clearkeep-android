@@ -60,7 +60,7 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (getItem(position).room?.get(0)?.type != 65 && getItem(position).room?.get(0)?.type != 66) 1 else 0;
+        return if (getItem(position).room?.type != 65 && getItem(position).room?.type != 66) 1 else 0;
     }
 
     override fun onBindViewHolder(p0: DataBoundViewHolder<ViewDataBinding>, p1: Int) {
@@ -71,8 +71,11 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
             (p0.binding as RoomItemBinding).roomListUser = getItem(p1);
             p0.binding.executePendingBindings();
             p0.binding.currentUserId = currentUserId;
-            callbackToGetUsers?.let {
-//                p0.binding.usersMember = it.getUsers(getItem(p1).id);
+            callbackToGetUsers?.let { callback ->
+                getItem(p1).roomUserJoin?.let {
+                    val userIds = Array<String>(it.size) { i -> it[i].userId };
+                    p0.binding.users = callback.getUsers(userIds);
+                }
             }
         }
     }

@@ -21,6 +21,10 @@
             type="vmodev.clearkeep.viewmodelobjects.RoomListUser" />
 
         <variable
+            name="users"
+            type="LiveData&lt;Resource&lt;List&lt;User>>>" />
+
+        <variable
             name="current_user_id"
             type="String" />
     </data>
@@ -43,7 +47,7 @@
                 android:src="@drawable/ic_launcher_app"
                 app:civ_border_color="@android:color/darker_gray"
                 app:civ_border_width="2dp"
-                app:room="@{room_list_user.room.get(0)}" />
+                app:room="@{room_list_user.room}" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/circle_image_view_status"
@@ -54,8 +58,8 @@
                 app:civ_border_color="@android:color/white"
                 app:civ_border_width="2dp"
                 app:currentUserId="@{current_user_id}"
-                app:listUser="@{room_list_user.users}"
-                app:visibleGone="@{room_list_user.room.get(0).type == 1 || room_list_user.room.get(0).type == 129}" />
+                app:listUser="@{users.data}"
+                app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}" />
         </FrameLayout>
 
         <LinearLayout
@@ -72,7 +76,7 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_weight="1"
                 android:singleLine="true"
-                android:text="@{room_list_user.room.get(0).name}"
+                android:text="@{room_list_user.room.name}"
                 android:textSize="@dimen/text_18_sp"
                 android:textStyle="bold" />
 
@@ -83,7 +87,7 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_weight="1"
                 android:singleLine="true"
-                android:text="@{room_list_user.room.get(0).lastMessage}"
+                android:text="@{room_list_user.room.lastMessage}"
                 android:textColor="@color/main_text_color_hint"
                 android:textSize="@dimen/text_15_sp" />
         </LinearLayout>
@@ -98,10 +102,10 @@
                 android:layout_gravity="center_vertical|end"
                 android:layout_marginEnd="40dp"
                 android:background="@drawable/circle_background"
-                android:text="@{``+room_list_user.room.get(0).notifyCount}"
+                android:text="@{``+room_list_user.room.notifyCount}"
                 android:textAlignment="center"
                 android:textColor="@color/main_text_color"
-                app:visibleGone="@{room_list_user.room.get(0).notifyCount > 0}" />
+                app:visibleGone="@{room_list_user.room.notifyCount > 0}" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -115,7 +119,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:textAlignment="textEnd"
-                    app:timeStamp="@{room_list_user.room.get(0).updatedDate}" />
+                    app:timeStamp="@{room_list_user.room.updatedDate}" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="wrap_content"
@@ -123,7 +127,7 @@
                     android:layout_gravity="end"
                     android:layout_weight="1"
                     android:src="@drawable/ic_lock_outline_grey_24dp"
-                    app:encrypted="@{room_list_user.room.get(0).encrypted}" />
+                    app:encrypted="@{room_list_user.room.encrypted}" />
             </LinearLayout>
         </FrameLayout>
     </LinearLayout>

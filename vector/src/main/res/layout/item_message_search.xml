@@ -17,8 +17,8 @@
         android:orientation="horizontal">
 
         <FrameLayout
-            android:layout_width="70dp"
-            android:layout_height="70dp">
+            android:layout_width="50dp"
+            android:layout_height="50dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/circle_image_view_avatar"
@@ -27,7 +27,7 @@
                 android:src="@drawable/ic_launcher_app"
                 app:civ_border_color="@android:color/darker_gray"
                 app:civ_border_width="2dp"
-                app:imageUrl="@{result.room.get(0).avatarUrl}"/>
+                app:room="@{result.room.get(0)}"/>
         </FrameLayout>
 
         <LinearLayout
@@ -44,7 +44,7 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_weight="1"
                 android:text="@{result.user.get(0).name}"
-                android:textSize="@dimen/text_20_sp"
+                android:textSize="@dimen/text_15_sp"
                 android:textStyle="bold" />
 
             <TextView

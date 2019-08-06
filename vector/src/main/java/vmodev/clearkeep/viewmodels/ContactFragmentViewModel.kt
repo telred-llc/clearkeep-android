@@ -33,7 +33,7 @@ class ContactFragmentViewModel @Inject constructor(roomRepository: RoomRepositor
         return _updateRoomNotifyResult;
     }
 
-    override fun getRoomUserJoinResult(roomId: String): LiveData<Resource<List<User>>> {
-        return userRepository.getListUserInRoomFromNetwork(roomId);
+    override fun getRoomUserJoinResult(userIds : Array<String>): LiveData<Resource<List<User>>> {
+        return userRepository.getUsersWithId(userIds);
     }
 }

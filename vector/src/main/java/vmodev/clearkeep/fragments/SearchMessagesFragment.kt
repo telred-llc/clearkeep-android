@@ -7,7 +7,6 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.util.DiffUtil
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +20,6 @@ import vmodev.clearkeep.adapters.ListSearchMessageRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
-import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchMessageFragmentViewModel
 import java.util.*
@@ -53,7 +51,7 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
 
     lateinit var binding: FragmentSearchMessagesBinding;
 
-    private var disposableEditext: Disposable? = null;
+    private var disposableEditText: Disposable? = null;
 
     private val listMessage = ArrayList<MessageRoomUser>();
     private lateinit var listSearchAdapter: ListSearchMessageRecyclerViewAdapter;
@@ -74,7 +72,6 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        binding.results = searchViewModel.getSearchMessageByTextResult();
 
         listSearchAdapter = ListSearchMessageRecyclerViewAdapter(appExecutors = appExecutors
                 , dataBindingComponent = dataBindingComponent, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
@@ -100,15 +97,6 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
             startActivity(intentRoom);
         };
         binding.recyclerView.adapter = listSearchAdapter;
-        viewModelFactory.getViewModel().getLoadMessagesResult().observe(this, Observer {
-            it?.data?.let {
-//                viewModelFactory.getViewModel().decryptListMessage(it).observe(this, Observer {
-//                    it?.data?.let {
-//
-//                    }
-//                })
-            }
-        })
         viewModelFactory.getViewModel().getListMessageRoomUser().observe(this, Observer {
             it?.data?.let {
                 viewModelFactory.getViewModel().decryptListMessage(it).observe(this, Observer {
@@ -122,7 +110,10 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
         getSearchViewTextChange()?.subscribe { s ->
             listSearchAdapter.submitList(listMessage.filter { messageRoomUser ->
                 messageRoomUser.message?.let {
-                    it.encryptedContent.contains(s)
+                    if (s.isNullOrEmpty())
+                        false;
+                    else
+                        it.encryptedContent.contains(s)
                 } ?: run {
                     false
                 }
@@ -187,7 +178,10 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
     override fun selectedFragment(query: String): ISearchFragment {
         listSearchAdapter.submitList(listMessage.filter { messageRoomUser ->
             messageRoomUser.message?.let {
-                it.encryptedContent.contains(query)
+                if (query.isNullOrEmpty())
+                    false;
+                else
+                    it.encryptedContent.contains(query)
             } ?: run {
                 false
             }
@@ -200,6 +194,6 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
     }
 
     override fun unSelectedFragment() {
-        disposableEditext?.dispose();
+        disposableEditText?.dispose();
     }
 }

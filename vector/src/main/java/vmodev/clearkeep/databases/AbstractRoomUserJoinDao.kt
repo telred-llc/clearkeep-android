@@ -2,10 +2,6 @@ package vmodev.clearkeep.databases
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
-import android.arch.persistence.room.RoomDatabase.MAX_BIND_PARAMETER_CNT
-import android.arch.persistence.room.util.StringUtil
-import android.database.Cursor
-import android.support.v4.util.ArrayMap
 import vmodev.clearkeep.viewmodelobjects.*
 import vmodev.clearkeep.viewmodelobjects.Room
 import java.util.ArrayList
@@ -43,27 +39,29 @@ abstract class AbstractRoomUserJoinDao {
     @Query("SELECT roomUserJoin.* FROM roomUserJoin INNER JOIN room ON room.id = roomUserJoin.room_id INNER JOIN user ON user.id = roomUserJoin.user_id WHERE room.id =:roomId AND user.id =:userId")
     abstract fun getRoomUserJoinWithRoomIdAndUserId(roomId: String, userId: String): LiveData<RoomUserJoin>;
 
-    @Query("SELECT RoomUserJoin.*, Room.*, User.* FROM RoomUserJoin INNER JOIN Room ON RoomUserJoin.room_id = Room.id INNER JOIN User ON RoomUserJoin.user_id = User.id WHERE room.type =:type")
-    abstract fun getListRoomListUserOne(type: Int): LiveData<List<RoomListUser>>
+    @Query("SELECT DISTINCT roomUserJoin.room_id, room.* FROM RoomUserJoin INNER JOIN Room ON roomUserJoin.room_id = room.id WHERE room.type =:typeOne")
+    abstract fun getListRoomListUserOne(typeOne: Int): LiveData<List<RoomListUser>>
 
-    @Query("SELECT roomUserJoin.*, room.*, user.* FROM RoomUserJoin INNER JOIN Room ON roomUserJoin.room_id = room.id INNER JOIN user ON roomUserJoin.user_id = user.id WHERE room.type =:typeOne OR room.type =:typeTwo")
+    @Query("SELECT DISTINCT roomUserJoin.room_id, room.* FROM RoomUserJoin INNER JOIN Room ON roomUserJoin.room_id = room.id WHERE room.type =:typeOne OR room.type =:typeTwo")
     abstract fun getListRoomListUserTwo(typeOne: Int, typeTwo: Int): LiveData<List<RoomListUser>>
 
     @Query("SELECT DISTINCT roomUserJoin.room_id, room.* FROM roomUserJoin INNER JOIN room ON roomUserJoin.room_id = room.id WHERE room.type =:typeOne OR room.type =:typeTwo")
-    abstract fun getListRoomUserListTwo(typeOne: Int, typeTwo: Int): List<RoomUserList>
+    abstract fun getListRoomUserListTwo(typeOne: Int, typeTwo: Int): LiveData<List<RoomUserList>>
 
-    @Query("SELECT DISTINCT RoomUserJoin.*, User.* FROM RoomUserJoin INNER JOIN User ON RoomUserJoin.user_id = User.id WHERE RoomUserJoin.room_id IN (:ids)")
-    abstract fun getListUserInRoom(ids: List<String>): List<ListUserRelationRoom>
+    @Query("SELECT DISTINCT User.* FROM User WHERE User.id IN (:ids)")
+    abstract fun getListUserInRoom(ids: List<String>): LiveData<List<User>>
 
-    fun getListRoomWithUsers(typeOne: Int, typeTwo: Int): List<ListUserRelationRoom> {
+    fun getListRoomWithUsers(typeOne: Int, typeTwo: Int): LiveData<List<RoomUserList>> {
         val list = getListRoomUserListTwo(typeOne, typeTwo);
-        val listIds = ArrayList<String>();
-        list.forEach {
-            it.room?.let {
-                listIds.add(it.id)
+
+        list.value?.forEach {
+            val usersIdTmp = mutableListOf<String>();
+            it.roomUserJoin?.let {
+                it.forEach { usersIdTmp.add(it.userId) }
             }
+            it.users = getListUserInRoom(usersIdTmp);
         }
-        return getListUserInRoom(listIds);
+        return list;
     }
 
     fun getListRoomListUser(filters: Array<Int>): LiveData<List<RoomListUser>> {

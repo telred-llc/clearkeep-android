@@ -158,8 +158,8 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment, ILi
         viewModelFactory.getViewModel().setListTypeFavouritesGroup(arrayOf(130))
     }
 
-    override fun getUsers(roomId: String): LiveData<Resource<List<User>>> {
-        return viewModelFactory.getViewModel().getRoomUserJoinResult(roomId);
+    override fun getUsers(userIds: Array<String>): LiveData<Resource<List<User>>> {
+        return viewModelFactory.getViewModel().getRoomUserJoinResult(userIds);
     }
 
     private fun gotoRoom(roomId: String) {

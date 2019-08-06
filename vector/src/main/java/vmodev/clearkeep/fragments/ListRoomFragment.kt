@@ -83,7 +83,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
         listDirectRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listGroupRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listDirectRoomAdapter.setOnItemClick { room, i ->
-            room.room?.get(0)?.let {
+            room.room?.let {
                 when (i) {
                     3 -> {
                         if (!onGoingRoom) {
@@ -107,7 +107,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
             val bottomDialog = DialogPlus.newDialog(this.context)
                     .setAdapter(BottomDialogRoomLongClick(0x02))
                     .setOnItemClickListener { dialog, item, view, position ->
-                        room.room?.get(0)?.let {
+                        room.room?.let {
                             when (position) {
                                 3 -> {
                                     declideInvite(it.id);
@@ -140,7 +140,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
             val bottomDialog = DialogPlus.newDialog(this.context)
                     .setAdapter(BottomDialogRoomLongClick(0x02))
                     .setOnItemClickListener { dialog, item, view, position ->
-                        room.room?.get(0)?.let {
+                        room.room?.let {
                             when (position) {
                                 3 -> {
                                     declideInvite(it.id);
@@ -170,7 +170,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
             bottomDialog.show();
         }
         listGroupRoomAdapter.setOnItemClick { room, i ->
-            room.room?.get(0)?.let {
+            room.room?.let {
                 when (i) {
                     3 -> {
                         if (!onGoingRoom) {
@@ -248,8 +248,8 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
         viewModelFactory.getViewModel().setFiltersGroupRoom(arrayOf(2, 66));
     }
 
-    override fun getUsers(roomId: String): LiveData<Resource<List<User>>> {
-        return viewModelFactory.getViewModel().getRoomUserJoinResult(roomId);
+    override fun getUsers(userIds: Array<String>): LiveData<Resource<List<User>>> {
+        return viewModelFactory.getViewModel().getRoomUserJoinResult(userIds);
     }
 
     private fun previewRoom(roomId: String) {

@@ -11,5 +11,5 @@ abstract class AbstractContactFragmentViewModel : ViewModel() {
     abstract fun setListType(types: Array<Int>);
     abstract fun setIdForUpdateRoomNotify(roomId: String);
     abstract fun getUpdateRoomNotifyResult(): LiveData<Resource<Room>>;
-    abstract fun getRoomUserJoinResult(roomId: String): LiveData<Resource<List<User>>>;
+    abstract fun getRoomUserJoinResult(userIds: Array<String>): LiveData<Resource<List<User>>>;
 }

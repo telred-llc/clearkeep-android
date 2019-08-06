@@ -16,14 +16,14 @@ interface IListRoomRecyclerViewAdapter {
     fun setOnItemLongClick(itemLongClick: (RoomListUser) -> Unit?)
     fun getAdapter(): ListAdapter<RoomListUser, *>
     fun setDataBindingComponent(dataBindingComponent: DataBindingComponent)
-    fun setCallbackToGetUsers(callback : ICallbackToGetUsers, lifecycleOwner: LifecycleOwner, currentUserId: String?);
+    fun setCallbackToGetUsers(callback: ICallbackToGetUsers, lifecycleOwner: LifecycleOwner, currentUserId: String?);
 
     companion object {
         const val ROOM = "ROOM";
         const val ROOM_CONTACT = "ROOM_CONTACT";
     }
 
-    interface ICallbackToGetUsers{
-        fun getUsers(roomId : String) : LiveData<Resource<List<User>>>;
+    interface ICallbackToGetUsers {
+        fun getUsers(userIds: Array<String>): LiveData<Resource<List<User>>>;
     }
 }

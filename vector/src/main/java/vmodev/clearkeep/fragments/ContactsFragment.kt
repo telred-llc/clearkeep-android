@@ -86,8 +86,8 @@ class ContactsFragment : DataBindingDaggerFragment(), IContactFragment, IListRoo
         viewModelFactory.getViewModel().setListType(arrayOf(1, 129))
     }
 
-    override fun getUsers(roomId: String): LiveData<Resource<List<User>>> {
-        return viewModelFactory.getViewModel().getRoomUserJoinResult(roomId);
+    override fun getUsers(userIds: Array<String>): LiveData<Resource<List<User>>> {
+        return viewModelFactory.getViewModel().getRoomUserJoinResult(userIds);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

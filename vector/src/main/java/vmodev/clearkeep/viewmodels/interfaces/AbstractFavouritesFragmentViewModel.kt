@@ -20,7 +20,7 @@ abstract class AbstractFavouritesFragmentViewModel : ViewModel() {
     abstract fun getUpdateRoomNotifyResult(): LiveData<Resource<Room>>;
     abstract fun setChangeNotificationState(roomId: String, state: Byte);
     abstract fun getChangeNotificationStateResult(): LiveData<Resource<Room>>;
-    abstract fun getRoomUserJoinResult(roomId: String): LiveData<Resource<List<User>>>;
+    abstract fun getRoomUserJoinResult(userIds: Array<String>): LiveData<Resource<List<User>>>;
     abstract fun getListRoomListUserResult() : LiveData<Resource<List<RoomListUser>>>
 
     data class ChangeNotificationStateObject(val roomId: String, val state: Byte)

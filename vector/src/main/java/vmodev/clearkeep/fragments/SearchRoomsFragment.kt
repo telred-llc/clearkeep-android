@@ -21,14 +21,14 @@ import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchRoomsFragmentViewModel
 import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -39,14 +39,12 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class SearchRoomsFragment : DaggerFragment(), ISearchFragment {
+class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory;
+    lateinit var viewModelFactory : IViewModelFactory<AbstractSearchRoomsFragmentViewModel>;
     @Inject
     lateinit var appExecutors: AppExecutors;
     @Inject
@@ -60,8 +58,6 @@ class SearchRoomsFragment : DaggerFragment(), ISearchFragment {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
         }
     }
 
@@ -74,7 +70,6 @@ class SearchRoomsFragment : DaggerFragment(), ISearchFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
         binding.rooms = roomViewModel.getFindByTextResult();
         listRoomRecyclerViewAdapter.setDataBindingComponent(bindingDataComponent)
         binding.recyclerView.adapter = listRoomRecyclerViewAdapter.getAdapter();
@@ -132,11 +127,9 @@ class SearchRoomsFragment : DaggerFragment(), ISearchFragment {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance() =
                 SearchRoomsFragment().apply {
                     arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
                     }
                 }
     }

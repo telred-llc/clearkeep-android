@@ -42,14 +42,14 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
 
     private var currentSearchFragment: ISearchFragment? = null;
 
-    private lateinit var userId : String;
+    private lateinit var userId: String;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding: ActivitySearchBinding = DataBindingUtil.setContentView(this, R.layout.activity_search, dataBindingComponent);
         userId = intent.getStringExtra(USER_ID);
         arraySearchFragment = arrayOf(SearchRoomsFragment.newInstance("", ""), SearchMessagesFragment.newInstance(userId),
-        SearchPeopleFragment.newInstance("", ""), SearchFilesFragment.newInstance("", ""));
+                SearchPeopleFragment.newInstance("", ""), SearchFilesFragment.newInstance("", ""));
         binding.textViewCancel.setOnClickListener { v -> finish() }
         val pagerAdapter = SearchViewPagerAdapter(supportFragmentManager, arraySearchFragment);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
@@ -76,19 +76,7 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
                         currentSearchFragment = arraySearchFragment[i].selectedFragment(binding.searchView.query.toString());
                     };
                 }
-        viewModelFactory.getViewModel().getLoadMessagesResult().observe(this, Observer {
-            it?.data?.let {
-//                viewModelFactory.getViewModel().decryptListMessage(it).observe(this, Observer {
-//                    it?.data?.let {
-//                        it.forEach {
-////                            Log.d("Message", it.encryptedContent)
-//                        }
-//                    }
-//                })
-            }
-        });
         binding.lifecycleOwner = this;
-        viewModelFactory.getViewModel().setTimeForRefreshLoadMessage(Calendar.getInstance().timeInMillis);
     }
 
     override fun getActivity(): FragmentActivity {
@@ -105,7 +93,7 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
         publishSubjectSearchView.onComplete();
         disposable?.dispose();
     }
-    
+
 
     override fun getSearchViewTextChange(): Observable<String> {
         return publishSubjectSearchView;

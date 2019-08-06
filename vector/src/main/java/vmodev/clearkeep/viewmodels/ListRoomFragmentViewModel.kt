@@ -99,8 +99,8 @@ class ListRoomFragmentViewModel @Inject constructor(roomRepository: RoomReposito
         return _changeNotificationStateResult;
     }
 
-    override fun getRoomUserJoinResult(roomId: String): LiveData<Resource<List<User>>> {
-        return userRepository.getListUserInRoomFromNetwork(roomId);
+    override fun getRoomUserJoinResult(userIds : Array<String>): LiveData<Resource<List<User>>> {
+        return userRepository.getUsersWithId(userIds);
     }
 
     override fun getListRoomListUserDirectResult(): LiveData<Resource<List<RoomListUser>>> {

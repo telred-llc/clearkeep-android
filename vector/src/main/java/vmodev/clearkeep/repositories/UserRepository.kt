@@ -104,7 +104,7 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
         }.asLiveData();
     }
 
-    override fun updateOrCreateNewUserFromRemote(roomId: String) : LiveData<Resource<List<User>>> {
+    override fun updateOrCreateNewUserFromRemote(roomId: String): LiveData<Resource<List<User>>> {
         return object : AbstractNetworkCreateAndUpdateSourceRx<List<User>, List<User>>() {
             override fun insertResult(item: List<User>) {
                 abstractUserDao.insertUsers(item);
@@ -152,6 +152,14 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
                     }
                 }
                 return users;
+            }
+        }.asLiveData();
+    }
+
+    override fun getUsersWithId(userIds: Array<String>): LiveData<Resource<List<User>>> {
+        return object : AbstractLocalLoadSouce<List<User>>() {
+            override fun loadFromDB(): LiveData<List<User>> {
+                return abstractUserDao.getUsersWithId(userIds);
             }
         }.asLiveData();
     }
