@@ -1613,7 +1613,6 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                 emitter.onError(Throwable("Crypto is null"))
                 emitter.onComplete();
             }
-
         }
     }
 

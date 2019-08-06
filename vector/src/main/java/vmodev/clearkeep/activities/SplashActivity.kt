@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v7.preference.PreferenceManager
+import android.widget.Toast
 import im.vector.ErrorListener
 import im.vector.Matrix
 import im.vector.R
@@ -160,7 +161,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
         val duration = finishTime - mLaunchTime
         val event = TrackingEvent.LaunchScreen(duration)
         VectorApp.getInstance().analytics.trackEvent(event)
-
+        val session : MXSession = Matrix.getInstance(applicationContext).defaultSession;
         if (!hasCorruptedStore()) {
             val intent = Intent(this, HomeScreenActivity::class.java)
             intent.putExtra(HomeScreenActivity.START_FROM_LOGIN, startFromLogin)
@@ -172,7 +173,9 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                             it?.let {
                                 when (it.status) {
                                     Status.ERROR -> {
+                                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
                                         index++;
+                                        viewModelFactory.getViewModel().getUpdateRoomUserJoinResult(r.id, session.myUserId)
                                         if (index >= rooms.size) {
                                             startActivity(intent)
                                             finish()

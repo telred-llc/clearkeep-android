@@ -44,7 +44,7 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
     private var listener: OnFragmentInteractionListener? = null
 
     @Inject
-    lateinit var viewModelFactory : IViewModelFactory<AbstractSearchRoomsFragmentViewModel>;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractSearchRoomsFragmentViewModel>;
     @Inject
     lateinit var appExecutors: AppExecutors;
     @Inject
@@ -52,7 +52,7 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
 
     private val bindingDataComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
     private lateinit var binding: FragmentSearchRoomsBinding;
-    private lateinit var roomViewModel: AbstractRoomViewModel;
+//    private lateinit var roomViewModel: AbstractRoomViewModel;
     private var disposable: Disposable? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,14 +70,16 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.rooms = roomViewModel.getFindByTextResult();
+//        binding.rooms = roomViewModel.getFindByTextResult();
         listRoomRecyclerViewAdapter.setDataBindingComponent(bindingDataComponent)
         binding.recyclerView.adapter = listRoomRecyclerViewAdapter.getAdapter();
-        roomViewModel.getFindByTextResult().observe(viewLifecycleOwner, Observer { t ->
-//            listRoomRecyclerViewAdapter.getAdapter().submitList(t?.data);
-        });
+//        roomViewModel.getFindByTextResult().observe(viewLifecycleOwner, Observer { t ->
+//
+//        });
+//        viewModelFactory.getViewModel().getRoomSearchResult().observe(this, Observer {
+////            listRoomRecyclerViewAdapter.getAdapter().submitList(it?.data);
+//        })
         binding.lifecycleOwner = viewLifecycleOwner;
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -135,12 +137,12 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
     }
 
     override fun selectedFragment(query: String): ISearchFragment {
-        roomViewModel.setTextForFindByText(query);
-        disposable = getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe { t: String? ->
-            t?.let { s ->
-                roomViewModel.setTextForFindByText(s);
-            }
-        };
+//        roomViewModel.setTextForFindByText(query);
+//        disposable = getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe { t: String? ->
+//            t?.let { s ->
+//                roomViewModel.setTextForFindByText(s);
+//            }
+//        };
         return this;
     }
 

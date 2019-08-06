@@ -4,6 +4,7 @@ import android.app.Application
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.util.Log
+import android.widget.Toast
 import com.google.gson.JsonParser
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.crypto.keysbackup.KeysBackupStateManager
@@ -62,22 +63,23 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
 
         if (event?.type?.compareTo("m.room.join_rules") == 0) {
             updateOrCreateRoom(roomRepository.updateOrCreateRoomFromRemote(event.roomId))
+            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event.roomId))
         }
         if (event?.type?.compareTo("m.room.name") == 0) {
             updateOrCreateRoom(roomRepository.updateOrCreateRoomFromRemote(event.roomId))
-            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event?.roomId))
+            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event.roomId))
         }
         if (event?.type?.compareTo("m.room.member") == 0) {
             updateOrCreateRoom(roomRepository.updateOrCreateRoomFromRemote(event.roomId))
-            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event?.roomId))
+            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event.roomId))
         }
         if (event?.type?.compareTo("m.room.message") == 0) {
             updateOrCreateRoom(roomRepository.updateOrCreateRoomFromRemote(event.roomId))
-            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event?.roomId))
+            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event.roomId))
         }
         if (event?.type?.compareTo("m.room.encrypted") == 0) {
             updateOrCreateRoom(roomRepository.updateOrCreateRoomFromRemote(event.roomId))
-            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event?.roomId))
+            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event.roomId))
         }
     }
 
@@ -87,6 +89,7 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
             t?.let { obj ->
                 when (obj.status) {
                     Status.ERROR -> {
+                        Toast.makeText(application, obj.message, Toast.LENGTH_LONG).show();
                         observer?.let { room.removeObserver(it) }
                     }
                     Status.SUCCESS -> {
@@ -105,7 +108,11 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
         observer = Observer { t ->
             t?.let { obj ->
                 when (obj.status) {
-                    Status.ERROR -> observer?.let { user.removeObserver(it) }
+                    Status.ERROR -> {
+                        Toast.makeText(application, obj.message, Toast.LENGTH_LONG).show();
+                        roomUserJoinRepository.updateOrCreateRoomUserJoin(roomId, mxSession!!.myUserId);
+                        observer?.let { user.removeObserver(it) }
+                    }
                     Status.SUCCESS -> {
                         obj.data?.let {
                             it.forEach {
