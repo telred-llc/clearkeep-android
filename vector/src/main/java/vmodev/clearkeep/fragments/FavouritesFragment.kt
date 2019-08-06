@@ -64,7 +64,7 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment {
         super.onCreate(savedInstanceState)
         arguments?.let {
             // Deserialize is here
-            userId = it.getString(USER_ID);
+            userId = it.getString(USER_ID, "");
         }
     }
 
