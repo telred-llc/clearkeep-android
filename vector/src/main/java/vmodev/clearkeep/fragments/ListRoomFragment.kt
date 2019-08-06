@@ -21,6 +21,7 @@ import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.FragmentListRoomBinding
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.activities.*
+import vmodev.clearkeep.adapters.BottomDialogFavouriteRoomLongClick
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.applications.IApplication
@@ -55,6 +56,9 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
     @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
     lateinit var listDirectRoomAdapter: IListRoomRecyclerViewAdapter;
+    @Inject
+    @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
+    lateinit var listFavouritesRoomAdapter: IListRoomRecyclerViewAdapter;
 
     // TODO: Rename and change types of parameters
     private var userId: String? = null
@@ -77,8 +81,108 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initListDirectChat();
+        initListGroupChat();
+        initListFavouriteChat();
+        viewModelFactory.getViewModel().joinRoomWithIdResult().observe(this.viewLifecycleOwner, Observer {
+            it?.data?.let { gotoRoom(it.id) }
+        });
+        binding.buttonStartDirectChat.setOnClickListener {
+            val intentNewChat = Intent(context, FindAndCreateNewConversationActivity::class.java);
+            startActivity(intentNewChat);
+        }
+        binding.buttonStartGroupChat.setOnClickListener {
+            val intentNewChat = Intent(context, CreateNewRoomActivity::class.java);
+            startActivity(intentNewChat);
+        }
+        binding.imageViewCreateNewRoom.setOnClickListener {
+            val intentNewChat = Intent(context, CreateNewRoomActivity::class.java);
+            startActivity(intentNewChat);
+        }
+        binding.imageViewCreateNewDirect.setOnClickListener {
+            val intentNewChat = Intent(context, FindAndCreateNewConversationActivity::class.java);
+            startActivity(intentNewChat);
+        }
+
+
+        binding.lifecycleOwner = this.viewLifecycleOwner;
+
+        viewModelFactory.getViewModel().setFiltersDirectRoom(arrayOf(1, 65));
+        viewModelFactory.getViewModel().setFiltersGroupRoom(arrayOf(2, 66));
+        viewModelFactory.getViewModel().setFiltersFavouriteRoom(arrayOf(129, 130))
+    }
+
+    private fun initListFavouriteChat() {
+        listFavouritesRoomAdapter.setdataBindingComponent(dataBindingComponent);
+        listFavouritesRoomAdapter.setOnItemClick { room, i ->
+            when (i) {
+                3 -> {
+                    if (!onGoingRoom) {
+                        onGoingRoom = true;
+                        gotoRoom(room.id);
+                    }
+                }
+                0 -> {
+                    previewRoom(room.id);
+                }
+                1 -> {
+                    joinRoom(room.id);
+                }
+                2 -> {
+                    declideInvite(room.id);
+                }
+            }
+        }
+        listFavouritesRoomAdapter.setOnItemLongClick { room ->
+            val bottomDialog = DialogPlus.newDialog(this.context)
+                    .setAdapter(BottomDialogFavouriteRoomLongClick(room.notificationState))
+                    .setOnItemClickListener { dialog, item, view, position ->
+                        when (position) {
+                            3 -> {
+                                declideInvite(room.id);
+                            }
+                            1 -> {
+                                binding.room = viewModelFactory.getViewModel().getRemoveFromFavouriteResult();
+                                viewModelFactory.getViewModel().setRemoveFromFavourite(room.id);
+                            }
+                            2 -> {
+                                val intent = Intent(this.activity, RoomSettingsActivity::class.java);
+                                intent.putExtra(RoomSettingsActivity.ROOM_ID, room.id);
+                                startActivity(intent);
+                            }
+                            4 -> {
+                                val intentGoRoom = Intent(activity, MessageListActivity::class.java);
+                                intentGoRoom.putExtra(MessageListActivity.ROOM_ID, room.id);
+                                startActivity(intentGoRoom);
+                            }
+                            0 -> {
+                                changeNotificationState(room.id, room.notificationState);
+                            }
+                        }
+
+                        dialog?.dismiss();
+                    }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create();
+            bottomDialog.show();
+        }
+        binding.recyclerViewListFavouritesChat.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        binding.recyclerViewListFavouritesChat.isNestedScrollingEnabled = false;
+        binding.recyclerViewListFavouritesChat.adapter = listFavouritesRoomAdapter.getAdapter();
+        binding.listFavourites = viewModelFactory.getViewModel().getListFavouritesResult();
+        viewModelFactory.getViewModel().getListFavouritesResult().observe(this.viewLifecycleOwner, Observer {
+            listFavouritesRoomAdapter.getAdapter().submitList(it?.data);
+        });
+        binding.linearLayoutFavourites.setOnClickListener {
+            binding.expandableLayoutListFavourites.isExpanded = !binding.expandableLayoutListFavourites.isExpanded;
+            if (binding.expandableLayoutListFavourites.isExpanded) {
+                binding.imageViewDirectionFavourites.rotation = 0f;
+            } else {
+                binding.imageViewDirectionFavourites.rotation = 270f;
+            }
+        }
+    }
+
+    private fun initListDirectChat() {
         listDirectRoomAdapter.setdataBindingComponent(dataBindingComponent);
-        listGroupRoomAdapter.setdataBindingComponent(dataBindingComponent);
         listDirectRoomAdapter.setOnItemClick { room, i ->
             when (i) {
                 3 -> {
@@ -129,6 +233,25 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
                     }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create();
             bottomDialog.show();
         }
+        binding.recyclerViewListDirectChat.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        binding.recyclerViewListDirectChat.isNestedScrollingEnabled = false;
+        binding.recyclerViewListDirectChat.adapter = listDirectRoomAdapter.getAdapter();
+        binding.listDirect = viewModelFactory.getViewModel().getListDirectRoomResult();
+        viewModelFactory.getViewModel().getListDirectRoomResult().observe(this.viewLifecycleOwner, Observer {
+            listDirectRoomAdapter.getAdapter().submitList(it?.data);
+        });
+        binding.linearLayoutGroup.setOnClickListener {
+            binding.expandableLayoutListGroup.isExpanded = !binding.expandableLayoutListGroup.isExpanded;
+            if (binding.expandableLayoutListGroup.isExpanded) {
+                binding.imageViewDirectionGroup.rotation = 0f;
+            } else {
+                binding.imageViewDirectionGroup.rotation = 270f;
+            }
+        }
+    }
+
+    private fun initListGroupChat() {
+        listGroupRoomAdapter.setdataBindingComponent(dataBindingComponent);
         listGroupRoomAdapter.setOnItemLongClick { room ->
             val bottomDialog = DialogPlus.newDialog(this.context)
                     .setAdapter(BottomDialogRoomLongClick(room.notificationState))
@@ -179,50 +302,13 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
                 }
             }
         }
-
-        binding.recyclerViewListDirectChat.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewListGroupChat.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
-        binding.recyclerViewListDirectChat.isNestedScrollingEnabled = false;
         binding.recyclerViewListGroupChat.isNestedScrollingEnabled = false;
-        binding.recyclerViewListDirectChat.adapter = listDirectRoomAdapter.getAdapter();
         binding.recyclerViewListGroupChat.adapter = listGroupRoomAdapter.getAdapter();
-
-        binding.listDirect = viewModelFactory.getViewModel().getListDirectRoomResult();
         binding.listGroup = viewModelFactory.getViewModel().getListGroupRoomResult();
-
-        viewModelFactory.getViewModel().getListDirectRoomResult().observe(this.viewLifecycleOwner, Observer {
-            listDirectRoomAdapter.getAdapter().submitList(it?.data);
-        });
         viewModelFactory.getViewModel().getListGroupRoomResult().observe(this.viewLifecycleOwner, Observer {
             listGroupRoomAdapter.getAdapter().submitList(it?.data)
         });
-        viewModelFactory.getViewModel().joinRoomWithIdResult().observe(this.viewLifecycleOwner, Observer {
-            it?.data?.let { gotoRoom(it.id) }
-        });
-        binding.buttonStartDirectChat.setOnClickListener {
-            val intentNewChat = Intent(context, FindAndCreateNewConversationActivity::class.java);
-            startActivity(intentNewChat);
-        }
-        binding.buttonStartGroupChat.setOnClickListener {
-            val intentNewChat = Intent(context, CreateNewRoomActivity::class.java);
-            startActivity(intentNewChat);
-        }
-        binding.imageViewCreateNewRoom.setOnClickListener {
-            val intentNewChat = Intent(context, CreateNewRoomActivity::class.java);
-            startActivity(intentNewChat);
-        }
-        binding.imageViewCreateNewDirect.setOnClickListener {
-            val intentNewChat = Intent(context, FindAndCreateNewConversationActivity::class.java);
-            startActivity(intentNewChat);
-        }
-        binding.linearLayoutGroup.setOnClickListener {
-            binding.expandableLayoutListGroup.isExpanded = !binding.expandableLayoutListGroup.isExpanded;
-            if (binding.expandableLayoutListGroup.isExpanded) {
-                binding.imageViewDirectionGroup.rotation = 0f;
-            } else {
-                binding.imageViewDirectionGroup.rotation = 270f;
-            }
-        }
         binding.linearLayoutDirect.setOnClickListener {
             binding.expandableLayoutListDirect.isExpanded = !binding.expandableLayoutListDirect.isExpanded;
             if (binding.expandableLayoutListDirect.isExpanded) {
@@ -231,10 +317,6 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment {
                 binding.imageViewDirectionDirect.rotation = 270f;
             }
         }
-        binding.lifecycleOwner = this.viewLifecycleOwner;
-
-        viewModelFactory.getViewModel().setFiltersDirectRoom(arrayOf(1, 65));
-        viewModelFactory.getViewModel().setFiltersGroupRoom(arrayOf(2, 66));
     }
 
     private fun previewRoom(roomId: String) {

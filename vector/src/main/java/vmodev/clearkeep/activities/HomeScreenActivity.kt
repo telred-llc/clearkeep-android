@@ -49,9 +49,9 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     @Inject
     @field:Named(value = IFragmentFactory.HOME_SCREEN_FRAGMENT)
     lateinit var homeScreenFragmentFactory: IFragmentFactory;
-    @Inject
-    @field:Named(value = IFragmentFactory.FAVOURITES_FRAGMENT)
-    lateinit var favouritesFragmentFactory: IFragmentFactory;
+//    @Inject
+//    @field:Named(value = IFragmentFactory.FAVOURITES_FRAGMENT)
+//    lateinit var favouritesFragmentFactory: IFragmentFactory;
     @Inject
     @field:Named(IFragmentFactory.CONTACTS_FRAGMENT)
     lateinit var contactsFragmentFactory: IFragmentFactory;
@@ -79,9 +79,9 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
                     R.id.action_home -> {
                         switchFragment(listRoomFragmentFactory.createNewInstance().getFragment());
                     };
-                    R.id.action_favorites -> {
-                        switchFragment(favouritesFragmentFactory.createNewInstance().getFragment());
-                    };
+//                    R.id.action_favorites -> {
+//                        switchFragment(favouritesFragmentFactory.createNewInstance().getFragment());
+//                    };
                     R.id.action_contacts -> {
                         switchFragment(contactsFragmentFactory.createNewInstance().getFragment());
                     };

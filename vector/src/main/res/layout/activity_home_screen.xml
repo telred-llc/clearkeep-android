@@ -132,22 +132,22 @@
                             app:roomsHighlightCount="@{rooms.data}" />
                     </FrameLayout>
 
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1">
+                    <!--<FrameLayout-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:layout_weight="1">-->
 
-                        <TextView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="end"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginEnd="20dp"
-                            android:background="@drawable/circle_background"
-                            android:textAlignment="center"
-                            android:textColor="@color/main_text_color"
-                            app:roomsHighlightCount="@{roomsFavourite.data}" />
-                    </FrameLayout>
+                        <!--<TextView-->
+                            <!--android:layout_width="20dp"-->
+                            <!--android:layout_height="20dp"-->
+                            <!--android:layout_gravity="end"-->
+                            <!--android:layout_marginTop="10dp"-->
+                            <!--android:layout_marginEnd="20dp"-->
+                            <!--android:background="@drawable/circle_background"-->
+                            <!--android:textAlignment="center"-->
+                            <!--android:textColor="@color/main_text_color"-->
+                            <!--app:roomsHighlightCount="@{roomsFavourite.data}" />-->
+                    <!--</FrameLayout>-->
 
                     <FrameLayout
                         android:layout_width="0dp"

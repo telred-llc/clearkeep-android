@@ -79,8 +79,8 @@ android {
             buildConfigField "boolean", "LOW_PRIVACY_LOG_ENABLE", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "HOME_SERVER", "\"https://ck.furoute.com\""
-            buildConfigField "String", "PUSH_GATEWAY", "\"http://ck.furoute.com:5000/_matrix/push/v1/notify\""
+            buildConfigField "String", "HOME_SERVER", "\"https://s.clearkeep.me\""
+            buildConfigField "String", "PUSH_GATEWAY", "\"https://push.clearkeep.me/_matrix/push/v1/notify\""
             buildConfigField "String", "IDENTIFY_SERVER", "\"https://id.clearkeep.me\""
         }
     }
