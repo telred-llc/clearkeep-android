@@ -2,6 +2,9 @@ package vmodev.clearkeep.databases
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import io.reactivex.Flowable
+import io.reactivex.Observable
+import io.reactivex.Single
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
 
@@ -18,6 +21,9 @@ abstract class AbstractRoomDao {
 
     @Query("SELECT * FROM room WHERE id =:id")
     abstract fun findById(id: String): LiveData<Room>;
+
+    @Query("SELECT * FROM Room WHERE id =:id")
+    abstract fun findByIdRx(id: String): Single <Room>;
 
     @Query("SELECT name FROM room WHERE id =:id")
     abstract fun findNameById(id: String): LiveData<String>;

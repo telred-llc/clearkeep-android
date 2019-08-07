@@ -62,71 +62,40 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
         Log.d("EventType:", event?.type);
 
         if (event?.type?.compareTo("m.room.join_rules") == 0) {
-            updateOrCreateRoom(roomRepository.updateOrCreateRoomFromRemote(event.roomId))
-            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event.roomId))
+            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe{
+                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({},{
+                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
+                });
+            };
         }
         if (event?.type?.compareTo("m.room.name") == 0) {
-            updateOrCreateRoom(roomRepository.updateOrCreateRoomFromRemote(event.roomId))
-            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event.roomId))
+            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe{
+                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({},{
+                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
+                });
+            };
         }
         if (event?.type?.compareTo("m.room.member") == 0) {
-            updateOrCreateRoom(roomRepository.updateOrCreateRoomFromRemote(event.roomId))
-            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event.roomId))
+            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe{
+                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({},{
+                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
+                });
+            };
         }
         if (event?.type?.compareTo("m.room.message") == 0) {
-            updateOrCreateRoom(roomRepository.updateOrCreateRoomFromRemote(event.roomId))
-            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event.roomId))
+            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe{
+                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({},{
+                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
+                });
+            };
         }
         if (event?.type?.compareTo("m.room.encrypted") == 0) {
-            updateOrCreateRoom(roomRepository.updateOrCreateRoomFromRemote(event.roomId))
-            updateOrCreateRoomUserJoin(event.roomId, userRepository.updateOrCreateNewUserFromRemote(event.roomId))
+            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe{
+                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({},{
+                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
+                });
+            };
         }
-    }
-
-    private fun updateOrCreateRoom(room: LiveData<Resource<Room>>) {
-        var observer: Observer<Resource<Room>>? = null;
-        observer = Observer { t ->
-            t?.let { obj ->
-                when (obj.status) {
-                    Status.ERROR -> {
-                        Toast.makeText(application, obj.message, Toast.LENGTH_LONG).show();
-                        observer?.let { room.removeObserver(it) }
-                    }
-                    Status.SUCCESS -> {
-                        observer?.let { room.removeObserver(it) }
-                    }
-                    Status.LOADING -> {
-                    }
-                }
-            }
-        }
-        room.observeForever { observer }
-    }
-
-    private fun updateOrCreateRoomUserJoin(roomId: String, user: LiveData<Resource<List<vmodev.clearkeep.viewmodelobjects.User>>>) {
-        var observer: Observer<Resource<List<vmodev.clearkeep.viewmodelobjects.User>>>? = null;
-        observer = Observer { t ->
-            t?.let { obj ->
-                when (obj.status) {
-                    Status.ERROR -> {
-                        Toast.makeText(application, obj.message, Toast.LENGTH_LONG).show();
-                        roomUserJoinRepository.updateOrCreateRoomUserJoin(roomId, mxSession!!.myUserId);
-                        observer?.let { user.removeObserver(it) }
-                    }
-                    Status.SUCCESS -> {
-                        obj.data?.let {
-                            it.forEach {
-                                roomUserJoinRepository.updateOrCreateRoomUserJoin(roomId, it.id);
-                            }
-                        }
-                        observer?.let { user.removeObserver(it) }
-                    }
-                    Status.LOADING -> {
-                    }
-                }
-            }
-        }
-        user.observeForever { observer }
     }
 
     /**

@@ -1,9 +1,7 @@
 package vmodev.clearkeep.repositories
 
 import android.arch.lifecycle.LiveData
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Scheduler
+import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
@@ -12,6 +10,7 @@ import vmodev.clearkeep.databases.AbstractUserDao
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.wayloads.AbstractLocalBoundSource
 import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSource
+import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSourceReturnRx
 import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSourceRx
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.*
@@ -41,6 +40,29 @@ class RoomUserJoinRepository @Inject constructor(private val roomUserJoinDao: Ab
                 }
             }
         }
+    }
+
+    fun updateOrCreateRoomUserJoinRx(roomId: String, userId: String): Observable<RoomUserJoin> {
+        return object : AbstractNetworkBoundSourceReturnRx<RoomUserJoin, RoomUserJoin>() {
+            override fun shouldFetch(data: RoomUserJoin?): Boolean {
+                return data == null;
+            }
+
+            override fun saveCallResult(item: RoomUserJoin) {
+                roomUserJoinDao.insert(item);
+            }
+
+            override fun loadFromDb(): Single<RoomUserJoin> {
+                return roomUserJoinDao.getRoomUserJoinWithRoomIdAndUserIdRx(roomId, userId);
+            }
+
+            override fun createCall(): Observable<RoomUserJoin> {
+                return Observable.create { emitter ->
+                    emitter.onNext(RoomUserJoin(roomId = roomId, userId = userId));
+                    emitter.onComplete();
+                }
+            }
+        }.getObject();
     }
 
     fun insertRoomUserJoin(roomId: String, userId: String) {

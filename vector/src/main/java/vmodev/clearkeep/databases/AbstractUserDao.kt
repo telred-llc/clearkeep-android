@@ -2,6 +2,8 @@ package vmodev.clearkeep.databases
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import io.reactivex.Flowable
+import io.reactivex.Single
 import vmodev.clearkeep.viewmodelobjects.User
 
 @Dao
@@ -44,6 +46,9 @@ abstract class AbstractUserDao {
 
     @Query("SELECT user.* FROM user INNER JOIN roomUserJoin ON user.id = roomUserJoin.user_id INNER JOIN room ON room.id = roomUserJoin.room_id WHERE room.id =:roomId")
     abstract fun getUsersWithRoomId(roomId: String): LiveData<List<User>>
+
+    @Query("SELECT user.* FROM user INNER JOIN roomUserJoin ON user.id = roomUserJoin.user_id INNER JOIN room ON room.id = roomUserJoin.room_id WHERE room.id =:roomId")
+    abstract fun getUsersWithRoomIdRx(roomId: String): Single<List<User>>
 
     @Query("SELECT * FROM user WHERE id IN (:ids)")
     abstract fun getUsersWithId(ids: Array<String>): LiveData<List<User>>

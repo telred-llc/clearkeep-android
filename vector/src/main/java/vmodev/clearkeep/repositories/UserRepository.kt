@@ -2,9 +2,7 @@ package vmodev.clearkeep.repositories
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Completable
-import io.reactivex.Observable
+import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
@@ -154,6 +152,57 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
                 return users;
             }
         }.asLiveData();
+    }
+    fun updateOrCreateNewUserFromRemoteRx(roomId: String) : Observable<List<User>>{
+        return object : AbstractNetworkCreateAndUpdateSourceReturnRx<List<User>, List<User>>(){
+            override fun insertResult(item: List<User>) {
+                abstractUserDao.insertUsers(item);
+            }
+
+            override fun updateResult(item: List<User>) {
+                abstractUserDao.updateUsers(item);
+            }
+
+            override fun loadFromDb(): Single<List<User>> {
+                return abstractUserDao.getUsersWithRoomIdRx(roomId);
+            }
+
+            override fun createCall(): Observable<List<User>> {
+                return matrixService.getUsersInRoom(roomId);
+            }
+
+            override fun getInsertItem(remoteItem: List<User>, localItem: List<User>?): List<User> {
+                val users = ArrayList<User>();
+                remoteItem?.let { r ->
+                    localItem?.let { l ->
+                        users.addAll(r);
+                    } ?: run {
+                        users.addAll(r);
+                    }
+                } ?: run {
+                    localItem?.let {
+                        users.addAll(it);
+                    }
+                }
+                return users;
+            }
+
+            override fun getUpdateItem(remoteItem: List<User>, localItem: List<User>?): List<User> {
+                val users = ArrayList<User>();
+                remoteItem?.let { r ->
+                    localItem?.let { l ->
+                        users.addAll(r);
+                    } ?: run {
+                        users.addAll(r);
+                    }
+                } ?: run {
+                    localItem?.let {
+                        users.addAll(it);
+                    }
+                }
+                return users;
+            }
+        }.getObject();
     }
 
     override fun getUsersWithId(userIds: Array<String>): LiveData<Resource<List<User>>> {

@@ -2,6 +2,9 @@ package vmodev.clearkeep.databases
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import io.reactivex.Flowable
+import io.reactivex.Maybe
+import io.reactivex.Single
 import vmodev.clearkeep.viewmodelobjects.*
 import vmodev.clearkeep.viewmodelobjects.Room
 import java.util.ArrayList
@@ -39,10 +42,13 @@ abstract class AbstractRoomUserJoinDao {
     @Query("SELECT roomUserJoin.* FROM roomUserJoin INNER JOIN room ON room.id = roomUserJoin.room_id INNER JOIN user ON user.id = roomUserJoin.user_id WHERE room.id =:roomId AND user.id =:userId")
     abstract fun getRoomUserJoinWithRoomIdAndUserId(roomId: String, userId: String): LiveData<RoomUserJoin>;
 
-    @Query("SELECT DISTINCT roomUserJoin.room_id, room.* FROM RoomUserJoin INNER JOIN Room ON roomUserJoin.room_id = room.id WHERE room.type =:typeOne")
+    @Query("SELECT roomUserJoin.* FROM roomUserJoin INNER JOIN room ON room.id = roomUserJoin.room_id INNER JOIN user ON user.id = roomUserJoin.user_id WHERE room.id =:roomId AND user.id =:userId")
+    abstract fun getRoomUserJoinWithRoomIdAndUserIdRx(roomId: String, userId: String): Single<RoomUserJoin>;
+
+    @Query("SELECT DISTINCT roomUserJoin.room_id, room.* FROM RoomUserJoin INNER JOIN Room ON roomUserJoin.room_id = room.id WHERE room.type =:typeOne ORDER BY room.type DESC, room.updatedDate DESC")
     abstract fun getListRoomListUserOne(typeOne: Int): LiveData<List<RoomListUser>>
 
-    @Query("SELECT DISTINCT roomUserJoin.room_id, room.* FROM RoomUserJoin INNER JOIN Room ON roomUserJoin.room_id = room.id WHERE room.type =:typeOne OR room.type =:typeTwo")
+    @Query("SELECT DISTINCT roomUserJoin.room_id, room.* FROM RoomUserJoin INNER JOIN Room ON roomUserJoin.room_id = room.id WHERE room.type =:typeOne OR room.type =:typeTwo ORDER BY room.type DESC, room.updatedDate DESC")
     abstract fun getListRoomListUserTwo(typeOne: Int, typeTwo: Int): LiveData<List<RoomListUser>>
 
     @Query("SELECT DISTINCT roomUserJoin.room_id, room.* FROM roomUserJoin INNER JOIN room ON roomUserJoin.room_id = room.id WHERE room.type =:typeOne OR room.type =:typeTwo")

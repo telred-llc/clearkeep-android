@@ -5,7 +5,9 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.util.Log
 import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.databases.AbstractRoomDao
@@ -120,6 +122,30 @@ class RoomRepository @Inject constructor(
                 return matrixService.getRoomWithId(id);
             }
         }.asLiveData();
+    }
+
+    fun updateOrCreateRoomFromRemoteRx(id : String) : Observable<Room>{
+        return object : AbstractNetworkCreateOrUpdateSourceReturnRx<Room, Room>(){
+            override fun loadFromDb(): Single<Room> {
+                return abstractRoomDao.findByIdRx(id);
+            }
+
+            override fun updateOrCreate(item: Room): Boolean {
+                return item == null;
+            }
+
+            override fun createNewItem(item: Room) {
+                abstractRoomDao.insert(item);
+            }
+
+            override fun updateItem(item: Room) {
+                abstractRoomDao.updateRoom(item);
+            }
+
+            override fun createCall(): Observable<Room> {
+                return matrixService.getRoomWithId(id);
+            }
+        }.getObject();
     }
 
     @SuppressLint("CheckResult")
