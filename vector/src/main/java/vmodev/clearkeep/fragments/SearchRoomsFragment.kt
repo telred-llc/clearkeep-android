@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -13,11 +14,13 @@ import android.view.ViewGroup
 import dagger.android.support.DaggerFragment
 
 import im.vector.R
+import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.FragmentSearchRoomsBinding
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
@@ -29,6 +32,7 @@ import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+private const val USER_ID = "USER_ID";
 
 /**
  * A simple [Fragment] subclass.
@@ -42,6 +46,7 @@ import javax.inject.Inject
 class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
     // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
+    private lateinit var userId: String;
 
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractSearchRoomsFragmentViewModel>;
@@ -52,12 +57,13 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
 
     private val bindingDataComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
     private lateinit var binding: FragmentSearchRoomsBinding;
-//    private lateinit var roomViewModel: AbstractRoomViewModel;
+    //    private lateinit var roomViewModel: AbstractRoomViewModel;
     private var disposable: Disposable? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+            userId = it.getString(USER_ID, "");
         }
     }
 
@@ -70,15 +76,28 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        binding.rooms = roomViewModel.getFindByTextResult();
         listRoomRecyclerViewAdapter.setDataBindingComponent(bindingDataComponent)
+        listRoomRecyclerViewAdapter.setOnItemClick { roomListUser, i ->
+            roomListUser.room?.let {
+                when (i) {
+                    3 -> {
+                        val intentRoom = Intent(this.context, RoomActivity::class.java);
+                        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
+                        intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, it.id);
+                        startActivity(intentRoom);
+                    }
+                }
+            }
+        }
         binding.recyclerView.adapter = listRoomRecyclerViewAdapter.getAdapter();
-//        roomViewModel.getFindByTextResult().observe(viewLifecycleOwner, Observer { t ->
-//
-//        });
-//        viewModelFactory.getViewModel().getRoomSearchResult().observe(this, Observer {
-////            listRoomRecyclerViewAdapter.getAdapter().submitList(it?.data);
-//        })
+        viewModelFactory.getViewModel().getListRoomIdResult().observe(viewLifecycleOwner, Observer {
+            it?.data?.let {
+                viewModelFactory.getViewModel().setListRoomId(it);
+            }
+        })
+        viewModelFactory.getViewModel().getRoomSearchResult().observe(viewLifecycleOwner, Observer {
+            listRoomRecyclerViewAdapter.getAdapter().submitList(it?.data);
+        })
         binding.lifecycleOwner = viewLifecycleOwner;
     }
 
@@ -129,20 +148,21 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance() =
+        fun newInstance(userId: String) =
                 SearchRoomsFragment().apply {
                     arguments = Bundle().apply {
+                        putString(USER_ID, userId);
                     }
                 }
     }
 
     override fun selectedFragment(query: String): ISearchFragment {
-//        roomViewModel.setTextForFindByText(query);
-//        disposable = getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe { t: String? ->
-//            t?.let { s ->
-//                roomViewModel.setTextForFindByText(s);
-//            }
-//        };
+        viewModelFactory.getViewModel().setQueryForSearch(query);
+        disposable = getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe { t: String? ->
+            t?.let { s ->
+                viewModelFactory.getViewModel().setQueryForSearch(s);
+            }
+        };
         return this;
     }
 

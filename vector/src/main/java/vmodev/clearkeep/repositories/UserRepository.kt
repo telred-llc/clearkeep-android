@@ -49,12 +49,15 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
     }
 
     override fun findUserFromNetwork(keyword: String): LiveData<Resource<List<User>>> {
-        return object : AbstractNetworkNonBoundSource<List<User>>() {
-            override fun createCall(): LiveData<List<User>> {
-                return LiveDataReactiveStreams.fromPublisher(matrixService.findListUser(keyword).subscribeOn(Schedulers.newThread())
-                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST));
+        return object : AbstractLoadFromNetworkRx<List<User>>(){
+            override fun createCall(): Observable<List<User>> {
+                return matrixService.findListUser(keyword);
             }
-        }.asLiveData()
+
+            override fun saveCallResult(item: List<User>) {
+                abstractUserDao.insertUsers(item);
+            }
+        }.asLiveData();
     }
 
     override fun updateUser(userId: String, name: String, avatarImage: InputStream?): LiveData<Resource<User>> {

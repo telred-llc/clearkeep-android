@@ -501,9 +501,9 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                         } else {
                             if (t?.result?.type?.compareTo("m.room.name") == 0) {
 //                                val result: SearchMessageByTextResult = Gson().fromJson(t?.result?.content, SearchMessageByTextResult::class.java);
-                                val room = matrixRoomToRoom(session!!.dataHandler.getRoom(t?.result.roomId));
+//                                val room = matrixRoomToRoom(session!!.dataHandler.getRoom(t?.result.roomId));
 
-                                searchResults.add(room as T);
+                                searchResults.add(t?.result.roomId as T);
                             }
                         }
                     }

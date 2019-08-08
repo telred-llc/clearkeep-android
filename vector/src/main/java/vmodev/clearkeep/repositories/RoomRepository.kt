@@ -226,10 +226,10 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
-    fun findListRoomWithText(keyword: String): LiveData<Resource<List<Room>>> {
-        return object : AbstractNetworkNonBoundSource<List<Room>>() {
-            override fun createCall(): LiveData<List<Room>> {
-                return LiveDataReactiveStreams.fromPublisher(matrixService.findListMessageText(keyword, Room::class.java)
+    fun     findListRoomWithText(keyword: String): LiveData<Resource<List<String>>> {
+        return object : AbstractNetworkNonBoundSource<List<String>>() {
+            override fun createCall(): LiveData<List<String>> {
+                return LiveDataReactiveStreams.fromPublisher(matrixService.findListMessageText(keyword, String::class.java)
                         .subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).toFlowable(BackpressureStrategy.LATEST))
             }
         }.asLiveData()

@@ -8,6 +8,7 @@ import vmodev.clearkeep.repositories.RoomUserJoinRepository
 import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.RoomListUser
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractFavouritesFragmentViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserInformationActivityViewModel
@@ -22,8 +23,8 @@ class UserInformationActivityViewModel @Inject constructor(userRepository: UserR
     private val _roomIdForJoinRoom = MutableLiveData<String>();
     private val _userIdForCreateNewConversation = MutableLiveData<String>();
     private val _userByIdResult = Transformations.switchMap(_userId) { input -> userRepository.loadUser(input) }
-    private val _directChatRoomsResult = Transformations.switchMap(_userId) { input -> roomRepository.getDirectChatRoomByUserId(input) }
-    private val _roomChatRoomsResult = Transformations.switchMap(_userId) { input -> roomRepository.getRoomChatRoomByUserId(input) }
+    private val _directChatRoomsResult = Transformations.switchMap(_userId) { input -> roomUserJoinRepository.getListRoomListUserWithFilterAndUserId(input, arrayOf(1, 65, 129)) }
+    private val _roomChatRoomsResult = Transformations.switchMap(_userId) { input -> roomUserJoinRepository.getListRoomListUserWithFilterAndUserId(input, arrayOf(2, 66, 130)) }
     private val _leaveRoomWithIdResult = Transformations.switchMap(_roomIdForLeave) { input -> roomRepository.leaveRoom(input) }
     private val _addRoomToFavouriteResult = Transformations.switchMap(_roomIdForAddToFavourite) { input -> roomRepository.addToFavourite(input) }
     private val _removeRoomFromFavouriteResult = Transformations.switchMap(_roomIdForRemoveFromFavourite) { input -> roomRepository.removeFromFavourite(input) }
@@ -40,11 +41,11 @@ class UserInformationActivityViewModel @Inject constructor(userRepository: UserR
         return _userByIdResult;
     }
 
-    override fun getDirectChatByUserIdResult(): LiveData<Resource<List<Room>>> {
+    override fun getDirectChatByUserIdResult(): LiveData<Resource<List<RoomListUser>>> {
         return _directChatRoomsResult;
     }
 
-    override fun getRoomChatByUserIdResult(): LiveData<Resource<List<Room>>> {
+    override fun getRoomChatByUserIdResult(): LiveData<Resource<List<RoomListUser>>> {
         return _roomChatRoomsResult;
     }
 

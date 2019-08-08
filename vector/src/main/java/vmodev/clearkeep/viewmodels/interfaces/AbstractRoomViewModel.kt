@@ -23,7 +23,7 @@ abstract class AbstractRoomViewModel : ViewModel() {
     abstract fun setInviteUsersToRoom(roomId: String, userIds: List<String>);
     abstract fun getInviteUsersToRoomResult(): LiveData<Resource<Room>>;
     abstract fun setTextForFindByText(keyword: String);
-    abstract fun getFindByTextResult(): LiveData<Resource<List<Room>>>;
+    abstract fun getFindByTextResult(): LiveData<Resource<List<String>>>;
     abstract fun setAddToFavourite(roomId: String);
     abstract fun getAddToFavouriteResult(): LiveData<Resource<Room>>
     abstract fun setRemoveFromFavourite(roomId: String);

@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
@@ -21,18 +22,20 @@ import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import vmodev.clearkeep.activities.ProfileActivity
+import vmodev.clearkeep.activities.UserInformationActivity
 import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
 import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchPeopleFragmentViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -43,42 +46,35 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class SearchPeopleFragment : DaggerFragment(), ISearchFragment {
+class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractSearchPeopleFragmentViewModel>;
     @Inject
     lateinit var appExecutors: AppExecutors;
 
-    private val dataBindingComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
     private lateinit var binding: FragmentSearchPeopleBinding;
-    private lateinit var userViewModel: AbstractUserViewModel;
     private var disposable: Disposable? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate<FragmentSearchPeopleBinding>(inflater, R.layout.fragment_search_people, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search_people, container, false, dataBindingComponent);
         return binding.root;
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        userViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractUserViewModel::class.java);
 
-        val listUserAdapter: ListUserRecyclerViewAdapter = ListUserRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<User>() {
+        val listUserAdapter = ListUserRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<User>() {
             override fun areItemsTheSame(p0: User, p1: User): Boolean {
                 return p0.id == p1.id;
             }
@@ -87,10 +83,15 @@ class SearchPeopleFragment : DaggerFragment(), ISearchFragment {
                 return p0.name == p1.name && p0.avatarUrl == p1.avatarUrl;
             }
         }, dataBindingComponent = dataBindingComponent) { user ->
+            activity?.let {
+                val intentUserProfile = Intent(it, UserInformationActivity::class.java);
+                intentUserProfile.putExtra(UserInformationActivity.USER_ID, user.id);
+                startActivity(intentUserProfile);
+            }
         }
         binding.recyclerView.adapter = listUserAdapter;
-        binding.users = userViewModel.getUsers();
-        userViewModel.getUsers().observe(viewLifecycleOwner, Observer { t -> listUserAdapter.submitList(t?.data) });
+        binding.users = viewModelFactory.getViewModel().getSearchResult();
+        viewModelFactory.getViewModel().getSearchResult().observe(viewLifecycleOwner, Observer { t -> listUserAdapter.submitList(t?.data) });
         binding.lifecycleOwner = viewLifecycleOwner;
 
     }
@@ -140,26 +141,22 @@ class SearchPeopleFragment : DaggerFragment(), ISearchFragment {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
          * @return A new instance of fragment SearchPeopleFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance() =
                 SearchPeopleFragment().apply {
                     arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
                     }
                 }
     }
 
     override fun selectedFragment(query: String): ISearchFragment {
-        userViewModel.setQuery(query);
+        viewModelFactory.getViewModel().setQueryForSearch(query);
         disposable = getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe { t: String? ->
             t?.let { s ->
-                userViewModel.setQuery(s)
+                viewModelFactory.getViewModel().setQueryForSearch(query);
             }
         }
         return this;

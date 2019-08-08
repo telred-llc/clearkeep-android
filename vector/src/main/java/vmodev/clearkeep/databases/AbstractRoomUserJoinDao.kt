@@ -46,16 +46,28 @@ abstract class AbstractRoomUserJoinDao {
     abstract fun getRoomUserJoinWithRoomIdAndUserIdRx(roomId: String, userId: String): Single<RoomUserJoin>;
 
     @Query("SELECT DISTINCT roomUserJoin.room_id, room.* FROM RoomUserJoin INNER JOIN Room ON roomUserJoin.room_id = room.id WHERE room.type =:typeOne ORDER BY room.type DESC, room.updatedDate DESC")
-    abstract fun getListRoomListUserOne(typeOne: Int): LiveData<List<RoomListUser>>
+    abstract fun getListRoomListUserWithFilter(typeOne: Int): LiveData<List<RoomListUser>>
 
     @Query("SELECT DISTINCT roomUserJoin.room_id, room.* FROM RoomUserJoin INNER JOIN Room ON roomUserJoin.room_id = room.id WHERE room.type =:typeOne OR room.type =:typeTwo ORDER BY room.type DESC, room.updatedDate DESC")
-    abstract fun getListRoomListUserTwo(typeOne: Int, typeTwo: Int): LiveData<List<RoomListUser>>
+    abstract fun getListRoomListUserWithFilter(typeOne: Int, typeTwo: Int): LiveData<List<RoomListUser>>
 
     @Query("SELECT DISTINCT roomUserJoin.room_id, room.* FROM roomUserJoin INNER JOIN room ON roomUserJoin.room_id = room.id WHERE room.type =:typeOne OR room.type =:typeTwo")
     abstract fun getListRoomUserListTwo(typeOne: Int, typeTwo: Int): LiveData<List<RoomUserList>>
 
     @Query("SELECT DISTINCT User.* FROM User WHERE User.id IN (:ids)")
     abstract fun getListUserInRoom(ids: List<String>): LiveData<List<User>>
+
+    @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.* FROM RoomUserJoin INNER JOIN Room ON RoomUserJoin.room_id = Room.id INNER JOIN User ON RoomUserJoin.user_id = User.id WHERE User.id =:userId AND type =:filterOne")
+    abstract fun getListRoomListUserWithFilterAndUserId(userId: String, filterOne: Int): LiveData<List<RoomListUser>>;
+
+    @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.* FROM RoomUserJoin INNER JOIN Room ON RoomUserJoin.room_id = Room.id INNER JOIN User ON RoomUserJoin.user_id = User.id WHERE User.id =:userId AND (Room.type =:filterOne OR Room.type =:filterTwo)")
+    abstract fun getListRoomListUserWithFilterAndUserId(userId: String, filterOne: Int, filterTwo: Int): LiveData<List<RoomListUser>>;
+
+    @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.* FROM RoomUserJoin INNER JOIN Room ON RoomUserJoin.room_id = Room.id INNER JOIN User ON RoomUserJoin.user_id = User.id WHERE User.id =:userId AND (Room.type =:filterOne OR Room.type =:filterTwo OR Room.type =:filterThree)")
+    abstract fun getListRoomListUserWithFilterAndUserId(userId: String, filterOne: Int, filterTwo: Int, filterThree: Int): LiveData<List<RoomListUser>>;
+
+    @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.* FROM RoomUserJoin INNER JOIN Room ON RoomUserJoin.room_id = Room.id WHERE room.id IN (:roomIds)")
+    abstract fun getListRoomListUserWithListRoomId(roomIds : List<String>) : LiveData<List<RoomListUser>>;
 
     fun getListRoomWithUsers(typeOne: Int, typeTwo: Int): LiveData<List<RoomUserList>> {
         val list = getListRoomUserListTwo(typeOne, typeTwo);
@@ -72,9 +84,18 @@ abstract class AbstractRoomUserJoinDao {
 
     fun getListRoomListUser(filters: Array<Int>): LiveData<List<RoomListUser>> {
         when (filters.size) {
-            1 -> return getListRoomListUserOne(filters[0])
-            2 -> return getListRoomListUserTwo(filters[0], filters[1])
-            else -> return getListRoomListUserOne(0)
+            1 -> return getListRoomListUserWithFilter(filters[0])
+            2 -> return getListRoomListUserWithFilter(filters[0], filters[1])
+            else -> return getListRoomListUserWithFilter(0)
+        }
+    }
+
+    fun getListRoomWithFilterAndUserId(userId: String, filters: Array<Int>): LiveData<List<RoomListUser>> {
+        when (filters.size) {
+            1 -> return getListRoomListUserWithFilterAndUserId(userId, filters[0]);
+            2 -> return getListRoomListUserWithFilterAndUserId(userId, filters[0], filters[1]);
+            3 -> return getListRoomListUserWithFilterAndUserId(userId, filters[0], filters[1], filters[2])
+            else -> return getListRoomListUserWithFilterAndUserId(userId, 0);
         }
     }
 }

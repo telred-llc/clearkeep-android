@@ -41,7 +41,7 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository, roomUser
     private val inviteUsersToRoom: LiveData<Resource<Room>> = Transformations.switchMap(_inviteUserToRoom) { input ->
         roomRepository.inviteUsersToRoom(input);
     }
-    private val findBytTextResult: LiveData<Resource<List<Room>>> = Transformations.switchMap(_findByText) { input -> roomRepository.findListRoomWithText(input) }
+    private val findBytTextResult: LiveData<Resource<List<String>>> = Transformations.switchMap(_findByText) { input -> roomRepository.findListRoomWithText(input) }
 
     private val addToFavourite: LiveData<Resource<Room>> = Transformations.switchMap(_addToFavourite) { input ->
         roomRepository.addToFavourite(input);
@@ -125,7 +125,7 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository, roomUser
             _findByText.value = keyword;
     }
 
-    override fun getFindByTextResult(): LiveData<Resource<List<Room>>> {
+    override fun getFindByTextResult(): LiveData<Resource<List<String>>> {
         return findBytTextResult;
     }
 

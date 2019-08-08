@@ -9,6 +9,7 @@ import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.SearchMessageFragmentViewModelFactory
+import vmodev.clearkeep.factories.viewmodels.SearchPeopleFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.SearchRoomsFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
@@ -19,6 +20,7 @@ import vmodev.clearkeep.fragments.SearchRoomsFragment
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchMessageFragmentViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchPeopleFragmentViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchRoomsFragmentViewModel
 import javax.inject.Named
 
@@ -46,10 +48,17 @@ abstract class AbstractSearchActivityFragmentsBuilderModule {
     abstract fun bindSearchRoomFragment(fragment: SearchRoomsFragment): IFragment;
 
     @Binds
+    @Named(IFragment.SEARCH_PEOPLE_FRAGMENT)
+    abstract fun bindSearchPeopleFragment(fragment: SearchPeopleFragment): IFragment;
+
+    @Binds
     abstract fun bindSearchMessageFragmentViewModelFactory(factory: SearchMessageFragmentViewModelFactory): IViewModelFactory<AbstractSearchMessageFragmentViewModel>;
 
     @Binds
     abstract fun bindSearchRoomFragmentViewModelFactory(factory: SearchRoomsFragmentViewModelFactory): IViewModelFactory<AbstractSearchRoomsFragmentViewModel>;
+
+    @Binds
+    abstract fun bindSearchPeopleFragmentViewModelFactory(factory : SearchPeopleFragmentViewModelFactory) : IViewModelFactory<AbstractSearchPeopleFragmentViewModel>;
 
     @Module
     companion object {

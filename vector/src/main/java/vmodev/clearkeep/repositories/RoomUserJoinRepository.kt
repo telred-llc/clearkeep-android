@@ -8,10 +8,7 @@ import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.databases.AbstractRoomDao
 import vmodev.clearkeep.databases.AbstractUserDao
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
-import vmodev.clearkeep.repositories.wayloads.AbstractLocalBoundSource
-import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSource
-import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSourceReturnRx
-import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSourceRx
+import vmodev.clearkeep.repositories.wayloads.*
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.*
 import javax.inject.Inject
@@ -75,6 +72,22 @@ class RoomUserJoinRepository @Inject constructor(private val roomUserJoinDao: Ab
         return object : AbstractLocalBoundSource<List<RoomListUser>>() {
             override fun loadFromDb(): LiveData<List<RoomListUser>> {
                 return roomUserJoinDao.getListRoomListUser(filters);
+            }
+        }.asLiveData();
+    }
+
+    fun getListRoomListUserWithFilterAndUserId(userId: String, filters: Array<Int>): LiveData<Resource<List<RoomListUser>>> {
+        return object : AbstractLocalBoundSource<List<RoomListUser>>() {
+            override fun loadFromDb(): LiveData<List<RoomListUser>> {
+                return roomUserJoinDao.getListRoomWithFilterAndUserId(userId, filters);
+            }
+        }.asLiveData();
+    }
+
+    fun getListRoomListUserWithListRoomId(roomIds: List<String>): LiveData<Resource<List<RoomListUser>>> {
+        return object : AbstractLocalLoadSouce<List<RoomListUser>>() {
+            override fun loadFromDB(): LiveData<List<RoomListUser>> {
+                return roomUserJoinDao.getListRoomListUserWithListRoomId(roomIds);
             }
         }.asLiveData();
     }

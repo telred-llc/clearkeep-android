@@ -190,5 +190,10 @@ abstract class ViewModelModule {
     abstract fun bindSearchRoomFragmentViewModel(viewModel: SearchRoomsFragmentViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractSearchPeopleFragmentViewModel::class)
+    abstract fun bindSearchPeopleFragmentViewModel(viewModel: SearchPeopleFragmentViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }
