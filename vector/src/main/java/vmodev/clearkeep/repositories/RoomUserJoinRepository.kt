@@ -84,10 +84,10 @@ class RoomUserJoinRepository @Inject constructor(private val roomUserJoinDao: Ab
         }.asLiveData();
     }
 
-    fun getListRoomListUserWithListRoomId(roomIds: List<String>): LiveData<Resource<List<RoomListUser>>> {
+    fun getListRoomListUserWithListRoomId(filters: List<Int>, query: String): LiveData<Resource<List<RoomListUser>>> {
         return object : AbstractLocalLoadSouce<List<RoomListUser>>() {
             override fun loadFromDB(): LiveData<List<RoomListUser>> {
-                return roomUserJoinDao.getListRoomListUserWithListRoomId(roomIds);
+                return roomUserJoinDao.findRoomByNameContain(filters, "%" + query + "%");
             }
         }.asLiveData();
     }

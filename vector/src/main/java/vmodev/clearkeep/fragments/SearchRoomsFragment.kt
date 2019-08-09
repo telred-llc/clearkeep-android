@@ -1,8 +1,6 @@
 package vmodev.clearkeep.fragments
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
@@ -11,7 +9,6 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import dagger.android.support.DaggerFragment
 
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
@@ -26,7 +23,6 @@ import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
-import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchRoomsFragmentViewModel
 import javax.inject.Inject
 
@@ -53,11 +49,14 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
     @Inject
     lateinit var appExecutors: AppExecutors;
     @Inject
-    lateinit var listRoomRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
+    lateinit var listRoomInviteRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
+    @Inject
+    lateinit var listRoomFavouriteRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
+    @Inject
+    lateinit var listRoomNormalRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
 
     private val bindingDataComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
     private lateinit var binding: FragmentSearchRoomsBinding;
-    //    private lateinit var roomViewModel: AbstractRoomViewModel;
     private var disposable: Disposable? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,8 +75,10 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        listRoomRecyclerViewAdapter.setDataBindingComponent(bindingDataComponent)
-        listRoomRecyclerViewAdapter.setOnItemClick { roomListUser, i ->
+        listRoomInviteRecyclerViewAdapter.setDataBindingComponent(bindingDataComponent)
+        listRoomFavouriteRecyclerViewAdapter.setDataBindingComponent(bindingDataComponent);
+        listRoomNormalRecyclerViewAdapter.setDataBindingComponent(dataBindingComponent);
+        listRoomInviteRecyclerViewAdapter.setOnItemClick { roomListUser, i ->
             roomListUser.room?.let {
                 when (i) {
                     3 -> {
@@ -89,15 +90,43 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
                 }
             }
         }
-        binding.recyclerView.adapter = listRoomRecyclerViewAdapter.getAdapter();
-        viewModelFactory.getViewModel().getListRoomIdResult().observe(viewLifecycleOwner, Observer {
-            it?.data?.let {
-                viewModelFactory.getViewModel().setListRoomId(it);
+        listRoomFavouriteRecyclerViewAdapter.setOnItemClick { roomListUser, i ->
+            roomListUser.room?.let {
+                when (i) {
+                    3 -> {
+                        val intentRoom = Intent(this.context, RoomActivity::class.java);
+                        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
+                        intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, it.id);
+                        startActivity(intentRoom);
+                    }
+                }
             }
+        }
+        listRoomNormalRecyclerViewAdapter.setOnItemClick { roomListUser, i ->
+            roomListUser.room?.let {
+                when (i) {
+                    3 -> {
+                        val intentRoom = Intent(this.context, RoomActivity::class.java);
+                        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
+                        intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, it.id);
+                        startActivity(intentRoom);
+                    }
+                }
+            }
+        }
+        binding.recyclerViewInvites.adapter = listRoomInviteRecyclerViewAdapter.getAdapter();
+        binding.recyclerViewFavourites.adapter = listRoomFavouriteRecyclerViewAdapter.getAdapter();
+        binding.recyclerViewRooms.adapter = listRoomNormalRecyclerViewAdapter.getAdapter();
+        viewModelFactory.getViewModel().getRoomInviteSearchResult().observe(viewLifecycleOwner, Observer {
+            listRoomInviteRecyclerViewAdapter.getAdapter().submitList(it?.data);
+        });
+        viewModelFactory.getViewModel().getRoomFavouriteSearchResult().observe(viewLifecycleOwner, Observer {
+            listRoomFavouriteRecyclerViewAdapter.getAdapter().submitList(it?.data);
         })
-        viewModelFactory.getViewModel().getRoomSearchResult().observe(viewLifecycleOwner, Observer {
-            listRoomRecyclerViewAdapter.getAdapter().submitList(it?.data);
+        viewModelFactory.getViewModel().getRoomNormalSearchResult().observe(viewLifecycleOwner, Observer {
+            listRoomNormalRecyclerViewAdapter.getAdapter().submitList(it?.data);
         })
+
         binding.lifecycleOwner = viewLifecycleOwner;
     }
 

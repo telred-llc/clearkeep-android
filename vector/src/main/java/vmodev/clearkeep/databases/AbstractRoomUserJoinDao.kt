@@ -67,7 +67,10 @@ abstract class AbstractRoomUserJoinDao {
     abstract fun getListRoomListUserWithFilterAndUserId(userId: String, filterOne: Int, filterTwo: Int, filterThree: Int): LiveData<List<RoomListUser>>;
 
     @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.* FROM RoomUserJoin INNER JOIN Room ON RoomUserJoin.room_id = Room.id WHERE room.id IN (:roomIds)")
-    abstract fun getListRoomListUserWithListRoomId(roomIds : List<String>) : LiveData<List<RoomListUser>>;
+    abstract fun getListRoomListUserWithListRoomId(roomIds: List<String>): LiveData<List<RoomListUser>>;
+
+    @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.* FROM RoomUserJoin INNER JOIN Room ON RoomUserJoin.room_id = Room.id WHERE Room.name LIKE :query AND type IN(:filters)")
+    abstract fun findRoomByNameContain(filters: List<Int>, query: String): LiveData<List<RoomListUser>>
 
     fun getListRoomWithUsers(typeOne: Int, typeTwo: Int): LiveData<List<RoomUserList>> {
         val list = getListRoomUserListTwo(typeOne, typeTwo);
