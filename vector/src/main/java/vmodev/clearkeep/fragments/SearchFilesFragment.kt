@@ -1,33 +1,35 @@
 package vmodev.clearkeep.fragments
 
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
+import android.arch.lifecycle.Observer
 import android.content.Context
+import android.content.Intent
 import android.databinding.DataBindingUtil
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.util.DiffUtil
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import dagger.android.support.DaggerFragment
-
 import im.vector.R
 import im.vector.databinding.FragmentSearchFilesBinding
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import vmodev.clearkeep.binding.FragmentDataBindingComponent
+import vmodev.clearkeep.activities.RoomActivity
+import vmodev.clearkeep.adapters.ListSearchMessageRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
-import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchViewModel
+import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
+import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchFilesFragmentViewModel
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val USER_ID = "USER_ID"
 
 /**
  * A simple [Fragment] subclass.
@@ -38,27 +40,25 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class SearchFilesFragment : DaggerFragment(), ISearchFragment {
+class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var userId: String? = null
     private var listener: OnFragmentInteractionListener? = null
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractSearchFilesFragmentViewModel>
     @Inject
     lateinit var appExecutors: AppExecutors;
 
-    private val dataBindingComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
     private lateinit var binding: FragmentSearchFilesBinding;
-    private lateinit var searchViewModel: AbstractSearchViewModel;
     private var disposable: Disposable? = null;
+    private val listMessage = ArrayList<MessageRoomUser>();
+    private lateinit var listSearchAdapter: ListSearchMessageRecyclerViewAdapter;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            userId = it.getString(USER_ID, "");
         }
     }
 
@@ -76,8 +76,53 @@ class SearchFilesFragment : DaggerFragment(), ISearchFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        searchViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractSearchViewModel::class.java);
-        binding.results = searchViewModel.getSearchMediaByTextResult();
+
+        listSearchAdapter = ListSearchMessageRecyclerViewAdapter(appExecutors = appExecutors
+                , dataBindingComponent = dataBindingComponent, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
+            override fun areItemsTheSame(p0: MessageRoomUser, p1: MessageRoomUser): Boolean {
+                return p0.message?.id == p1.message?.id
+            }
+
+            override fun areContentsTheSame(p0: MessageRoomUser, p1: MessageRoomUser): Boolean {
+                return p0.room?.get(0)?.avatarUrl == p1.room?.get(0)?.avatarUrl && p0.message?.encryptedContent == p1.message?.encryptedContent
+                        && p0.user?.get(0)?.name == p1.user?.get(0)?.name;
+            }
+        }) { messageSearchText ->
+            val intentRoom = Intent(this.activity, RoomActivity::class.java);
+            messageSearchText.room?.let {
+                intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, it[0].id);
+            }
+
+            intentRoom.putExtra(RoomActivity.EXTRA_MATRIX_ID, userId);
+            messageSearchText.message?.let {
+                intentRoom.putExtra(RoomActivity.EXTRA_EVENT_ID, it.id);
+            }
+
+            startActivity(intentRoom);
+        };
+        binding.recyclerView.adapter = listSearchAdapter;
+        viewModelFactory.getViewModel().getListMessageRoomUser().observe(viewLifecycleOwner, Observer {
+            it?.data?.let {
+                viewModelFactory.getViewModel().decryptListMessage(it).observe(this, Observer {
+                    it?.data?.let {
+                        listMessage.addAll(it);
+                    }
+                })
+            }
+        })
+        viewModelFactory.getViewModel().setTimeForRefreshLoadMessage(Calendar.getInstance().timeInMillis);
+        getSearchViewTextChange()?.subscribe { s ->
+            listSearchAdapter.submitList(listMessage.filter { messageRoomUser ->
+                messageRoomUser.message?.let {
+                    if (s.isNullOrEmpty())
+                        false;
+                    else
+                        it.encryptedContent.contains(s)
+                } ?: run {
+                    false
+                }
+            })
+        }
         binding.lifecycleOwner = viewLifecycleOwner;
     }
 
@@ -122,19 +167,25 @@ class SearchFilesFragment : DaggerFragment(), ISearchFragment {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(userId: String) =
                 SearchFilesFragment().apply {
                     arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
+                        putString(USER_ID, userId)
                     }
                 }
     }
 
     override fun selectedFragment(query: String): ISearchFragment {
-        searchViewModel.setKeywordSearchMedia(query);
-        disposable = getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())
-                ?.subscribe { t: String? -> t?.let { s -> searchViewModel.setKeywordSearchMedia(s) } }
+        listSearchAdapter.submitList(listMessage.filter { messageRoomUser ->
+            messageRoomUser.message?.let {
+                if (query.isNullOrEmpty())
+                    false;
+                else
+                    it.encryptedContent.contains(query)
+            } ?: run {
+                false
+            }
+        })
         return this;
     }
 

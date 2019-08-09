@@ -1,4 +1,4 @@
-package vmodev.clearkeep.viewmodels
+ package vmodev.clearkeep.viewmodels
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
@@ -28,6 +28,6 @@ class SearchActivityViewModel @Inject constructor(private val messageRepository:
     }
 
     override fun decryptListMessage(messages: List<MessageRoomUser>): LiveData<Resource<List<MessageRoomUser>>> {
-        return messageRepository.decryptMessage(messages);
+        return messageRepository.decryptMessage(messages, "m.text");
     }
 }

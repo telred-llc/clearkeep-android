@@ -49,7 +49,7 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
         val binding: ActivitySearchBinding = DataBindingUtil.setContentView(this, R.layout.activity_search, dataBindingComponent);
         userId = intent.getStringExtra(USER_ID);
         arraySearchFragment = arrayOf(SearchRoomsFragment.newInstance(userId), SearchMessagesFragment.newInstance(userId),
-                SearchPeopleFragment.newInstance(), SearchFilesFragment.newInstance("", ""));
+                SearchPeopleFragment.newInstance(), SearchFilesFragment.newInstance(userId));
         binding.textViewCancel.setOnClickListener { v -> finish() }
         val pagerAdapter = SearchViewPagerAdapter(supportFragmentManager, arraySearchFragment);
         binding.tabLayout.setupWithViewPager(binding.viewPager);

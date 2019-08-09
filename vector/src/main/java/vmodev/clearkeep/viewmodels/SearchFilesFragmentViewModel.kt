@@ -3,14 +3,14 @@ package vmodev.clearkeep.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
-import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
 import vmodev.clearkeep.repositories.MessageRepository
 import vmodev.clearkeep.viewmodelobjects.Message
+import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
 import vmodev.clearkeep.viewmodelobjects.Resource
-import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchMessageFragmentViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchFilesFragmentViewModel
 import javax.inject.Inject
 
-class SearchMessageFragmentViewModel @Inject constructor(private val messageRepository: MessageRepository) : AbstractSearchMessageFragmentViewModel() {
+class SearchFilesFragmentViewModel @Inject constructor(private val messageRepository: MessageRepository) : AbstractSearchFilesFragmentViewModel() {
     private val _setTimeForRefreshLoadMessage = MutableLiveData<Long>();
     private val _loadMessagesResult = Transformations.switchMap(_setTimeForRefreshLoadMessage) { input ->
         messageRepository.updateListMessage();
@@ -31,7 +31,7 @@ class SearchMessageFragmentViewModel @Inject constructor(private val messageRepo
     }
 
     override fun decryptListMessage(messages: List<MessageRoomUser>): LiveData<Resource<List<MessageRoomUser>>> {
-        return messageRepository.decryptMessage(messages, "m.text");
+        return messageRepository.decryptMessage(messages, "m.image");
     }
 
     override fun getListMessageRoomUser(): LiveData<Resource<List<MessageRoomUser>>> {

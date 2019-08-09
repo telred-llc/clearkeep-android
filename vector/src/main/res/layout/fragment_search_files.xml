@@ -7,15 +7,17 @@
 
         <import type="java.util.List" />
 
-        <import type="android.arch.lifecycle.LiveData" />
-
         <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
 
         <import type="vmodev.clearkeep.viewmodelobjects.Status" />
 
+        <import type="android.arch.lifecycle.LiveData" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.MessageSearchText" />
+
         <variable
             name="results"
-            type="LiveData&lt;Resource&lt;List&lt;String>>>" />
+            type="LiveData&lt;Resource&lt;List&lt;MessageSearchText>>>" />
     </data>
 
     <FrameLayout
@@ -26,11 +28,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:visibleGone="@{results.status == Status.LOADING}"/>
+            app:visibleGone="@{results.status == Status.LOADING}" />
 
-        <TextView
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment" />
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_message_search"/>
     </FrameLayout>
+
 </layout>

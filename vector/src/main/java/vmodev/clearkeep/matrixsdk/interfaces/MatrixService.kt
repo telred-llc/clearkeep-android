@@ -48,5 +48,5 @@ public interface MatrixService {
     fun changeRoomNotificationState(roomId: String, state: Byte): Observable<Byte>;
     fun checkBackupKeyTypeWhenSignIn(): Observable<Int>;
     fun getMessagesToSearch(): Observable<List<Message>>;
-        fun decryptListMessage(messages: List<MessageRoomUser>): Observable<List<MessageRoomUser>>;
+    fun decryptListMessage(messages: List<MessageRoomUser>, msgType : String): Observable<List<MessageRoomUser>>;
 }

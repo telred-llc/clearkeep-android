@@ -36,7 +36,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/invite" />
+                    android:layout_margin="10dp"
+                    android:text="@string/invites"
+                    android:textSize="@dimen/text_20_sp" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_view_invites"
@@ -48,7 +50,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/add_to_favourite" />
+                    android:layout_margin="10dp"
+                    android:text="@string/favourites"
+                    android:textSize="@dimen/text_20_sp" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_view_favourites"
@@ -60,7 +64,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/add_to_favourite" />
+                    android:layout_margin="10dp"
+                    android:text="@string/rooms"
+                    android:textSize="@dimen/text_20_sp" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_view_rooms"

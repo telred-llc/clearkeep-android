@@ -1581,5 +1581,7 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="labs_swipe_to_reply_in_timeline">Enable swipe to reply in timeline</string>
 
     <string name="link_copied_to_clipboard">Link copied to clipboard</string>
+    <string name="favourites">Favourites</string>
+    <string name="invites">Invites</string>
 
 </resources>

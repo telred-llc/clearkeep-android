@@ -1693,7 +1693,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         }
     }
 
-    override fun decryptListMessage(messages: List<MessageRoomUser>): Observable<List<MessageRoomUser>> {
+    override fun decryptListMessage(messages: List<MessageRoomUser>, msgType : String): Observable<List<MessageRoomUser>> {
         setMXSession();
         return Observable.create { emitter ->
             val messagesResult = ArrayList<MessageRoomUser>();
@@ -1709,21 +1709,26 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                             val type = json.get("type").asString;
                             if (!type.isNullOrEmpty() && type.compareTo("m.room.message") == 0) {
                                 val message = gson.fromJson(result.mClearEvent, MessageContent::class.java);
-                                var messageResult: Message? = null
-                                item.message?.let {
-                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = message.getContent().getBody())
+                                if (message.getContent().getMsgType().compareTo(msgType) == 0) {
+                                    var messageResult: Message? = null
+                                    item.message?.let {
+                                        messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = message.getContent().getBody())
+                                    }
+                                    val messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
+                                    messagesResult.add(messageRooUser);
                                 }
-                                val messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
-                                messagesResult.add(messageRooUser);
                             }
                         }
                     } catch (e: MXDecryptionException) {
-//                        emitter.onError(Throwable(e.message))
+                        Log.d("DecryptError", e.message);
                     }
                 }
+                emitter.onNext(messagesResult);
+                emitter.onComplete();
+            } ?: run {
+                emitter.onError(Throwable("Crypto is null"))
+                emitter.onComplete();
             }
-            emitter.onNext(messagesResult);
-            emitter.onComplete();
         }
     }
 }

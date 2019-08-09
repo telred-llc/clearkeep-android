@@ -8,6 +8,7 @@ import dagger.android.ContributesAndroidInjector
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.factories.viewmodels.SearchFilesFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.SearchMessageFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.SearchPeopleFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.SearchRoomsFragmentViewModelFactory
@@ -19,6 +20,7 @@ import vmodev.clearkeep.fragments.SearchPeopleFragment
 import vmodev.clearkeep.fragments.SearchRoomsFragment
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
+import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchFilesFragmentViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchMessageFragmentViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchPeopleFragmentViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchRoomsFragmentViewModel
@@ -52,13 +54,20 @@ abstract class AbstractSearchActivityFragmentsBuilderModule {
     abstract fun bindSearchPeopleFragment(fragment: SearchPeopleFragment): IFragment;
 
     @Binds
+    @Named(IFragment.SEARCH_FILES_FRAGMENT)
+    abstract fun bindSearchFilesFragment(fragment: SearchFilesFragment): IFragment;
+
+    @Binds
     abstract fun bindSearchMessageFragmentViewModelFactory(factory: SearchMessageFragmentViewModelFactory): IViewModelFactory<AbstractSearchMessageFragmentViewModel>;
 
     @Binds
     abstract fun bindSearchRoomFragmentViewModelFactory(factory: SearchRoomsFragmentViewModelFactory): IViewModelFactory<AbstractSearchRoomsFragmentViewModel>;
 
     @Binds
-    abstract fun bindSearchPeopleFragmentViewModelFactory(factory : SearchPeopleFragmentViewModelFactory) : IViewModelFactory<AbstractSearchPeopleFragmentViewModel>;
+    abstract fun bindSearchPeopleFragmentViewModelFactory(factory: SearchPeopleFragmentViewModelFactory): IViewModelFactory<AbstractSearchPeopleFragmentViewModel>;
+
+    @Binds
+    abstract fun bindSearchFilesFragmentViewModelFactory(factory: SearchFilesFragmentViewModelFactory): IViewModelFactory<AbstractSearchFilesFragmentViewModel>;
 
     @Module
     companion object {

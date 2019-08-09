@@ -55,7 +55,7 @@ class SearchFragment : Fragment() {
 
     private fun setupViewPager() {
         val pagerAdapter = SearchViewPagerAdapter(childFragmentManager, arrayOf(SearchRoomsFragment.newInstance(""), SearchMessagesFragment.newInstance(""),
-                SearchPeopleFragment.newInstance(), SearchFilesFragment.newInstance("", "")));
+                SearchPeopleFragment.newInstance(), SearchFilesFragment.newInstance("")));
         tabLayout.setupWithViewPager(viewPager);
         viewPager.adapter = pagerAdapter;
     }
