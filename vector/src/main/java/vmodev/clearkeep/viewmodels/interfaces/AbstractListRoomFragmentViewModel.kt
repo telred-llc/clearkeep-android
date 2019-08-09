@@ -7,9 +7,11 @@ import vmodev.clearkeep.viewmodelobjects.*
 abstract class AbstractListRoomFragmentViewModel : ViewModel() {
     abstract fun setFiltersDirectRoom(filters: Array<Int>);
     abstract fun setFiltersGroupRoom(filters: Array<Int>)
+    abstract fun setFiltersFavouriteRoom(filters: Array<Int>);
 
-    abstract fun getListDirectRoomResult(): LiveData<Resource<List<Room>>>
-    abstract fun getListGroupRoomResult(): LiveData<Resource<List<Room>>>
+    abstract fun getListDirectRoomResult(): LiveData<Resource<List<RoomListUser>>>
+    abstract fun getListGroupRoomResult(): LiveData<Resource<List<RoomListUser>>>
+    abstract fun getListFavouritesResult(): LiveData<Resource<List<RoomListUser>>>
     abstract fun setLeaveRoomId(roomId: String);
     abstract fun getLeaveRoomWithIdResult(): LiveData<Resource<String>>;
     abstract fun setAddToFavouriteRoomId(roomId: String);
@@ -26,5 +28,7 @@ abstract class AbstractListRoomFragmentViewModel : ViewModel() {
     abstract fun getListRoomListUserDirectResult(): LiveData<Resource<List<RoomListUser>>>
     abstract fun getListRoomListUserGroup() : LiveData<Resource<List<RoomListUser>>>
 
+    abstract fun getRemoveFromFavouriteResult(): LiveData<Resource<Room>>;
+    abstract fun setRemoveFromFavourite(roomId: String);
     data class ChangeNotificationStateObject(val roomId: String, val state: Byte)
 }

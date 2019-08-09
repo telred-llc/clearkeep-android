@@ -23,7 +23,7 @@ import vmodev.clearkeep.viewmodelobjects.User
 
 class FragmentBindingAdapters constructor(val fragment: Fragment) : ImageViewBindingAdapters, TextViewBindingAdapters, ISwitchCompatViewBindingAdapters {
     override fun bindImage(imageView: ImageView, imageUrl: String?, listener: RequestListener<Drawable?>?) {
-        Glide.with(fragment).load(imageUrl).listener(listener).placeholder(R.drawable.ic_launcher_app).into(imageView);
+        Glide.with(fragment).load(imageUrl).listener(listener).into(imageView);
     }
 
     override fun bindTime(textView: TextView, timeStamp: Long?) {
@@ -85,7 +85,7 @@ class FragmentBindingAdapters constructor(val fragment: Fragment) : ImageViewBin
                 val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(room.id), if (room.name.isEmpty()) room.id else room.name, true);
                 imageView.setImageBitmap(bitmap);
             } else {
-                Glide.with(fragment).load(room.avatarUrl).listener(listener).placeholder(R.drawable.ic_launcher_app).into(imageView);
+                Glide.with(fragment).load(room.avatarUrl).listener(listener).into(imageView);
             }
         }
     }
@@ -96,7 +96,7 @@ class FragmentBindingAdapters constructor(val fragment: Fragment) : ImageViewBin
                 val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(user.id), if (user.name.isEmpty()) user.id else user.name, true);
                 imageView.setImageBitmap(bitmap);
             } else {
-                Glide.with(fragment).load(user.avatarUrl).listener(listener).placeholder(R.drawable.ic_launcher_app).into(imageView);
+                Glide.with(fragment).load(user.avatarUrl).listener(listener).into(imageView);
             }
         }
     }

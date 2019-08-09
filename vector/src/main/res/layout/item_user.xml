@@ -55,7 +55,6 @@
                 android:layout_weight="1"
                 android:singleLine="true"
                 android:text="@{user.name}"
-                android:textColor="@android:color/black"
                 android:textSize="@dimen/text_20_sp"
                 android:textStyle="bold" />
 

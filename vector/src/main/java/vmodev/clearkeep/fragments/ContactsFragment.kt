@@ -44,7 +44,7 @@ class ContactsFragment : DataBindingDaggerFragment(), IContactFragment, IListRoo
     @Inject
     lateinit var viewModelFactory: IContactFragmentViewModelFactory;
     @Inject
-    @field:Named(value = IListRoomRecyclerViewAdapter.ROOM_CONTACT)
+    @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
     lateinit var listRoomAdapter: IListRoomRecyclerViewAdapter;
     lateinit var binding: FragmentContactsBinding;
     private lateinit var userId: String;
@@ -72,14 +72,17 @@ class ContactsFragment : DataBindingDaggerFragment(), IContactFragment, IListRoo
         binding.recyclerViewListContact.addItemDecoration(dividerItemDecoration);
         binding.recyclerViewListContact.adapter = listRoomAdapter.getAdapter();
         listRoomAdapter.setOnItemClick { room, i ->
-            if (!onGoingRoom) {
-                onGoingRoom = true;
-//                onClickGoRoom(room.id);
+            room.room?.let {
+                if (!onGoingRoom) {
+                    onGoingRoom = true;
+                    onClickGoRoom(it.id); }
             }
         }
+        listRoomAdapter.setOnItemLongClick {  }
+        listRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, userId);
         binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
         viewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
-//            listRoomAdapter.getAdapter().submitList(t?.data)
+            listRoomAdapter.getAdapter().submitList(t?.data)
         })
         binding.lifecycleOwner = viewLifecycleOwner;
 

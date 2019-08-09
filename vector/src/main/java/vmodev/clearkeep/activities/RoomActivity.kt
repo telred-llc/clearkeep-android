@@ -586,7 +586,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         toolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_green)
         toolbar.setNavigationOnClickListener {
             finishResult();
-            finish();
+            finish()
         }
         mCallId = intent.getStringExtra(EXTRA_START_CALL_ID)
         mEventId = intent.getStringExtra(EXTRA_EVENT_ID)
@@ -1260,6 +1260,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     }
 
     private fun finishResult() {
+
         val intentResult = Intent();
         intentResult.putExtra(RESULT_ROOM_ID, currentRoom!!.roomId);
         setResult(Activity.RESULT_OK, intentResult);
@@ -3904,4 +3905,5 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //            mSendImageView!!.performClick()
 //        }
     }
+
 }

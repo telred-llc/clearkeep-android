@@ -8,16 +8,17 @@ import vmodev.clearkeep.repositories.RoomUserJoinRepository
 import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.RoomListUser
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractContactFragmentViewModel
 import javax.inject.Inject
 
 class ContactFragmentViewModel @Inject constructor(roomRepository: RoomRepository, private val roomUserJoinRepository: RoomUserJoinRepository, private val userRepository: UserRepository) : AbstractContactFragmentViewModel() {
     private val _listType = MutableLiveData<Array<Int>>();
-    private val listRoomByType = Transformations.switchMap(_listType) { input -> roomRepository.loadListRoom(input) }
+    private val listRoomByType = Transformations.switchMap(_listType) { input -> roomUserJoinRepository.getRoomListUser(input) }
     private val _roomIdForUpdateNotify = MutableLiveData<String>();
     private val _updateRoomNotifyResult = Transformations.switchMap(_roomIdForUpdateNotify) { input -> roomRepository.setRoomNotify(input) }
-    override fun getListRoomByType(): LiveData<Resource<List<Room>>> {
+    override fun getListRoomByType(): LiveData<Resource<List<RoomListUser>>> {
         return listRoomByType;
     }
 

@@ -64,7 +64,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:hint="@string/search"/>
+                android:hint="@string/search"
+                android:singleLine="true" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view_list_user"
