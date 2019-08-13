@@ -7,6 +7,7 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.view.View
@@ -170,11 +171,15 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     }
 
     private fun switchFragment(fragment: Fragment) {
-        val transaction = supportFragmentManager.beginTransaction();
-        transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-        transaction.replace(R.id.frame_layout_fragment_container, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+      Handler().post(Runnable {
+          kotlin.run {
+              val transaction = supportFragmentManager.beginTransaction();
+              transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+              transaction.replace(R.id.frame_layout_fragment_container, fragment);
+              transaction.addToBackStack(null);
+              transaction.commit();
+          }
+      })
     }
 
 
