@@ -132,7 +132,9 @@
         <activity android:name="vmodev.clearkeep.activities.RoomfilesListActivity" />
         <activity android:name="vmodev.clearkeep.activities.RoomSettingsActivity" />
         <activity android:name="vmodev.clearkeep.activities.RoomActivity" />
-        <activity android:name="vmodev.clearkeep.activities.CallViewActivity" />
+        <activity
+            android:name="vmodev.clearkeep.activities.CallViewActivity"
+            android:screenOrientation="portrait" />
         <activity android:name="vmodev.clearkeep.activities.SearchActivity" />
         <activity android:name="vmodev.clearkeep.activities.InviteUsersToRoomActivity" />
         <activity android:name="vmodev.clearkeep.activities.CreateNewRoomActivity" />
@@ -547,9 +549,9 @@
             android:exported="false" />
 
         <!--<provider-->
-            <!--android:name=".db.VectorContentProvider"-->
-            <!--android:authorities="${applicationId}.VectorApp.provider"-->
-            <!--android:exported="true" />-->
+        <!--android:name=".db.VectorContentProvider"-->
+        <!--android:authorities="${applicationId}.VectorApp.provider"-->
+        <!--android:exported="true" />-->
     </application>
 
 </manifest>
