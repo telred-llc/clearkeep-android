@@ -4,6 +4,7 @@ import android.arch.persistence.room.Room
 import android.support.v7.util.DiffUtil
 import dagger.Module
 import dagger.Provides
+import im.vector.BuildConfig
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.applications.ClearKeepApplication
@@ -15,6 +16,9 @@ import vmodev.clearkeep.factories.activitiesandfragments.RoomMessageFragmentFact
 import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IShowListRoomFragmentFactory
 import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.repositories.interfaces.IRepository
+import vmodev.clearkeep.rests.ClearKeepApis
+import vmodev.clearkeep.rests.IRetrofit
+import vmodev.clearkeep.rests.RetrofitBuilder
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -114,5 +118,17 @@ class AppModule {
     @Named(value = IShowListRoomFragmentFactory.ROOM_MESSAGE_FRAGMENT_FACTORY)
     fun provideRoomMessageFragmentFactory(): IShowListRoomFragmentFactory {
         return RoomMessageFragmentFactory();
+    }
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(): IRetrofit {
+        return RetrofitBuilder(BuildConfig.HOME_SERVER);
+    }
+
+    @Provides
+    @Singleton
+    fun provideClearKeepApis(retrofit: IRetrofit): ClearKeepApis {
+        return retrofit.getRetrofit().create(ClearKeepApis::class.java);
     }
 }

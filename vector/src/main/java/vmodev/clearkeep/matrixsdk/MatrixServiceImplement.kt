@@ -12,7 +12,6 @@ import im.vector.Matrix
 import im.vector.R
 import im.vector.util.HomeRoomsViewModel
 import im.vector.util.RoomUtils
-import im.vector.util.VectorUtils
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function
@@ -51,17 +50,24 @@ import org.matrix.androidsdk.rest.model.sync.RoomSyncTimeline
 import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.jsonmodels.MessageContent
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
+import vmodev.clearkeep.rests.ClearKeepApis
+import vmodev.clearkeep.rests.models.requests.EditMessageRequest
+import vmodev.clearkeep.rests.models.responses.EditMessageResponse
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.ultis.SearchMessageByTextResult
 import vmodev.clearkeep.ultis.getJoinedRoom
 import vmodev.clearkeep.viewmodelobjects.*
 import java.io.InputStream
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
 
 @Singleton
-class MatrixServiceImplement @Inject constructor(private val application: ClearKeepApplication) : MatrixService {
+class MatrixServiceImplement @Inject constructor(private val application: ClearKeepApplication, private val apis: ClearKeepApis) : MatrixService {
 
     //    @Inject
     private var session: MXSession? = null;
@@ -1693,7 +1699,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         }
     }
 
-    override fun decryptListMessage(messages: List<MessageRoomUser>, msgType : String): Observable<List<MessageRoomUser>> {
+    override fun decryptListMessage(messages: List<MessageRoomUser>, msgType: String): Observable<List<MessageRoomUser>> {
         setMXSession();
         return Observable.create { emitter ->
             val messagesResult = ArrayList<MessageRoomUser>();
@@ -1702,6 +1708,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             session!!.dataHandler.crypto?.let { mxCrypto ->
                 messages.forEach { item ->
                     val event = Event(item.message?.messageType, parser.parse(item.message?.encryptedContent).asJsonObject, item.message?.userId, item.message?.roomId);
+                    val eventEncrypt = event.toEncryptedEventContent();
                     try {
                         val result = mxCrypto.decryptEvent(event, null);
                         result?.let {
@@ -1729,6 +1736,27 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                 emitter.onError(Throwable("Crypto is null"))
                 emitter.onComplete();
             }
+        }
+    }
+
+    override fun editMessage(event: Event): Observable<EditMessageResponse> {
+        return Observable.create { emitter ->
+            val encryptedEventContent = event.toEncryptedEventContent();
+            val relatesTo = HashMap<String, String>();
+            relatesTo.put("rel_type", "m.replace")
+            relatesTo.put("event_id", event.eventId);
+            val editMessageRequest = EditMessageRequest(encryptedEventContent.session_id, encryptedEventContent.ciphertext, encryptedEventContent.device_id, encryptedEventContent.algorithm
+                    , encryptedEventContent.sender_key, relatesTo);
+            val locaId = "local" + UUID.randomUUID();
+            apis.editMessage("Bearer " + session!!.credentials.accessToken, event.roomId, "m.room.encrypted", locaId, editMessageRequest)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.io()).subscribe({
+                        emitter.onNext(it);
+                        emitter.onComplete();
+                    }, {
+                        emitter.onError(it);
+                        emitter.onComplete();
+                    })
         }
     }
 }

@@ -9,14 +9,18 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import org.matrix.androidsdk.rest.model.Event
 import vmodev.clearkeep.databases.AbstractMessageDao
 import vmodev.clearkeep.factories.messaghandler.interfaces.IMessageHandlerFactory
+import vmodev.clearkeep.jsonmodels.MessageContent
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
 import vmodev.clearkeep.repositories.wayloads.AbstractLocalLoadSouce
 import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSourceWithCondition
 import vmodev.clearkeep.repositories.wayloads.AbstractNetworkNonBoundSource
 import vmodev.clearkeep.repositories.wayloads.AbstractNetworkNonBoundSourceRx
+import vmodev.clearkeep.rests.models.requests.EditMessageRequest
+import vmodev.clearkeep.rests.models.responses.EditMessageResponse
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
@@ -169,17 +173,26 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
         }
     }
 
-    fun decryptMessage(messages: List<MessageRoomUser>, type : String): LiveData<Resource<List<MessageRoomUser>>> {
+    fun decryptMessage(messages: List<MessageRoomUser>, type: String): LiveData<Resource<List<MessageRoomUser>>> {
         return object : AbstractNetworkNonBoundSourceRx<List<MessageRoomUser>>() {
             override fun createCall(): Observable<List<MessageRoomUser>> {
                 return matrixService.decryptListMessage(messages, type);
             }
         }.asLiveData();
     }
-    fun getListMessageRoomUser() : LiveData<Resource<List<MessageRoomUser>>>{
-        return object : AbstractLocalLoadSouce<List<MessageRoomUser>>(){
+
+    fun getListMessageRoomUser(): LiveData<Resource<List<MessageRoomUser>>> {
+        return object : AbstractLocalLoadSouce<List<MessageRoomUser>>() {
             override fun loadFromDB(): LiveData<List<MessageRoomUser>> {
                 return messageDao.getAllMessageWithRoomAndUser();
+            }
+        }.asLiveData();
+    }
+
+    fun editMessage(event : Event): LiveData<Resource<EditMessageResponse>> {
+        return object : AbstractNetworkNonBoundSourceRx<EditMessageResponse>() {
+            override fun createCall(): Observable<EditMessageResponse> {
+                return matrixService.editMessage(event);
             }
         }.asLiveData();
     }
