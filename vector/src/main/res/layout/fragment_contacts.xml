@@ -14,10 +14,11 @@
         <import type="android.arch.lifecycle.LiveData" />
 
         <import type="vmodev.clearkeep.viewmodelobjects.Room" />
+        <import type="vmodev.clearkeep.viewmodelobjects.RoomListUser" />
 
         <variable
             name="rooms"
-            type="LiveData&lt;Resource&lt;List&lt;Room>>>" />
+            type="LiveData&lt;Resource&lt;List&lt;RoomListUser>>>" />
 
         <variable
             name="room"

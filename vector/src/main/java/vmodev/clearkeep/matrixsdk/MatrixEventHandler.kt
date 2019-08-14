@@ -1,7 +1,10 @@
 package vmodev.clearkeep.matrixsdk
 
 import android.app.Application
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.util.Log
+import android.widget.Toast
 import com.google.gson.JsonParser
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.crypto.keysbackup.KeysBackupStateManager
@@ -13,10 +16,10 @@ import org.matrix.androidsdk.rest.model.User
 import org.matrix.androidsdk.rest.model.bingrules.BingRule
 import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
-import vmodev.clearkeep.repositories.KeyBackupRepository
-import vmodev.clearkeep.repositories.RoomRepository
-import vmodev.clearkeep.repositories.SignatureRepository
-import vmodev.clearkeep.repositories.UserRepository
+import vmodev.clearkeep.repositories.*
+import vmodev.clearkeep.viewmodelobjects.Resource
+import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.Status
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,7 +28,8 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
                                              private val userRepository: UserRepository,
                                              private val roomRepository: RoomRepository,
                                              private val signatureRepository: SignatureRepository,
-                                             private val keyBackupRepository: KeyBackupRepository)
+                                             private val keyBackupRepository: KeyBackupRepository
+                                             , private val roomUserJoinRepository: RoomUserJoinRepository)
     : MXEventListener(), IMatrixEventHandler, KeysBackupStateManager.KeysBackupStateListener {
     private var mxSession: MXSession? = null;
     override fun onAccountDataUpdated() {
@@ -56,41 +60,41 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
         super.onLiveEvent(event, roomState)
 
         Log.d("EventType:", event?.type);
-//        event?.contentAsJsonObject?.let {
-//            val content = it.toString();
-//            val parser = JsonParser();
-//            val contentJson = parser.parse(content).asJsonObject;
-//            Log.d("Event Type Convert", contentJson.toString());
-//        }
-
 
         if (event?.type?.compareTo("m.room.join_rules") == 0) {
-            if (event?.roomId != null) {
-                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
-//                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
-                Log.d("EventType", event?.userId + "----" + mxSession!!.myUserId);
-            }
+            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe{
+                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({},{
+                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
+                });
+            };
         }
         if (event?.type?.compareTo("m.room.name") == 0) {
-            if (event?.roomId != null)
-                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
-//                roomRepository.insertRoom(event?.roomId);
+            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe{
+                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({},{
+                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
+                });
+            };
         }
         if (event?.type?.compareTo("m.room.member") == 0) {
-            if (event?.roomId != null)
-                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
-            Log.d("EventType", event?.userId + "----" + mxSession!!.myUserId);
-//                roomRepository.insertRoom(event?.roomId);S
+            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe{
+                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({},{
+                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
+                });
+            };
         }
         if (event?.type?.compareTo("m.room.message") == 0) {
-            if (event?.roomId != null) {
-                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
-            }
+            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe{
+                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({},{
+                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
+                });
+            };
         }
         if (event?.type?.compareTo("m.room.encrypted") == 0) {
-            if (event?.roomId != null) {
-                roomRepository.updateOrCreateRoomFromRemote(event?.roomId);
-            }
+            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe{
+                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({},{
+                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
+                });
+            };
         }
     }
 
@@ -99,12 +103,13 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
      */
     override fun onPresenceUpdate(event: Event?, user: User?) {
         super.onPresenceUpdate(event, user)
-        user?.let { roomRepository.updateRoomMemberStatus(it.user_id, if (it.presence.compareTo("online") == 0) 1 else 0) }
+        user?.let {
+            userRepository.updateUserStatus(it.user_id, if (it.presence.compareTo("online") == 0) 1 else 0)
+        }
     }
 
     override fun onBingEvent(event: Event?, roomState: RoomState?, bingRule: BingRule?) {
         super.onBingEvent(event, roomState, bingRule)
-        Log.d("EventType", event?.type + "-----" + roomState?.roomId + "---" + bingRule?.ruleId)
     }
 
     override fun getMXEventListener(mxSession: MXSession): MXEventListener {

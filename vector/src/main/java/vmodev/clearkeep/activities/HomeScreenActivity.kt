@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import im.vector.Matrix
@@ -21,7 +22,7 @@ import im.vector.databinding.ActivityHomeScreenBinding
 import im.vector.services.EventStreamService
 import im.vector.ui.badge.BadgeProxy
 import im.vector.util.HomeRoomsViewModel
-import io.reactivex.Observable
+import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_home_screen.*
@@ -32,12 +33,12 @@ import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.activities.interfaces.IHomeScreenActivity
 import vmodev.clearkeep.applications.ClearKeepApplication
+import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IFragmentFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IHomeScreenViewModelFactory
 import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.fragments.Interfaces.IListRoomOnFragmentInteractionListener
 import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -61,6 +62,9 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     lateinit var listRoomFragmentFactory: IFragmentFactory;
     @Inject
     lateinit var viewModelFactory: IHomeScreenViewModelFactory;
+
+    @Inject
+    lateinit var roomUserJoinDao: AbstractRoomUserJoinDao;
 
     lateinit var binding: ActivityHomeScreenBinding;
     lateinit var mxSession: MXSession;
@@ -101,8 +105,9 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         switchFragment(listRoomFragmentFactory.createNewInstance().getFragment());
 
         binding.frameLayoutSearch.setOnClickListener { v ->
-            //            val intent = Intent(this, SearchActivity::class.java);
-            val intent = Intent(this, UnifiedSearchActivity::class.java)
+            val intent = Intent(this, SearchActivity::class.java);
+            intent.putExtra(SearchActivity.USER_ID, mxSession.myUserId);
+//            val intent = Intent(this, UnifiedSearchActivity::class.java)
             startActivity(intent);
         }
         binding.user = viewModelFactory.getViewModel().getUserById();
@@ -128,7 +133,12 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
 //                mSharedFilesIntent = sharedFilesIntent
             }
         }
-
+        Completable.fromAction {
+            val cursor = roomUserJoinDao.getListRoomWithUsers(1, 65);
+            cursor.observe(this, android.arch.lifecycle.Observer {
+                Log.d("", "");
+            })
+        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe();
         if (startFromLogin != 0) {
             viewModelFactory.getViewModel().getBackupKeyStatusResult().observe(this, android.arch.lifecycle.Observer {
                 it?.data?.let {

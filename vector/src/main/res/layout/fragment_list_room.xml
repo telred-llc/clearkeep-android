@@ -13,19 +13,21 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.Room" />
 
+        <import type="vmodev.clearkeep.viewmodelobjects.RoomListUser" />
+
         <import type="java.util.List" />
 
         <variable
             name="listGroup"
-            type="LiveData&lt;Resource&lt;List&lt;Room>>>" />
+            type="LiveData&lt;Resource&lt;List&lt;RoomListUser>>>" />
 
         <variable
             name="listDirect"
-            type="LiveData&lt;Resource&lt;List&lt;Room>>>" />
+            type="LiveData&lt;Resource&lt;List&lt;RoomListUser>>>" />
 
         <variable
             name="listFavourites"
-            type="LiveData&lt;Resource&lt;List&lt;Room>>>" />
+            type="LiveData&lt;Resource&lt;List&lt;RoomListUser>>>" />
 
         <variable
             name="room"

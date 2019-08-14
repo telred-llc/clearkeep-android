@@ -4,12 +4,13 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import vmodev.clearkeep.repositories.RoomRepository
-import vmodev.clearkeep.viewmodelobjects.Resource
-import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.repositories.RoomUserJoinRepository
+import vmodev.clearkeep.repositories.UserRepository
+import vmodev.clearkeep.viewmodelobjects.*
 import vmodev.clearkeep.viewmodels.interfaces.AbstractListRoomFragmentViewModel
 import javax.inject.Inject
 
-class ListRoomFragmentViewModel @Inject constructor(roomRepository: RoomRepository) : AbstractListRoomFragmentViewModel() {
+class ListRoomFragmentViewModel @Inject constructor(roomRepository: RoomRepository, private val userRepository: UserRepository, private val roomUserJoinRepository: RoomUserJoinRepository) : AbstractListRoomFragmentViewModel() {
 
     private val _directRoomFilters = MutableLiveData<Array<Int>>();
     private val _groupRoomFilters = MutableLiveData<Array<Int>>();
@@ -26,12 +27,17 @@ class ListRoomFragmentViewModel @Inject constructor(roomRepository: RoomReposito
     private val _addRoomToFavouriteResult = Transformations.switchMap(_roomIdForAddToFavourite) { input -> roomRepository.addToFavourite(input) }
     private val _removeRoomFromFavouriteResult = Transformations.switchMap(_roomIdForRemoveFromFavourite) { input -> roomRepository.removeFromFavourite(input) }
     private val _joinRoomResult = Transformations.switchMap(_roomIdForJoinRoom) { input -> roomRepository.joinRoom(input) }
-    private val _getListDirectRoomResult = Transformations.switchMap(_directRoomFilters) { input -> roomRepository.loadListRoomUserJoin(input) }
-    private val _getListGroupRoomResult = Transformations.switchMap(_groupRoomFilters) { input -> roomRepository.loadListRoomUserJoin(input) }
-    private val _getListFavouritesResult = Transformations.switchMap(_favouriteFilters) { input -> roomRepository.loadListRoomUserJoin(input) }
+    private val _getListFavouritesResult = Transformations.switchMap(_favouriteFilters) { input -> roomRepository.loadListRoom(input) }
+    private val _getListDirectRoomResult = Transformations.switchMap(_directRoomFilters) { input ->
+        roomRepository.loadListRoom(input)
+    }
+    private val _getListGroupRoomResult = Transformations.switchMap(_groupRoomFilters) { input -> roomRepository.loadListRoom(input) }
     private val _updateRoomNotifyResult = Transformations.switchMap(_roomIdForUpdateNotify) { input -> roomRepository.setRoomNotify(input) }
     private val _changeNotificationStateResult = Transformations.switchMap(_setChangeNotificationState) { input -> roomRepository.changeNotificationState(input.roomId, input.state) }
     private val removeFromFavouriteResult = Transformations.switchMap(_removeFromFavourite) { input -> roomRepository.removeFromFavourite(input) }
+    private val _listRoomListUserGroupResult = Transformations.switchMap(_groupRoomFilters) { input -> roomUserJoinRepository.getRoomListUser(input) }
+    private val _listRoomListUserDirectResult = Transformations.switchMap(_directRoomFilters) { input -> roomUserJoinRepository.getRoomListUser(input) }
+    private val _listRoomListUserFavouritesResult = Transformations.switchMap(_favouriteFilters) { input -> roomUserJoinRepository.getRoomListUser(input) }
 
 
     override fun setFiltersDirectRoom(filters: Array<Int>) {
@@ -42,12 +48,12 @@ class ListRoomFragmentViewModel @Inject constructor(roomRepository: RoomReposito
         _groupRoomFilters.value = filters;
     }
 
-    override fun getListDirectRoomResult(): LiveData<Resource<List<Room>>> {
-        return _getListDirectRoomResult;
+    override fun getListDirectRoomResult(): LiveData<Resource<List<RoomListUser>>> {
+        return _listRoomListUserDirectResult;
     }
 
-    override fun getListGroupRoomResult(): LiveData<Resource<List<Room>>> {
-        return _getListGroupRoomResult;
+    override fun getListGroupRoomResult(): LiveData<Resource<List<RoomListUser>>> {
+        return _listRoomListUserGroupResult;
     }
 
     override fun setLeaveRoomId(roomId: String) {
@@ -110,7 +116,19 @@ class ListRoomFragmentViewModel @Inject constructor(roomRepository: RoomReposito
         _favouriteFilters.value = filters;
     }
 
-    override fun getListFavouritesResult(): LiveData<Resource<List<Room>>> {
-        return _getListFavouritesResult;
+    override fun getListFavouritesResult(): LiveData<Resource<List<RoomListUser>>> {
+        return _listRoomListUserFavouritesResult;
+    }
+
+    override fun getRoomUserJoinResult(userIds: Array<String>): LiveData<Resource<List<User>>> {
+        return userRepository.getUsersWithId(userIds);
+    }
+
+    override fun getListRoomListUserDirectResult(): LiveData<Resource<List<RoomListUser>>> {
+        return _listRoomListUserDirectResult;
+    }
+
+    override fun getListRoomListUserGroup(): LiveData<Resource<List<RoomListUser>>> {
+        return _listRoomListUserGroupResult;
     }
 }

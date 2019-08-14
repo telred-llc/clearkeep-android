@@ -25,4 +25,7 @@ interface ImageViewBindingAdapters {
 
     @BindingAdapter(value = ["validStatus"], requireAll = false)
     fun bindStatusValid(imageView: ImageView, validStatus: Byte?)
+
+    @BindingAdapter(value = ["listUser", "currentUserId"], requireAll = false)
+    fun bindStatusFromListUser(imageView: ImageView, users: List<User>?, currentUserId: String?)
 }

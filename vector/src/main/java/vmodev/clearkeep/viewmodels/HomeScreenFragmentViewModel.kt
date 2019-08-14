@@ -11,9 +11,9 @@ import javax.inject.Inject
 
 class HomeScreenFragmentViewModel @Inject constructor(roomRepository: RoomRepository) : AbstractHomeScreenFragmentViewModel() {
     private val _typesDirectMessage = MutableLiveData<Array<Int>>();
-    private val _listRoomsDirectMessage = Transformations.switchMap(_typesDirectMessage) { input -> roomRepository.loadListRoomUserJoin(input) }
+    private val _listRoomsDirectMessage = Transformations.switchMap(_typesDirectMessage) { input -> roomRepository.loadListRoom(input) }
     private val _typesRoomsMessage = MutableLiveData<Array<Int>>();
-    private val _listRoomsMessage = Transformations.switchMap(_typesRoomsMessage) { input -> roomRepository.loadListRoomUserJoin(input) }
+    private val _listRoomsMessage = Transformations.switchMap(_typesRoomsMessage) { input -> roomRepository.loadListRoom(input) }
     override fun getListRoomDirectMessage(): LiveData<Resource<List<Room>>> {
         return _listRoomsDirectMessage;
     }

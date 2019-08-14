@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v7.preference.PreferenceManager
+import android.widget.Toast
 import im.vector.ErrorListener
 import im.vector.Matrix
 import im.vector.R
@@ -50,7 +51,6 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_splash, dataBindingComponent);
         startFromLogin = intent.getIntExtra(START_FROM_LOGIN, 0);
-        binding.rooms = viewModelFactory.getViewModel().getAllRoomResult();
         if (!hasCredentials()) {
             val intent = Intent(this, LoginActivity::class.java);
             startActivity(intent);
@@ -161,17 +161,49 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
         val duration = finishTime - mLaunchTime
         val event = TrackingEvent.LaunchScreen(duration)
         VectorApp.getInstance().analytics.trackEvent(event)
-
+        val session : MXSession = Matrix.getInstance(applicationContext).defaultSession;
         if (!hasCorruptedStore()) {
             val intent = Intent(this, HomeScreenActivity::class.java)
             intent.putExtra(HomeScreenActivity.START_FROM_LOGIN, startFromLogin)
-            viewModelFactory.getViewModel().getAllRoomResult().observe(this, Observer { t ->
-                if (t?.status == Status.SUCCESS) {
-                    startActivity(intent)
-                    finish()
+            viewModelFactory.getViewModel().getAllRoomResult(arrayOf(1, 2, 65, 66, 129, 130)).observe(this, Observer { t ->
+                t?.data?.let { rooms ->
+                    var index: Int = 0x01;
+                    rooms.forEach { r ->
+                        viewModelFactory.getViewModel().getUpdateUserResult(r.id).observe(this, Observer {
+                            it?.let {
+                                when (it.status) {
+                                    Status.ERROR -> {
+                                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
+                                        index++;
+                                        viewModelFactory.getViewModel().getUpdateRoomUserJoinResult(r.id, session.myUserId)
+                                        if (index >= rooms.size) {
+                                            startActivity(intent)
+                                            finish()
+                                        } else {
+                                        }
+                                    }
+                                    Status.SUCCESS -> {
+                                        index++;
+                                        it.data?.let {
+                                            it.forEach { u ->
+                                                viewModelFactory.getViewModel().getUpdateRoomUserJoinResult(r.id, u.id)
+                                            }
+                                        }
+                                        if (index >= rooms.size) {
+                                            startActivity(intent)
+                                            finish()
+                                        } else {
+                                        }
+                                    }
+                                    Status.LOADING -> {
+
+                                    }
+                                }
+                            }
+                        })
+                    }
                 }
             })
-            viewModelFactory.getViewModel().setFiltersForGetAllRoom(arrayOf(1, 2, 65, 66, 129, 130));
         } else {
             CommonActivityUtils.logout(this)
         }

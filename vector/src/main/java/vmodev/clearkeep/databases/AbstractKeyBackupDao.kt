@@ -24,4 +24,7 @@ abstract class AbstractKeyBackupDao {
 
     @Query("SELECT signature.* FROM signature INNER JOIN keyBackup ON signature.key_backup_id = keyBackup.id WHERE keyBackup.id = :keyBackupId")
     abstract fun getListSignatureFromKeyBackup(keyBackupId: String): LiveData<List<Signature>>
+
+    @Query("DELETE FROM keyBackup")
+    abstract fun delete()
 }

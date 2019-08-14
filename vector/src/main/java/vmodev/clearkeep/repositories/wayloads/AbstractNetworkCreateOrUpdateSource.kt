@@ -1,4 +1,4 @@
-package vmodev.clearkeep.repositories
+package vmodev.clearkeep.repositories.wayloads
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
@@ -7,7 +7,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.viewmodelobjects.Resource
-import javax.inject.Inject
 
 abstract class AbstractNetworkCreateOrUpdateSource<T, V> @MainThread constructor() {
     private val result = MediatorLiveData<Resource<T>>();

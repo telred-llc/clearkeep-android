@@ -1,6 +1,7 @@
 package vmodev.clearkeep.fragments
 
 import android.app.Activity
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
@@ -22,6 +23,8 @@ import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IFavouritesFragmentViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFavouritesFragment
+import vmodev.clearkeep.viewmodelobjects.Resource
+import vmodev.clearkeep.viewmodelobjects.User
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -39,7 +42,7 @@ private const val GO_TO_ROOM_CODE = 12432;
  * create an instance of this fragment.
  *
  */
-class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment {
+class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment, IListRoomRecyclerViewAdapter.ICallbackToGetUsers {
     // TODO: Rename and change types of parameters
     // You can declare variable to pass from activity is here
 
@@ -77,30 +80,32 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner;
-        listGroupRecyclerViewAdapter.setdataBindingComponent(dataBindingComponent);
-        listDirectRecyclerViewAdapter.setdataBindingComponent(dataBindingComponent);
+        listDirectRecyclerViewAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, userId);
+        listGroupRecyclerViewAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, userId);
+        listGroupRecyclerViewAdapter.setDataBindingComponent(dataBindingComponent);
+        listDirectRecyclerViewAdapter.setDataBindingComponent(dataBindingComponent);
         listGroupRecyclerViewAdapter.setOnItemClick { room, i ->
             if (!onGoingRoom) {
                 onGoingRoom = true;
-                gotoRoom(room.id);
+//                gotoRoom(room.id);
             }
         }
         listDirectRecyclerViewAdapter.setOnItemClick { room, i ->
             if (!onGoingRoom) {
                 onGoingRoom = true;
-                gotoRoom(room.id);
+//                gotoRoom(room.id);
             }
         }
         listGroupRecyclerViewAdapter.setOnItemLongClick { room ->
             val bottomDialog = DialogPlus.newDialog(this.context)
                     .setAdapter(BottomDialogFavouriteRoomLongClick())
                     .setOnItemClickListener { dialog, item, view, position ->
-                        when (position) {
-                            1 -> removeFromFavourites(room.id);
-                            3 -> declineInvite(room.id);
-                            2 -> gotoRoomSettings(room.id);
-                            0 -> changeNotificationState(room.id, room.notificationState);
-                        }
+//                        when (position) {
+//                            1 -> removeFromFavourites(room.id);
+//                            3 -> declineInvite(room.id);
+//                            2 -> gotoRoomSettings(room.id);
+//                            0 -> changeNotificationState(room.id, room.notificationState);
+//                        }
                         dialog?.dismiss();
                     }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create();
             bottomDialog.show();
@@ -109,12 +114,12 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment {
             val bottomDialog = DialogPlus.newDialog(this.context)
                     .setAdapter(BottomDialogFavouriteRoomLongClick())
                     .setOnItemClickListener { dialog, item, view, position ->
-                        when (position) {
-                            1 -> removeFromFavourites(it.id);
-                            3 -> declineInvite(it.id);
-                            2 -> gotoRoomSettings(it.id);
-                            0 -> changeNotificationState(it.id, it.notificationState);
-                        }
+//                        when (position) {
+//                            1 -> removeFromFavourites(it.id);
+//                            3 -> declineInvite(it.id);
+//                            2 -> gotoRoomSettings(it.id);
+//                            0 -> changeNotificationState(it.id, it.notificationState);
+//                        }
                         dialog?.dismiss();
                     }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create();
             bottomDialog.show();
@@ -143,14 +148,18 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment {
                 binding.imageViewDirectionDirect.rotation = 270f;
             }
         }
-        viewModelFactory.getViewModel().getListTypeFavouritesDirectResult().observe(viewLifecycleOwner, Observer { t ->
+        viewModelFactory.getViewModel().getListRoomListUserResult().observe(viewLifecycleOwner, Observer { t ->
             listDirectRecyclerViewAdapter.getAdapter().submitList(t?.data);
         });
-        viewModelFactory.getViewModel().getListTypeFavouritesGroupResult().observe(viewLifecycleOwner, Observer {
+        viewModelFactory.getViewModel().getListRoomListUserResult().observe(viewLifecycleOwner, Observer {
             listGroupRecyclerViewAdapter.getAdapter().submitList(it?.data);
         })
         viewModelFactory.getViewModel().setListTypeFavouritesDirect(arrayOf(129))
         viewModelFactory.getViewModel().setListTypeFavouritesGroup(arrayOf(130))
+    }
+
+    override fun getUsers(userIds: Array<String>): LiveData<Resource<List<User>>> {
+        return viewModelFactory.getViewModel().getRoomUserJoinResult(userIds);
     }
 
     private fun gotoRoom(roomId: String) {

@@ -1,21 +1,21 @@
-package vmodev.clearkeep.repositories
+package vmodev.clearkeep.repositories.wayloads
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import android.support.annotation.MainThread
 import vmodev.clearkeep.viewmodelobjects.Resource
 
-abstract class AbstractLocalLoadSouce<T> @MainThread constructor() {
+abstract class AbstractLocalBoundSource<T> @MainThread constructor() {
+
     private val result = MediatorLiveData<Resource<T>>();
 
     init {
         result.value = Resource.loading(null);
-        val dbSource = loadFromDB();
-        result.addSource(dbSource) { db ->
-            if (db == null) {
-                setValue(Resource.error("Cannot find data", null));
+        result.addSource(loadFromDb()) {
+            if (it != null) {
+                setValue(Resource.success(it));
             } else {
-                setValue(Resource.success(db));
+                setValue(Resource.error("Cannot find this object", null))
             }
         }
     }
@@ -25,6 +25,7 @@ abstract class AbstractLocalLoadSouce<T> @MainThread constructor() {
             result.value = newValue;
     }
 
-    abstract fun loadFromDB(): LiveData<T>;
     fun asLiveData() = result as LiveData<Resource<T>>
+    @MainThread
+    protected abstract fun loadFromDb(): LiveData<T>
 }

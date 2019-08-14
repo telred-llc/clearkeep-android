@@ -14,6 +14,7 @@ import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.dialogfragments.ReceivedShareFileDialogFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractDataBindingDaggerActivityViewModel
+import java.util.*
 import javax.inject.Inject
 
 @Suppress("LeakingThis")
@@ -40,7 +41,7 @@ abstract class DataBindingDaggerActivity : DaggerAppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        dataBindingDaggerActivityViewModel.getDeviceSettingsResult().observe(this, Observer {
+        dataBindingDaggerActivityViewModel.getLocalSettingsResult().observe(this, Observer {
             it?.data?.let {
                 if (application.getCurrentTheme() != it.theme) {
                     application.setCurrentTheme(it.theme);
@@ -50,7 +51,7 @@ abstract class DataBindingDaggerActivity : DaggerAppCompatActivity() {
             }
         })
         session?.let {
-            dataBindingDaggerActivityViewModel.setDeviceSettingsId(it.myUserId);
+            dataBindingDaggerActivityViewModel.setTimeForGetTheme(Calendar.getInstance().timeInMillis);
         }
 
     }

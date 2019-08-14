@@ -17,4 +17,7 @@ abstract class AbstractBackupKeyPathDao {
 
     @Query("SELECT * FROM backupKeyPath")
     abstract fun getAllBackupKeyPath(): LiveData<BackupKeyPath>;
+
+    @Query("DELETE FROM backupKeyPath")
+    abstract fun delete();
 }

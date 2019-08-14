@@ -1,12 +1,9 @@
 package vmodev.clearkeep.di
 
 import android.arch.persistence.room.Room
-import android.net.Uri
 import android.support.v7.util.DiffUtil
 import dagger.Module
 import dagger.Provides
-import im.vector.BuildConfig
-import org.matrix.androidsdk.HomeServerConnectionConfig
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.applications.ClearKeepApplication
@@ -16,12 +13,13 @@ import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.activitiesandfragments.DirectMessageFragmentFactory
 import vmodev.clearkeep.factories.activitiesandfragments.RoomMessageFragmentFactory
 import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IShowListRoomFragmentFactory
+import vmodev.clearkeep.repositories.UserRepository
+import vmodev.clearkeep.repositories.interfaces.IRepository
 import javax.inject.Named
 import javax.inject.Singleton
 
-@Module(includes = [ViewModelModule::class, MatrixSDKModule::class, AbstractMatrixSDKModule::class, AbstractDialogFragmentModules::class])
+@Module(includes = [ViewModelModule::class, MatrixSDKModule::class, AbstractMatrixSDKModule::class, AbstractDialogFragmentModules::class, AbstractRepositoryModule::class])
 class AppModule {
-
     @Provides
     @Singleton
     fun bindApplication(application: ClearKeepApplication): IApplication {
@@ -38,13 +36,13 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideUserDao(clearKeepDatabase: ClearKeepDatabase): UserDao {
+    fun provideUserDao(clearKeepDatabase: ClearKeepDatabase): AbstractUserDao {
         return clearKeepDatabase.userDao();
     }
 
     @Singleton
     @Provides
-    fun provideRoomDao(clearKeepDatabase: ClearKeepDatabase): RoomDao {
+    fun provideRoomDao(clearKeepDatabase: ClearKeepDatabase): AbstractRoomDao {
         return clearKeepDatabase.roomDao();
     }
 
@@ -78,18 +76,24 @@ class AppModule {
         return clearKeepDatabase.keyBackupDao();
     }
 
+    @Singleton
+    @Provides
+    fun provideLocalSettings(clearKeepDatabase: ClearKeepDatabase): AbstractLocalSettingsDao {
+        return clearKeepDatabase.localSettingsDao();
+    }
+
     @Provides
     @Named(value = IListRoomRecyclerViewAdapter.ROOM)
     fun provideListRoomDirectMessageAdapter(appExecutors: AppExecutors): IListRoomRecyclerViewAdapter {
-        return ListRoomRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<vmodev.clearkeep.viewmodelobjects.Room>() {
-            override fun areItemsTheSame(p0: vmodev.clearkeep.viewmodelobjects.Room, p1: vmodev.clearkeep.viewmodelobjects.Room): Boolean {
-                return p0.id == p1.id;
+        return ListRoomRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<vmodev.clearkeep.viewmodelobjects.RoomListUser>() {
+            override fun areItemsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
+                return p0.room?.id == p1.room?.id;
             }
 
-            override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.Room, p1: vmodev.clearkeep.viewmodelobjects.Room): Boolean {
-                return p0.name == p1.name && p0.updatedDate == p1.updatedDate && p0.avatarUrl == p1.avatarUrl
-                        && p0.notifyCount == p1.notifyCount && p0.roomMemberStatus == p1.roomMemberStatus && p0.type == p1.type
-                        && p0.lastMessage == p1.lastMessage && p0.notificationState == p1.notificationState;
+            override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
+                return p0.room?.name == p1.room?.name && p0.room?.updatedDate == p1.room?.updatedDate && p0.room?.avatarUrl == p1.room?.avatarUrl
+                        && p0.room?.notifyCount == p1.room?.notifyCount && p0.room?.type == p1.room?.type
+                        && p0.room?.lastMessage == p1.room?.lastMessage && p0.room?.notificationState == p1.room?.notificationState
             }
         })
     }

@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.DividerItemDecoration
 import com.orhanobut.dialogplus.DialogPlus
-import dagger.android.support.DaggerAppCompatActivity
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
@@ -17,7 +16,6 @@ import vmodev.clearkeep.activities.interfaces.IUserInformationActivity
 import vmodev.clearkeep.adapters.BottomDialogFavouriteRoomLongClick
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.factories.viewmodels.interfaces.IUserInformationActivityViewModelFactory
 import javax.inject.Inject
 import javax.inject.Named
@@ -84,124 +82,132 @@ class UserInformationActivity : DataBindingDaggerActivity(), IUserInformationAct
     private fun setUpRecyclerView() {
         binding.recyclerViewListDirectChat.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         binding.recyclerViewListRoomChat.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        listDirectChatRoomAdapter.setdataBindingComponent(dataBindingComponent);
-        listRoomChatRoomAdapter.setdataBindingComponent(dataBindingComponent);
+        listDirectChatRoomAdapter.setDataBindingComponent(dataBindingComponent);
+        listRoomChatRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listDirectChatRoomAdapter.setOnItemClick { room, i ->
-            when (i) {
-                3 -> {
-                    val intentRoom = Intent(this, RoomActivity::class.java);
-                    intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, session.myUserId);
-                    intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, room.id);
-                    startActivity(intentRoom);
+            room.room?.let {
+                when (i) {
+                    3 -> {
+                        val intentRoom = Intent(this, RoomActivity::class.java);
+                        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, session.myUserId);
+                        intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, it.id);
+                        startActivity(intentRoom);
+                    }
                 }
             }
         }
         listDirectChatRoomAdapter.setOnItemLongClick {
-            if (it.type == 129) {
-                val bottomDialog = DialogPlus.newDialog(this)
-                        .setAdapter(BottomDialogFavouriteRoomLongClick(it.notificationState))
-                        .setOnItemClickListener { dialog, item, view, position ->
-                            when (position) {
-                                1 -> {
-                                    binding.room = viewModelFactory.getViewModel().gerRemoveRoomFromFavouriteResult();
-                                    viewModelFactory.getViewModel().setRoomIdForRemoveFromFavourite(it.id);
+            it.room?.let {
+                if (it.type == 129) {
+                    val bottomDialog = DialogPlus.newDialog(this)
+                            .setAdapter(BottomDialogFavouriteRoomLongClick(it.notificationState))
+                            .setOnItemClickListener { dialog, item, view, position ->
+                                when (position) {
+                                    1 -> {
+                                        binding.room = viewModelFactory.getViewModel().gerRemoveRoomFromFavouriteResult();
+                                        viewModelFactory.getViewModel().setRoomIdForRemoveFromFavourite(it.id);
+                                    }
+                                    2 -> {
+                                        val intent = Intent(this, RoomSettingsActivity::class.java);
+                                        intent.putExtra(RoomSettingsActivity.ROOM_ID, it.id);
+                                        startActivity(intent);
+                                    }
+                                    3 -> {
+                                        binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult();
+                                        viewModelFactory.getViewModel().setLeaveRoomId(it.id);
+                                    }
+                                    0 -> changeNotificationState(it.id, it.notificationState);
                                 }
-                                2 -> {
-                                    val intent = Intent(this, RoomSettingsActivity::class.java);
-                                    intent.putExtra(RoomSettingsActivity.ROOM_ID, it.id);
-                                    startActivity(intent);
+                                dialog?.dismiss();
+                            }.create();
+                    bottomDialog.show();
+                } else {
+                    val bottomDialog = DialogPlus.newDialog(this)
+                            .setAdapter(BottomDialogRoomLongClick(it.notificationState))
+                            .setOnItemClickListener { dialog, item, view, position ->
+                                when (position) {
+                                    1 -> {
+                                        binding.room = viewModelFactory.getViewModel().getAddToFavouriteResult();
+                                        viewModelFactory.getViewModel().setAddToFavouriteRoomId(it.id);
+                                    }
+                                    2 -> {
+                                        val intent = Intent(this, RoomSettingsActivity::class.java);
+                                        intent.putExtra(RoomSettingsActivity.ROOM_ID, it.id);
+                                        startActivity(intent);
+                                    }
+                                    3 -> {
+                                        binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult();
+                                        viewModelFactory.getViewModel().setLeaveRoomId(it.id);
+                                    }
+                                    0 -> changeNotificationState(it.id, it.notificationState);
                                 }
-                                3 -> {
-                                    binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult();
-                                    viewModelFactory.getViewModel().setLeaveRoomId(it.id);
-                                }
-                                0 -> changeNotificationState(it.id, it.notificationState);
-                            }
-                            dialog?.dismiss();
-                        }.create();
-                bottomDialog.show();
-            } else {
-                val bottomDialog = DialogPlus.newDialog(this)
-                        .setAdapter(BottomDialogRoomLongClick(it.notificationState))
-                        .setOnItemClickListener { dialog, item, view, position ->
-                            when (position) {
-                                1 -> {
-                                    binding.room = viewModelFactory.getViewModel().getAddToFavouriteResult();
-                                    viewModelFactory.getViewModel().setAddToFavouriteRoomId(it.id);
-                                }
-                                2 -> {
-                                    val intent = Intent(this, RoomSettingsActivity::class.java);
-                                    intent.putExtra(RoomSettingsActivity.ROOM_ID, it.id);
-                                    startActivity(intent);
-                                }
-                                3 -> {
-                                    binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult();
-                                    viewModelFactory.getViewModel().setLeaveRoomId(it.id);
-                                }
-                                0 -> changeNotificationState(it.id, it.notificationState);
-                            }
 
-                            dialog?.dismiss();
-                        }.create();
-                bottomDialog.show();
+                                dialog?.dismiss();
+                            }.create();
+                    bottomDialog.show();
+                }
             }
         }
         listRoomChatRoomAdapter.setOnItemClick { room, i ->
-            when (i) {
-                3 -> {
-                    val intentRoom = Intent(this, RoomActivity::class.java);
-                    intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, session.myUserId);
-                    intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, room.id);
-                    startActivity(intentRoom);
+            room.room?.let {
+                when (i) {
+                    3 -> {
+                        val intentRoom = Intent(this, RoomActivity::class.java);
+                        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, session.myUserId);
+                        intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, it.id);
+                        startActivity(intentRoom);
+                    }
                 }
             }
         }
         listRoomChatRoomAdapter.setOnItemLongClick {
-            if (it.type == 130) {
-                val bottomDialog = DialogPlus.newDialog(this)
-                        .setAdapter(BottomDialogFavouriteRoomLongClick())
-                        .setOnItemClickListener { dialog, item, view, position ->
-                            when (position) {
-                                1 -> {
-                                    binding.room = viewModelFactory.getViewModel().gerRemoveRoomFromFavouriteResult();
-                                    viewModelFactory.getViewModel().setRoomIdForRemoveFromFavourite(it.id);
+            it.room?.let {
+                if (it.type == 130) {
+                    val bottomDialog = DialogPlus.newDialog(this)
+                            .setAdapter(BottomDialogFavouriteRoomLongClick())
+                            .setOnItemClickListener { dialog, item, view, position ->
+                                when (position) {
+                                    1 -> {
+                                        binding.room = viewModelFactory.getViewModel().gerRemoveRoomFromFavouriteResult();
+                                        viewModelFactory.getViewModel().setRoomIdForRemoveFromFavourite(it.id);
+                                    }
+                                    2 -> {
+                                        val intent = Intent(this, RoomSettingsActivity::class.java);
+                                        intent.putExtra(RoomSettingsActivity.ROOM_ID, it.id);
+                                        startActivity(intent);
+                                    }
+                                    3 -> {
+                                        binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult();
+                                        viewModelFactory.getViewModel().setLeaveRoomId(it.id);
+                                    }
                                 }
-                                2 -> {
-                                    val intent = Intent(this, RoomSettingsActivity::class.java);
-                                    intent.putExtra(RoomSettingsActivity.ROOM_ID, it.id);
-                                    startActivity(intent);
+                                dialog?.dismiss();
+                            }.create();
+                    bottomDialog.show();
+                } else {
+                    val bottomDialog = DialogPlus.newDialog(this)
+                            .setAdapter(BottomDialogRoomLongClick())
+                            .setOnItemClickListener { dialog, item, view, position ->
+                                when (position) {
+                                    1 -> {
+                                        binding.room = viewModelFactory.getViewModel().getAddToFavouriteResult();
+                                        viewModelFactory.getViewModel().setAddToFavouriteRoomId(it.id);
+                                    }
+                                    2 -> {
+                                        val intent = Intent(this, RoomSettingsActivity::class.java);
+                                        intent.putExtra(RoomSettingsActivity.ROOM_ID, it.id);
+                                        startActivity(intent);
+                                    }
+                                    3 -> {
+                                        binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult();
+                                        viewModelFactory.getViewModel().setLeaveRoomId(it.id);
+                                    }
                                 }
-                                3 -> {
-                                    binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult();
-                                    viewModelFactory.getViewModel().setLeaveRoomId(it.id);
-                                }
-                            }
-                            dialog?.dismiss();
-                        }.create();
-                bottomDialog.show();
-            } else {
-                val bottomDialog = DialogPlus.newDialog(this)
-                        .setAdapter(BottomDialogRoomLongClick())
-                        .setOnItemClickListener { dialog, item, view, position ->
-                            when (position) {
-                                1 -> {
-                                    binding.room = viewModelFactory.getViewModel().getAddToFavouriteResult();
-                                    viewModelFactory.getViewModel().setAddToFavouriteRoomId(it.id);
-                                }
-                                2 -> {
-                                    val intent = Intent(this, RoomSettingsActivity::class.java);
-                                    intent.putExtra(RoomSettingsActivity.ROOM_ID, it.id);
-                                    startActivity(intent);
-                                }
-                                3 -> {
-                                    binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult();
-                                    viewModelFactory.getViewModel().setLeaveRoomId(it.id);
-                                }
-                            }
 
-                            dialog?.dismiss();
-                        }.create();
-                bottomDialog.show();
+                                dialog?.dismiss();
+                            }.create();
+                    bottomDialog.show();
+                }
             }
         }
         binding.recyclerViewListDirectChat.adapter = listDirectChatRoomAdapter.getAdapter();

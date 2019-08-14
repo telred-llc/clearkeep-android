@@ -2,7 +2,6 @@ package vmodev.clearkeep.adapters
 
 import android.databinding.DataBindingComponent
 import android.databinding.DataBindingUtil
-import android.databinding.ViewDataBinding
 import android.support.v7.recyclerview.extensions.AsyncDifferConfig
 import android.support.v7.recyclerview.extensions.ListAdapter
 import android.support.v7.util.DiffUtil
@@ -10,16 +9,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import im.vector.R
 import im.vector.databinding.ItemMessageSearchBinding
-import im.vector.databinding.ItemUserBinding
 import vmodev.clearkeep.executors.AppExecutors
-import vmodev.clearkeep.viewmodelobjects.MessageSearchText
-import vmodev.clearkeep.viewmodelobjects.Room
-import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
 
-class ListSearchMessageRecyclerViewAdaptert constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<MessageSearchText>
-                                              , private val dataBindingComponent: DataBindingComponent
-                                              , private val itemClick: (MessageSearchText) -> Unit?)
-    : ListAdapter<MessageSearchText, DataBoundViewHolder<ItemMessageSearchBinding>>(AsyncDifferConfig.Builder<MessageSearchText>(diffCallback)
+class ListSearchRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<MessageRoomUser>
+                                                    , private val dataBindingComponent: DataBindingComponent
+                                                    , private val itemClick: (MessageRoomUser) -> Unit?)
+    : ListAdapter<MessageRoomUser, DataBoundViewHolder<ItemMessageSearchBinding>>(AsyncDifferConfig.Builder(diffCallback)
         .setBackgroundThreadExecutor(appExecutors.diskIO())
         .build()) {
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DataBoundViewHolder<ItemMessageSearchBinding> {

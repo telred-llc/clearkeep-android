@@ -2,15 +2,13 @@ package vmodev.clearkeep.viewmodels.interfaces
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
-import vmodev.clearkeep.viewmodelobjects.Resource
-import vmodev.clearkeep.viewmodelobjects.Room
-import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.viewmodelobjects.*
 
 abstract class AbstractUserInformationActivityViewModel : ViewModel() {
     abstract fun setUserId(userId: String);
     abstract fun getUserByIdResult(): LiveData<Resource<User>>;
-    abstract fun getDirectChatByUserIdResult(): LiveData<Resource<List<Room>>>;
-    abstract fun getRoomChatByUserIdResult(): LiveData<Resource<List<Room>>>;
+    abstract fun getDirectChatByUserIdResult(): LiveData<Resource<List<RoomListUser>>>;
+    abstract fun getRoomChatByUserIdResult(): LiveData<Resource<List<RoomListUser>>>;
     abstract fun setLeaveRoomId(roomId: String);
     abstract fun getLeaveRoomWithIdResult(): LiveData<Resource<String>>;
     abstract fun setAddToFavouriteRoomId(roomId: String);

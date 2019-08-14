@@ -7,7 +7,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractBackupKeyPathDao
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
-import vmodev.clearkeep.viewmodelobjects.BackupKeyPath
+import vmodev.clearkeep.repositories.wayloads.AbstractNetworkNonBoundSource
 import vmodev.clearkeep.viewmodelobjects.Resource
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -3,23 +3,23 @@ package vmodev.clearkeep.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
-import vmodev.clearkeep.repositories.DeviceSettingsRepository
-import vmodev.clearkeep.viewmodelobjects.DeviceSettings
+import vmodev.clearkeep.repositories.LocalSettingsRepository
+import vmodev.clearkeep.viewmodelobjects.LocalSettings
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodels.interfaces.AbstractDataBindingDaggerActivityViewModel
 import javax.inject.Inject
 
-class DataBindingDaggerActivityViewModel @Inject constructor(deviceSettingsRepository: DeviceSettingsRepository) : AbstractDataBindingDaggerActivityViewModel() {
+class DataBindingDaggerActivityViewModel @Inject constructor(localSettingsRepository: LocalSettingsRepository) : AbstractDataBindingDaggerActivityViewModel() {
 
-    private val _deviceSettingsId = MutableLiveData<String>();
-    private val _deviceSettingsResult = Transformations.switchMap(_deviceSettingsId) { input -> deviceSettingsRepository.loadDeviceSettings(input) }
+    private val _setTimeForGetChangeTheme = MutableLiveData<Long>();
+    private val _getChangeThemeResult = Transformations.switchMap(_setTimeForGetChangeTheme) { input -> localSettingsRepository.getLocalSettingsDao() }
 
-    override fun setDeviceSettingsId(deviceSettingsId: String) {
-        if (_deviceSettingsId.value != deviceSettingsId)
-            _deviceSettingsId.value = deviceSettingsId;
+    override fun setTimeForGetTheme(time: Long) {
+        if (_setTimeForGetChangeTheme.value != time)
+            _setTimeForGetChangeTheme.value = time;
     }
 
-    override fun getDeviceSettingsResult(): LiveData<Resource<DeviceSettings>> {
-        return _deviceSettingsResult;
+    override fun getLocalSettingsResult(): LiveData<Resource<LocalSettings>> {
+        return _getChangeThemeResult;
     }
 }

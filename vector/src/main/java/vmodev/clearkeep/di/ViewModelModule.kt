@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import vmodev.clearkeep.fragments.SearchMessagesFragment
 import vmodev.clearkeep.viewmodelproviderfactories.ClearKeepViewModelProviderFactory
 import vmodev.clearkeep.viewmodels.*
 import vmodev.clearkeep.viewmodels.interfaces.*
@@ -172,6 +173,31 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AbstractProfileActivityViewModel::class)
     abstract fun bindProfileActivityViewModel(viewModel: ProfileActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractSearchActivityViewModel::class)
+    abstract fun bindSearchActivityViewModel(viewModel: SearchActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractSearchMessageFragmentViewModel::class)
+    abstract fun bindSearchMessageFragmentViewModel(viewModel: SearchMessageFragmentViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractSearchRoomsFragmentViewModel::class)
+    abstract fun bindSearchRoomFragmentViewModel(viewModel: SearchRoomsFragmentViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractSearchPeopleFragmentViewModel::class)
+    abstract fun bindSearchPeopleFragmentViewModel(viewModel: SearchPeopleFragmentViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractSearchFilesFragmentViewModel::class)
+    abstract fun bindSearchFilesFragmentViewModel(viewModel: SearchFilesFragmentViewModel): ViewModel;
 
     @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;

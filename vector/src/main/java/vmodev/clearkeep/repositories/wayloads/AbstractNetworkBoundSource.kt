@@ -1,6 +1,5 @@
-package vmodev.clearkeep.repositories
+package vmodev.clearkeep.repositories.wayloads
 
-import android.annotation.SuppressLint
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import android.support.annotation.MainThread
@@ -9,8 +8,9 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.viewmodelobjects.Resource
+import java.lang.NullPointerException
 
-abstract class AbstractNetworkBoundSourceRx<T, V> @MainThread constructor() {
+abstract class AbstractNetworkBoundSource<T, V> @MainThread constructor() {
     private val result = MediatorLiveData<Resource<T>>();
 
     init {
@@ -33,16 +33,17 @@ abstract class AbstractNetworkBoundSourceRx<T, V> @MainThread constructor() {
             result.value = newValue;
     }
 
-    @SuppressLint("CheckResult")
     private fun fetchFromNetwork(dbSource: LiveData<T>) {
+        val apiResponse = createCall();
         result.addSource(dbSource) {
             setValue(Resource.loading(null));
         }
-        createCall().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+        result.addSource(apiResponse) { responseData ->
+            result.removeSource(apiResponse)
             result.removeSource(dbSource)
-            if (it != null) {
+            if (responseData != null) {
                 Observable.create<Int> { emitter ->
-                    saveCallResult(it)
+                    saveCallResult(responseData)
                     emitter.onNext(1);
                     emitter.onComplete();
                 }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
@@ -68,9 +69,7 @@ abstract class AbstractNetworkBoundSourceRx<T, V> @MainThread constructor() {
                     setValue(Resource.error(it.message, null))
                 });
             }
-        }, {
-            setValue(Resource.error(it.message, null))
-        });
+        }
     }
 
     fun asLiveData() = result as LiveData<Resource<T>>
@@ -84,5 +83,5 @@ abstract class AbstractNetworkBoundSourceRx<T, V> @MainThread constructor() {
     protected abstract fun loadFromDb(): LiveData<T>
 
     @MainThread
-    protected abstract fun createCall(): Observable<V>
+    protected abstract fun createCall(): LiveData<V>
 }

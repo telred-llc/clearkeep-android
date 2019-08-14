@@ -7,6 +7,7 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractDeviceSettingsDao
+import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSource
 import vmodev.clearkeep.viewmodelobjects.DeviceSettings
 import vmodev.clearkeep.viewmodelobjects.Resource
 import javax.inject.Inject

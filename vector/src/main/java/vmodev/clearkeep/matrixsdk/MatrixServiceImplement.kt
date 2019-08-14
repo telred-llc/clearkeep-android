@@ -7,6 +7,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
 import com.google.gson.Gson
+import com.google.gson.JsonParser
 import im.vector.Matrix
 import im.vector.R
 import im.vector.util.HomeRoomsViewModel
@@ -27,6 +28,7 @@ import org.matrix.androidsdk.core.listeners.ProgressListener
 import org.matrix.androidsdk.core.listeners.StepProgressListener
 import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.crypto.MXCRYPTO_ALGORITHM_MEGOLM
+import org.matrix.androidsdk.crypto.MXDecryptionException
 import org.matrix.androidsdk.crypto.data.ImportRoomKeysResult
 import org.matrix.androidsdk.crypto.keysbackup.KeysBackupStateManager
 import org.matrix.androidsdk.crypto.keysbackup.MegolmBackupCreationInfo
@@ -37,15 +39,22 @@ import org.matrix.androidsdk.data.RoomMediaMessage
 import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.data.RoomTag
 import org.matrix.androidsdk.listeners.IMXMediaUploadListener
+import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.search.SearchResponse
 import org.matrix.androidsdk.rest.model.search.SearchResult
 import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
+import org.matrix.androidsdk.rest.model.sync.RoomResponse
+import org.matrix.androidsdk.rest.model.sync.RoomSync
+import org.matrix.androidsdk.rest.model.sync.RoomSyncState
+import org.matrix.androidsdk.rest.model.sync.RoomSyncTimeline
 import vmodev.clearkeep.applications.ClearKeepApplication
+import vmodev.clearkeep.jsonmodels.MessageContent
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.ultis.SearchMessageByTextResult
+import vmodev.clearkeep.ultis.getJoinedRoom
 import vmodev.clearkeep.viewmodelobjects.*
 import java.io.InputStream
 import javax.inject.Inject
@@ -177,7 +186,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                     var avatar = "";
                     var result = session!!.contentManager.getDownloadableUrl(myUser.avatarUrl);
                     result?.let { avatar = result }
-                    val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = avatar, status = if (myUser.isActive) 1 else 0, roomId = "");
+                    val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = avatar, status = if (myUser.isActive) 1 else 0);
                     emitter.onNext(user);
                     emitter.onComplete();
                 } else {
@@ -190,62 +199,38 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
 
     override fun getListRoom(filters: Array<Int>): Observable<List<vmodev.clearkeep.viewmodelobjects.Room>> {
         setMXSession();
-        return Observable.create<List<vmodev.clearkeep.viewmodelobjects.Room>> { emitter ->
-            kotlin.run {
-                val listRoom = ArrayList<vmodev.clearkeep.viewmodelobjects.Room>();
-                if (homeRoomsViewModel != null && homeRoomsViewModel!!.result != null) {
-                    homeRoomsViewModel!!.update();
-                    val rooms = ArrayList<Room>();
-                    for (filter in filters) {
-                        rooms.addAll(funcs[filter].apply(homeRoomsViewModel!!.result))
-                    }
-                    var currentIndex: Int = 0;
-                    rooms.forEach { t: Room? ->
-                        t?.let {
-                            asyncUpdateRoomMember(it).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ mrId ->
-                                kotlin.run {
-                                    currentIndex++;
-                                    listRoom.add(matrixRoomToRoom(t, if (mrId.isNotEmpty()) if (mrId[0].id.isNullOrEmpty()) "" else mrId[0].id else ""));
-                                    if (currentIndex == rooms.size) {
-                                        emitter.onNext(listRoom);
-                                        emitter.onComplete();
-                                    }
-                                }
-                            }
-                                    , { e ->
-                                kotlin.run {
-                                    currentIndex++;
-                                    listRoom.add(matrixRoomToRoom(t));
-                                    if (currentIndex == rooms.size) {
-                                        emitter.onNext(listRoom);
-                                        emitter.onComplete();
-                                    }
-                                }
-                            });
-                        }
-                    }
-//                    emitter.onNext(listRoom);
-//                    emitter.onComplete();
-                } else {
-                    emitter.onError(NullPointerException());
-                    emitter.onComplete();
+        return Observable.create { emitter ->
+            val listRoom = ArrayList<vmodev.clearkeep.viewmodelobjects.Room>();
+            if (homeRoomsViewModel != null && homeRoomsViewModel!!.result != null) {
+                homeRoomsViewModel!!.update();
+                val rooms = ArrayList<Room>();
+                for (filter in filters) {
+                    rooms.addAll(funcs[filter].apply(homeRoomsViewModel!!.result))
                 }
+                rooms.forEach { t: Room? ->
+                    t?.let {
+                        listRoom.add(matrixRoomToRoom(t));
+                    }
+                }
+                emitter.onNext(listRoom);
+                emitter.onComplete();
+            } else {
+                emitter.onError(NullPointerException());
+                emitter.onComplete();
             }
         }
     }
 
     override fun getRoomWithId(id: String): Observable<vmodev.clearkeep.viewmodelobjects.Room> {
         setMXSession();
-        return ObservableAll.create<vmodev.clearkeep.viewmodelobjects.Room> { emitter ->
-            kotlin.run {
-                val room = session!!.dataHandler!!.getRoom(id);
-                if (room != null) {
-                    emitter.onNext(matrixRoomToRoom(room));
-                    emitter.onComplete();
-                } else {
-                    emitter.onError(NullPointerException());
-                    emitter.onComplete();
-                }
+        return ObservableAll.create { emitter ->
+            val room = session!!.dataHandler!!.getRoom(id);
+            if (room != null) {
+                emitter.onNext(matrixRoomToRoom(room));
+                emitter.onComplete();
+            } else {
+                emitter.onError(NullPointerException());
+                emitter.onComplete();
             }
         }
     }
@@ -374,7 +359,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         }
     }
 
-    private fun matrixRoomToRoom(room: Room, roomMemberId: String = ""): vmodev.clearkeep.viewmodelobjects.Room {
+    private fun matrixRoomToRoom(room: Room): vmodev.clearkeep.viewmodelobjects.Room {
         var sourcePrimary = 1;// = if (room.isDirect) 0b00000001 else 0b00000010;
         if (room.isInvited) {
             sourcePrimary = if (room.isDirectChatInvitation) 0b00000001 else 0b00000010;
@@ -401,29 +386,21 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             BingRulesManager.RoomNotificationState.MUTE -> notificationState = 0x08;
         }
         val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
-
-        val rooMemberOnlineStatus: Byte = if (roomMemberId.isNullOrEmpty()) 0 else if (VectorUtils.getUserOnlineStatus(application, session!!, roomMemberId, null).compareTo("Online now") == 0) 1 else 0;
-//        Log.d("Room Type: ", (sourcePrimary or sourceSecondary or sourceThird).toString() + "-----" + room.getRoomDisplayName(application))
-        val roomObj: vmodev.clearkeep.viewmodelobjects.Room = vmodev.clearkeep.viewmodelobjects.Room(id = room.roomId, name = room.getRoomDisplayName(application)
+        val roomObj: vmodev.clearkeep.viewmodelobjects.Room = Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
-                , updatedDate = timeUpdateLong, roomMemberId = roomMemberId, roomMemberStatus = rooMemberOnlineStatus, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, lastMessage = lastMessage
+                , updatedDate = timeUpdateLong, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, lastMessage = lastMessage
                 , encrypted = if (room.isEncrypted) 1 else 0, status = if (room.isLeaving || room.isLeft) 0 else 1, notificationState = notificationState);
         return roomObj;
     }
 
     @SuppressLint("CheckResult")
     private fun asyncUpdateRoomMember(room: Room): Observable<List<User>> {
-        return Observable.create<List<User>> { emitter ->
+        return Observable.create { emitter ->
             val users = ArrayList<User>();
-//            if (!room.isDirect || room.isInvited) {
-//                emitter.onError(Throwable("No need check"))
-//                emitter.onComplete();
-//            }
             room.getMembersAsync(object : ApiCallback<List<RoomMember>> {
                 override fun onSuccess(p0: List<RoomMember>?) {
                     p0?.forEach { t: RoomMember? ->
                         t?.userId?.let {
-                            //                            if (t.userId.compareTo(session!!.myUserId) != 0) {
                             var avatar = "";
                             if (t?.avatarUrl.isNullOrEmpty() || t == null) {
                                 avatar = "";
@@ -431,8 +408,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                 var result = session!!.contentManager.getDownloadableUrl(t?.avatarUrl);
                                 result?.let { avatar = result }
                             };
-                            users.add(User(name = t?.name, roomId = "", status = 0, avatarUrl = avatar, id = t?.userId));
-//                            }
+                            users.add(User(name = t?.name, status = 0, avatarUrl = avatar, id = t?.userId));
                         }
                     }
                     emitter.onNext(users);
@@ -477,7 +453,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                         result?.let { avatar = result }
                                     };
                                     t?.let { user ->
-                                        users.add(User(id = user.user_id, name = if (user.displayname.isNullOrEmpty()) "Riot-bot" else user.displayname, avatarUrl = avatar, status = if (user.isActive) 1 else 0, roomId = ""))
+                                        users.add(User(id = user.user_id, name = if (user.displayname.isNullOrEmpty()) "Riot-bot" else user.displayname, avatarUrl = avatar, status = if (user.isActive) 1 else 0))
                                     }
                                 }
                             }
@@ -525,9 +501,9 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                         } else {
                             if (t?.result?.type?.compareTo("m.room.name") == 0) {
 //                                val result: SearchMessageByTextResult = Gson().fromJson(t?.result?.content, SearchMessageByTextResult::class.java);
-                                val room = matrixRoomToRoom(session!!.dataHandler.getRoom(t?.result.roomId));
+//                                val room = matrixRoomToRoom(session!!.dataHandler.getRoom(t?.result.roomId));
 
-                                searchResults.add(room as T);
+                                searchResults.add(t?.result.roomId as T);
                             }
                         }
                     }
@@ -882,15 +858,14 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
     }
 
     override fun getUsersInRoom(roomId: String): Observable<List<User>> {
-        return Observable.create<List<User>> { emitter ->
+        return Observable.create { emitter ->
             val room = session!!.dataHandler.getRoom(roomId);
             room.getActiveMembersAsync(object : ApiCallback<List<RoomMember>> {
                 override fun onSuccess(p0: List<RoomMember>?) {
                     val users = ArrayList<User>();
                     p0?.forEach { t: RoomMember? ->
                         t?.let { roomMember ->
-                            users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0, roomId = roomId))
-                            Log.d("Add User: ", roomMember.name);
+                            users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0))
                         }
                     }
                     emitter.onNext(users);
@@ -938,7 +913,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                             asyncUpdateRoomMember(it).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ mrId ->
                                 kotlin.run {
                                     currentIndex++;
-                                    listRoom.add(matrixRoomToRoom(t, if (mrId.isNotEmpty()) if (mrId[0].id.isNullOrEmpty()) "" else mrId[0].id else ""));
+                                    listRoom.add(matrixRoomToRoom(t));
                                     mrId.forEach { u: User? ->
                                         u?.let { user ->
                                             listUser.add(user);
@@ -982,7 +957,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                 override fun onSuccess(p0: List<RoomMember>?) {
                     p0?.forEach { t: RoomMember? ->
                         t?.let { roomMember ->
-                            users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0, roomId = roomId))
+                            users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0))
                             roomUserJoin.add(RoomUserJoin(room.roomId, roomMember.userId))
                         }
                     }
@@ -1012,7 +987,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         if (avatar == null) {
             return Observable.create<User> {
                 updateUser(name).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe({ sn ->
-                    it.onNext(User(name = sn, id = session!!.myUserId, roomId = "", status = 0, avatarUrl = ""))
+                    it.onNext(User(name = sn, id = session!!.myUserId, status = 0, avatarUrl = ""))
                     it.onComplete();
                 }, { en ->
                     it.onError(en);
@@ -1023,7 +998,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             return Observable.create<User> {
                 updateUser(name).observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe({ sn ->
                     updateUser(avatar).observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe({ sa ->
-                        it.onNext(User(name = sn, id = session!!.myUserId, avatarUrl = sa, status = 0, roomId = ""));
+                        it.onNext(User(name = sn, id = session!!.myUserId, avatarUrl = sa, status = 0));
                         it.onComplete();
                     }, { ea ->
                         it.onError(ea);
@@ -1638,7 +1613,6 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                 emitter.onError(Throwable("Crypto is null"))
                 emitter.onComplete();
             }
-
         }
     }
 
@@ -1664,5 +1638,97 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                 }
             })
         };
+    }
+
+    override fun getMessagesToSearch(): Observable<List<Message>> {
+        setMXSession();
+        return Observable.create { emitter ->
+            var index = 0;
+            val rooms = session!!.getJoinedRoom();
+            rooms.forEach { r ->
+                session!!.roomsApiClient.initialSync(r.roomId, object : ApiCallback<RoomResponse> {
+                    override fun onSuccess(info: RoomResponse?) {
+                        val roomSync = RoomSync();
+                        roomSync.state = RoomSyncState();
+                        roomSync.state.events = info?.state;
+                        roomSync.timeline = RoomSyncTimeline();
+                        roomSync.timeline.events = info?.messages?.chunk;
+                        val messages = ArrayList<Message>();
+                        roomSync.timeline.events.forEach {
+                            it?.let {
+                                if (it.type.compareTo("m.room.encrypted") == 0) {
+                                    val message = Message(id = it.eventId, roomId = it.roomId, userId = it.sender, messageType = it.type, encryptedContent = it.content.toString());
+                                    messages.add(message);
+                                }
+                            }
+                        }
+                        emitter.onNext(messages);
+                        index++;
+                        if (index >= rooms.size)
+                            emitter.onComplete();
+                    }
+
+                    override fun onUnexpectedError(e: java.lang.Exception?) {
+                        emitter.onError(Throwable(e?.message))
+                        index++;
+                        if (index >= rooms.size)
+                            emitter.onComplete();
+                    }
+
+                    override fun onMatrixError(e: MatrixError?) {
+                        emitter.onError(Throwable(e?.message))
+                        index++;
+                        if (index >= rooms.size)
+                            emitter.onComplete();
+                    }
+
+                    override fun onNetworkError(e: java.lang.Exception?) {
+                        emitter.onError(Throwable(e?.message))
+                        index++;
+                        if (index >= rooms.size)
+                            emitter.onComplete();
+                    }
+                })
+            }
+        }
+    }
+
+    override fun decryptListMessage(messages: List<MessageRoomUser>, msgType : String): Observable<List<MessageRoomUser>> {
+        setMXSession();
+        return Observable.create { emitter ->
+            val messagesResult = ArrayList<MessageRoomUser>();
+            val parser = JsonParser();
+            val gson = Gson();
+            session!!.dataHandler.crypto?.let { mxCrypto ->
+                messages.forEach { item ->
+                    val event = Event(item.message?.messageType, parser.parse(item.message?.encryptedContent).asJsonObject, item.message?.userId, item.message?.roomId);
+                    try {
+                        val result = mxCrypto.decryptEvent(event, null);
+                        result?.let {
+                            val json = result.mClearEvent.asJsonObject;
+                            val type = json.get("type").asString;
+                            if (!type.isNullOrEmpty() && type.compareTo("m.room.message") == 0) {
+                                val message = gson.fromJson(result.mClearEvent, MessageContent::class.java);
+                                if (message.getContent().getMsgType().compareTo(msgType) == 0) {
+                                    var messageResult: Message? = null
+                                    item.message?.let {
+                                        messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = message.getContent().getBody())
+                                    }
+                                    val messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
+                                    messagesResult.add(messageRooUser);
+                                }
+                            }
+                        }
+                    } catch (e: MXDecryptionException) {
+                        Log.d("DecryptError", e.message);
+                    }
+                }
+                emitter.onNext(messagesResult);
+                emitter.onComplete();
+            } ?: run {
+                emitter.onError(Throwable("Crypto is null"))
+                emitter.onComplete();
+            }
+        }
     }
 }

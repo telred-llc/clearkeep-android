@@ -61,10 +61,10 @@ class RoomFragment : DataBindingDaggerFragment(), IRoomFragment {
         super.onViewCreated(view, savedInstanceState)
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner;
-        listRoomAdapter.setdataBindingComponent(dataBindingComponent);
+        listRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listRoomAdapter.setOnItemClick { room, i ->
             when (i) {
-                3 -> onClickItem.onNext(room.id)
+//                3 -> onClickItem.onNext(room.id)
             }
         }
         listRoomAdapter.setOnItemLongClick { room ->
@@ -77,10 +77,10 @@ class RoomFragment : DataBindingDaggerFragment(), IRoomFragment {
         binding.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewListConversation.adapter = listRoomAdapter.getAdapter();
         viewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer {
-            listRoomAdapter.getAdapter().submitList(it?.data);
+//            listRoomAdapter.getAdapter().submitList(it?.data);
         });
         viewModelFactory.getViewModel().getSearchResult().observe(viewLifecycleOwner, Observer {
-            listRoomAdapter.getAdapter().submitList(it?.data);
+//            listRoomAdapter.getAdapter().submitList(it?.data);
         })
         viewModelFactory.getViewModel().setListType(arrayOf(2, 130))
     }

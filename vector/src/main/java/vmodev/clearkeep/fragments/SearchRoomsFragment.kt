@@ -1,41 +1,34 @@
 package vmodev.clearkeep.fragments
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
 import android.databinding.DataBindingUtil
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.util.DiffUtil
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import dagger.android.support.DaggerFragment
 
 import im.vector.R
+import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.FragmentSearchRoomsBinding
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
-import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
-import vmodev.clearkeep.viewmodelobjects.Room
-import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchRoomsFragmentViewModel
 import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val USER_ID = "USER_ID";
 
 /**
  * A simple [Fragment] subclass.
@@ -46,29 +39,30 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  *
  */
-class SearchRoomsFragment : DaggerFragment(), ISearchFragment {
+class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
+    private lateinit var userId: String;
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractSearchRoomsFragmentViewModel>;
     @Inject
     lateinit var appExecutors: AppExecutors;
     @Inject
-    lateinit var listRoomRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
+    lateinit var listRoomInviteRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
+    @Inject
+    lateinit var listRoomFavouriteRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
+    @Inject
+    lateinit var listRoomNormalRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
 
     private val bindingDataComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
     private lateinit var binding: FragmentSearchRoomsBinding;
-    private lateinit var roomViewModel: AbstractRoomViewModel;
     private var disposable: Disposable? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            userId = it.getString(USER_ID, "");
         }
     }
 
@@ -81,15 +75,59 @@ class SearchRoomsFragment : DaggerFragment(), ISearchFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
-        binding.rooms = roomViewModel.getFindByTextResult();
-        listRoomRecyclerViewAdapter.setdataBindingComponent(bindingDataComponent)
-        binding.recyclerView.adapter = listRoomRecyclerViewAdapter.getAdapter();
-        roomViewModel.getFindByTextResult().observe(viewLifecycleOwner, Observer { t ->
-            listRoomRecyclerViewAdapter.getAdapter().submitList(t?.data);
+        listRoomInviteRecyclerViewAdapter.setDataBindingComponent(bindingDataComponent)
+        listRoomFavouriteRecyclerViewAdapter.setDataBindingComponent(bindingDataComponent);
+        listRoomNormalRecyclerViewAdapter.setDataBindingComponent(dataBindingComponent);
+        listRoomInviteRecyclerViewAdapter.setOnItemClick { roomListUser, i ->
+            roomListUser.room?.let {
+                when (i) {
+                    3 -> {
+                        val intentRoom = Intent(this.context, RoomActivity::class.java);
+                        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
+                        intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, it.id);
+                        startActivity(intentRoom);
+                    }
+                }
+            }
+        }
+        listRoomFavouriteRecyclerViewAdapter.setOnItemClick { roomListUser, i ->
+            roomListUser.room?.let {
+                when (i) {
+                    3 -> {
+                        val intentRoom = Intent(this.context, RoomActivity::class.java);
+                        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
+                        intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, it.id);
+                        startActivity(intentRoom);
+                    }
+                }
+            }
+        }
+        listRoomNormalRecyclerViewAdapter.setOnItemClick { roomListUser, i ->
+            roomListUser.room?.let {
+                when (i) {
+                    3 -> {
+                        val intentRoom = Intent(this.context, RoomActivity::class.java);
+                        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
+                        intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, it.id);
+                        startActivity(intentRoom);
+                    }
+                }
+            }
+        }
+        binding.recyclerViewInvites.adapter = listRoomInviteRecyclerViewAdapter.getAdapter();
+        binding.recyclerViewFavourites.adapter = listRoomFavouriteRecyclerViewAdapter.getAdapter();
+        binding.recyclerViewRooms.adapter = listRoomNormalRecyclerViewAdapter.getAdapter();
+        viewModelFactory.getViewModel().getRoomInviteSearchResult().observe(viewLifecycleOwner, Observer {
+            listRoomInviteRecyclerViewAdapter.getAdapter().submitList(it?.data);
         });
-        binding.lifecycleOwner = viewLifecycleOwner;
+        viewModelFactory.getViewModel().getRoomFavouriteSearchResult().observe(viewLifecycleOwner, Observer {
+            listRoomFavouriteRecyclerViewAdapter.getAdapter().submitList(it?.data);
+        })
+        viewModelFactory.getViewModel().getRoomNormalSearchResult().observe(viewLifecycleOwner, Observer {
+            listRoomNormalRecyclerViewAdapter.getAdapter().submitList(it?.data);
+        })
 
+        binding.lifecycleOwner = viewLifecycleOwner;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -139,20 +177,19 @@ class SearchRoomsFragment : DaggerFragment(), ISearchFragment {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(userId: String) =
                 SearchRoomsFragment().apply {
                     arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
+                        putString(USER_ID, userId);
                     }
                 }
     }
 
     override fun selectedFragment(query: String): ISearchFragment {
-        roomViewModel.setTextForFindByText(query);
+        viewModelFactory.getViewModel().setQueryForSearch(query);
         disposable = getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe { t: String? ->
             t?.let { s ->
-                roomViewModel.setTextForFindByText(s);
+                viewModelFactory.getViewModel().setQueryForSearch(s);
             }
         };
         return this;

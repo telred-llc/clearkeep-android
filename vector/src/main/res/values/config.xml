@@ -15,12 +15,12 @@
     <string name="bug_report_url" translatable="false">https://riot.im/bugreports/submit</string>
 
     <!-- Widget urls -->
-    <string name="integrations_ui_url" translatable="false">"https://scalar.vector.im/"</string>
-    <string name="integrations_rest_url" translatable="false">"https://scalar.vector.im/api"</string>
+    <string name="integrations_ui_url" translatable="false">"https://scalar.clearkeep.me/riot"</string>
+    <string name="integrations_rest_url" translatable="false">"https://scalar.clearkeep.me/api/v1/scalar"</string>
 
     <string-array name="integrations_widgets_urls" translatable="false">
-        <item>https://scalar-staging.riot.im/scalar/api</item>
-        <item>https://scalar.vector.im/api</item>
+        <item>https://scalar.clearkeep.me/widgets</item>
+        <!--<item>https://scalar.vector.im/api</item>-->
     </string-array>
 
     <!-- empty means to use the active HS url -->

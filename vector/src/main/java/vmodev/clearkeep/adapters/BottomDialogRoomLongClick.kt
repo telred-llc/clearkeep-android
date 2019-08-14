@@ -11,7 +11,7 @@ import im.vector.R
 
 class BottomDialogRoomLongClick constructor(state: Byte = 0x02) : BaseAdapter() {
 
-    private var arrayTitles: Array<Int> = arrayOf(R.string.turn_on_room_notification, R.string.add_to_favourite, R.string.setting, R.string.leave/*, R.string.preview_message*/)
+    private var arrayTitles: Array<Int> = arrayOf(R.string.turn_on_room_notification, R.string.add_to_favourite, R.string.setting, R.string.leave, R.string.preview_message)
     private var arrayIcons: Array<Int> = arrayOf(R.drawable.ic_notification_setting, R.drawable.ic_room_favourite, R.drawable.ic_room_settings, R.drawable.ic_leave_room, R.drawable.ic_forward_black_24dp)
 
     @SuppressLint("ViewHolder")

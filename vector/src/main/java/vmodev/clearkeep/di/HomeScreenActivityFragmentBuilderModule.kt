@@ -18,6 +18,7 @@ import vmodev.clearkeep.factories.viewmodels.interfaces.*
 import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.fragments.Interfaces.*
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.RoomListUser
 import javax.inject.Named
 
 @Suppress("unused")
@@ -81,14 +82,14 @@ abstract class HomeScreenActivityFragmentBuilderModule {
         @JvmStatic
         @Named(value = IListRoomRecyclerViewAdapter.ROOM_CONTACT)
         fun provideListRoomContactAdapter(appExecutors: AppExecutors): IListRoomRecyclerViewAdapter {
-            return ListRoomContactRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<Room>() {
-                override fun areItemsTheSame(p0: Room, p1: Room): Boolean {
-                    return p0.id == p1.id;
+            return ListRoomContactRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<RoomListUser>() {
+                override fun areItemsTheSame(p0: RoomListUser, p1: RoomListUser): Boolean {
+                    return p0.room?.id == p1.room?.id;
                 }
 
-                override fun areContentsTheSame(p0: Room, p1: Room): Boolean {
-                    return p0.name == p1.name && p0.updatedDate == p1.updatedDate && p0.avatarUrl == p1.avatarUrl
-                            && p0.notifyCount == p1.notifyCount && p0.roomMemberStatus == p1.roomMemberStatus;
+                override fun areContentsTheSame(p0: RoomListUser, p1: RoomListUser): Boolean {
+                    return p0.room?.name == p1.room?.name && p0.room?.updatedDate == p1.room?.updatedDate && p0.room?.avatarUrl == p1.room?.avatarUrl
+                            && p0.room?.notifyCount == p1.room?.notifyCount;
                 }
             })
         }

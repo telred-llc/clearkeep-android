@@ -10,7 +10,6 @@ import android.support.v7.widget.DividerItemDecoration
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.orhanobut.dialogplus.DialogPlus
 import im.vector.R
 import im.vector.databinding.FragmentDirectMessageBinding
 import io.reactivex.Observable
@@ -18,7 +17,6 @@ import io.reactivex.subjects.PublishSubject
 import vmodev.clearkeep.activities.MessageListActivity
 import vmodev.clearkeep.activities.FindAndCreateNewConversationActivity
 import vmodev.clearkeep.activities.RoomSettingsActivity
-import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IDirectMessageFragmentViewModelFactory
@@ -67,10 +65,10 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDirectMessageFragmen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner;
-        listRoomAdapter.setdataBindingComponent(dataBindingComponent);
+        listRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listRoomAdapter.setOnItemClick { room, i ->
             when (i) {
-                3 -> onClickItem.onNext(room.id);
+//                3 -> onClickItem.onNext(room.id);
             }
         }
         listRoomAdapter.setOnItemLongClick { room ->
@@ -83,10 +81,10 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDirectMessageFragmen
         binding.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewListConversation.adapter = listRoomAdapter.getAdapter();
         viewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer {
-            listRoomAdapter!!.getAdapter().submitList(it?.data);
+//            listRoomAdapter!!.getAdapter().submitList(it?.data);
         });
         viewModelFactory.getViewModel().getSearchResult().observe(viewLifecycleOwner, Observer {
-            listRoomAdapter!!.getAdapter().submitList(it?.data);
+//            listRoomAdapter!!.getAdapter().submitList(it?.data);
         })
         viewModelFactory.getViewModel().setListType(arrayOf(1, 129))
     }
