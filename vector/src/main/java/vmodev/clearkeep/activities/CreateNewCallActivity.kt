@@ -37,6 +37,7 @@ class CreateNewCallActivity : DataBindingDaggerActivity(), ICreateNewCallActivit
     private lateinit var binding: ActivityCreateNewCallBinding;
     private val listSelected = HashMap<String, User>();
     private lateinit var userId: String;
+    private var currentRoomId: String = ""
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,7 +94,10 @@ class CreateNewCallActivity : DataBindingDaggerActivity(), ICreateNewCallActivit
         });
         viewModelFactory.getViewModel().getCreateNewRoomResult().observe(this, Observer {
             it?.data?.let {
-                gotoRoom(it.id);
+                if (it.id != currentRoomId) {
+                    currentRoomId = it.id
+                    gotoRoom(currentRoomId)
+                }
             }
         })
 
