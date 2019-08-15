@@ -21,6 +21,8 @@
         <!-- default background color -->
         <item name="android:colorBackground">@color/riot_primary_background_color_light</item>
         <item name="vctr_bottom_nav_background_color">#FFF3F8FD</item>
+        <item name="vctr_bottom_nav_background_border_color">#FFE9EDF1</item>
+
 
         <!-- waiting view background -->
         <item name="vctr_waiting_background_color">@color/waiting_background_light</item>

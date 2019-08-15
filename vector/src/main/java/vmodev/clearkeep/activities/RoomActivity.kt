@@ -15,6 +15,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Vibrator
 import android.preference.PreferenceManager
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AlertDialog
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
@@ -66,6 +67,7 @@ import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.crypto.MXCryptoError
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo
 import org.matrix.androidsdk.crypto.data.MXUsersDevicesMap
+import org.matrix.androidsdk.crypto.model.crypto.EncryptedEventContent
 import org.matrix.androidsdk.data.Room
 import org.matrix.androidsdk.data.RoomMediaMessage
 import org.matrix.androidsdk.data.RoomPreviewData
@@ -77,17 +79,22 @@ import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.User
 import org.matrix.androidsdk.rest.model.message.Message
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.fragments.MessageListFragment
+import vmodev.clearkeep.jsonmodels.MessageContent
+import vmodev.clearkeep.repositories.MessageRepository
 import vmodev.clearkeep.ultis.ReadMarkerManager
 import vmodev.clearkeep.ultis.RoomMediasSender
+import vmodev.clearkeep.viewmodelobjects.Status
 import java.util.*
+import javax.inject.Inject
 
 class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPreviewDataListener,
         MatrixMessageListFragment.IEventSendingListener,
         MatrixMessageListFragment.IOnScrollListener,
         MessageListFragment.VectorMessageListFragmentListener,
-        VectorReadReceiptsDialogFragment.VectorReadReceiptsDialogFragmentListener {
+        VectorReadReceiptsDialogFragment.VectorReadReceiptsDialogFragmentListener, IActivity {
     companion object {
         // the session
         val EXTRA_MATRIX_ID = MXCActionBarActivity.EXTRA_MATRIX_ID
@@ -113,7 +120,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         private val SHOW_ACTION_BAR_HEADER = true
         private val HIDE_ACTION_BAR_HEADER = false
-
+        private var checkEditMessage : Boolean = false
         // the room is launched but it expects to start the dedicated call activity
         val EXTRA_START_CALL_ID = "EXTRA_START_CALL_ID"
 
@@ -128,7 +135,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     private val TYPING_TIMEOUT_MS = 10000
 
     private val FIRST_VISIBLE_ROW = "FIRST_VISIBLE_ROW"
-
     // activity result request code
     private val REQUEST_FILES_REQUEST_CODE = 0
     private val TAKE_IMAGE_REQUEST_CODE = 1
@@ -162,17 +168,21 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     private var mEventId: String? = null
     private var mDefaultRoomName: String? = null
     private var mDefaultTopic: String? = null
+    private var event : Event? = null
 
     private var mLatestChatMessageCache: MXLatestChatMessageCache? = null
 
     @BindView(R.id.room_sending_message_layout)
     lateinit var mSendingMessagesLayout: View
 
-//    @BindView(R.id.room_send_image_view)
-//    lateinit var mSendImageView: ImageView
+//    @BindView(R.id.composerLayout)
+//    lateinit var composerLayout: TextComposerView
 
     @BindView(R.id.editText_messageBox)
     lateinit var mEditText: VectorAutoCompleteTextView
+
+    @BindView(R.id.deleteEditMessage)
+    lateinit var deleteEditMessage : ImageButton
 
     @BindView(R.id.room_self_avatar)
     lateinit var mAvatarImageView: ImageView
@@ -235,6 +245,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     @BindView(R.id.room_notifications_area)
     lateinit var mNotificationsArea: NotificationAreaView
 
+//    @BindView(R.id.layoutEditMessage)
+//    lateinit var editMessage: NotificationAreaView
+
     private var mLatestTypingMessage: String? = null
     private var mIsScrolledToTheBottom: Boolean? = null
     private var mLatestDisplayedEvent: Event? = null // the event at the bottom of the list
@@ -278,6 +291,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     lateinit var imageViewVideoCall: ImageView;
     @BindView(R.id.image_view_voice_call)
     lateinit var imageViewVoiceCall: ImageView;
+
+    @Inject
+    lateinit var messageRepository: MessageRepository;
 
     // network events
     private val mNetworkEventListener = IMXNetworkEventListener {
@@ -501,6 +517,10 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         application = applicationContext as IApplication;
         setTheme(application.getCurrentTheme());
         return R.layout.activity_room
+    }
+
+    override fun getActivity(): FragmentActivity {
+        return this;
     }
 
     override fun initUiAndData() {
@@ -2417,6 +2437,31 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         }
     }
 
+    fun insertEditMessage(editMessage: String,eventRow: Event) {
+        if (!TextUtils.isEmpty(editMessage)) {
+            deleteEditMessage.visibility = View.VISIBLE
+            marginRightEdittext()
+            mEditText!!.setText("")
+            if (TextUtils.isEmpty(mEditText!!.text)) {
+                mEditText!!.append(editMessage)
+            } else {
+                mEditText!!.text.insert(mEditText!!.selectionStart, editMessage)
+            }
+            checkEditMessage = true
+            event = eventRow
+        }
+    }
+
+    private fun marginRightEdittext(){
+        val param = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT)
+        if (deleteEditMessage.visibility == View.VISIBLE){
+            param.setMargins(0,0,90,0)
+            mEditText.layoutParams = param
+        }else{
+            param.setMargins(0,0,6,0)
+            mEditText.layoutParams = param
+        }
+    }
     /* ==========================================================================================
      * Implement VectorMessageListFragmentListener
      * ========================================================================================== */
@@ -3755,7 +3800,49 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     @OnClick(R.id.button_send)
     internal fun onClickSend() {
-        sendTextMessage();
+        if (checkEditMessage){
+            deleteEditMessage.visibility = View.GONE
+            marginRightEdittext()
+            editMessage(event)
+            checkEditMessage = false
+        }else{
+            sendTextMessage();
+        }
+
+    }
+
+    @OnClick(R.id.deleteEditMessage)
+    internal fun onClickDeleteEditMessage(){
+        if(deleteEditMessage.visibility == View.VISIBLE){
+            deleteEditMessage.visibility = View.GONE
+            marginRightEdittext()
+            checkEditMessage = false
+            mEditText.setText("")
+        }
+    }
+    private fun editMessage(event: Event?) {
+//       val room : Room = mxSession!!.dataHandler.getRoom("");
+////        room.unsentEvents[0].
+//        val sendMode : SendMode
+//        val messageContent : MessageContent? =
+        messageRepository.editMessage(event!!).observe(this, android.arch.lifecycle.Observer {
+            it?.let {
+                when(it.status){
+                    Status.SUCCESS -> {
+                        it.data?.let {
+                            //update UI
+
+                        }
+                    }
+                    Status.ERROR -> {
+
+                    }
+                    else -> {
+
+                    }
+                }
+            }
+        })
     }
 
     @SuppressLint("SetTextI18n")

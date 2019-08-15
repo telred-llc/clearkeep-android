@@ -302,25 +302,42 @@
                         android:tint="?attr/colorAccent"
                         android:visibility="gone" />
 
-                    <im.vector.view.VectorAutoCompleteTextView
-                        android:id="@+id/editText_messageBox"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="6dp"
-                        android:layout_marginRight="6dp"
-                        android:layout_weight="1"
-                        android:background="@android:color/transparent"
-                        android:dropDownAnchor="@+id/room_sending_message_layout"
-                        android:hint="@string/room_message_placeholder_not_encrypted"
-                        android:inputType="textCapSentences|textMultiLine"
-                        android:maxHeight="160dp"
-                        android:textColor="?android:textColorPrimary"
-                        android:textColorHint="?attr/vctr_default_text_hint_color"
-                        android:textCursorDrawable="@drawable/searches_cursor_background"
-                        android:textSize="14sp"
-                        tools:text="line 1" />
-
+                   <RelativeLayout
+                       android:orientation="horizontal"
+                       android:layout_gravity="center_vertical"
+                       android:layout_weight="1"
+                       android:layout_width="0dp"
+                       android:layout_height="wrap_content">
+                       <im.vector.view.VectorAutoCompleteTextView
+                           android:layout_marginEnd="6dp"
+                           android:layout_marginRight="6dp"
+                           android:id="@+id/editText_messageBox"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:background="@android:color/transparent"
+                           android:dropDownAnchor="@+id/room_sending_message_layout"
+                           android:hint="@string/room_message_placeholder_not_encrypted"
+                           android:inputType="textCapSentences|textMultiLine"
+                           android:maxHeight="160dp"
+                           android:textColor="?android:textColorPrimary"
+                           android:textColorHint="?attr/vctr_default_text_hint_color"
+                           android:textCursorDrawable="@drawable/searches_cursor_background"
+                           android:textSize="14sp"
+                           tools:text="line 1" />
+                       <ImageButton
+                           android:visibility="gone"
+                           android:layout_alignParentEnd="true"
+                           android:id="@+id/deleteEditMessage"
+                           android:layout_width="22dp"
+                           android:layout_height="22dp"
+                           android:layout_marginEnd="8dp"
+                           android:background="?android:attr/selectableItemBackground"
+                           android:src="@drawable/ic_close_round"
+                           android:tint="@color/riotx_notice"
+                           app:layout_constraintBottom_toBottomOf="@+id/composer_related_message_preview"
+                           app:layout_constraintRight_toRightOf="parent"
+                           app:layout_constraintTop_toTopOf="@+id/composer_related_message_preview" />
+                   </RelativeLayout>
 
                     <!--<ImageView-->
                     <!--android:id="@+id/room_start_call_image_view"-->

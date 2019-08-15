@@ -2528,6 +2528,9 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
             menu.findItem(R.id.ic_action_vector_copy).setVisible(true);
             menu.findItem(R.id.ic_action_vector_quote).setVisible(true);
         }
+        if (event.getSender().equals(mSession.getMyUserId())){
+            menu.findItem(R.id.ic_action_vector_edit).setVisible(true);
+        }
 
         if (event.isUploadingMedia(mMediasCache)) {
             menu.findItem(R.id.ic_action_vector_cancel_upload).setVisible(true);

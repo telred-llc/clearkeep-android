@@ -5,6 +5,7 @@
     <color name="vector_success_color">#70BF56</color>
     <color name="vector_warning_color">#ff4b55</color>
     <color name="vector_error_color">#ff4b55</color>
+    <color name="riotx_notice">#FFFF4B55</color>
 
     <!-- main app colors -->
     <color name="vector_fuchsia_color">#ff4b55</color>
@@ -72,6 +73,7 @@
     <color name="list_divider_color_dark">#FF61708B</color>
     <!--Black/Line break mobile-->
     <color name="list_divider_color_black">#FF22262E</color>
+    <attr name="riotx_text_primary" format="color" />
 
     <color name="tab_bar_selected_background_color_light">@color/primary_color_light</color>
     <color name="tab_bar_selected_background_color_dark">@color/primary_color_dark</color>

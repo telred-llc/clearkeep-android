@@ -591,7 +591,14 @@ class MessageListFragment : MatrixMessageListFragment<VectorMessagesAdapter>(), 
                 }
                 (attachedActivity as RoomActivity).insertQuoteInTextEditor(quotedTextMsg + "\n\n")
             }
-        } else if ((action == R.id.ic_action_vector_share) || (action == R.id.ic_action_vector_forward) || (action == R.id.ic_action_vector_save)) {
+        }else if (action == R.id.ic_action_vector_edit) {
+            val attachedActivity = activity
+            if ((null != attachedActivity) && (attachedActivity is RoomActivity) && !textMsg.isNullOrEmpty()) {
+                // EditMessage
+                (attachedActivity as RoomActivity).insertEditMessage(textMsg,event)
+            }
+        }
+        else if ((action == R.id.ic_action_vector_share) || (action == R.id.ic_action_vector_forward) || (action == R.id.ic_action_vector_save)) {
             //
             val message = JsonUtils.toMessage(event.content)
 
@@ -683,6 +690,8 @@ class MessageListFragment : MatrixMessageListFragment<VectorMessagesAdapter>(), 
                     .show()
         }
     }
+
+
 
     /**
      * The event for which the user asked again for the key is now decrypted
