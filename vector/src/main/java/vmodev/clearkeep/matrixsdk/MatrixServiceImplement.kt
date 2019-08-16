@@ -7,6 +7,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import im.vector.Matrix
 import im.vector.R
@@ -1709,7 +1710,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             session!!.dataHandler.crypto?.let { mxCrypto ->
                 messages.forEach { item ->
                     val event = Event(item.message?.messageType, parser.parse(item.message?.encryptedContent).asJsonObject, item.message?.userId, item.message?.roomId);
-                    val eventEncrypt = event.toEncryptedEventContent();
+
                     try {
                         val result = mxCrypto.decryptEvent(event, null);
                         result?.let {
@@ -1743,12 +1744,12 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
     override fun editMessage(event: Event): Observable<EditMessageResponse> {
         return Observable.create { emitter ->
 
-            session!!.crypto?.let {crypto ->
+            session!!.crypto?.let { crypto ->
                 val room = session!!.dataHandler.getRoom(event.roomId)
-                crypto.encryptEventContent(event.contentJson, "m.room.encrypted", room, object : ApiCallback<MXEncryptEventContentResult>{
+                crypto.encryptEventContent(event.contentJson, "m.room.message", room, object : ApiCallback<MXEncryptEventContentResult> {
                     override fun onSuccess(info: MXEncryptEventContentResult?) {
                         val relatesTo = HashMap<String, String>();
-                        relatesTo.put("rel_type", "m.replace")
+                        relatesTo.put("rel_type ", "m.replace")
                         relatesTo.put("event_id", event.eventId);
                         val jsonObject = info!!.mEventContent.asJsonObject;
                         val sessionId = jsonObject.get("session_id").asString;
@@ -1771,15 +1772,15 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                     }
 
                     override fun onUnexpectedError(e: java.lang.Exception?) {
-                        Log.d("","");
+                        Log.d("", "");
                     }
 
                     override fun onMatrixError(e: MatrixError?) {
-                        Log.d("","");
+                        Log.d("", "");
                     }
 
                     override fun onNetworkError(e: java.lang.Exception?) {
-                        Log.d("","");
+                        Log.d("", "");
                     }
                 })
             }
