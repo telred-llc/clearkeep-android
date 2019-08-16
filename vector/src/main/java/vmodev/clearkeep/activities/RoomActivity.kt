@@ -18,9 +18,12 @@ import android.preference.PreferenceManager
 import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AlertDialog
 import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.text.style.ClickableSpan
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.text.style.URLSpan
 import android.util.Pair
 import android.util.TypedValue
@@ -3821,9 +3824,24 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             mEditText.setText("")
         }
     }
+    @SuppressLint("ResourceType")
     private fun editMessage(event: Event?) {
-        val jsonObject = JsonObject();
-        jsonObject.addProperty("body", "aaaa");
+        val msgEdit = SpannableStringBuilder(mEditText.text.toString())
+
+        val editedSuffix = getString(R.string.edited_suffix)
+        msgEdit.append(" ").append(editedSuffix)
+        val color =getActivity(). resources.getColor(R.attr.vctr_list_header_secondary_text_color)
+        val editStart = msgEdit.lastIndexOf(editedSuffix)
+        val editEnd = editStart + editedSuffix.length
+        msgEdit.setSpan(
+                ForegroundColorSpan(color),
+                editStart,
+                editEnd,
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+
+        msgEdit.setSpan(RelativeSizeSpan(.9f), editStart, editEnd, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+        val jsonObject = JsonObject()
+        jsonObject.addProperty("body",msgEdit.toString());
         jsonObject.addProperty("msgtype","m.text")
         val newEvent = Event("m.room.message",jsonObject,event!!.sender,event!!.getRoomId())
 //       val room : Room = mxSession!!.dataHandler.getRoom("");
