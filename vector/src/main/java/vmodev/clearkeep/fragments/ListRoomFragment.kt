@@ -66,6 +66,8 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
     private var listener: OnFragmentInteractionListener? = null
     private lateinit var binding: FragmentListRoomBinding;
     private var onGoingRoom = false;
+    private var currentRoomId: String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -86,7 +88,12 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
         initListGroupChat();
         initListFavouriteChat();
         viewModelFactory.getViewModel().joinRoomWithIdResult().observe(this.viewLifecycleOwner, Observer {
-            it?.data?.let { gotoRoom(it.id) }
+            it?.data?.let {
+                if (it.id != currentRoomId) {
+                    currentRoomId = it.id
+                    gotoRoom(currentRoomId)
+                }
+            }
         });
         binding.buttonStartDirectChat.setOnClickListener {
             val intentNewChat = Intent(context, FindAndCreateNewConversationActivity::class.java);
