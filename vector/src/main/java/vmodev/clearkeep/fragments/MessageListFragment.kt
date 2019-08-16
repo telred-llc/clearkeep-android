@@ -53,6 +53,7 @@ import org.matrix.androidsdk.rest.model.message.Message
 import org.matrix.androidsdk.rest.model.message.VideoMessage
 import vmodev.clearkeep.activities.ProfileActivity
 import vmodev.clearkeep.activities.RoomActivity
+import vmodev.clearkeep.activities.UserInformationActivity
 import vmodev.clearkeep.activities.ViewUserProfileActivity
 import vmodev.clearkeep.fragments.BaseMessageListFragment.Companion.VERIF_REQ_CODE
 import java.io.File
@@ -1152,10 +1153,11 @@ class MessageListFragment : MatrixMessageListFragment<VectorMessagesAdapter>(), 
     override fun onMatrixUserIdClick(userId: String) {
         try {
             // start member details UI
-            val roomDetailsIntent = Intent(activity, VectorMemberDetailsActivity::class.java)
-            roomDetailsIntent.putExtra(VectorMemberDetailsActivity.EXTRA_ROOM_ID, mRoom.roomId)
-            roomDetailsIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MEMBER_ID, userId)
-            roomDetailsIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MATRIX_ID, mSession.credentials.userId)
+            val roomDetailsIntent = Intent(activity, UserInformationActivity::class.java)
+            roomDetailsIntent.putExtra(UserInformationActivity.USER_ID,userId)
+//            roomDetailsIntent.putExtra(VectorMemberDetailsActivity.EXTRA_ROOM_ID, mRoom.roomId)
+//            roomDetailsIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MEMBER_ID, userId)
+//            roomDetailsIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MATRIX_ID, mSession.credentials.userId)
             startActivity(roomDetailsIntent)
         } catch (e: Exception) {
             Log.e(LOG_TAG, "## onMatrixUserIdClick() failed " + e.message, e)
