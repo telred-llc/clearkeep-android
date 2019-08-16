@@ -14,10 +14,15 @@ import android.widget.Toast
 import im.vector.R
 import im.vector.databinding.FragmentForgotPasswordBinding
 import im.vector.databinding.FragmentForgotPasswordVerifyEmailBinding
+import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractForgotPasswordVerifyEmailFragmentViewModel
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
@@ -48,8 +53,8 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            email = it.getString(EMAIL);
-            password = it.getString(PASSWORD);
+            email = it.getString(EMAIL, "");
+            password = it.getString(PASSWORD, "");
         }
     }
 
@@ -69,8 +74,11 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
             it?.let {
                 when (it.status) {
                     Status.SUCCESS -> {
-                        it.data?.let {
-                            viewModelFactory.getViewModel().setPasswordForResetPassword(password, it);
+                        it.data?.let {threePid ->
+                            Observable.timer(30, TimeUnit.SECONDS).subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread()).subscribe {
+                                        viewModelFactory.getViewModel().setPasswordForResetPassword(password, threePid);
+                                    }
                         }
                     }
                     Status.ERROR -> {
