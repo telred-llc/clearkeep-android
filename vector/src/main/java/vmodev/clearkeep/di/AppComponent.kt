@@ -40,7 +40,8 @@ import javax.inject.Singleton
     , AbstractBackupKeyActivityModule::class
     , AbstractRestoreBackupKeyActivityModule::class
     , AbstractPushBackupKeyActivityModule::class
-    , AbstractLoginActivityModule::class])
+    , AbstractLoginActivityModule::class
+    , AbstractRoomActivityModule::class])
 interface AppComponent : AndroidInjector<ClearKeepApplication> {
     override fun inject(instance: ClearKeepApplication?)
 

@@ -32,6 +32,7 @@ import butterknife.BindView
 import butterknife.OnClick
 import butterknife.OnLongClick
 import butterknife.OnTouch
+import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import im.vector.Matrix
 import im.vector.R
@@ -3821,24 +3822,30 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         }
     }
     private fun editMessage(event: Event?) {
+        val jsonObject = JsonObject();
+        jsonObject.addProperty("body", "aaaa");
+        jsonObject.addProperty("msgtype","m.text")
+        val newEvent = Event("m.room.message",jsonObject,event!!.sender,event!!.getRoomId())
 //       val room : Room = mxSession!!.dataHandler.getRoom("");
 ////        room.unsentEvents[0].
 //        val sendMode : SendMode
 //        val messageContent : MessageContent? =
-        messageRepository.editMessage(event!!).observe(this, android.arch.lifecycle.Observer {
+        messageRepository.editMessage(newEvent).observe(this, android.arch.lifecycle.Observer {
             it?.let {
                 when(it.status){
                     Status.SUCCESS -> {
                         it.data?.let {
                             //update UI
+                            Toast.makeText(this@RoomActivity, it.eventId, Toast.LENGTH_LONG).show()
 
                         }
                     }
                     Status.ERROR -> {
+                        Toast.makeText(this@RoomActivity,"Error" , Toast.LENGTH_LONG).show()
 
                     }
-                    else -> {
-
+                    Status.LOADING -> {
+                        Toast.makeText(this@RoomActivity, "Loading", Toast.LENGTH_LONG).show()
                     }
                 }
             }
