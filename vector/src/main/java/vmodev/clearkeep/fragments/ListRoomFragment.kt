@@ -258,12 +258,12 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
         viewModelFactory.getViewModel().getListDirectRoomResult().observe(this.viewLifecycleOwner, Observer {
             listDirectRoomAdapter.getAdapter().submitList(it?.data);
         });
-        binding.linearLayoutGroup.setOnClickListener {
-            binding.expandableLayoutListGroup.isExpanded = !binding.expandableLayoutListGroup.isExpanded;
-            if (binding.expandableLayoutListGroup.isExpanded) {
-                binding.imageViewDirectionGroup.rotation = 0f;
+        binding.linearLayoutDirect.setOnClickListener {
+            binding.expandableLayoutListDirect.isExpanded = !binding.expandableLayoutListDirect.isExpanded;
+            if (binding.expandableLayoutListDirect.isExpanded) {
+                binding.imageViewDirectionDirect.rotation = 0f;
             } else {
-                binding.imageViewDirectionGroup.rotation = 270f;
+                binding.imageViewDirectionDirect.rotation = 270f;
             }
         }
     }
@@ -332,12 +332,12 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
         viewModelFactory.getViewModel().getListGroupRoomResult().observe(this.viewLifecycleOwner, Observer {
             listGroupRoomAdapter.getAdapter().submitList(it?.data)
         });
-        binding.linearLayoutDirect.setOnClickListener {
-            binding.expandableLayoutListDirect.isExpanded = !binding.expandableLayoutListDirect.isExpanded;
-            if (binding.expandableLayoutListDirect.isExpanded) {
-                binding.imageViewDirectionDirect.rotation = 0f;
+        binding.linearLayoutGroup.setOnClickListener {
+            binding.expandableLayoutListGroup.isExpanded = !binding.expandableLayoutListGroup.isExpanded;
+            if (binding.expandableLayoutListGroup.isExpanded) {
+                binding.imageViewDirectionGroup.rotation = 0f;
             } else {
-                binding.imageViewDirectionDirect.rotation = 270f;
+                binding.imageViewDirectionGroup.rotation = 270f;
             }
         }
     }
