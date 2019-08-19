@@ -147,15 +147,15 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     }
 
     private fun switchFragment(fragment: Fragment) {
-        Handler().post(Runnable {
-            kotlin.run {
-                val transaction = supportFragmentManager.beginTransaction();
-                transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-                transaction.replace(R.id.frame_layout_fragment_container, fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        })
+      Handler().post(Runnable {
+          kotlin.run {
+              val transaction = supportFragmentManager.beginTransaction();
+              transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+              transaction.replace(R.id.frame_layout_fragment_container, fragment);
+              transaction.addToBackStack(null);
+              transaction.commitAllowingStateLoss();
+          }
+      })
     }
 
     override fun onFragmentInteraction(uri: Uri) {
