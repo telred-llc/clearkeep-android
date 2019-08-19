@@ -101,7 +101,8 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
             it?.data?.let {
                 viewModelFactory.getViewModel().decryptListMessage(it).observe(this, Observer {
                     it?.data?.let {
-                        listMessage.addAll(it);
+                        listMessage.clear()
+                        listMessage.addAll(it)
                     }
                 })
             }
