@@ -47,51 +47,55 @@
             android:focusableInTouchMode="true"
             android:orientation="vertical">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="?attr/actionBarSize"
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/circle_image_view_avatar"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_vertical"
-                        android:background="@drawable/ic_launcher_app"
-                        app:imageUrl="@{user.data.avatarUrl}" />
-
-                    <FrameLayout
-                        android:id="@+id/frame_layout_search"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/search_view_background">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginStart="10dp"
-                            android:src="@drawable/ic_search_gray_24dp" />
-                    </FrameLayout>
+                <android.support.v7.widget.CardView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:background="@color/blue_app"
+                    android:innerRadius="0dp"
+                    android:shape="ring"
+                    app:cardCornerRadius="20dp">
 
                     <ImageView
-                        android:id="@+id/button_create_convention"
-                        android:layout_width="?attr/actionBarSize"
-                        android:layout_height="?attr/actionBarSize"
+                        android:id="@+id/circle_image_view_avatar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/app_green"
+                        app:user="@{user.data}" />
+                </android.support.v7.widget.CardView>
+
+                <FrameLayout
+                    android:id="@+id/frame_layout_search"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/search_view_background">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="10dp"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_new_chat"
-                        android:tint="@color/app_green" />
-                </LinearLayout>
-            </android.support.v7.widget.Toolbar>
+                        android:layout_marginStart="10dp"
+                        android:src="@drawable/ic_search_gray_24dp" />
+                </FrameLayout>
+
+                <ImageView
+                    android:id="@+id/button_create_convention"
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="10dp"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_new_chat"
+                    android:tint="@color/app_green" />
+            </LinearLayout>
 
             <FrameLayout
                 android:id="@+id/frame_layout_fragment_container"
@@ -133,20 +137,20 @@
                     </FrameLayout>
 
                     <!--<FrameLayout-->
-                        <!--android:layout_width="0dp"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--android:layout_weight="1">-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:layout_weight="1">-->
 
-                        <!--<TextView-->
-                            <!--android:layout_width="20dp"-->
-                            <!--android:layout_height="20dp"-->
-                            <!--android:layout_gravity="end"-->
-                            <!--android:layout_marginTop="10dp"-->
-                            <!--android:layout_marginEnd="20dp"-->
-                            <!--android:background="@drawable/circle_background"-->
-                            <!--android:textAlignment="center"-->
-                            <!--android:textColor="@color/main_text_color"-->
-                            <!--app:roomsHighlightCount="@{roomsFavourite.data}" />-->
+                    <!--<TextView-->
+                    <!--android:layout_width="20dp"-->
+                    <!--android:layout_height="20dp"-->
+                    <!--android:layout_gravity="end"-->
+                    <!--android:layout_marginTop="10dp"-->
+                    <!--android:layout_marginEnd="20dp"-->
+                    <!--android:background="@drawable/circle_background"-->
+                    <!--android:textAlignment="center"-->
+                    <!--android:textColor="@color/main_text_color"-->
+                    <!--app:roomsHighlightCount="@{roomsFavourite.data}" />-->
                     <!--</FrameLayout>-->
 
                     <FrameLayout

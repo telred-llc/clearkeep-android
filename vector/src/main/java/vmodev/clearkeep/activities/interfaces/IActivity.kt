@@ -14,5 +14,6 @@ interface IActivity {
         const val PROFILE_ACTIVITY = "PROFILE_ACTIVITY";
         const val PROFILE_SETTINGS_ACTIVITY = "PROFILE_SETTINGS_ACTIVITY";
         const val SEARCH_ACTIVITY = "SEARCH_ACTIVITY";
+        const val HOME_SCREEN_ACTIVITY = "HOME_SCREEN_ACTIVITY";
     }
 }

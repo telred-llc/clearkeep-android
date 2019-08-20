@@ -18,6 +18,7 @@ import im.vector.activity.CommonActivityUtils
 import im.vector.analytics.TrackingEvent
 import im.vector.databinding.ActivitySplashBinding
 import im.vector.services.EventStreamService
+import im.vector.services.EventStreamServiceX
 import im.vector.util.PreferencesManager
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.core.Log
@@ -128,7 +129,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
         try {
             val session = Matrix.getInstance(applicationContext).defaultSession;
             return null != session && session.isAlive
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Log.d("Error Credentials: ", e?.message)
         }
 
@@ -157,6 +158,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
     }
 
     private fun onFinish() {
+        android.util.Log.d("RoomSize", "OnFinish")
         val finishTime = System.currentTimeMillis()
         val duration = finishTime - mLaunchTime
         val event = TrackingEvent.LaunchScreen(duration)
@@ -173,10 +175,10 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                             it?.let {
                                 when (it.status) {
                                     Status.ERROR -> {
-                                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
+//                                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
                                         index++;
                                         viewModelFactory.getViewModel().getUpdateRoomUserJoinResult(r.id, session.myUserId)
-                                        if (index >= rooms.size) {
+                                        if (index > rooms.size) {
                                             startActivity(intent)
                                             finish()
                                         } else {
@@ -189,7 +191,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                                                 viewModelFactory.getViewModel().getUpdateRoomUserJoinResult(r.id, u.id)
                                             }
                                         }
-                                        if (index >= rooms.size) {
+                                        if (index > rooms.size) {
                                             startActivity(intent)
                                             finish()
                                         } else {
@@ -266,30 +268,30 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
         var matrixIds: MutableList<String> = ArrayList()
 
         for (session in sessions) {
-
+            val fSession = session;
             val eventListener = object : MXEventListener() {
                 private fun onReady() {
                     val isAlreadyDone: Boolean
 
-                    synchronized("") {
-                        isAlreadyDone = mDoneListeners.containsKey(session)
+                    synchronized("SplashActivity") {
+                        isAlreadyDone = mDoneListeners.containsKey(fSession)
                     }
 
                     if (!isAlreadyDone) {
-                        synchronized("") {
-                            val noMoreListener: Boolean
+                        synchronized("SplashActivity") {
+                            var noMoreListener: Boolean = true;
 
-                            mDoneListeners[session] = mListeners[session]!!
+                            mDoneListeners[session] = mListeners[fSession]!!
                             // do not remove the listeners here
                             // it crashes the application because of the upper loop
                             //fSession.getDataHandler().removeListener(mListeners.get(fSession));
                             // remove from the pending list
 
-                            mListeners.remove(session)
+                            mListeners.remove(fSession)
                             noMoreListener = mListeners.size == 0
 
                             if (noMoreListener) {
-                                VectorApp.addSyncingSession(session)
+                                VectorApp.addSyncingSession(fSession)
                                 onFinish()
                             }
                         }
@@ -307,14 +309,14 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                 }
             }
 
-            if (!session.dataHandler.isInitialSyncComplete) {
+            if (!fSession.dataHandler.isInitialSyncComplete) {
                 session.dataHandler.store.open()
 
-                mListeners[session] = eventListener
-                session.dataHandler.addListener(eventListener)
+                mListeners[fSession] = eventListener
+                fSession.dataHandler.addListener(eventListener)
 
                 // Set the main error listener
-                session.setFailureCallback(ErrorListener(session, this))
+                fSession.setFailureCallback(ErrorListener(session, this))
 
                 // session to activate
                 matrixIds.add(session.credentials.userId)
@@ -333,15 +335,16 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
             Matrix.getInstance(this)!!.mHasBeenDisconnected = false
         }
 
-        if (EventStreamService.getInstance() == null) {
-            // Start the event stream service
-            val intent = Intent(this, EventStreamService::class.java)
-            intent.putExtra(EventStreamService.EXTRA_MATRIX_IDS, matrixIds.toTypedArray())
-            intent.putExtra(EventStreamService.EXTRA_STREAM_ACTION, EventStreamService.StreamAction.START.ordinal)
-            startService(intent)
-        } else {
-            EventStreamService.getInstance()!!.startAccounts(matrixIds)
-        }
+//        if (EventStreamService.getInstance() == null) {
+//            // Start the event stream service
+//            val intent = Intent(this, EventStreamService::class.java)
+//            intent.putExtra(EventStreamService.EXTRA_MATRIX_IDS, matrixIds.toTypedArray())
+//            intent.putExtra(EventStreamService.EXTRA_STREAM_ACTION, EventStreamService.StreamAction.START.ordinal)
+//            startService(intent)
+//        } else {
+//            EventStreamService.getInstance()!!.startAccounts(matrixIds)
+//        }
+        EventStreamServiceX.onApplicationStarted(this)
 
         // trigger the push registration if required
         val pushManager = Matrix.getInstance(applicationContext)!!.pushManager

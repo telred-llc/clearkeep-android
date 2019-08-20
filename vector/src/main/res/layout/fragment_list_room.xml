@@ -48,7 +48,6 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
-                android:id="@+id/linear_layout_group"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -177,6 +176,7 @@
                 </net.cachapa.expandablelayout.ExpandableLayout>
 
                 <LinearLayout
+                    android:id="@+id/linear_layout_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
