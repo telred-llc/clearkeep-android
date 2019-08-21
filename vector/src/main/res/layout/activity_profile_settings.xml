@@ -462,6 +462,20 @@
                     android:textAlignment="center"
                     android:textColor="@android:color/holo_red_dark"
                     android:textSize="@dimen/text_20_sp" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/lb_grey" />
+
+                <TextView
+                    android:id="@+id/text_view_version"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:text="@string/keys_backup_info_title_version"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/text_20_sp" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

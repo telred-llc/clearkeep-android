@@ -5,6 +5,7 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
+import im.vector.BuildConfig
 import im.vector.Matrix
 import im.vector.R
 import im.vector.databinding.ActivityProfileSettingsBinding
@@ -100,6 +101,8 @@ class ProfileSettingsActivity : DataBindingDaggerActivity(), IActivity {
         })
         binding.lifecycleOwner = this;
         viewModelFactory.getViewModel().setTimeToGetTheme(Calendar.getInstance().timeInMillis);
+
+        binding.textViewVersion.append(" " + BuildConfig.VERSION_NAME)
     }
 
     override fun getActivity(): FragmentActivity {

@@ -54,9 +54,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:hint="@string/search" />
+                android:hint="@string/searc_people_on_directory" />
 
             <TextView
+                android:textColor="@color/riot_primary_background_color_dark"
+                android:background="@color/vector_silver_color"
+                android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
@@ -88,6 +91,7 @@
                             android:tint="?attr/icon_gray_color" />
 
                         <ImageView
+                            android:padding="5dp"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_gravity="center"
@@ -121,6 +125,7 @@
                             android:tint="?attr/icon_gray_color" />
 
                         <ImageView
+                            android:padding="5dp"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_gravity="center"
@@ -137,6 +142,9 @@
             </LinearLayout>
 
             <TextView
+                android:textColor="@color/riot_primary_background_color_dark"
+                android:background="@color/vector_silver_color"
+                android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
