@@ -268,7 +268,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="10dp"
                         android:layout_weight="1"
-                        android:text="@string/Dark_mode"
+                        android:text="@string/dark_mode"
                         android:textSize="@dimen/text_20_sp" />
 
                     <android.support.v7.widget.SwitchCompat
