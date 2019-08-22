@@ -19,11 +19,16 @@ import com.orhanobut.dialogplus.DialogPlus
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.FragmentListRoomBinding
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.activities.*
 import vmodev.clearkeep.adapters.BottomDialogFavouriteRoomLongClick
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.applications.IApplication
+import vmodev.clearkeep.databases.AbstractMessageDao
+import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.factories.viewmodels.interfaces.IListRoomFragmentViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IListRoomFragment
 import vmodev.clearkeep.viewmodelobjects.Resource
@@ -60,6 +65,12 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
     @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
     lateinit var listFavouritesRoomAdapter: IListRoomRecyclerViewAdapter;
+
+    @Inject
+    lateinit var roomUserJoin: AbstractRoomUserJoinDao;
+
+    @Inject
+    lateinit var messageDao: AbstractMessageDao;
 
     // TODO: Rename and change types of parameters
     private var userId: String? = null
@@ -118,6 +129,12 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
         viewModelFactory.getViewModel().setFiltersDirectRoom(arrayOf(1, 65));
         viewModelFactory.getViewModel().setFiltersGroupRoom(arrayOf(2, 66));
         viewModelFactory.getViewModel().setFiltersFavouriteRoom(arrayOf(129, 130))
+
+
+//        Completable.fromAction {
+//            val rooms = roomUserJoin.getListRoomListUserWithFilterTest(1, 65);
+//            Log.d("", "");
+//        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe();
     }
 
     private fun initListFavouriteChat() {
