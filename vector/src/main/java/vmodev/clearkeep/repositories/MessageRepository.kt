@@ -7,6 +7,7 @@ import android.util.Log
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.rest.model.Event
@@ -14,11 +15,8 @@ import vmodev.clearkeep.databases.AbstractMessageDao
 import vmodev.clearkeep.factories.messaghandler.interfaces.IMessageHandlerFactory
 import vmodev.clearkeep.jsonmodels.MessageContent
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
+import vmodev.clearkeep.repositories.wayloads.*
 import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
-import vmodev.clearkeep.repositories.wayloads.AbstractLocalLoadSouce
-import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSourceWithCondition
-import vmodev.clearkeep.repositories.wayloads.AbstractNetworkNonBoundSource
-import vmodev.clearkeep.repositories.wayloads.AbstractNetworkNonBoundSourceRx
 import vmodev.clearkeep.rests.models.requests.EditMessageRequest
 import vmodev.clearkeep.rests.models.responses.EditMessageResponse
 import vmodev.clearkeep.viewmodelobjects.Message
@@ -189,11 +187,27 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
         }.asLiveData();
     }
 
-    fun editMessage(event : Event): LiveData<Resource<EditMessageResponse>> {
+    fun editMessage(event: Event): LiveData<Resource<EditMessageResponse>> {
         return object : AbstractNetworkNonBoundSourceRx<EditMessageResponse>() {
             override fun createCall(): Observable<EditMessageResponse> {
                 return matrixService.editMessage(event);
             }
         }.asLiveData();
+    }
+
+    fun getLastMessageOfRoom(roomId: String): Observable<Message> {
+        return object : AbstractNetworkCallAndSaveToDBReturnRx<Message, Message>() {
+            override fun saveCallResult(item: Message) {
+                messageDao.insert(item);
+            }
+
+            override fun loadFromDb(item: Message): Single<Message> {
+                return messageDao.findByIdRx(item.id);
+            }
+
+            override fun createCall(): Observable<Message> {
+                return matrixService.getLastMessageOfRoom(roomId);
+            }
+        }.getObject();
     }
 }

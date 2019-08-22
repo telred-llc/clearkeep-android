@@ -4,10 +4,7 @@ import android.annotation.SuppressLint
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.util.Log
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
-import io.reactivex.Observable
-import io.reactivex.Single
+import io.reactivex.*
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.databases.AbstractRoomDao
@@ -104,8 +101,8 @@ class RoomRepository @Inject constructor(
     }
 
     @SuppressLint("CheckResult")
-    fun updateOrCreateRoomFromRemote(id: String) : LiveData<Resource<Room>> {
-        return object : AbstractNetworkCreateOrUpdateSourceRx<Room, Room>(){
+    fun updateOrCreateRoomFromRemote(id: String): LiveData<Resource<Room>> {
+        return object : AbstractNetworkCreateOrUpdateSourceRx<Room, Room>() {
             override fun loadFromDb(): LiveData<Room> {
                 return abstractRoomDao.findById(id);
             }
@@ -124,8 +121,8 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
-    fun updateOrCreateRoomFromRemoteRx(id : String) : Observable<Room>{
-        return object : AbstractNetworkCreateOrUpdateSourceReturnRx<Room, Room>(){
+    fun updateOrCreateRoomFromRemoteRx(id: String): Observable<Room> {
+        return object : AbstractNetworkCreateOrUpdateSourceReturnRx<Room, Room>() {
             override fun loadFromDb(): Single<Room> {
                 return abstractRoomDao.findByIdRx(id);
             }
@@ -226,7 +223,7 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
-    fun     findListRoomWithText(keyword: String): LiveData<Resource<List<String>>> {
+    fun findListRoomWithText(keyword: String): LiveData<Resource<List<String>>> {
         return object : AbstractNetworkNonBoundSource<List<String>>() {
             override fun createCall(): LiveData<List<String>> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.findListMessageText(keyword, String::class.java)
@@ -412,7 +409,7 @@ class RoomRepository @Inject constructor(
 
             override fun getItemInsert(localData: List<Room>?, remoteData: List<Room>?): List<Room> {
                 val rooms = ArrayList<Room>();
-                remoteData?.let{
+                remoteData?.let {
                     rooms.addAll(it)
                 }
                 return rooms;
@@ -497,19 +494,24 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
-    fun getDirectChatRoomByUserId(userId: String) : LiveData<Resource<List<Room>>>{
-        return object : AbstractLocalLoadSouce<List<Room>>(){
+    fun getDirectChatRoomByUserId(userId: String): LiveData<Resource<List<Room>>> {
+        return object : AbstractLocalLoadSouce<List<Room>>() {
             override fun loadFromDB(): LiveData<List<Room>> {
                 return abstractRoomDao.getDirectChatRoomWithUserId(userId);
             }
         }.asLiveData();
     }
-    fun getRoomChatRoomByUserId(userId: String) : LiveData<Resource<List<Room>>>{
-        return object : AbstractLocalLoadSouce<List<Room>>(){
+
+    fun getRoomChatRoomByUserId(userId: String): LiveData<Resource<List<Room>>> {
+        return object : AbstractLocalLoadSouce<List<Room>>() {
             override fun loadFromDB(): LiveData<List<Room>> {
                 return abstractRoomDao.getRoomChatRoomWithUserId(userId);
             }
         }.asLiveData();
+    }
+
+    fun updateLastMessage(roomId: String, messageId: String) {
+        Completable.fromAction { abstractRoomDao.updateRoomLastMessage(roomId, messageId) }.subscribeOn(Schedulers.io()).subscribe();
     }
 
     class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);

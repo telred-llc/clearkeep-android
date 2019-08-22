@@ -6,6 +6,7 @@ import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,10 +15,16 @@ import android.widget.Toast
 import im.vector.R
 import im.vector.databinding.FragmentForgotPasswordBinding
 import im.vector.databinding.FragmentForgotPasswordVerifyEmailBinding
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import org.matrix.androidsdk.rest.model.login.ThreePidCredentials
+import org.matrix.androidsdk.rest.model.pid.ThreePid
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractForgotPasswordVerifyEmailFragmentViewModel
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
@@ -44,12 +51,13 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
     private lateinit var email: String;
     private lateinit var password: String;
     private lateinit var binding: FragmentForgotPasswordVerifyEmailBinding;
+    private var currentThreePid: ThreePid? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            email = it.getString(EMAIL);
-            password = it.getString(PASSWORD);
+            email = it.getString(EMAIL, "");
+            password = it.getString(PASSWORD, "");
         }
     }
 
@@ -69,8 +77,9 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
             it?.let {
                 when (it.status) {
                     Status.SUCCESS -> {
-                        it.data?.let {
-                            viewModelFactory.getViewModel().setPasswordForResetPassword(password, it);
+                        it.data?.let { threePid ->
+                            currentThreePid = threePid;
+                            viewModelFactory.getViewModel().setPasswordForResetPassword(password, threePid);
                         }
                     }
                     Status.ERROR -> {
@@ -92,8 +101,16 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
                         }
                     }
                     Status.ERROR -> {
-                        Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show();
-                        onPressCancel();
+                        if (TextUtils.equals(it.message, "M_UNAUTHORIZED")) {
+                            currentThreePid?.let { threePid ->
+                                Observable.timer(5, TimeUnit.SECONDS).subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe { viewModelFactory.getViewModel().setPasswordForResetPassword(password, threePid) }
+                            }
+                        } else {
+                            Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show();
+                            onPressCancel();
+                        }
                     }
                     else -> {
 

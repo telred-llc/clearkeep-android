@@ -80,7 +80,8 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
     }
 
     override fun onResetPasswordSuccess() {
-        changeFragment(SignUpFragment.newInstance());
+        Toast.makeText(this, "Your password has been reset", Toast.LENGTH_LONG).show();
+        changeFragment(LoginFragment.newInstance());
     }
 
     private fun changeFragment(fragment: Fragment) {

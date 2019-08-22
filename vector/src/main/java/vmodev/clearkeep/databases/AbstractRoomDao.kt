@@ -23,7 +23,7 @@ abstract class AbstractRoomDao {
     abstract fun findById(id: String): LiveData<Room>;
 
     @Query("SELECT * FROM Room WHERE id =:id")
-    abstract fun findByIdRx(id: String): Single <Room>;
+    abstract fun findByIdRx(id: String): Single<Room>;
 
     @Query("SELECT name FROM room WHERE id =:id")
     abstract fun findNameById(id: String): LiveData<String>;
@@ -87,6 +87,12 @@ abstract class AbstractRoomDao {
 
     @Query("SELECT room.* FROM room INNER JOIN roomUserJoin ON room.id = roomUserJoin.room_id INNER JOIN user ON user.id = roomUserJoin.user_id WHERE roomUserJoin.user_id =:userId AND (room.type == 2 OR room.type == 66 OR room.type == 130)")
     abstract fun getRoomChatRoomWithUserId(userId: String): LiveData<List<Room>>;
+
+    @Query("UPDATE Room SET message_id =:messageId WHERE Room.id =:id")
+    abstract fun updateRoomLastMessage(id: String, messageId: String): Int
+
+    @Query("SELECT Room.* FROM Room WHERE Room.message_id =:messageId")
+    abstract fun getRoomWithMessageId(messageId: String): List<Room>;
 
     fun loadWithType(filter: Array<Int>): LiveData<List<Room>> {
         when (filter.size) {

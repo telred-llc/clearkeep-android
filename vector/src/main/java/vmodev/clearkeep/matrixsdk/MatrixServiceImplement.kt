@@ -11,7 +11,7 @@ import com.google.gson.JsonParser
 import im.vector.Matrix
 import im.vector.R
 import im.vector.util.HomeRoomsViewModel
-import im.vector.util.RoomUtils
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function
@@ -48,6 +48,9 @@ import org.matrix.androidsdk.rest.model.sync.RoomSync
 import org.matrix.androidsdk.rest.model.sync.RoomSyncState
 import org.matrix.androidsdk.rest.model.sync.RoomSyncTimeline
 import vmodev.clearkeep.applications.ClearKeepApplication
+import vmodev.clearkeep.databases.AbstractMessageDao
+import vmodev.clearkeep.databases.AbstractRoomDao
+import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.jsonmodels.MessageContent
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.rests.ClearKeepApis
@@ -60,6 +63,7 @@ import vmodev.clearkeep.ultis.getJoinedRoom
 import vmodev.clearkeep.viewmodelobjects.*
 import java.io.InputStream
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.collections.ArrayList
@@ -67,7 +71,9 @@ import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 
 @Singleton
-class MatrixServiceImplement @Inject constructor(private val application: ClearKeepApplication, private val apis: ClearKeepApis) : MatrixService {
+class MatrixServiceImplement @Inject constructor(private val application: ClearKeepApplication, private val apis: ClearKeepApis
+                                                 , private val messageDao: AbstractMessageDao, private val roomDao: AbstractRoomDao
+                                                 , private val roomUserJoin: AbstractRoomUserJoinDao) : MatrixService {
 
     //    @Inject
     private var session: MXSession? = null;
@@ -206,20 +212,41 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
     override fun getListRoom(filters: Array<Int>): Observable<List<vmodev.clearkeep.viewmodelobjects.Room>> {
         setMXSession();
         return Observable.create { emitter ->
-            val listRoom = ArrayList<vmodev.clearkeep.viewmodelobjects.Room>();
+            val listRoom = mutableListOf<vmodev.clearkeep.viewmodelobjects.Room>()
             if (homeRoomsViewModel != null && homeRoomsViewModel!!.result != null) {
                 homeRoomsViewModel!!.update();
                 val rooms = ArrayList<Room>();
                 for (filter in filters) {
                     rooms.addAll(funcs[filter].apply(homeRoomsViewModel!!.result))
                 }
-                rooms.forEach { t: Room? ->
-                    t?.let {
-                        listRoom.add(matrixRoomToRoom(t));
-                    }
+                for ((index, value) in rooms.withIndex()) {
+//                    addLastMessage(value).subscribeOn(Schedulers.io()).subscribe({
+                    listRoom.add(matrixRoomToRoom(value));
+//                    addLastMessage(value.roomId).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe();
+//                        if (index >= rooms.size) {
+//                            emitter.onNext(listRoom);
+//                            emitter.onComplete();
+//                        }
+//                    }, {
+//                        if (index >= rooms.size) {
+//                            emitter.onNext(listRoom);
+//                            emitter.onComplete();
+//                        }
+//                    })
                 }
+//                Observable.timer(5, TimeUnit.SECONDS).subscribe {
+//                    messageDao.getMessageWithRoomId(rooms[0].roomId).forEach {
+//                        Log.d("Message", it.encryptedContent)
+//                        roomDao.getRoomWithMessageId(it.id).forEach {
+//                            Log.d("Message", it.name)
+//                        }
+//                    }
+//                    roomUserJoin.getListRoomListUserWithFilterTest(1, 65).forEach {
+//                        Log.d("Message", it.room?.name)
+//                    }
                 emitter.onNext(listRoom);
                 emitter.onComplete();
+//                }
             } else {
                 emitter.onError(NullPointerException());
                 emitter.onComplete();
@@ -376,27 +403,50 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         val sourceThird = if ((room.accountData?.keys
                         ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
         var timeUpdateLong: Long = 0;
-        var lastMessage: String = "";
+        var messageId: String = "";
         room.roomSummary?.let { roomSummary ->
-            timeUpdateLong = roomSummary.latestReceivedEvent.originServerTs
-            lastMessage = RoomUtils.getRoomMessageToDisplay(application, session!!, roomSummary).toString();
-            if (lastMessage.compareTo("** Unable to decrypt: The sender's device has not sent us the keys for this message. **") == 0) {
-                lastMessage = "";
-            }
+            val event = roomSummary.latestReceivedEvent;
+            messageId = event.eventId;
         }
-        var notificationState: Byte = 0x02;
-        when (session!!.dataHandler.bingRulesManager.getRoomNotificationState(room.roomId)) {
-            BingRulesManager.RoomNotificationState.ALL_MESSAGES_NOISY -> notificationState = 0x01;
-            BingRulesManager.RoomNotificationState.ALL_MESSAGES -> notificationState = 0x02;
-            BingRulesManager.RoomNotificationState.MENTIONS_ONLY -> notificationState = 0x04;
-            BingRulesManager.RoomNotificationState.MUTE -> notificationState = 0x08;
+        val notificationState = when (session!!.dataHandler.bingRulesManager.getRoomNotificationState(room.roomId)) {
+            BingRulesManager.RoomNotificationState.ALL_MESSAGES_NOISY -> 0x01;
+            BingRulesManager.RoomNotificationState.ALL_MESSAGES -> 0x02;
+            BingRulesManager.RoomNotificationState.MENTIONS_ONLY -> 0x04;
+            BingRulesManager.RoomNotificationState.MUTE -> 0x08;
         }
         val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
-                , updatedDate = timeUpdateLong, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, lastMessage = lastMessage
-                , encrypted = if (room.isEncrypted) 1 else 0, status = if (room.isLeaving || room.isLeft) 0 else 1, notificationState = notificationState);
+                , updatedDate = timeUpdateLong, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, messageId = null
+                , encrypted = if (room.isEncrypted) 1 else 0, status = if (room.isLeaving || room.isLeft) 0 else 1, notificationState = notificationState.toByte());
         return roomObj;
+    }
+
+    override fun getLastMessageOfRoom(roomId: String): Observable<Message> {
+        val room = session!!.dataHandler.getRoom(roomId);
+        return Observable.create { emitter ->
+            room.roomSummary?.let {
+                val event = it.latestReceivedEvent;
+                val message = Message(id = event.eventId, userId = event.sender, roomId = event.roomId, encryptedContent = event.content.toString(), messageType = event.type);
+                emitter.onNext(message);
+                emitter.onComplete();
+            } ?: run {
+                emitter.onError(Throwable("RoomSummary is null"));
+                emitter.onComplete();
+            }
+        };
+    }
+
+    private fun getCurrentUser() : User{
+        val myUser = session!!.myUser;
+        var avatar = "";
+        if (myUser.avatarUrl.isNullOrEmpty() || myUser == null) {
+            avatar = "";
+        } else {
+            var result = session!!.contentManager.getDownloadableUrl(myUser.avatarUrl);
+            result?.let { avatar = result }
+        };
+        return User(myUser.displayname, myUser.user_id, avatar, 0);
     }
 
     @SuppressLint("CheckResult")
@@ -422,17 +472,20 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                 }
 
                 override fun onUnexpectedError(p0: Exception?) {
-                    emitter.onError(Throwable(p0?.message))
+                    users.add(getCurrentUser());
+                    emitter.onNext(users);
                     emitter.onComplete();
                 }
 
                 override fun onMatrixError(p0: MatrixError?) {
-                    emitter.onError(Throwable(p0?.message))
+                    users.add(getCurrentUser());
+                    emitter.onNext(users);
                     emitter.onComplete();
                 }
 
                 override fun onNetworkError(p0: Exception?) {
-                    emitter.onError(Throwable(p0?.message))
+                    users.add(getCurrentUser());
+                    emitter.onNext(users);
                     emitter.onComplete();
                 }
             })
@@ -865,10 +918,13 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
 
     override fun getUsersInRoom(roomId: String): Observable<List<User>> {
         return Observable.create { emitter ->
+            Log.d("UpdateUserBefore", roomId);
+            val users = ArrayList<User>();
             val room = session!!.dataHandler.getRoom(roomId);
+            Log.d("UpdateUser", room.roomId);
             room.getActiveMembersAsync(object : ApiCallback<List<RoomMember>> {
                 override fun onSuccess(p0: List<RoomMember>?) {
-                    val users = ArrayList<User>();
+
                     p0?.forEach { t: RoomMember? ->
                         t?.let { roomMember ->
                             users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0))
@@ -879,18 +935,21 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                 }
 
                 override fun onUnexpectedError(p0: Exception?) {
-                    emitter.onError(Throwable(p0?.message))
-                    emitter.onComplete()
+                    users.add(getCurrentUser());
+                    emitter.onNext(users);
+                    emitter.onComplete();
                 }
 
                 override fun onMatrixError(p0: MatrixError?) {
-                    emitter.onError(Throwable(p0?.message))
-                    emitter.onComplete()
+                    users.add(getCurrentUser());
+                    emitter.onNext(users);
+                    emitter.onComplete();
                 }
 
                 override fun onNetworkError(p0: Exception?) {
-                    emitter.onError(Throwable(p0?.message))
-                    emitter.onComplete()
+                    users.add(getCurrentUser());
+                    emitter.onNext(users);
+                    emitter.onComplete();
                 }
             })
         }
@@ -959,6 +1018,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
 //            Log.d("UpdateRoom", room.avatarUrl)
             val users = ArrayList<User>();
             val roomUserJoin = ArrayList<RoomUserJoin>();
+            Log.d("UpdateUser", room.toString());
             room.getMembersAsync(object : ApiCallback<List<RoomMember>> {
                 override fun onSuccess(p0: List<RoomMember>?) {
                     p0?.forEach { t: RoomMember? ->

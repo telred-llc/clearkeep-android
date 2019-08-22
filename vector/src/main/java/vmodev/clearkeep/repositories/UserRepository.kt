@@ -49,7 +49,7 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
     }
 
     override fun findUserFromNetwork(keyword: String): LiveData<Resource<List<User>>> {
-        return object : AbstractLoadFromNetworkRx<List<User>>(){
+        return object : AbstractLoadFromNetworkRx<List<User>>() {
             override fun createCall(): Observable<List<User>> {
                 return matrixService.findListUser(keyword);
             }
@@ -58,6 +58,19 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
                 abstractUserDao.insertUsers(item);
             }
         }.asLiveData();
+    }
+
+
+    override fun getListUserInRoomFromNetworkRx(roomId: String): Observable<List<User>> {
+        return object : AbstractLoadFromNetworkReturnRx<List<User>>() {
+            override fun createCall(): Observable<List<User>> {
+                return matrixService.getUsersInRoom(roomId);
+            }
+
+            override fun saveCallResult(item: List<User>) {
+                abstractUserDao.insertUsers(item);
+            }
+        }.getObject();
     }
 
     override fun updateUser(userId: String, name: String, avatarImage: InputStream?): LiveData<Resource<User>> {
@@ -156,8 +169,9 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
             }
         }.asLiveData();
     }
-    fun updateOrCreateNewUserFromRemoteRx(roomId: String) : Observable<List<User>>{
-        return object : AbstractNetworkCreateAndUpdateSourceReturnRx<List<User>, List<User>>(){
+
+    fun updateOrCreateNewUserFromRemoteRx(roomId: String): Observable<List<User>> {
+        return object : AbstractNetworkCreateAndUpdateSourceReturnRx<List<User>, List<User>>() {
             override fun insertResult(item: List<User>) {
                 abstractUserDao.insertUsers(item);
             }

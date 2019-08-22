@@ -3,16 +3,22 @@ package vmodev.clearkeep.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
+import io.reactivex.Observable
+import vmodev.clearkeep.repositories.MessageRepository
 import vmodev.clearkeep.repositories.RoomRepository
 import vmodev.clearkeep.repositories.RoomUserJoinRepository
 import vmodev.clearkeep.repositories.UserRepository
+import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSplashActivityViewModel
 import javax.inject.Inject
 
-class SplashActivityViewModel @Inject constructor(private val roomRepository: RoomRepository, private val userRepository: UserRepository, private val roomUserJoinRepository: RoomUserJoinRepository) : AbstractSplashActivityViewModel() {
+class SplashActivityViewModel @Inject constructor(private val roomRepository: RoomRepository
+                                                  , private val userRepository: UserRepository
+                                                  , private val roomUserJoinRepository: RoomUserJoinRepository
+                                                  , private val messageRepository: MessageRepository) : AbstractSplashActivityViewModel() {
     override fun getAllRoomResult(filters: Array<Int>): LiveData<Resource<List<Room>>> {
         return roomRepository.updateAndCreateListRoomRx(filters);
     }
@@ -23,5 +29,17 @@ class SplashActivityViewModel @Inject constructor(private val roomRepository: Ro
 
     override fun getUpdateRoomUserJoinResult(roomId: String, userId: String) {
         roomUserJoinRepository.insertRoomUserJoin(roomId, userId);
+    }
+
+    override fun getUpdateLastMessageResult(roomId: String): Observable<Message> {
+        return messageRepository.getLastMessageOfRoom(roomId);
+    }
+
+    override fun updateRoomLastMessage(roomId: String, messageId: String) {
+        roomRepository.updateLastMessage(roomId, messageId);
+    }
+
+    override fun updateUsersFromRoom(roomId: String): Observable<List<User>> {
+        return userRepository.getListUserInRoomFromNetworkRx(roomId);
     }
 }

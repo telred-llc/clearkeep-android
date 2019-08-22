@@ -87,7 +87,7 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_weight="1"
                 android:singleLine="true"
-                android:text="@{room_list_user.room.lastMessage}"
+                app:decryptMessage="@{room_list_user.lastMessage.get(0)}"
                 android:textColor="@color/main_text_color_hint"
                 android:textSize="@dimen/text_15_sp" />
         </LinearLayout>

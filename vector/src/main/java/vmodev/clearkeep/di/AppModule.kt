@@ -97,7 +97,7 @@ class AppModule {
             override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
                 return p0.room?.name == p1.room?.name && p0.room?.updatedDate == p1.room?.updatedDate && p0.room?.avatarUrl == p1.room?.avatarUrl
                         && p0.room?.notifyCount == p1.room?.notifyCount && p0.room?.type == p1.room?.type
-                        && p0.room?.lastMessage == p1.room?.lastMessage && p0.room?.notificationState == p1.room?.notificationState
+                        && p0.room?.messageId == p1.room?.messageId && p0.room?.notificationState == p1.room?.notificationState
             }
         })
     }

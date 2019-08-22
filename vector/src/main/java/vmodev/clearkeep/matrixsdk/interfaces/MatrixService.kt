@@ -52,5 +52,6 @@ public interface MatrixService {
     fun checkBackupKeyTypeWhenSignIn(): Observable<Int>;
     fun getMessagesToSearch(): Observable<List<Message>>;
     fun decryptListMessage(messages: List<MessageRoomUser>, msgType: String): Observable<List<MessageRoomUser>>;
-    fun editMessage(event : Event): Observable<EditMessageResponse>;
+    fun editMessage(event: Event): Observable<EditMessageResponse>;
+    fun getLastMessageOfRoom(roomId: String): Observable<Message>;
 }
