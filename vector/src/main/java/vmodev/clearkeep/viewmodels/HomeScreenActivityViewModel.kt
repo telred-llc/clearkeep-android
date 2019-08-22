@@ -3,11 +3,13 @@ package vmodev.clearkeep.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
+import io.reactivex.Observable
 import vmodev.clearkeep.di.AnnotationRepositoryKey
 import vmodev.clearkeep.repositories.KeyBackupRepository
 import vmodev.clearkeep.repositories.RoomRepository
 import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.repositories.interfaces.IRepository
+import vmodev.clearkeep.rests.models.responses.PassphraseResponse
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
@@ -16,7 +18,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 import kotlin.reflect.KClass
 
-class HomeScreenActivityViewModel @Inject constructor(userRepository: UserRepository, roomRepository: RoomRepository, keyBackupRepository: KeyBackupRepository) : AbstractHomeScreenActivityViewModel() {
+class HomeScreenActivityViewModel @Inject constructor(userRepository: UserRepository, roomRepository: RoomRepository, private val keyBackupRepository: KeyBackupRepository) : AbstractHomeScreenActivityViewModel() {
     private val _userId = MutableLiveData<String>();
     private val _filters = MutableLiveData<Array<Int>>();
     private val _filtersFavourite = MutableLiveData<Array<Int>>();
@@ -58,5 +60,13 @@ class HomeScreenActivityViewModel @Inject constructor(userRepository: UserReposi
 
     override fun getBackupKeyStatusResult(): LiveData<Resource<Int>> {
         return _getBackupStatusResult;
+    }
+
+    override fun getPassphrase(): Observable<PassphraseResponse> {
+        return keyBackupRepository.getPassphrase();
+    }
+
+    override fun createNewPassphrase(passphrase: String): Observable<PassphraseResponse> {
+        return keyBackupRepository.createPassphrase(passphrase);
     }
 }

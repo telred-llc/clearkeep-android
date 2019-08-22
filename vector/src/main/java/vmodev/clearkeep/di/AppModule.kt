@@ -122,13 +122,29 @@ class AppModule {
 
     @Provides
     @Singleton
+    @Named(value = IRetrofit.BASE_URL_HOME_SERVER)
     fun provideRetrofit(): IRetrofit {
         return RetrofitBuilder(BuildConfig.HOME_SERVER);
     }
 
     @Provides
     @Singleton
-    fun provideClearKeepApis(retrofit: IRetrofit): ClearKeepApis {
+    @Named(value = IRetrofit.BASE_URL_CLEAR_KEEP_SERVER)
+    fun provideRetrofitClearKeep(): IRetrofit {
+        return RetrofitBuilder("https://ck-server-demo.herokuapp.com");
+    }
+
+    @Provides
+    @Singleton
+    @Named(value = IRetrofit.BASE_URL_HOME_SERVER)
+    fun provideClearKeepApis(@Named(IRetrofit.BASE_URL_HOME_SERVER) retrofit: IRetrofit): ClearKeepApis {
+        return retrofit.getRetrofit().create(ClearKeepApis::class.java);
+    }
+
+    @Provides
+    @Singleton
+    @Named(value = IRetrofit.BASE_URL_CLEAR_KEEP_SERVER)
+    fun provideClearKeepApisClearKeep(@Named(IRetrofit.BASE_URL_CLEAR_KEEP_SERVER) retrofit: IRetrofit): ClearKeepApis {
         return retrofit.getRetrofit().create(ClearKeepApis::class.java);
     }
 }

@@ -54,8 +54,10 @@ import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.jsonmodels.MessageContent
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.rests.ClearKeepApis
+import vmodev.clearkeep.rests.IRetrofit
 import vmodev.clearkeep.rests.models.requests.EditMessageRequest
 import vmodev.clearkeep.rests.models.responses.EditMessageResponse
+import vmodev.clearkeep.rests.models.responses.PassphraseResponse
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.ultis.SearchMessageByTextResult
@@ -65,13 +67,16 @@ import java.io.InputStream
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.inject.Named
 import javax.inject.Singleton
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
 
 @Singleton
-class MatrixServiceImplement @Inject constructor(private val application: ClearKeepApplication, private val apis: ClearKeepApis
+class MatrixServiceImplement @Inject constructor(private val application: ClearKeepApplication
+                                                 , @Named(value = IRetrofit.BASE_URL_HOME_SERVER) private val apis: ClearKeepApis
+                                                 , @Named(value = IRetrofit.BASE_URL_CLEAR_KEEP_SERVER) private val apisClearKeep: ClearKeepApis
                                                  , private val messageDao: AbstractMessageDao, private val roomDao: AbstractRoomDao
                                                  , private val roomUserJoin: AbstractRoomUserJoinDao) : MatrixService {
 
@@ -437,7 +442,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         };
     }
 
-    private fun getCurrentUser() : User{
+    private fun getCurrentUser(): User {
         val myUser = session!!.myUser;
         var avatar = "";
         if (myUser.avatarUrl.isNullOrEmpty() || myUser == null) {
@@ -1818,5 +1823,15 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                         emitter.onComplete();
                     })
         }
+    }
+
+    override fun getPassphrase(): Observable<PassphraseResponse> {
+        setMXSession();
+        return apisClearKeep.getPassphrase("Bearer " + session!!.credentials.accessToken);
+    }
+
+    override fun createPassphrase(passphrase: String): Observable<PassphraseResponse> {
+        setMXSession();
+        return apisClearKeep.creaatePassphrase("Bearer " + session!!.credentials.accessToken, passphrase);
     }
 }

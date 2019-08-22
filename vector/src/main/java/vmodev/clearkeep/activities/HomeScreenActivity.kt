@@ -51,7 +51,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     @Inject
     @field:Named(value = IFragmentFactory.HOME_SCREEN_FRAGMENT)
     lateinit var homeScreenFragmentFactory: IFragmentFactory;
-//    @Inject
+    //    @Inject
 //    @field:Named(value = IFragmentFactory.FAVOURITES_FRAGMENT)
 //    lateinit var favouritesFragmentFactory: IFragmentFactory;
     @Inject
@@ -169,6 +169,17 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
             viewModelFactory.getViewModel().setValueForGetBackupStatus(Calendar.getInstance().timeInMillis);
         }
 
+
+        viewModelFactory.getViewModel().getPassphrase().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+            //Update Keybackup
+        }, {
+            Toast.makeText(this, "Get passphrase error, creating new passphrase", Toast.LENGTH_LONG).show();
+            viewModelFactory.getViewModel().createNewPassphrase("PBKDF2").subscribe({
+                //Update Keybackup
+            }, {
+                Toast.makeText(this, "Create passphrase error, passphrase recreate at the next session", Toast.LENGTH_LONG).show();
+            })
+        });
     }
 
     private fun startIncomingCall() {
@@ -181,15 +192,15 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     }
 
     private fun switchFragment(fragment: Fragment) {
-      Handler().post(Runnable {
-          kotlin.run {
-              val transaction = supportFragmentManager.beginTransaction();
-              transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-              transaction.replace(R.id.frame_layout_fragment_container, fragment);
-              transaction.addToBackStack(null);
-              transaction.commitAllowingStateLoss();
-          }
-      })
+        Handler().post(Runnable {
+            kotlin.run {
+                val transaction = supportFragmentManager.beginTransaction();
+                transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                transaction.replace(R.id.frame_layout_fragment_container, fragment);
+                transaction.addToBackStack(null);
+                transaction.commitAllowingStateLoss();
+            }
+        })
     }
 
 

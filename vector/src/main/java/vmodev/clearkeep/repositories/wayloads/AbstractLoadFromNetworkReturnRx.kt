@@ -12,7 +12,7 @@ abstract class AbstractLoadFromNetworkReturnRx<T> @MainThread constructor() {
     private val result: PublishSubject<T> = PublishSubject.create();
 
     init {
-        createCall().observeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ t ->
+        createCall().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ t ->
             Completable.fromAction {
                 saveCallResult(t);
             }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {

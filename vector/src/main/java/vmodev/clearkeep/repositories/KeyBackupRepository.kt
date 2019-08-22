@@ -8,9 +8,11 @@ import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.crypto.data.ImportRoomKeysResult
 import vmodev.clearkeep.databases.AbstractKeyBackupDao
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
+import vmodev.clearkeep.repositories.wayloads.AbstractLoadFromNetworkReturnRx
 import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSourceRx
 import vmodev.clearkeep.repositories.wayloads.AbstractNetworkNonBoundSource
 import vmodev.clearkeep.repositories.wayloads.AbstractNetworkNonBoundSourceRx
+import vmodev.clearkeep.rests.models.responses.PassphraseResponse
 import vmodev.clearkeep.viewmodelobjects.KeyBackup
 import vmodev.clearkeep.viewmodelobjects.Resource
 import javax.inject.Inject
@@ -127,5 +129,29 @@ class KeyBackupRepository @Inject constructor(private val matrixService: MatrixS
                 return matrixService.checkBackupKeyTypeWhenSignIn();
             }
         }.asLiveData();
+    }
+
+    fun getPassphrase(): Observable<PassphraseResponse> {
+        return object : AbstractLoadFromNetworkReturnRx<PassphraseResponse>() {
+            override fun createCall(): Observable<PassphraseResponse> {
+                return matrixService.getPassphrase();
+            }
+
+            override fun saveCallResult(item: PassphraseResponse) {
+
+            }
+        }.getObject();
+    }
+
+    fun createPassphrase(passphrase: String): Observable<PassphraseResponse> {
+        return object : AbstractLoadFromNetworkReturnRx<PassphraseResponse>() {
+            override fun createCall(): Observable<PassphraseResponse> {
+                return matrixService.createPassphrase(passphrase);
+            }
+
+            override fun saveCallResult(item: PassphraseResponse) {
+
+            }
+        }.getObject();
     }
 }
