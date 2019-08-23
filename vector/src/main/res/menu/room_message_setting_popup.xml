@@ -47,15 +47,15 @@
         android:title="@string/save"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/ic_action_view_source"
-        android:title="@string/show_details"
-        app:showAsAction="never" />
+    <!--<item-->
+        <!--android:id="@+id/ic_action_view_source"-->
+        <!--android:title="@string/show_details"-->
+        <!--app:showAsAction="never" />-->
 
-    <item
-        android:id="@+id/ic_action_view_decrypted_source"
-        android:title="@string/view_decrypted_source"
-        app:showAsAction="never" />
+    <!--<item-->
+        <!--android:id="@+id/ic_action_view_decrypted_source"-->
+        <!--android:title="@string/view_decrypted_source"-->
+        <!--app:showAsAction="never" />-->
 
     <item
         android:id="@+id/ic_action_vector_permalink"
