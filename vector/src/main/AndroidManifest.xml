@@ -131,7 +131,9 @@
         <activity android:name="vmodev.clearkeep.activities.RoomMemberListActivity" />
         <activity android:name="vmodev.clearkeep.activities.RoomfilesListActivity" />
         <activity android:name="vmodev.clearkeep.activities.RoomSettingsActivity" />
-        <activity android:name="vmodev.clearkeep.activities.RoomActivity" />
+        <activity
+            android:name="vmodev.clearkeep.activities.RoomActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="vmodev.clearkeep.activities.CallViewActivity"
             android:screenOrientation="portrait" />
