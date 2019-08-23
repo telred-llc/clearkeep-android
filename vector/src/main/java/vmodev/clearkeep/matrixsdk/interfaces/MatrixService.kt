@@ -7,6 +7,7 @@ import org.matrix.androidsdk.data.Room
 import org.matrix.androidsdk.rest.model.Event
 import vmodev.clearkeep.rests.models.requests.EditMessageRequest
 import vmodev.clearkeep.rests.models.responses.EditMessageResponse
+import vmodev.clearkeep.rests.models.responses.PassphraseResponse
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.*
@@ -52,5 +53,8 @@ public interface MatrixService {
     fun checkBackupKeyTypeWhenSignIn(): Observable<Int>;
     fun getMessagesToSearch(): Observable<List<Message>>;
     fun decryptListMessage(messages: List<MessageRoomUser>, msgType: String): Observable<List<MessageRoomUser>>;
-    fun editMessage(event : Event): Observable<EditMessageResponse>;
+    fun editMessage(event: Event): Observable<EditMessageResponse>;
+    fun getLastMessageOfRoom(roomId: String): Observable<Message>;
+    fun getPassphrase(): Observable<PassphraseResponse>;
+    fun createPassphrase(passphrase: String): Observable<PassphraseResponse>;
 }

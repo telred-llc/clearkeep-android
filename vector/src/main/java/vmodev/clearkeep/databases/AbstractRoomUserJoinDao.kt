@@ -45,10 +45,10 @@ abstract class AbstractRoomUserJoinDao {
     @Query("SELECT roomUserJoin.* FROM roomUserJoin INNER JOIN room ON room.id = roomUserJoin.room_id INNER JOIN user ON user.id = roomUserJoin.user_id WHERE room.id =:roomId AND user.id =:userId")
     abstract fun getRoomUserJoinWithRoomIdAndUserIdRx(roomId: String, userId: String): Single<RoomUserJoin>;
 
-    @Query("SELECT DISTINCT roomUserJoin.room_id, room.* FROM RoomUserJoin INNER JOIN Room ON roomUserJoin.room_id = room.id WHERE room.type =:typeOne ORDER BY room.type DESC, room.updatedDate DESC")
+    @Query("SELECT DISTINCT roomUserJoin.room_id, Room.* FROM Room INNER JOIN RoomUserJoin ON roomUserJoin.room_id = Room.id WHERE room.type =:typeOne ORDER BY room.type DESC, room.updatedDate DESC")
     abstract fun getListRoomListUserWithFilter(typeOne: Int): LiveData<List<RoomListUser>>
 
-    @Query("SELECT DISTINCT roomUserJoin.room_id, room.* FROM RoomUserJoin INNER JOIN Room ON roomUserJoin.room_id = room.id WHERE room.type =:typeOne OR room.type =:typeTwo ORDER BY room.type DESC, room.updatedDate DESC")
+    @Query("SELECT DISTINCT roomUserJoin.room_id, Room.* FROM Room INNER JOIN RoomUserJoin ON roomUserJoin.room_id = Room.id WHERE room.type =:typeOne OR room.type =:typeTwo ORDER BY room.type DESC, room.updatedDate DESC")
     abstract fun getListRoomListUserWithFilter(typeOne: Int, typeTwo: Int): LiveData<List<RoomListUser>>
 
     @Query("SELECT DISTINCT roomUserJoin.room_id, room.* FROM roomUserJoin INNER JOIN room ON roomUserJoin.room_id = room.id WHERE room.type =:typeOne OR room.type =:typeTwo")
@@ -71,6 +71,9 @@ abstract class AbstractRoomUserJoinDao {
 
     @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.* FROM RoomUserJoin INNER JOIN Room ON RoomUserJoin.room_id = Room.id WHERE Room.name LIKE :query AND type IN(:filters)")
     abstract fun findRoomByNameContain(filters: List<Int>, query: String): LiveData<List<RoomListUser>>
+
+    @Query("SELECT DISTINCT roomUserJoin.room_id, Room.*, Message.room_id FROM Room INNER JOIN RoomUserJoin ON roomUserJoin.room_id = Room.id INNER JOIN Message ON Message.id = Room.message_id WHERE room.type =:typeOne OR room.type =:typeTwo ORDER BY room.type DESC, room.updatedDate DESC")
+    abstract fun getListRoomListUserWithFilterTest(typeOne: Int, typeTwo: Int): List<RoomListUser>
 
     fun getListRoomWithUsers(typeOne: Int, typeTwo: Int): LiveData<List<RoomUserList>> {
         val list = getListRoomUserListTwo(typeOne, typeTwo);

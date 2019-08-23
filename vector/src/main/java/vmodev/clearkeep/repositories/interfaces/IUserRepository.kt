@@ -1,6 +1,7 @@
 package vmodev.clearkeep.repositories.interfaces
 
 import android.arch.lifecycle.LiveData
+import io.reactivex.Observable
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.User
 import java.io.InputStream
@@ -13,5 +14,6 @@ interface IUserRepository : IRepository {
     fun updateUserStatus(userId: String, status: Byte)
     fun getListUserInRoomFromNetwork(roomId: String): LiveData<Resource<List<User>>>
     fun updateOrCreateNewUserFromRemote(roomId: String): LiveData<Resource<List<User>>>;
-    fun getUsersWithId(userIds : Array<String>): LiveData<Resource<List<User>>>
+    fun getUsersWithId(userIds: Array<String>): LiveData<Resource<List<User>>>
+    fun getListUserInRoomFromNetworkRx(roomId: String): Observable<List<User>>;
 }

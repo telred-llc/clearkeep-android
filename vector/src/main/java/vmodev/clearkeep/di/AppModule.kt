@@ -97,7 +97,7 @@ class AppModule {
             override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
                 return p0.room?.name == p1.room?.name && p0.room?.updatedDate == p1.room?.updatedDate && p0.room?.avatarUrl == p1.room?.avatarUrl
                         && p0.room?.notifyCount == p1.room?.notifyCount && p0.room?.type == p1.room?.type
-                        && p0.room?.lastMessage == p1.room?.lastMessage && p0.room?.notificationState == p1.room?.notificationState
+                        && p0.room?.messageId == p1.room?.messageId && p0.room?.notificationState == p1.room?.notificationState
             }
         })
     }
@@ -122,13 +122,29 @@ class AppModule {
 
     @Provides
     @Singleton
+    @Named(value = IRetrofit.BASE_URL_HOME_SERVER)
     fun provideRetrofit(): IRetrofit {
         return RetrofitBuilder(BuildConfig.HOME_SERVER);
     }
 
     @Provides
     @Singleton
-    fun provideClearKeepApis(retrofit: IRetrofit): ClearKeepApis {
+    @Named(value = IRetrofit.BASE_URL_CLEAR_KEEP_SERVER)
+    fun provideRetrofitClearKeep(): IRetrofit {
+        return RetrofitBuilder("https://ck-server-demo.herokuapp.com");
+    }
+
+    @Provides
+    @Singleton
+    @Named(value = IRetrofit.BASE_URL_HOME_SERVER)
+    fun provideClearKeepApis(@Named(IRetrofit.BASE_URL_HOME_SERVER) retrofit: IRetrofit): ClearKeepApis {
+        return retrofit.getRetrofit().create(ClearKeepApis::class.java);
+    }
+
+    @Provides
+    @Singleton
+    @Named(value = IRetrofit.BASE_URL_CLEAR_KEEP_SERVER)
+    fun provideClearKeepApisClearKeep(@Named(IRetrofit.BASE_URL_CLEAR_KEEP_SERVER) retrofit: IRetrofit): ClearKeepApis {
         return retrofit.getRetrofit().create(ClearKeepApis::class.java);
     }
 }

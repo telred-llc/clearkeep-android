@@ -247,11 +247,12 @@ class MatrixLoginService constructor(private val application: IApplication) : IM
 
     override fun resetPassword(password: String, threePid: ThreePid): Observable<String> {
         return Observable.create { emitter ->
-            val profileRestClient = ProfileRestClient(homeServerConnectionConfig);
+            val homeServer : HomeServerConnectionConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse(BuildConfig.HOME_SERVER)).withIdentityServerUri(Uri.parse(BuildConfig.IDENTIFY_SERVER)).build();
+            val profileRestClient = ProfileRestClient(homeServer);
             val threePidCredentials = ThreePidCredentials();
             threePidCredentials.clientSecret = threePid.clientSecret;
             threePidCredentials.sid = threePid.sid;
-            threePidCredentials.idServer = homeServerConnectionConfig.identityServerUri.host;
+            threePidCredentials.idServer = homeServer.identityServerUri.host;
             profileRestClient.resetPassword(password, threePidCredentials, object : ApiCallback<Void> {
                 override fun onSuccess(p0: Void?) {
                     emitter.onNext("Success");

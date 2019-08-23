@@ -1585,5 +1585,8 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="link_copied_to_clipboard">Link copied to clipboard</string>
     <string name="favourites">Favourites</string>
     <string name="invites">Invites</string>
+    <string name="updating_rooms">Updating rooms...</string>
+    <string name="updating_users">Updating users...</string>
+    <string name="updating_last_message">Updating last messages</string>
 
 </resources>

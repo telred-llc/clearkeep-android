@@ -17,6 +17,8 @@ import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorHomeActivity
 import im.vector.databinding.ActivityHomeScreenBinding
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.applications.ClearKeepApplication
@@ -135,6 +137,18 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
             binding.progressBar.visibility = View.VISIBLE;
             viewModelFactory.getViewModel().setValueForGetBackupStatus(Calendar.getInstance().timeInMillis);
         }
+
+
+        viewModelFactory.getViewModel().getPassphrase().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+            //Update Keybackup
+        }, {
+            Toast.makeText(this, "Get passphrase error, creating new passphrase", Toast.LENGTH_LONG).show();
+            viewModelFactory.getViewModel().createNewPassphrase("PBKDF2").subscribe({
+                //Update Keybackup
+            }, {
+                Toast.makeText(this, "Create passphrase error, passphrase recreate at the next session", Toast.LENGTH_LONG).show();
+            })
+        });
     }
 
     private fun startIncomingCall() {
@@ -147,15 +161,15 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     }
 
     private fun switchFragment(fragment: Fragment) {
-      Handler().post(Runnable {
-          kotlin.run {
-              val transaction = supportFragmentManager.beginTransaction();
-              transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-              transaction.replace(R.id.frame_layout_fragment_container, fragment);
-              transaction.addToBackStack(null);
-              transaction.commitAllowingStateLoss();
-          }
-      })
+        Handler().post(Runnable {
+            kotlin.run {
+                val transaction = supportFragmentManager.beginTransaction();
+                transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                transaction.replace(R.id.frame_layout_fragment_container, fragment);
+                transaction.addToBackStack(null);
+                transaction.commitAllowingStateLoss();
+            }
+        })
     }
 
     override fun onFragmentInteraction(uri: Uri) {
