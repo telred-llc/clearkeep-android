@@ -78,7 +78,7 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
                 val password = binding.editTextPassword.text.toString().trim();
                 val username = binding.editTextUsername.text.toString().trim();
                 if (TextUtils.isEmpty(username)) {
-                    binding.editTextUsername.setError(getString(R.string.error_empty_field_enter_user_name));
+                    binding.editTextUsername.setError(getString(R.string.error_empty_field_enter_user_name_or_email));
                     return@run;
                 }
                 if (TextUtils.isEmpty(password)) {

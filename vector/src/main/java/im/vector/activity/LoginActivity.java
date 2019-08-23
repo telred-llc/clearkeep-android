@@ -1807,7 +1807,7 @@ public class LoginActivity extends MXCActionBarActivity implements RegistrationM
         boolean hasError = false;
 
         if (TextUtils.isEmpty(name)) {
-            mCreationUsernameTextViewTil.setError(getString(R.string.error_empty_field_enter_user_name));
+            mCreationUsernameTextViewTil.setError(getString(R.string.error_empty_field_enter_user_name_or_email));
             hasError = true;
         } else {
             String expression = "^[a-z0-9.\\-_]+$";
