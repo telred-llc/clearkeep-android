@@ -1250,6 +1250,7 @@ Why choose Riot.im?
     <string name="profile">Profile</string>
     <string name="probably_you_want">probably you want</string>
     <string name="new_room">New Room</string>
+    <string name="add_members">Add members</string>
     <string name="new_call">New Call</string>
     <string name="suggested">Suggested (direct messages)</string>
     <string name="new_conversation">New Conversation</string>

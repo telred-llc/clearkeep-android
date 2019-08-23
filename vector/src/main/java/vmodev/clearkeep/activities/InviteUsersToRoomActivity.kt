@@ -55,7 +55,7 @@ class InviteUsersToRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
         super.onCreate(savedInstanceState)
         val binding = DataBindingUtil.setContentView<ActivityInviteUsersToRoomBinding>(this, R.layout.activity_invite_users_to_room);
         setSupportActionBar(binding.toolbar);
-        supportActionBar!!.setTitle(R.string.new_room);
+        supportActionBar!!.setTitle(R.string.add_members);
         supportActionBar!!.setDisplayHomeAsUpEnabled(true);
         supportActionBar!!.setDisplayShowHomeEnabled(true);
         binding.toolbar.setNavigationOnClickListener { v ->
