@@ -131,7 +131,7 @@ class AppModule {
     @Singleton
     @Named(value = IRetrofit.BASE_URL_CLEAR_KEEP_SERVER)
     fun provideRetrofitClearKeep(): IRetrofit {
-        return RetrofitBuilder("https://ck-server-demo.herokuapp.com");
+        return RetrofitBuilder(BuildConfig.CLEAR_KEEP_SERVER);
     }
 
     @Provides

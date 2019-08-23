@@ -68,6 +68,7 @@ android {
             buildConfigField "String", "HOME_SERVER", "\"https://study.sinbadflyce.com\""
             buildConfigField "String", "PUSH_GATEWAY", "\"http://study.sinbadflyce.com:5000/_matrix/push/v1/notify\""
             buildConfigField "String", "IDENTIFY_SERVER", "\"https://id.clearkeep.me\""
+            buildConfigField "String", "CLEAR_KEEP_SERVER", "\"https://ck-server-demo.herokuapp.com\""
         }
 
         release {
@@ -82,6 +83,7 @@ android {
             buildConfigField "String", "HOME_SERVER", "\"https://s.clearkeep.me\""
             buildConfigField "String", "PUSH_GATEWAY", "\"https://push.clearkeep.me/_matrix/push/v1/notify\""
             buildConfigField "String", "IDENTIFY_SERVER", "\"https://id.clearkeep.me\""
+            buildConfigField "String", "CLEAR_KEEP_SERVER", "\"https://op.clearkeep.me\""
         }
     }
 

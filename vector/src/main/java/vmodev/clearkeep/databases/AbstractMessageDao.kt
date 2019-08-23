@@ -40,7 +40,7 @@ abstract class AbstractMessageDao {
     @Query("DELETE FROM message")
     abstract fun delete();
 
-    @Query("SELECT message.*, room.* FROM message INNER JOIN room ON message.room_id = room.id")
+    @Query("SELECT message.*FROM message")
     abstract fun getAllMessageWithRoomAndUser(): LiveData<List<MessageRoomUser>>
 
     @Query("SELECT Message.* FROM Message WHERE Message.room_id =:roomId")
