@@ -195,7 +195,7 @@ class RoomRepository @Inject constructor(
     }
 
     fun createNewRoom(name: String, topic: String, visibility: String): LiveData<Resource<Room>> {
-        return object : AbstractNetworkBoundSourceWithParams<Room, Room>() {
+        return object : AbstractNetworkBoundSourceOneTimeWithParams<Room, Room>() {
             override fun saveCallResult(item: Room) {
                 abstractRoomDao.insert(item);
             }
@@ -423,6 +423,38 @@ class RoomRepository @Inject constructor(
                 return rooms;
             }
         }.asLiveData();
+    }
+
+    fun updateAndCreateListRoomReturnRx(filters: Array<Int>): Observable<List<Room>> {
+        return object : AbstractNetworkCreateAndUpdateSourceReturnRx<List<Room>, List<Room>>() {
+            override fun insertResult(item: List<Room>) {
+                abstractRoomDao.insertRooms(item);
+            }
+
+            override fun updateResult(item: List<Room>) {
+                abstractRoomDao.updateRooms(item);
+            }
+
+            override fun loadFromDb(): Single<List<Room>> {
+                return abstractRoomDao.loadWithTypeRx(filters);
+            }
+
+            override fun createCall(): Observable<List<Room>> {
+                return matrixService.getListRoom(filters);
+            }
+
+            override fun getInsertItem(remoteItem: List<Room>, localItem: List<Room>?): List<Room> {
+                val rooms = ArrayList<Room>();
+                rooms.addAll(remoteItem)
+                return rooms;
+            }
+
+            override fun getUpdateItem(remoteItem: List<Room>, localItem: List<Room>?): List<Room> {
+                val rooms = ArrayList<Room>();
+                rooms.addAll(remoteItem);
+                return rooms;
+            }
+        }.getObject();
     }
 
     fun getListRoomWithListId(ids: List<String>): LiveData<Resource<List<Room>>> {

@@ -411,6 +411,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         var messageId: String = "";
         room.roomSummary?.let { roomSummary ->
             val event = roomSummary.latestReceivedEvent;
+            timeUpdateLong = event.originServerTs;
             messageId = event.eventId;
         }
         val notificationState = when (session!!.dataHandler.bingRulesManager.getRoomNotificationState(room.roomId)) {
@@ -923,10 +924,8 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
 
     override fun getUsersInRoom(roomId: String): Observable<List<User>> {
         return Observable.create { emitter ->
-            Log.d("UpdateUserBefore", roomId);
             val users = ArrayList<User>();
             val room = session!!.dataHandler.getRoom(roomId);
-            Log.d("UpdateUser", room.roomId);
             room.getActiveMembersAsync(object : ApiCallback<List<RoomMember>> {
                 override fun onSuccess(p0: List<RoomMember>?) {
 

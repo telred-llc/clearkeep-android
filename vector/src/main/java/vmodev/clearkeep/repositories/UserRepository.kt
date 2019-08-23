@@ -196,10 +196,6 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
                     } ?: run {
                         users.addAll(r);
                     }
-                } ?: run {
-                    localItem?.let {
-                        users.addAll(it);
-                    }
                 }
                 return users;
             }
@@ -211,10 +207,6 @@ class UserRepository @Inject constructor(private val executors: AppExecutors
                         users.addAll(r);
                     } ?: run {
                         users.addAll(r);
-                    }
-                } ?: run {
-                    localItem?.let {
-                        users.addAll(it);
                     }
                 }
                 return users;

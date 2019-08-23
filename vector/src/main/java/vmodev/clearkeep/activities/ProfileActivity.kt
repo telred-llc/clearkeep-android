@@ -41,6 +41,8 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
     lateinit var backupKeyBackupDao: AbstractKeyBackupDao;
     @Inject
     lateinit var roomUserJoinDao: AbstractRoomUserJoinDao;
+    @Inject
+    lateinit var messageDao: AbstractMessageDao;
 
     lateinit var binding: ActivityProfileBinding;
     lateinit var mxSession: MXSession;
@@ -120,6 +122,7 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
                 .setMessage(R.string.action_sign_out_confirmation_simple)
                 .setPositiveButton(R.string.action_sign_out) { dialog, which ->
                     Completable.fromAction {
+                        messageDao.delete();
                         roomUserJoinDao.delete();
                         abstractUserDao.delete();
                         abstractRoomDao.delete();

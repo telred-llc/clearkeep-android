@@ -7,10 +7,14 @@ import dagger.Module
 import dagger.Provides
 import dagger.android.ContributesAndroidInjector
 import vmodev.clearkeep.activities.HomeScreenActivity
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.activities.interfaces.IHomeScreenActivity
 import vmodev.clearkeep.factories.viewmodels.HomeScreenViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IHomeScreenViewModelFactory
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.viewmodels.interfaces.AbstractHomeScreenActivityViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
+import javax.inject.Named
 
 @Suppress("unused")
 @Module
@@ -20,8 +24,9 @@ abstract class HomeScreenActivityModule {
     abstract fun contributeHomeScreenActivityModule(): HomeScreenActivity
 
     @Binds
-    abstract fun bindIHomeScreenActivity(activity: HomeScreenActivity): IHomeScreenActivity;
+    @Named(IActivity.HOME_SCREEN_ACTIVITY)
+    abstract fun bindIHomeScreenActivity(activity: HomeScreenActivity): IActivity;
 
     @Binds
-    abstract fun bindHomeScreenViewModelFactory(factory: HomeScreenViewModelFactory): IHomeScreenViewModelFactory;
+    abstract fun bindHomeScreenViewModelFactory(factory: HomeScreenViewModelFactory): IViewModelFactory<AbstractHomeScreenActivityViewModel>;
 }

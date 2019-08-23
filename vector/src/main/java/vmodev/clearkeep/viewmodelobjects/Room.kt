@@ -20,7 +20,7 @@ import com.google.gson.annotations.SerializedName
             ForeignKey(entity = Message::class
                     , parentColumns = ["id"]
                     , childColumns = ["message_id"]
-                    , onDelete = ForeignKey.NO_ACTION)
+                    , onDelete = ForeignKey.CASCADE)
         ]
 )
 data class Room(

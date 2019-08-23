@@ -19,11 +19,16 @@ import com.orhanobut.dialogplus.DialogPlus
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.FragmentListRoomBinding
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.activities.*
 import vmodev.clearkeep.adapters.BottomDialogFavouriteRoomLongClick
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.applications.IApplication
+import vmodev.clearkeep.databases.AbstractMessageDao
+import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.factories.viewmodels.interfaces.IListRoomFragmentViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IListRoomFragment
 import vmodev.clearkeep.viewmodelobjects.Resource
@@ -60,6 +65,12 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
     @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
     lateinit var listFavouritesRoomAdapter: IListRoomRecyclerViewAdapter;
+
+    @Inject
+    lateinit var roomUserJoin: AbstractRoomUserJoinDao;
+
+    @Inject
+    lateinit var messageDao: AbstractMessageDao;
 
     // TODO: Rename and change types of parameters
     private var userId: String? = null
@@ -258,12 +269,12 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
         viewModelFactory.getViewModel().getListDirectRoomResult().observe(this.viewLifecycleOwner, Observer {
             listDirectRoomAdapter.getAdapter().submitList(it?.data);
         });
-        binding.linearLayoutGroup.setOnClickListener {
-            binding.expandableLayoutListGroup.isExpanded = !binding.expandableLayoutListGroup.isExpanded;
-            if (binding.expandableLayoutListGroup.isExpanded) {
-                binding.imageViewDirectionGroup.rotation = 0f;
+        binding.linearLayoutDirect.setOnClickListener {
+            binding.expandableLayoutListDirect.isExpanded = !binding.expandableLayoutListDirect.isExpanded;
+            if (binding.expandableLayoutListDirect.isExpanded) {
+                binding.imageViewDirectionDirect.rotation = 0f;
             } else {
-                binding.imageViewDirectionGroup.rotation = 270f;
+                binding.imageViewDirectionDirect.rotation = 270f;
             }
         }
     }
@@ -332,12 +343,12 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
         viewModelFactory.getViewModel().getListGroupRoomResult().observe(this.viewLifecycleOwner, Observer {
             listGroupRoomAdapter.getAdapter().submitList(it?.data)
         });
-        binding.linearLayoutDirect.setOnClickListener {
-            binding.expandableLayoutListDirect.isExpanded = !binding.expandableLayoutListDirect.isExpanded;
-            if (binding.expandableLayoutListDirect.isExpanded) {
-                binding.imageViewDirectionDirect.rotation = 0f;
+        binding.linearLayoutGroup.setOnClickListener {
+            binding.expandableLayoutListGroup.isExpanded = !binding.expandableLayoutListGroup.isExpanded;
+            if (binding.expandableLayoutListGroup.isExpanded) {
+                binding.imageViewDirectionGroup.rotation = 0f;
             } else {
-                binding.imageViewDirectionDirect.rotation = 270f;
+                binding.imageViewDirectionGroup.rotation = 270f;
             }
         }
     }

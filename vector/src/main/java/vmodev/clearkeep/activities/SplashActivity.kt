@@ -17,8 +17,12 @@ import im.vector.VectorApp
 import im.vector.activity.CommonActivityUtils
 import im.vector.analytics.TrackingEvent
 import im.vector.databinding.ActivitySplashBinding
-import im.vector.services.EventStreamService
+import im.vector.services.EventStreamServiceX
 import im.vector.util.PreferencesManager
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.core.Log
 import org.matrix.androidsdk.core.callback.ApiCallback
@@ -28,8 +32,11 @@ import org.matrix.androidsdk.listeners.IMXEventListener
 import org.matrix.androidsdk.listeners.MXEventListener
 import vmodev.clearkeep.activities.interfaces.ISplashActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.ISplashActivityViewModelFactory
-import vmodev.clearkeep.viewmodelobjects.Status
+import vmodev.clearkeep.viewmodelobjects.Message
+import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
+import vmodev.clearkeep.viewmodelobjects.User
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
@@ -41,8 +48,6 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
 
     private val mListeners = HashMap<MXSession, IMXEventListener>()
     private val mDoneListeners = HashMap<MXSession, IMXEventListener>()
-
-    private val mLaunchTime = System.currentTimeMillis()
 
     private var startFromLogin: Int = 0;
 
@@ -128,7 +133,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
         try {
             val session = Matrix.getInstance(applicationContext).defaultSession;
             return null != session && session.isAlive
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Log.d("Error Credentials: ", e?.message)
         }
 
@@ -156,53 +161,92 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
         return hasCorruptedStore
     }
 
+    @SuppressLint("CheckResult")
     private fun onFinish() {
-        val finishTime = System.currentTimeMillis()
-        val duration = finishTime - mLaunchTime
-        val event = TrackingEvent.LaunchScreen(duration)
-        VectorApp.getInstance().analytics.trackEvent(event)
-        val session : MXSession = Matrix.getInstance(applicationContext).defaultSession;
         if (!hasCorruptedStore()) {
             val intent = Intent(this, HomeScreenActivity::class.java)
             intent.putExtra(HomeScreenActivity.START_FROM_LOGIN, startFromLogin)
-            viewModelFactory.getViewModel().getAllRoomResult(arrayOf(1, 2, 65, 66, 129, 130)).observe(this, Observer { t ->
-                t?.data?.let { rooms ->
-                    var index: Int = 0x01;
-                    rooms.forEach { r ->
-                        viewModelFactory.getViewModel().getUpdateUserResult(r.id).observe(this, Observer {
-                            it?.let {
-                                when (it.status) {
-                                    Status.ERROR -> {
-                                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
-                                        index++;
-                                        viewModelFactory.getViewModel().getUpdateRoomUserJoinResult(r.id, session.myUserId)
-                                        if (index >= rooms.size) {
-                                            startActivity(intent)
-                                            finish()
-                                        } else {
-                                        }
-                                    }
-                                    Status.SUCCESS -> {
-                                        index++;
-                                        it.data?.let {
-                                            it.forEach { u ->
-                                                viewModelFactory.getViewModel().getUpdateRoomUserJoinResult(r.id, u.id)
-                                            }
-                                        }
-                                        if (index >= rooms.size) {
-                                            startActivity(intent)
-                                            finish()
-                                        } else {
-                                        }
-                                    }
-                                    Status.LOADING -> {
-
+            binding.textViewContentLoading.setText(R.string.updating_rooms);
+            viewModelFactory.getViewModel().getAllRoomResultRx(arrayOf(1, 2, 65, 66, 129, 130)).subscribe({ rooms ->
+                if (rooms.isEmpty()) {
+                    startActivity(intent)
+                    finish();
+                } else {
+                    var currentObservable: Observable<List<RoomUserJoin>>? = null
+                    for ((index, r) in rooms.withIndex()) {
+                        if (index == 0) {
+                            currentObservable = Observable.zip(viewModelFactory.getViewModel().updateUsersFromRoom(r.id), viewModelFactory.getViewModel().updateUsersFromRoom(rooms[1].id
+                            ), BiFunction<List<User>, List<User>, List<RoomUserJoin>> { t1, t2 ->
+                                val mutableList = mutableListOf<RoomUserJoin>();
+                                t1.forEach { mutableList.add(RoomUserJoin(r.id, it.id)) }
+                                t2.forEach { mutableList.add(RoomUserJoin(rooms[1].id, it.id)) }
+                                mutableList;
+                            })
+                        } else if (index > 1) {
+                            currentObservable?.let {
+                                currentObservable = it.zipWith(viewModelFactory.getViewModel().updateUsersFromRoom(r.id), BiFunction<List<RoomUserJoin>, List<User>, List<RoomUserJoin>> { t1, t2 ->
+                                    val mutableList = mutableListOf<RoomUserJoin>();
+                                    mutableList.addAll(t1);
+                                    t2.forEach { mutableList.add(RoomUserJoin(r.id, it.id)) }
+                                    mutableList;
+                                })
+                            }
+                        }
+                    }
+                    binding.textViewContentLoading.setText(R.string.updating_users);
+                    currentObservable?.let {
+                        it.subscribe({
+                            it.forEach {
+                                viewModelFactory.getViewModel().getUpdateRoomUserJoinResult(it.roomId, it.userId);
+                            }
+                            var currentZipMessage: Observable<List<Message>>? = null;
+                            for ((index, r) in rooms.withIndex()) {
+                                if (index == 0) {
+                                    currentZipMessage = Observable.zip(viewModelFactory.getViewModel().getUpdateLastMessageResult(r.id)
+                                            , viewModelFactory.getViewModel().getUpdateLastMessageResult(rooms[1].id)
+                                            , BiFunction<Message, Message, List<Message>> { t1, t2 ->
+                                        val mutableList = mutableListOf<Message>();
+                                        mutableList.add(t1);
+                                        mutableList.add(t2);
+                                        mutableList;
+                                    })
+                                } else if (index > 1) {
+                                    currentZipMessage?.let {
+                                        currentZipMessage = it.zipWith(viewModelFactory.getViewModel().getUpdateLastMessageResult(r.id).onErrorReturn { Message("", "", "", "", "") }
+                                                , BiFunction<List<Message>, Message, List<Message>> { t1, t2 ->
+                                            val mutableList = mutableListOf<Message>();
+                                            mutableList.addAll(t1);
+                                            mutableList.add(t2);
+                                            mutableList;
+                                        })
                                     }
                                 }
                             }
+                            binding.textViewContentLoading.setText(R.string.updating_last_message);
+                            currentZipMessage?.let {
+                                it.subscribe({
+                                    it.forEach {
+                                        viewModelFactory.getViewModel().updateRoomLastMessage(it.roomId, it.id);
+                                    }
+                                    startActivity(intent)
+                                    finish()
+                                }, {
+                                    Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
+                                    startActivity(intent)
+                                    finish()
+                                })
+                            }
+                        }, {
+                            Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
+                            startActivity(intent)
+                            finish()
                         })
                     }
                 }
+            }, {
+                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
+                startActivity(intent)
+                finish()
             })
         } else {
             CommonActivityUtils.logout(this)
@@ -266,30 +310,30 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
         var matrixIds: MutableList<String> = ArrayList()
 
         for (session in sessions) {
-
+            val fSession = session;
             val eventListener = object : MXEventListener() {
                 private fun onReady() {
                     val isAlreadyDone: Boolean
 
-                    synchronized("") {
-                        isAlreadyDone = mDoneListeners.containsKey(session)
+                    synchronized("SplashActivity") {
+                        isAlreadyDone = mDoneListeners.containsKey(fSession)
                     }
 
                     if (!isAlreadyDone) {
-                        synchronized("") {
-                            val noMoreListener: Boolean
+                        synchronized("SplashActivity") {
+                            var noMoreListener: Boolean = true;
 
-                            mDoneListeners[session] = mListeners[session]!!
+                            mDoneListeners[session] = mListeners[fSession]!!
                             // do not remove the listeners here
                             // it crashes the application because of the upper loop
                             //fSession.getDataHandler().removeListener(mListeners.get(fSession));
                             // remove from the pending list
 
-                            mListeners.remove(session)
+                            mListeners.remove(fSession)
                             noMoreListener = mListeners.size == 0
 
                             if (noMoreListener) {
-                                VectorApp.addSyncingSession(session)
+                                VectorApp.addSyncingSession(fSession)
                                 onFinish()
                             }
                         }
@@ -307,14 +351,14 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                 }
             }
 
-            if (!session.dataHandler.isInitialSyncComplete) {
+            if (!fSession.dataHandler.isInitialSyncComplete) {
                 session.dataHandler.store.open()
 
-                mListeners[session] = eventListener
-                session.dataHandler.addListener(eventListener)
+                mListeners[fSession] = eventListener
+                fSession.dataHandler.addListener(eventListener)
 
                 // Set the main error listener
-                session.setFailureCallback(ErrorListener(session, this))
+                fSession.setFailureCallback(ErrorListener(session, this))
 
                 // session to activate
                 matrixIds.add(session.credentials.userId)
@@ -333,15 +377,16 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
             Matrix.getInstance(this)!!.mHasBeenDisconnected = false
         }
 
-        if (EventStreamService.getInstance() == null) {
-            // Start the event stream service
-            val intent = Intent(this, EventStreamService::class.java)
-            intent.putExtra(EventStreamService.EXTRA_MATRIX_IDS, matrixIds.toTypedArray())
-            intent.putExtra(EventStreamService.EXTRA_STREAM_ACTION, EventStreamService.StreamAction.START.ordinal)
-            startService(intent)
-        } else {
-            EventStreamService.getInstance()!!.startAccounts(matrixIds)
-        }
+//        if (EventStreamService.getInstance() == null) {
+//            // Start the event stream service
+//            val intent = Intent(this, EventStreamService::class.java)
+//            intent.putExtra(EventStreamService.EXTRA_MATRIX_IDS, matrixIds.toTypedArray())
+//            intent.putExtra(EventStreamService.EXTRA_STREAM_ACTION, EventStreamService.StreamAction.START.ordinal)
+//            startService(intent)
+//        } else {
+//            EventStreamService.getInstance()!!.startAccounts(matrixIds)
+//        }
+        EventStreamServiceX.onApplicationStarted(this)
 
         // trigger the push registration if required
         val pushManager = Matrix.getInstance(applicationContext)!!.pushManager

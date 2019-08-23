@@ -16,9 +16,6 @@ abstract class AbstractRoomDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insertRooms(rooms: List<Room>): List<Long>;
 
-    @Query("SELECT * FROM room WHERE type = :type ORDER BY updatedDate DESC")
-    abstract fun loadWithType(type: Int): LiveData<List<Room>>;
-
     @Query("SELECT * FROM room WHERE id =:id")
     abstract fun findById(id: String): LiveData<Room>;
 
@@ -34,11 +31,14 @@ abstract class AbstractRoomDao {
     @Query("UPDATE room SET type =:type WHERE id =:id")
     abstract fun updateRoom(id: String, type: Int);
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo ORDER BY type DESC, updatedDate DESC")
-    abstract fun loadWithType(filterOne: Int, filterTwo: Int): LiveData<List<Room>>;
-
     @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo ORDER BY updatedDate DESC")
     abstract fun loadWithTypeOnlyTime(filterOne: Int, filterTwo: Int): LiveData<List<Room>>;
+
+    @Query("SELECT * FROM room WHERE type = :type ORDER BY updatedDate DESC")
+    abstract fun loadWithType(type: Int): LiveData<List<Room>>;
+
+    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo ORDER BY type DESC, updatedDate DESC")
+    abstract fun loadWithType(filterOne: Int, filterTwo: Int): LiveData<List<Room>>;
 
     @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree ORDER BY type DESC, updatedDate DESC")
     abstract fun loadWithType(filterOne: Int, filterTwo: Int, filterThree: Int): LiveData<List<Room>>;
@@ -51,6 +51,24 @@ abstract class AbstractRoomDao {
 
     @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive OR type =:filterSix ORDER BY type DESC, updatedDate DESC")
     abstract fun loadWithType(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int, filterFive: Int, filterSix: Int): LiveData<List<Room>>;
+
+    @Query("SELECT * FROM room WHERE type = :type ORDER BY updatedDate DESC")
+    abstract fun loadWithTypeRx(type: Int): Single<List<Room>>;
+
+    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo ORDER BY type DESC, updatedDate DESC")
+    abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int): Single<List<Room>>;
+
+    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree ORDER BY type DESC, updatedDate DESC")
+    abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int, filterThree: Int): Single<List<Room>>;
+
+    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour ORDER BY type DESC, updatedDate DESC")
+    abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int): Single<List<Room>>;
+
+    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive ORDER BY type DESC, updatedDate DESC")
+    abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int, filterFive: Int): Single<List<Room>>;
+
+    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive OR type =:filterSix ORDER BY type DESC, updatedDate DESC")
+    abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int, filterFive: Int, filterSix: Int): Single<List<Room>>;
 
     @Query("DELETE FROM room WHERE id =:id")
     abstract fun deleteRoom(id: String);
@@ -94,15 +112,27 @@ abstract class AbstractRoomDao {
     @Query("SELECT Room.* FROM Room WHERE Room.message_id =:messageId")
     abstract fun getRoomWithMessageId(messageId: String): List<Room>;
 
-    fun loadWithType(filter: Array<Int>): LiveData<List<Room>> {
-        when (filter.size) {
-            1 -> return loadWithType(filter[0]);
-            2 -> return loadWithType(filter[0], filter[1])
-            3 -> return loadWithType(filter[0], filter[1], filter[2])
-            4 -> return loadWithType(filter[0], filter[1], filter[2], filter[3])
-            5 -> return loadWithType(filter[0], filter[1], filter[2], filter[3], filter[4])
-            6 -> return loadWithType(filter[0], filter[1], filter[2], filter[3], filter[4], filter[5])
+    fun loadWithType(filters: Array<Int>): LiveData<List<Room>> {
+        when (filters.size) {
+            1 -> return loadWithType(filters[0]);
+            2 -> return loadWithType(filters[0], filters[1])
+            3 -> return loadWithType(filters[0], filters[1], filters[2])
+            4 -> return loadWithType(filters[0], filters[1], filters[2], filters[3])
+            5 -> return loadWithType(filters[0], filters[1], filters[2], filters[3], filters[4])
+            6 -> return loadWithType(filters[0], filters[1], filters[2], filters[3], filters[4], filters[5])
             else -> return loadWithType(0);
+        }
+    }
+
+    fun loadWithTypeRx(filters: Array<Int>): Single<List<Room>> {
+        when (filters.size) {
+            1 -> return loadWithTypeRx(filters[0]);
+            2 -> return loadWithTypeRx(filters[0], filters[1])
+            3 -> return loadWithTypeRx(filters[0], filters[1], filters[2])
+            4 -> return loadWithTypeRx(filters[0], filters[1], filters[2], filters[3])
+            5 -> return loadWithTypeRx(filters[0], filters[1], filters[2], filters[3], filters[4])
+            6 -> return loadWithTypeRx(filters[0], filters[1], filters[2], filters[3], filters[4], filters[5])
+            else -> return loadWithTypeRx(0);
         }
     }
 

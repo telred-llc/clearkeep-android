@@ -29,7 +29,8 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
                                              private val roomRepository: RoomRepository,
                                              private val signatureRepository: SignatureRepository,
                                              private val keyBackupRepository: KeyBackupRepository
-                                             , private val roomUserJoinRepository: RoomUserJoinRepository)
+                                             , private val roomUserJoinRepository: RoomUserJoinRepository
+                                             , private val messageRepository: MessageRepository)
     : MXEventListener(), IMatrixEventHandler, KeysBackupStateManager.KeysBackupStateListener {
     private var mxSession: MXSession? = null;
     override fun onAccountDataUpdated() {
@@ -62,36 +63,71 @@ class MatrixEventHandler @Inject constructor(private val application: ClearKeepA
         Log.d("EventType:", event?.type);
 
         if (event?.type?.compareTo("m.room.join_rules") == 0) {
-            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe{
-                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({},{
+            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe {
+                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({
+                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
+                    messageRepository.getLastMessageOfRoom(event.roomId).subscribe({
+                        roomRepository.updateLastMessage(it.roomId, it.id);
+                    }, {
+                        Toast.makeText(application, "Can't get last message", Toast.LENGTH_SHORT).show();
+                    });
+                }, {
                     roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
                 });
             };
         }
         if (event?.type?.compareTo("m.room.name") == 0) {
-            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe{
-                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({},{
+            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe {
+                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({
+                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
+                    messageRepository.getLastMessageOfRoom(event.roomId).subscribe({
+                        roomRepository.updateLastMessage(it.roomId, it.id);
+                    }, {
+                        Toast.makeText(application, "Can't get last message", Toast.LENGTH_SHORT).show();
+                    });
+                }, {
                     roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
                 });
             };
         }
         if (event?.type?.compareTo("m.room.member") == 0) {
-            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe{
-                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({},{
+            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe {
+                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({
+                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
+                    messageRepository.getLastMessageOfRoom(event.roomId).subscribe({
+                        roomRepository.updateLastMessage(it.roomId, it.id);
+                    }, {
+                        Toast.makeText(application, "Can't get last message", Toast.LENGTH_SHORT).show();
+                    });
+                }, {
                     roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
                 });
             };
         }
         if (event?.type?.compareTo("m.room.message") == 0) {
-            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe{
-                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({},{
+            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe {
+                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({
+                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
+                    messageRepository.getLastMessageOfRoom(event.roomId).subscribe({
+                        roomRepository.updateLastMessage(it.roomId, it.id);
+                    }, {
+                        Toast.makeText(application, "Can't get last message", Toast.LENGTH_SHORT).show();
+                    });
+                }, {
                     roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
                 });
             };
         }
         if (event?.type?.compareTo("m.room.encrypted") == 0) {
-            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe{
-                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({},{
+            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe {
+                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({
+                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
+                    messageRepository.getLastMessageOfRoom(event.roomId).subscribe({
+                        roomRepository.updateLastMessage(it.roomId, it.id);
+                    }, {
+                        Toast.makeText(application, "Can't get last message", Toast.LENGTH_SHORT).show();
+                    });
+                }, {
                     roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
                 });
             };

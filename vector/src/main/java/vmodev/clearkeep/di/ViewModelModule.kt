@@ -200,5 +200,10 @@ abstract class ViewModelModule {
     abstract fun bindSearchFilesFragmentViewModel(viewModel: SearchFilesFragmentViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractCreateNewRoomActivityViewModel::class)
+    abstract fun bindCreateNewRoomActivityViewModel(viewModel: CreateNewRoomActivityViewModel): ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 }
