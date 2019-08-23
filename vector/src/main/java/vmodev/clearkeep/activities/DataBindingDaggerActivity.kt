@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import dagger.android.support.DaggerAppCompatActivity
 import im.vector.Matrix
@@ -34,6 +35,7 @@ abstract class DataBindingDaggerActivity : DaggerAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(application.getCurrentTheme());
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         session = Matrix.getInstance(applicationContext).defaultSession;
         dataBindingDaggerActivityViewModel = ViewModelProviders.of(this, _viewModelFactory).get(AbstractDataBindingDaggerActivityViewModel::class.java);
 
