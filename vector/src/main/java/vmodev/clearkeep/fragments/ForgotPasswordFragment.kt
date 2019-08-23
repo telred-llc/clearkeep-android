@@ -64,7 +64,7 @@ class ForgotPasswordFragment : DataBindingDaggerFragment(), IFragment {
             val password = binding.textInputEditTextPassword.text.toString().trim();
             val confirmPassword = binding.textInputEditTextConfirmPassword.text.toString().trim();
             if (!email.isEmailValid()) {
-                binding.textInputEditTextUsername.error = getString(R.string.error_empty_field_enter_user_name_or_email);
+                binding.textInputEditTextUsername.error = getString(R.string.error_empty_field_enter_email);
                 return@setOnClickListener;
             }
             if (TextUtils.isEmpty(password)) {
