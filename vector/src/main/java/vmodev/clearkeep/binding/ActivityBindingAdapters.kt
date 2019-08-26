@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import im.vector.Matrix
@@ -112,7 +113,7 @@ class ActivityBindingAdapters constructor(val activity: FragmentActivity) : Imag
                 val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(user.id), if (user.name.isEmpty()) user.id else user.name, true);
                 imageView.setImageBitmap(bitmap);
             } else {
-                Glide.with(activity).load(user.avatarUrl).listener(listener).into(imageView);
+                Glide.with(activity).load(user.avatarUrl).apply(RequestOptions().centerCrop()).listener(listener).into(imageView);
             }
         }
     }
