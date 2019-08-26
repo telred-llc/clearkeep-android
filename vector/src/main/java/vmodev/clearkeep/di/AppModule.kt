@@ -7,6 +7,8 @@ import dagger.Provides
 import im.vector.BuildConfig
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
+import vmodev.clearkeep.aes.AESCrypto
+import vmodev.clearkeep.aes.interfaces.ICrypto
 import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.databases.*
@@ -14,8 +16,8 @@ import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.activitiesandfragments.DirectMessageFragmentFactory
 import vmodev.clearkeep.factories.activitiesandfragments.RoomMessageFragmentFactory
 import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IShowListRoomFragmentFactory
-import vmodev.clearkeep.repositories.UserRepository
-import vmodev.clearkeep.repositories.interfaces.IRepository
+import vmodev.clearkeep.pbkdf2.PBKDF2GenerateKey
+import vmodev.clearkeep.pbkdf2.interfaces.IGenerateKey
 import vmodev.clearkeep.rests.ClearKeepApis
 import vmodev.clearkeep.rests.IRetrofit
 import vmodev.clearkeep.rests.RetrofitBuilder
@@ -146,5 +148,17 @@ class AppModule {
     @Named(value = IRetrofit.BASE_URL_CLEAR_KEEP_SERVER)
     fun provideClearKeepApisClearKeep(@Named(IRetrofit.BASE_URL_CLEAR_KEEP_SERVER) retrofit: IRetrofit): ClearKeepApis {
         return retrofit.getRetrofit().create(ClearKeepApis::class.java);
+    }
+
+    @Provides
+    @Singleton
+    fun provideHashPassword(): IGenerateKey {
+        return PBKDF2GenerateKey();
+    }
+
+    @Provides
+    @Singleton
+    fun provideCrypto(generateKey: IGenerateKey): ICrypto {
+        return AESCrypto(generateKey);
     }
 }

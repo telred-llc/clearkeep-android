@@ -17,8 +17,6 @@ import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorHomeActivity
 import im.vector.databinding.ActivityHomeScreenBinding
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.applications.ClearKeepApplication
@@ -105,7 +103,6 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         }
 
 //        checkStartFromLogin(startFromLogin);
-        application.startAutoKeyBackup();
     }
 
     private fun checkStartFromLogin(startFromLogin: Int) {

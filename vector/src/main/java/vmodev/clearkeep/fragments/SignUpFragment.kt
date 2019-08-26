@@ -136,6 +136,7 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
                         } else {
                             ServerUrlsRepository.saveServerUrls(this.context!!, BuildConfig.HOME_SERVER, BuildConfig.IDENTIFY_SERVER);
                             val intent = Intent(activity, SplashActivity::class.java);
+                            intent.putExtra(SplashActivity.START_FROM_LOGIN, binding.textInputEditTextPassword.text.toString());
                             startActivity(intent);
                             activity?.finish();
                         }

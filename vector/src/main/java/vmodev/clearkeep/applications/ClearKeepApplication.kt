@@ -11,11 +11,11 @@ import im.vector.R
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
+import vmodev.clearkeep.aes.interfaces.ICrypto
 import vmodev.clearkeep.databases.ClearKeepDatabase
 import vmodev.clearkeep.di.DaggerAppComponent
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
-import vmodev.clearkeep.rests.ClearKeepApis
 import vmodev.clearkeep.rests.models.responses.PassphraseResponse
 import javax.inject.Inject
 
@@ -28,6 +28,8 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
     lateinit var database: ClearKeepDatabase;
     @Inject
     lateinit var matrixService: MatrixService;
+    @Inject
+    lateinit var crypto: ICrypto;
 
     private var currentTheme: Int = R.style.LightTheme;
 
@@ -62,13 +64,14 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
     }
 
     @SuppressLint("CheckResult")
-    override fun startAutoKeyBackup() {
+    override fun startAutoKeyBackup(password: String) {
         matrixService.getPassphrase().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ passphrase ->
             Toast.makeText(this, passphrase.passphrase, Toast.LENGTH_SHORT).show();
+            val decryptedData = crypto.decrypt(password, passphrase.passphrase);
             matrixService.getKeyBackUpData(passphrase.id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
                 when (it.state) {
                     4 -> {
-                        matrixService.restoreBackupFromPassphrase(passphrase.passphrase).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                        matrixService.restoreBackupFromPassphrase(decryptedData).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({
                                     Toast.makeText(this, "Restore success: " + it.successfullyNumberOfImportedKeys + "/" + it.totalNumberOfKeys + " keys", Toast.LENGTH_SHORT).show();
                                 }, {
@@ -79,7 +82,7 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
                         matrixService.checkBackupKeyStateWhenStart().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({
                                     if (it == 4) {
-                                        matrixService.restoreBackupFromPassphrase(passphrase.passphrase).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                                        matrixService.restoreBackupFromPassphrase(decryptedData).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                                                 .subscribe({
                                                     Toast.makeText(this, "Restore success: " + it.successfullyNumberOfImportedKeys + "/" + it.totalNumberOfKeys + " keys", Toast.LENGTH_SHORT).show();
                                                 }, {
@@ -96,7 +99,8 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
             })
 
         }, {
-            matrixService.createPassphrase("PBKDF2").subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ passphrase ->
+            val encryptedPassphrase = crypto.encrypt(password, password + "COLIAKIP")
+            matrixService.createPassphrase(encryptedPassphrase).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ passphrase ->
                 Toast.makeText(this, passphrase.passphrase, Toast.LENGTH_SHORT).show();
                 matrixService.getKeyBackUpData(passphrase.id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
                     when (it.state) {
@@ -123,7 +127,7 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
                         0, 1 -> {
                             matrixService.checkBackupKeyStateWhenStart().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({
-                                        autoKeyBackupWhenCreatePassphrase(passphrase);
+                                        autoKeyBackupWhenCreatePassphrase(password, passphrase);
                                     }, {
                                         Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
                                     });
@@ -139,12 +143,13 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
     }
 
     @SuppressLint("CheckResult")
-    private fun autoKeyBackupWhenCreatePassphrase(passphraseResponse: PassphraseResponse) {
+    private fun autoKeyBackupWhenCreatePassphrase(password: String, passphraseResponse: PassphraseResponse) {
+        val decryptedData = crypto.decrypt(password, passphraseResponse.passphrase);
         matrixService.getKeyBackUpData(passphraseResponse.id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
             when (it.state) {
                 6, 7, 4 -> {
                     matrixService.deleteKeyBackup(it.id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
-                        matrixService.exportNewBackupKey(passphraseResponse.passphrase).subscribeOn(Schedulers.io())
+                        matrixService.exportNewBackupKey(decryptedData).subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread()).subscribe({
                                     Toast.makeText(this, it, Toast.LENGTH_SHORT).show();
                                 }, {
@@ -155,7 +160,7 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
                     });
                 }
                 3 -> {
-                    matrixService.exportNewBackupKey(passphraseResponse.passphrase).subscribeOn(Schedulers.io())
+                    matrixService.exportNewBackupKey(decryptedData).subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread()).subscribe({
                                 Toast.makeText(this, it, Toast.LENGTH_SHORT).show();
                             }, {
