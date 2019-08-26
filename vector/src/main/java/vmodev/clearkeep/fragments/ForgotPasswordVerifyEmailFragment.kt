@@ -6,11 +6,13 @@ import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.jakewharton.rxbinding2.support.design.widget.dismisses
 
 import im.vector.R
 import im.vector.databinding.FragmentForgotPasswordBinding
@@ -71,18 +73,31 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.buttonCancel.setOnClickListener {
-            onPressCancel();
+                AlertDialog.Builder(getActivity()!!)
+                        .setTitle(R.string.cancel_request)
+                        .setCancelable(false)
+                        .setNegativeButton(R.string.no) { _, _ ->
+
+                        }
+                        .setPositiveButton(R.string.yes) { _, _ ->
+                            //nop
+                            onPressCancelForgot()
+                        }.show()
+
+//            onPressCancel();
         }
         viewModelFactory.getViewModel().getForgetPasswordResult().observe(viewLifecycleOwner, Observer {
             it?.let {
                 when (it.status) {
                     Status.SUCCESS -> {
+                        binding.buttonCancel.setOnClickListener(null)
                         it.data?.let { threePid ->
                             currentThreePid = threePid;
                             viewModelFactory.getViewModel().setPasswordForResetPassword(password, threePid);
                         }
                     }
                     Status.ERROR -> {
+                        binding.buttonCancel.setOnClickListener(null)
                         Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show();
                         onPressCancel();
                     }
@@ -127,6 +142,10 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
         listener?.onPressCancel();
     }
 
+    private fun onPressCancelForgot() {
+        listener?.onCancelForgot();
+    }
+
     private fun onResetPasswordSuccess() {
         listener?.onResetPasswordSuccess();
     }
@@ -163,7 +182,7 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         fun onPressCancel();
-
+        fun onCancelForgot()
         fun onResetPasswordSuccess();
     }
 
@@ -185,5 +204,7 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
                         putString(PASSWORD, password)
                     }
                 }
+
+
     }
 }

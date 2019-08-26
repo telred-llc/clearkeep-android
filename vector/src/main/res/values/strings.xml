@@ -1589,5 +1589,6 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="updating_rooms">Updating rooms...</string>
     <string name="updating_users">Updating users...</string>
     <string name="updating_last_message">Updating last messages</string>
+    <string name="cancel_request">Are you sure you want to cancel the request?</string>
 
 </resources>

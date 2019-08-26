@@ -20,6 +20,7 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
         , SignUpFragment.OnFragmentInteractionListener, HandlerVerifyEmailFragment.OnFragmentInteractionListener
         , ForgotPasswordFragment.OnFragmentInteractionListener, ForgotPasswordVerifyEmailFragment.OnFragmentInteractionListener {
 
+
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractLoginActivityViewModel>;
     private lateinit var binding: ActivityLoginBinding;
@@ -60,6 +61,10 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
 
     override fun onPressSendToEmail(email: String, password: String) {
         changeFragment(ForgotPasswordVerifyEmailFragment.newInstance(email, password));
+    }
+
+    override fun onCancelForgot() {
+        changeFragment(ForgotPasswordFragment.newInstance())
     }
 
     override fun onPressCancel() {
