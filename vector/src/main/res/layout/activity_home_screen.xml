@@ -52,15 +52,23 @@
                 android:layout_height="?attr/actionBarSize"
                 android:orientation="horizontal">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/circle_image_view_avatar"
+                <android.support.v7.widget.CardView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:scaleType="centerCrop"
-                    android:visibility="visible"
-                    app:user="@{user.data}" />
+                    android:background="@color/blue_app"
+                    android:innerRadius="0dp"
+                    android:shape="ring"
+                    app:cardCornerRadius="20dp">
+
+                    <ImageView
+                        android:id="@+id/circle_image_view_avatar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/app_green"
+                        app:user="@{user.data}" />
+                </android.support.v7.widget.CardView>
 
                 <FrameLayout
                     android:id="@+id/frame_layout_search"
