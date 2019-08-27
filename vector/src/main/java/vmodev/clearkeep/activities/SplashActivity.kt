@@ -31,6 +31,7 @@ import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.listeners.IMXEventListener
 import org.matrix.androidsdk.listeners.MXEventListener
 import vmodev.clearkeep.activities.interfaces.ISplashActivity
+import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.ISplashActivityViewModelFactory
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
@@ -43,19 +44,21 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
 
     @Inject
     lateinit var viewModelFactory: ISplashActivityViewModelFactory;
+    @Inject
+    lateinit var clearKeepApplication: IApplication;
 
     private lateinit var binding: ActivitySplashBinding;
 
     private val mListeners = HashMap<MXSession, IMXEventListener>()
     private val mDoneListeners = HashMap<MXSession, IMXEventListener>()
 
-    private var startFromLogin: Int = 0;
+    private var startFromLogin: String? = null;
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_splash, dataBindingComponent);
-        startFromLogin = intent.getIntExtra(START_FROM_LOGIN, 0);
+        startFromLogin = intent.getStringExtra(START_FROM_LOGIN);
         if (!hasCredentials()) {
             val intent = Intent(this, LoginActivity::class.java);
             startActivity(intent);
@@ -165,7 +168,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
     private fun onFinish() {
         if (!hasCorruptedStore()) {
             val intent = Intent(this, HomeScreenActivity::class.java)
-            intent.putExtra(HomeScreenActivity.START_FROM_LOGIN, startFromLogin)
+//            intent.putExtra(HomeScreenActivity.START_FROM_LOGIN, startFromLogin)
             binding.textViewContentLoading.setText(R.string.updating_rooms);
             viewModelFactory.getViewModel().getAllRoomResultRx(arrayOf(1, 2, 65, 66, 129, 130)).subscribe({ rooms ->
                 if (rooms.isEmpty()) {
@@ -228,16 +231,20 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                                     it.forEach {
                                         viewModelFactory.getViewModel().updateRoomLastMessage(it.roomId, it.id);
                                     }
+                                    startFromLogin?.let { clearKeepApplication.startAutoKeyBackup(it) }
+
                                     startActivity(intent)
                                     finish()
                                 }, {
                                     Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
+                                    startFromLogin?.let { clearKeepApplication.startAutoKeyBackup(it) }
                                     startActivity(intent)
                                     finish()
                                 })
                             }
                         }, {
                             Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
+                            startFromLogin?.let { clearKeepApplication.startAutoKeyBackup(it) }
                             startActivity(intent)
                             finish()
                         })
@@ -245,6 +252,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                 }
             }, {
                 Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
+                startFromLogin?.let { clearKeepApplication.startAutoKeyBackup(it) }
                 startActivity(intent)
                 finish()
             })

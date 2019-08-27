@@ -57,4 +57,5 @@ public interface MatrixService {
     fun getLastMessageOfRoom(roomId: String): Observable<Message>;
     fun getPassphrase(): Observable<PassphraseResponse>;
     fun createPassphrase(passphrase: String): Observable<PassphraseResponse>;
+    fun checkBackupKeyStateWhenStart(): Observable<Int>;
 }

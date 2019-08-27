@@ -1421,13 +1421,13 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                     if (isComputingKey)
                                         return;
                                     isComputingKey = true;
-                                    Toast.makeText(application, "Computing Key", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(application, "Computing Key", Toast.LENGTH_SHORT).show();
                                 }
                                 is StepProgressListener.Step.DownloadingKey -> {
-                                    Toast.makeText(application, "Downloading Key", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(application, "Downloading Key", Toast.LENGTH_SHORT).show();
                                 }
                                 is StepProgressListener.Step.ImportingKey -> {
-                                    Toast.makeText(application, "Importing Key", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(application, "Importing Key", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }
@@ -1675,6 +1675,31 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                             emitter.onNext(valueNext);
                             emitter.onComplete();
                             listener?.let { mxCrypto.keysBackup.removeListener(it) }
+                        }
+                    }
+                }
+                mxCrypto.keysBackup.addListener(listener);
+            } ?: run {
+                emitter.onError(Throwable("Crypto is null"))
+                emitter.onComplete();
+            }
+        }
+    }
+
+    override fun checkBackupKeyStateWhenStart(): Observable<Int> {
+        setMXSession();
+        return Observable.create { emitter ->
+            session!!.crypto?.let { mxCrypto ->
+                var listener: KeysBackupStateManager.KeysBackupStateListener? = null;
+                listener = object : KeysBackupStateManager.KeysBackupStateListener {
+                    override fun onStateChange(newState: KeysBackupStateManager.KeysBackupState) {
+                        emitter.onNext(newState.ordinal);
+                        if (newState == KeysBackupStateManager.KeysBackupState.NotTrusted || newState == KeysBackupStateManager.KeysBackupState.Disabled
+                                || newState == KeysBackupStateManager.KeysBackupState.ReadyToBackUp || newState == KeysBackupStateManager.KeysBackupState.WrongBackUpVersion) {
+                            listener?.let {
+                                mxCrypto.keysBackup.removeListener(it)
+                                emitter.onComplete();
+                            }
                         }
                     }
                 }
