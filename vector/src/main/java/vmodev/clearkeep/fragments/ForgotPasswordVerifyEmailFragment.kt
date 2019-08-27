@@ -6,17 +6,21 @@ import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.jakewharton.rxbinding2.support.design.widget.dismisses
 
 import im.vector.R
 import im.vector.databinding.FragmentForgotPasswordBinding
 import im.vector.databinding.FragmentForgotPasswordVerifyEmailBinding
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.rest.model.login.ThreePidCredentials
 import org.matrix.androidsdk.rest.model.pid.ThreePid
@@ -50,9 +54,11 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
     private var listener: OnFragmentInteractionListener? = null
     private lateinit var email: String;
     private lateinit var password: String;
+    private var checkError: Boolean = false
     private lateinit var binding: FragmentForgotPasswordVerifyEmailBinding;
     private var currentThreePid: ThreePid? = null;
-
+    private var disposable: Disposable? = null
+    private var alertDialog: AlertDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -70,9 +76,28 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.buttonCancel.setOnClickListener {
-            onPressCancel();
+        val onClickListener = View.OnClickListener {
+            alertDialog = AlertDialog.Builder(getActivity()!!)
+                    .setTitle(R.string.cancel_request)
+                    .setCancelable(false)
+                    .setNegativeButton(R.string.no) { _, _ ->
+                        if (checkError == true) {
+                            onPressCancel();
+                        } else {
+
+                        }
+
+                    }
+                    .setPositiveButton(R.string.yes) { _, _ ->
+                        //nop
+                        disposable?.dispose()
+                        onPressCancelForgot()
+                    }.show()
         }
+        binding.buttonCancel.setOnClickListener(onClickListener)
+
+
+//            onPressCancel();
         viewModelFactory.getViewModel().getForgetPasswordResult().observe(viewLifecycleOwner, Observer {
             it?.let {
                 when (it.status) {
@@ -84,9 +109,13 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
                     }
                     Status.ERROR -> {
                         Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show();
-                        onPressCancel();
+                        if (alertDialog == null || !alertDialog!!.isShowing) {
+                            onPressCancel();
+                        } else {
+                            checkError = true
+                        }
                     }
-                    else -> {
+                    Status.LOADING -> {
 
                     }
                 }
@@ -98,22 +127,29 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
                     Status.SUCCESS -> {
                         it.data?.let {
                             onResetPasswordSuccess();
+                            alertDialog?.dismiss()
                         }
                     }
                     Status.ERROR -> {
                         if (TextUtils.equals(it.message, "M_UNAUTHORIZED")) {
                             currentThreePid?.let { threePid ->
-                                Observable.timer(5, TimeUnit.SECONDS).subscribeOn(Schedulers.io())
+                                disposable = Observable.timer(5, TimeUnit.SECONDS).subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .subscribe { viewModelFactory.getViewModel().setPasswordForResetPassword(password, threePid) }
+                                binding.buttonCancel.setOnClickListener(onClickListener)
                             }
                         } else {
                             Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show();
-                            onPressCancel();
+                            if (alertDialog == null || !alertDialog!!.isShowing) {
+                                onPressCancel();
+                            } else {
+                                checkError = true
+                            }
+
                         }
                     }
-                    else -> {
-
+                    Status.LOADING -> {
+                        binding.buttonCancel.setOnClickListener(null)
                     }
                 }
             }
@@ -125,6 +161,10 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
     // TODO: Rename method, update argument and hook method into UI event
     private fun onPressCancel() {
         listener?.onPressCancel();
+    }
+
+    private fun onPressCancelForgot() {
+        listener?.onCancelForgot();
     }
 
     private fun onResetPasswordSuccess() {
@@ -164,6 +204,7 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
         // TODO: Update argument type and name
         fun onPressCancel();
 
+        fun onCancelForgot()
         fun onResetPasswordSuccess();
     }
 
@@ -185,5 +226,13 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
                         putString(PASSWORD, password)
                     }
                 }
+
+
     }
+
+    override fun onResume() {
+        super.onResume()
+        checkError = false
+    }
+
 }
