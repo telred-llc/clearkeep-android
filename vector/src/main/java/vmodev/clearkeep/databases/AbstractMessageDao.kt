@@ -13,10 +13,10 @@ import vmodev.clearkeep.viewmodelobjects.User
 
 @Dao
 abstract class AbstractMessageDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insert(message: Message): Long;
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insertListMessage(messages: List<Message>): List<Long>;
 
     @Query("SELECT message.* FROM message INNER JOIN room ON message.room_id = room.id WHERE room.id =:roomId")
@@ -40,7 +40,7 @@ abstract class AbstractMessageDao {
     @Query("DELETE FROM message")
     abstract fun delete();
 
-    @Query("SELECT message.*, room.* FROM message INNER JOIN room ON message.room_id = room.id")
+    @Query("SELECT message.*FROM message")
     abstract fun getAllMessageWithRoomAndUser(): LiveData<List<MessageRoomUser>>
 
     @Query("SELECT Message.* FROM Message WHERE Message.room_id =:roomId")

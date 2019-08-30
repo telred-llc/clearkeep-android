@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import im.vector.Matrix
@@ -73,21 +74,21 @@ class FragmentBindingAdapters constructor(val fragment: Fragment) : ImageViewBin
             val event = Event(message?.messageType, parser.parse(message.encryptedContent).asJsonObject, message.userId, message.roomId);
             if (message.messageType.compareTo("m.room.message") != 0)
                 return;
-            try {
-                val result = session.dataHandler.crypto.decryptEvent(event, null);
-                result?.let {
-                    //                    Log.d("MessageType", result.mClearEvent.toString())
-                    val json = result.mClearEvent.asJsonObject;
-                    val type = json.get("type").asString;
-//                    Log.d("MessageType", type);
-                    if (!type.isNullOrEmpty() && type.compareTo("m.room.message") == 0) {
-                        val message = gson.fromJson(result.mClearEvent, MessageContent::class.java);
-                        textView.text = message.getContent().getBody();
-                    }
-                }
-            } catch (e: MXDecryptionException) {
-                android.util.Log.d("Decrypt Error", e.message)
-            }
+//            try {
+//                val result = session.dataHandler.crypto.decryptEvent(event, null);
+//                result?.let {
+//                    //                    Log.d("MessageType", result.mClearEvent.toString())
+//                    val json = result.mClearEvent.asJsonObject;
+//                    val type = json.get("type").asString;
+////                    Log.d("MessageType", type);
+//                    if (!type.isNullOrEmpty() && type.compareTo("m.room.message") == 0) {
+//                        val message = gson.fromJson(result.mClearEvent, MessageContent::class.java);
+//                        textView.text = message.getContent().getBody();
+//                    }
+//                }
+//            } catch (e: MXDecryptionException) {
+//                android.util.Log.d("Decrypt Error", e.message)
+//            }
 
         }
 
@@ -114,7 +115,7 @@ class FragmentBindingAdapters constructor(val fragment: Fragment) : ImageViewBin
                 val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(user.id), if (user.name.isEmpty()) user.id else user.name, true);
                 imageView.setImageBitmap(bitmap);
             } else {
-                Glide.with(fragment).load(user.avatarUrl).listener(listener).into(imageView);
+                Glide.with(fragment).load(user.avatarUrl).apply(RequestOptions().centerCrop()).listener(listener).into(imageView);
             }
         }
     }

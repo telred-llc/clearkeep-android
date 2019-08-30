@@ -17,8 +17,6 @@ import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorHomeActivity
 import im.vector.databinding.ActivityHomeScreenBinding
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.applications.ClearKeepApplication
@@ -104,10 +102,10 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
             }
         }
 
-        checkStartFromLogin(startFromLogin);
+//        checkStartFromLogin(startFromLogin);
     }
 
-    private fun checkStartFromLogin(startFromLogin : Int) {
+    private fun checkStartFromLogin(startFromLogin: Int) {
         if (startFromLogin != 0) {
             viewModelFactory.getViewModel().getBackupKeyStatusResult().observe(this, android.arch.lifecycle.Observer {
                 it?.data?.let {
@@ -138,17 +136,6 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
             viewModelFactory.getViewModel().setValueForGetBackupStatus(Calendar.getInstance().timeInMillis);
         }
 
-
-        viewModelFactory.getViewModel().getPassphrase().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
-            //Update Keybackup
-        }, {
-            Toast.makeText(this, "Get passphrase error, creating new passphrase", Toast.LENGTH_LONG).show();
-            viewModelFactory.getViewModel().createNewPassphrase("PBKDF2").subscribe({
-                //Update Keybackup
-            }, {
-                Toast.makeText(this, "Create passphrase error, passphrase recreate at the next session", Toast.LENGTH_LONG).show();
-            })
-        });
     }
 
     private fun startIncomingCall() {

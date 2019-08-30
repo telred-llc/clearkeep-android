@@ -392,9 +392,9 @@ public class CommonActivityUtils {
 
         // if no activity is provided, use the application context instead.
         final Context context = (null == activity) ? VectorApp.getInstance().getApplicationContext() : activity;
-
+        EventStreamServiceX.Companion.onLogout(context);
         VectorApp.getInstance().getNotificationDrawerManager().clearAllEvents();
-        EventStreamServiceX.Companion.onLogout(activity);
+
         // stopEventStream(context);
 
         BadgeProxy.INSTANCE.updateBadgeCount(context, 0);

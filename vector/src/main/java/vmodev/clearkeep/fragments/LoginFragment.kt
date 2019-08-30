@@ -102,7 +102,7 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
 
     private fun gotoHomeActivity() {
         val intent = Intent(this.context, SplashActivity::class.java);
-        intent.putExtra(SplashActivity.START_FROM_LOGIN, 1);
+        intent.putExtra(SplashActivity.START_FROM_LOGIN, binding.editTextPassword.text.toString());
         startActivity(intent);
         activity?.finish();
     }
