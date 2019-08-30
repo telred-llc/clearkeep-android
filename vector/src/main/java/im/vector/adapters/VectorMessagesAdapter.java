@@ -55,6 +55,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.binaryfork.spanny.Spanny;
+import com.google.gson.JsonObject;
 
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.adapters.AbstractMessagesAdapter;
@@ -168,8 +169,8 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
     static final int ROW_TYPE_CODE = 10;
     static final int ROW_TYPE_STICKER = 11;
     static final int ROW_TYPE_VERSIONED_ROOM = 12;
-    static final int NUM_ROW_TYPES = 13;
-
+    static final int ROW_TYPE_TEXT_EDITED = 13;
+    static final int NUM_ROW_TYPES = 14;
 
     final Context mContext;
     private final Map<Integer, Integer> mRowTypeToLayoutId = new HashMap<>();
@@ -285,6 +286,7 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
                 R.layout.adapter_item_vector_message_image_video,
                 R.layout.adapter_item_vector_message_redact,
                 R.layout.adapter_item_vector_message_room_versioned,
+                R.layout.adapter_item_vector_message_text_edited_emote_notice,
                 mediasCache);
     }
 
@@ -323,6 +325,7 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
                           int stickerResLayoutId,
                           int hiddenResLayoutId,
                           int roomVersionedResLayoutId,
+                          int textEditedResLayoutId,
                           MXMediaCache mediasCache) {
         super(context, 0);
         mContext = context;
@@ -339,6 +342,7 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
         mRowTypeToLayoutId.put(ROW_TYPE_STICKER, stickerResLayoutId);
         mRowTypeToLayoutId.put(ROW_TYPE_HIDDEN, hiddenResLayoutId);
         mRowTypeToLayoutId.put(ROW_TYPE_VERSIONED_ROOM, roomVersionedResLayoutId);
+        mRowTypeToLayoutId.put(ROW_TYPE_TEXT_EDITED, textEditedResLayoutId);
         mMediasCache = mediasCache;
         mLayoutInflater = LayoutInflater.from(mContext);
         // the refresh will be triggered only when it is required
@@ -463,6 +467,7 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
     @Override
     public void addToFront(MessageRow row) {
         if (isSupportedRow(row)) {
+            android.util.Log.d("AddItem", row.getEvent().contentJson.toString());
             // ensure that notifyDataSetChanged is not called
             // it seems that setNotifyOnChange is reinitialized to true;
             setNotifyOnChange(false);
@@ -787,6 +792,9 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
             case ROW_TYPE_VERSIONED_ROOM:
                 inflatedView = getVersionedRoomView(position, convertView, parent);
                 break;
+            case ROW_TYPE_TEXT_EDITED:
+                inflatedView = getTextEditedView(viewType, position, convertView, parent);
+                break;
             default:
                 throw new RuntimeException("Unknown item view type for position " + position);
         }
@@ -997,8 +1005,27 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
         String eventId = event.eventId;
         String eventType = event.getType();
 
+        if (event.contentJson != null) {
+            JsonObject content = event.contentJson.getAsJsonObject();
+            JsonObject relatesTo = content.getAsJsonObject("m.relates_to");
+            if (relatesTo != null) {
+                String eventRelatesToId = relatesTo.get("event_id").getAsString();
+                if (editedMessageMap.containsKey(eventRelatesToId)) {
+                    if (event.originServerTs > editedMessageMap.get(eventRelatesToId).originServerTs)
+                        editedMessageMap.put(eventRelatesToId, event);
+                } else {
+                    editedMessageMap.put(eventRelatesToId, event);
+                }
+                return ROW_TYPE_HIDDEN;
+            }
+        }
+
         if ((null != eventId) && mHiddenEventIds.contains(eventId)) {
             return ROW_TYPE_HIDDEN;
+        }
+
+        if (editedMessageMap.containsKey(eventId)) {
+            return ROW_TYPE_TEXT_EDITED;
         }
 
         // never cache the view type of the encrypted messages
@@ -1205,6 +1232,11 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
      * @param parent      the parent view
      * @return the updated text view.
      */
+
+
+    private HashMap<String, Event> editedMessageMap = new HashMap<>();
+
+
     private View getTextView(final int viewType, final int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(mRowTypeToLayoutId.get(viewType), parent, false);
@@ -1213,6 +1245,11 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
         try {
             MessageRow row = getItem(position);
             Event event = row.getEvent();
+//            if (editedMessageMap.containsKey(event.eventId)) {
+//                event = editedMessageMap.get(event.eventId);
+//                row = new MessageRow(event, mSession.getDataHandler().getRoom(event.roomId).getState());
+//            }
+
             Message message = JsonUtils.toMessage(event.getContent());
 
             boolean shouldHighlighted = (null != mVectorMessagesAdapterEventsListener) && mVectorMessagesAdapterEventsListener.shouldHighlightEvent(event);
@@ -1239,6 +1276,88 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
                         mBackgroundColorSpan,
                         shouldHighlighted);
 
+                bodyTextView.setText(result);
+
+                mHelper.applyLinkMovementMethod(bodyTextView);
+                VectorLinkifyKt.vectorCustomLinkify(bodyTextView, true);
+                textViews = new ArrayList<>();
+                textViews.add(bodyTextView);
+            }
+
+            int textColor;
+
+            if (row.getEvent().isEncrypting()) {
+                textColor = mEncryptingMessageTextColor;
+            } else if (row.getEvent().isSending() || row.getEvent().isUnsent()) {
+                textColor = mSendingMessageTextColor;
+            } else if (row.getEvent().isUndelivered() || row.getEvent().isUnknownDevice()) {
+                textColor = mNotSentMessageTextColor;
+            } else {
+                textColor = shouldHighlighted ? mHighlightMessageTextColor : mDefaultMessageTextColor;
+            }
+
+            for (final TextView tv : textViews) {
+                tv.setTextColor(textColor);
+            }
+
+            View textLayout = convertView.findViewById(R.id.messagesAdapter_text_layout);
+            manageSubView(position, convertView, textLayout, viewType);
+
+            for (final TextView tv : textViews) {
+                addContentViewListeners(convertView, tv, position, viewType);
+            }
+
+            mHelper.manageURLPreviews(message, convertView, event.eventId);
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "## getTextView() failed : " + e.getMessage(), e);
+        }
+
+        return convertView;
+    }
+
+    private View getTextEditedView(final int viewType, final int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = mLayoutInflater.inflate(mRowTypeToLayoutId.get(viewType), parent, false);
+        }
+
+        try {
+            MessageRow row = getItem(position);
+            Event event = row.getEvent();
+            Message message;
+            if (editedMessageMap.containsKey(event.eventId)) {
+                event = editedMessageMap.get(event.eventId);
+                row = new MessageRow(event, mSession.getDataHandler().getRoom(event.roomId).getState());
+                message = JsonUtils.toMessage(event.getContent());
+                message.body = event.getContent().getAsJsonObject().get("m.new_content").getAsJsonObject().get("body").getAsString();
+            } else {
+                message = JsonUtils.toMessage(event.getContent());
+            }
+
+
+            boolean shouldHighlighted = (null != mVectorMessagesAdapterEventsListener) && mVectorMessagesAdapterEventsListener.shouldHighlightEvent(event);
+
+            final List<TextView> textViews;
+
+            if (ROW_TYPE_CODE == viewType) {
+                textViews = populateRowTypeCode(message, convertView, shouldHighlighted);
+            } else {
+                final TextView bodyTextView = convertView.findViewById(R.id.messagesAdapter_body);
+
+                // cannot refresh it
+                if (null == bodyTextView) {
+                    Log.e(LOG_TAG, "getTextView : invalid layout");
+                    return convertView;
+                }
+
+                EventDisplay display = new RiotEventDisplay(mContext, mHtmlToolbox);
+
+                Spannable body = row.getText(new VectorQuoteSpan(mContext), display);
+
+                CharSequence result = mHelper.highlightPattern(body,
+                        mPattern,
+                        mBackgroundColorSpan,
+                        shouldHighlighted);
+                result = result.subSequence(2, result.length());
                 bodyTextView.setText(result);
 
                 mHelper.applyLinkMovementMethod(bodyTextView);
@@ -2581,6 +2700,10 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
 
                 // offer to report a message content
 //                menu.findItem(R.id.ic_action_vector_report).setVisible(!mIsPreviewMode && !TextUtils.equals(event.sender, mSession.getMyUserId()));
+
+                if (TextUtils.equals(event.sender, mSession.getMyUserId()) && TextUtils.equals(message.msgtype, Message.MSGTYPE_TEXT)) {
+                    menu.findItem(R.id.ic_action_edit).setVisible(true);
+                }
             }
         }
 

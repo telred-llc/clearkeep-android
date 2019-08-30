@@ -29,6 +29,7 @@ import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.crypto.MXCRYPTO_ALGORITHM_MEGOLM
 import org.matrix.androidsdk.crypto.MXDecryptionException
 import org.matrix.androidsdk.crypto.data.ImportRoomKeysResult
+import org.matrix.androidsdk.crypto.data.MXEncryptEventContentResult
 import org.matrix.androidsdk.crypto.keysbackup.KeysBackupStateManager
 import org.matrix.androidsdk.crypto.keysbackup.MegolmBackupCreationInfo
 import org.matrix.androidsdk.crypto.model.keys.KeysVersion
@@ -1421,10 +1422,10 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                     if (isComputingKey)
                                         return;
                                     isComputingKey = true;
-//                                    Toast.makeText(application, "Computing Key", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(application, "Computing key", Toast.LENGTH_SHORT).show();
                                 }
                                 is StepProgressListener.Step.DownloadingKey -> {
-//                                    Toast.makeText(application, "Downloading Key", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(application, "Downloading key", Toast.LENGTH_SHORT).show();
                                 }
                                 is StepProgressListener.Step.ImportingKey -> {
 //                                    Toast.makeText(application, "Importing Key", Toast.LENGTH_SHORT).show();
@@ -1434,7 +1435,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                     }, object : ApiCallback<ImportRoomKeysResult> {
                         override fun onSuccess(p0: ImportRoomKeysResult?) {
                             p0?.let {
-                                Toast.makeText(application, "Successfully", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(application, "Restore backup key successfully", Toast.LENGTH_SHORT).show();
                                 mxCrypto.keysBackup.trustKeysBackupVersion(keyBackupResult, true, object : ApiCallback<Void> {
                                     override fun onSuccess(p0: Void?) {
                                         emitter.onNext(it);
@@ -1797,7 +1798,6 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             session!!.dataHandler.crypto?.let { mxCrypto ->
                 messages.forEach { item ->
                     val event = Event(item.message?.messageType, parser.parse(item.message?.encryptedContent).asJsonObject, item.message?.userId, item.message?.roomId);
-                    val eventEncrypt = event.toEncryptedEventContent();
                     try {
                         val result = mxCrypto.decryptEvent(event, null);
                         result?.let {
@@ -1830,22 +1830,48 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
 
     override fun editMessage(event: Event): Observable<EditMessageResponse> {
         return Observable.create { emitter ->
-            val encryptedEventContent = event.toEncryptedEventContent();
-            val relatesTo = HashMap<String, String>();
-            relatesTo.put("rel_type", "m.replace")
-            relatesTo.put("event_id", event.eventId);
-            val editMessageRequest = EditMessageRequest(encryptedEventContent.session_id, encryptedEventContent.ciphertext, encryptedEventContent.device_id, encryptedEventContent.algorithm
-                    , encryptedEventContent.sender_key, relatesTo);
-            val locaId = "local" + UUID.randomUUID();
-            apis.editMessage("Bearer " + session!!.credentials.accessToken, event.roomId, "m.room.encrypted", locaId, editMessageRequest)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(Schedulers.io()).subscribe({
-                        emitter.onNext(it);
-                        emitter.onComplete();
-                    }, {
-                        emitter.onError(it);
-                        emitter.onComplete();
-                    })
+
+            session!!.crypto?.let { crypto ->
+                val room = session!!.dataHandler.getRoom(event.roomId)
+                crypto.encryptEventContent(event.contentJson, "m.room.message", room, object : ApiCallback<MXEncryptEventContentResult> {
+                    override fun onSuccess(info: MXEncryptEventContentResult?) {
+                        val relatesTo = HashMap<String, String>();
+                        relatesTo.put("event_id", event.eventId);
+                        relatesTo.put("rel_type", "m.replace");
+                        val jsonObject = info!!.mEventContent.asJsonObject;
+                        val sessionId = jsonObject.get("session_id").asString;
+                        val ciphertext = jsonObject.get("ciphertext").asString;
+                        val deviceId = jsonObject.get("device_id").asString
+                        val sender = jsonObject.get("sender_key").asString
+                        val algorithm = jsonObject.get("algorithm").asString
+                        val editMessageRequest = EditMessageRequest(sessionId, ciphertext, deviceId, algorithm
+                                , sender, relatesTo);
+                        val locaId = "local." + UUID.randomUUID();
+                        apis.editMessage("Bearer " + session!!.credentials.accessToken, event.roomId, "m.room.encrypted", locaId, editMessageRequest)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.io()).subscribe({
+                                    emitter.onNext(it);
+                                    emitter.onComplete();
+                                }, {
+                                    emitter.onError(it);
+                                    emitter.onComplete();
+                                })
+                    }
+
+                    override fun onUnexpectedError(e: java.lang.Exception?) {
+                        Log.d("", "");
+                    }
+
+                    override fun onMatrixError(e: MatrixError?) {
+                        Log.d("", "");
+                    }
+
+                    override fun onNetworkError(e: java.lang.Exception?) {
+                        Log.d("", "");
+                    }
+                })
+            }
+
         }
     }
 

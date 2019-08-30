@@ -8,7 +8,7 @@ import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
 class PBKDF2GenerateKey : IGenerateKey {
-    val secretKeyFactory: SecretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+    val secretKeyFactory: SecretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
     override fun generate(passphrase: String): String {
         var salt: ByteArray = ByteArray(128);
         val secureRandom: SecureRandom = SecureRandom();

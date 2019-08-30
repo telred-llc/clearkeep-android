@@ -16,6 +16,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.activities.interfaces.IActivity
+import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.databases.*
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.repositories.interfaces.IRepository
@@ -43,6 +44,8 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
     lateinit var roomUserJoinDao: AbstractRoomUserJoinDao;
     @Inject
     lateinit var messageDao: AbstractMessageDao;
+    @Inject
+    lateinit var clearkeepAplication : IApplication;
 
     lateinit var binding: ActivityProfileBinding;
     lateinit var mxSession: MXSession;
@@ -121,6 +124,7 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
                 .setTitle(R.string.action_sign_out)
                 .setMessage(R.string.action_sign_out_confirmation_simple)
                 .setPositiveButton(R.string.action_sign_out) { dialog, which ->
+                    clearkeepAplication.removeEventHandler();
                     Completable.fromAction {
                         messageDao.delete();
                         roomUserJoinDao.delete();
@@ -129,7 +133,7 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
                         deviceSettingsDao.delete();
                         backupKeyBackupDao.delete();
                     }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
-                        CommonActivityUtils.logout(this@ProfileActivity);
+                        CommonActivityUtils.logout(null, true);
                     };
                 }
                 .setNegativeButton(R.string.cancel, null)

@@ -372,7 +372,16 @@
                             android:src="@drawable/ic_send_image_disabled"
                             android:tint="?attr/icon_color"
                             android:contentDescription="@string/app_name" />
-
+                        <ImageView
+                            android:id="@+id/image_view_cancel_edit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_x_close"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginEnd="10dp"
+                            android:tint="?attr/icon_color"
+                            android:visibility="gone"
+                            tools:visibility="visible"/>
                         <Button
                             android:id="@+id/button_send"
                             android:layout_width="wrap_content"
