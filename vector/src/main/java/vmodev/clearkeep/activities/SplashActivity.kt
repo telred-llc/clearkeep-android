@@ -167,15 +167,11 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
     @SuppressLint("CheckResult")
     private fun onFinish() {
         if (!hasCorruptedStore()) {
-            val intent = Intent(this, HomeScreenActivity::class.java)
-//            intent.putExtra(HomeScreenActivity.START_FROM_LOGIN, startFromLogin)
             binding.textViewContentLoading.setText(R.string.updating_rooms);
             viewModelFactory.getViewModel().getAllRoomResultRx(arrayOf(1, 2, 65, 66, 129, 130)).subscribe({ rooms ->
                 android.util.Log.d("InsertRoom", rooms.size.toString());
                 if (rooms.isEmpty()) {
-                    startFromLogin?.let { clearKeepApplication.startAutoKeyBackup(it) }
-                    startActivity(intent)
-                    finish();
+                    startHomeScreen();
                 } else {
                     var currentObservable: Observable<List<RoomUserJoin>>? = null
                     for ((index, r) in rooms.withIndex()) {
@@ -233,34 +229,34 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                                     it.forEach {
                                         viewModelFactory.getViewModel().updateRoomLastMessage(it.roomId, it.id);
                                     }
-                                    startFromLogin?.let { clearKeepApplication.startAutoKeyBackup(it) }
-
-                                    startActivity(intent)
-                                    finish()
+                                    startHomeScreen();
                                 }, {
                                     Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
-                                    startFromLogin?.let { clearKeepApplication.startAutoKeyBackup(it) }
-                                    startActivity(intent)
-                                    finish()
+                                    startHomeScreen();
                                 })
                             }
                         }, {
                             Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
-                            startFromLogin?.let { clearKeepApplication.startAutoKeyBackup(it) }
-                            startActivity(intent)
-                            finish()
+                            startHomeScreen();
                         })
                     }
                 }
             }, {
                 Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
-                startFromLogin?.let { clearKeepApplication.startAutoKeyBackup(it) }
-                startActivity(intent)
-                finish()
+                startHomeScreen();
             })
         } else {
             CommonActivityUtils.logout(this)
         }
+    }
+
+    private fun startHomeScreen(){
+        application.setEventHandler();
+        val intent = Intent(this, HomeScreenActivity::class.java)
+//            intent.putExtra(HomeScreenActivity.START_FROM_LOGIN, startFromLogin)
+        clearKeepApplication.startAutoKeyBackup(startFromLogin)
+        startActivity(intent)
+        finish()
     }
 
     private fun checkLazyLoadingStatus(sessions: List<MXSession>) {

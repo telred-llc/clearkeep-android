@@ -56,7 +56,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         val startFromLogin = intent.getIntExtra(START_FROM_LOGIN, 0);
         startIncomingCall();
         mxSession = Matrix.getInstance(this.applicationContext).defaultSession;
-        (application as ClearKeepApplication).setEventHandler();
+//        (application as ClearKeepApplication).setEventHandler();
         binding.bottomNavigationViewHomeScreen.setOnNavigationItemSelectedListener { menuItem ->
             run {
                 when (menuItem.itemId) {

@@ -13,6 +13,8 @@ import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.aes.interfaces.ICrypto
+import vmodev.clearkeep.autokeybackups.AutoKeyBackup
+import vmodev.clearkeep.autokeybackups.interfaces.IAutoKeyBackup
 import vmodev.clearkeep.databases.ClearKeepDatabase
 import vmodev.clearkeep.di.DaggerAppComponent
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
@@ -28,9 +30,7 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
     @Inject
     lateinit var database: ClearKeepDatabase;
     @Inject
-    lateinit var matrixService: MatrixService;
-    @Inject
-    lateinit var crypto: ICrypto;
+    lateinit var autoKeyBackup: IAutoKeyBackup;
 
     private var session: MXSession? = null;
 
@@ -71,114 +71,7 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
         return this;
     }
 
-    @SuppressLint("CheckResult")
-    override fun startAutoKeyBackup(password: String) {
-        val passwordForGenerateKey = session!!.myUserId + "COLIAKIP";
-        matrixService.getPassphrase().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ passphrase ->
-            Toast.makeText(this, R.string.get_passphrase_successfully, Toast.LENGTH_SHORT).show();
-            val decryptedData = crypto.decrypt(passwordForGenerateKey, passphrase.data.passphrase);
-            matrixService.getKeyBackUpData(passphrase.data.id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
-                when (it.state) {
-                    4 -> {
-                        matrixService.restoreBackupFromPassphrase(decryptedData).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                                .subscribe({
-                                    Toast.makeText(this, "Restore success: " + it.successfullyNumberOfImportedKeys + "/" + it.totalNumberOfKeys + " keys", Toast.LENGTH_SHORT).show();
-                                }, {
-                                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
-                                });
-                    }
-                    0, 1 -> {
-                        matrixService.checkBackupKeyStateWhenStart().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                                .subscribe({
-                                    if (it == 4) {
-                                        matrixService.restoreBackupFromPassphrase(decryptedData).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                                                .subscribe({
-                                                    Toast.makeText(this, "Restore success: " + it.successfullyNumberOfImportedKeys + "/" + it.totalNumberOfKeys + " keys", Toast.LENGTH_SHORT).show();
-                                                }, {
-                                                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
-                                                });
-                                    }
-                                }, {
-                                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
-                                });
-                    }
-                }
-            }, {
-                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
-            })
-
-        }, {
-            val encryptedPassphrase = crypto.encrypt(passwordForGenerateKey, password + "COLIAKIP")
-            matrixService.createPassphrase(encryptedPassphrase).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ passphrase ->
-                Toast.makeText(this, R.string.create_new_passphrase_successfully, Toast.LENGTH_SHORT).show();
-                matrixService.getKeyBackUpData(passphrase.data.id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
-                    when (it.state) {
-                        6, 7, 4 -> {
-                            matrixService.deleteKeyBackup(it.id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
-                                val decryptedData = crypto.decrypt(passwordForGenerateKey, passphrase.data.passphrase);
-                                matrixService.exportNewBackupKey(decryptedData).subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                                            Toast.makeText(this, R.string.export_key_successfully, Toast.LENGTH_SHORT).show();
-                                        }, {
-                                            Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
-                                        });
-                            }, {
-                                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
-                            });
-                        }
-                        3 -> {
-                            val decryptedData = crypto.decrypt(passwordForGenerateKey, passphrase.data.passphrase);
-                            matrixService.exportNewBackupKey(decryptedData).subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                                        Toast.makeText(this, R.string.export_key_successfully, Toast.LENGTH_SHORT).show();
-                                    }, {
-                                        Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
-                                    });
-                        }
-                        0, 1 -> {
-                            matrixService.checkBackupKeyStateWhenStart().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe({
-                                        autoKeyBackupWhenCreatePassphrase(passwordForGenerateKey, passphrase);
-                                    }, {
-                                        Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
-                                    });
-                        }
-                    }
-                }, {
-                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
-                });
-            }, {
-                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
-            });
-        })
-    }
-
-    @SuppressLint("CheckResult")
-    private fun autoKeyBackupWhenCreatePassphrase(password: String, passphraseResponse: PassphraseResponse) {
-        val decryptedData = crypto.decrypt(password, passphraseResponse.data.passphrase);
-        matrixService.getKeyBackUpData(passphraseResponse.data.id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
-            when (it.state) {
-                6, 7, 4 -> {
-                    matrixService.deleteKeyBackup(it.id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
-                        matrixService.exportNewBackupKey(decryptedData).subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                                    Toast.makeText(this, R.string.export_key_successfully, Toast.LENGTH_SHORT).show();
-                                }, {
-                                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
-                                });
-                    }, {
-                        Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
-                    });
-                }
-                3 -> {
-                    matrixService.exportNewBackupKey(decryptedData).subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                                Toast.makeText(this, R.string.export_key_successfully, Toast.LENGTH_SHORT).show();
-                            }, {
-                                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
-                            });
-                }
-            }
-        }
+    override fun startAutoKeyBackup(password: String?) {
+        session?.let { autoKeyBackup.startAutoKeyBackup(it.myUserId, password) }
     }
 }
