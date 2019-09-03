@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.LiveDataReactiveStreams
 import android.util.Log
 import io.reactivex.*
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.databases.AbstractRoomDao
@@ -428,11 +429,14 @@ class RoomRepository @Inject constructor(
     fun updateAndCreateListRoomReturnRx(filters: Array<Int>): Observable<List<Room>> {
         return object : AbstractNetworkCreateAndUpdateSourceReturnRx<List<Room>, List<Room>>() {
             override fun insertResult(item: List<Room>) {
-                abstractRoomDao.insertRooms(item);
+                Log.d("InsertRoomBefore", item.size.toString());
+                val result = abstractRoomDao.insertRooms(item);
+                Log.d("InsertRoomAfter", result.size.toString());
             }
 
             override fun updateResult(item: List<Room>) {
-                abstractRoomDao.updateRooms(item);
+//                Log.d("InsertRoom", item.size.toString());
+//                abstractRoomDao.updateRooms(item);
             }
 
             override fun loadFromDb(): Single<List<Room>> {

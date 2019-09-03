@@ -1589,5 +1589,8 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="updating_rooms">Updating rooms...</string>
     <string name="updating_users">Updating users...</string>
     <string name="updating_last_message">Updating last messages</string>
+    <string name="export_key_successfully">Export new backup key successfully</string>
+    <string name="get_passphrase_successfully">Get passphrase successfully</string>
+    <string name="create_new_passphrase_successfully">Create new passphrase successfully</string>
 
 </resources>

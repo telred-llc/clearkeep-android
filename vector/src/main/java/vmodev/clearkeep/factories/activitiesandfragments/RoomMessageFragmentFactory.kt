@@ -5,8 +5,9 @@ import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
 import vmodev.clearkeep.fragments.Interfaces.ISearchRoomFragment
 import vmodev.clearkeep.fragments.RoomFragment
+import javax.inject.Inject
 
-class RoomMessageFragmentFactory : IShowListRoomFragmentFactory {
+class RoomMessageFragmentFactory @Inject constructor() : IShowListRoomFragmentFactory {
     override fun createNewInstance(): ISearchRoomFragment {
         return RoomFragment.newInstance();
     }

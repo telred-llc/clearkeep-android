@@ -682,6 +682,13 @@ class MessageListFragment : MatrixMessageListFragment<VectorMessagesAdapter>(), 
                         }
                     })
                     .show()
+        } else if (action == R.id.ic_action_edit) {
+            val attachedActivity = activity
+
+            if ((null != attachedActivity) && (attachedActivity is RoomActivity) && !textMsg.isNullOrEmpty()) {
+                // Quote all paragraphs instead
+                (attachedActivity as RoomActivity).insertSelectedMessageInTextEditor(event, textMsg);
+            }
         }
     }
 
@@ -1154,7 +1161,7 @@ class MessageListFragment : MatrixMessageListFragment<VectorMessagesAdapter>(), 
         try {
             // start member details UI
             val roomDetailsIntent = Intent(activity, UserInformationActivity::class.java)
-            roomDetailsIntent.putExtra(UserInformationActivity.USER_ID,userId)
+            roomDetailsIntent.putExtra(UserInformationActivity.USER_ID, userId)
 //            roomDetailsIntent.putExtra(VectorMemberDetailsActivity.EXTRA_ROOM_ID, mRoom.roomId)
 //            roomDetailsIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MEMBER_ID, userId)
 //            roomDetailsIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MATRIX_ID, mSession.credentials.userId)

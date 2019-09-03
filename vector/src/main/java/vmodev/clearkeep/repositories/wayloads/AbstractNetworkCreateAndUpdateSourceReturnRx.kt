@@ -1,9 +1,13 @@
 package vmodev.clearkeep.repositories.wayloads
 
+import android.annotation.SuppressLint
 import android.support.annotation.MainThread
-import io.reactivex.*
+import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.AsyncSubject
 
@@ -13,61 +17,38 @@ abstract class AbstractNetworkCreateAndUpdateSourceReturnRx<T, V> @MainThread co
     init {
         loadFromDb().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : SingleObserver<V> {
+                    @SuppressLint("CheckResult")
                     override fun onSuccess(t: V) {
                         createCall().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ remote ->
-                                    Completable.fromAction {
-                                        insertResult(getInsertItem(remote, t));
-                                    }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe({
-                                                loadFromDb().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                                                        .subscribe(object : SingleObserver<V> {
-                                                            override fun onSuccess(t: V) {
-                                                                asyncSubject.onNext(t);
-                                                                asyncSubject.onComplete();
-                                                            }
+                                    val one = Observable.create<Int> {
+                                        insertResult(getInsertItem(remote, null));
+                                        it.onNext(1);
+                                        it.onComplete();
+                                    };
+                                    val two = Observable.create<Int> {
+                                        updateResult(getUpdateItem(remote, null));
+                                        it.onNext(2);
+                                        it.onComplete();
+                                    };
 
-                                                            override fun onSubscribe(d: Disposable) {
-
-                                                            }
-
-                                                            override fun onError(e: Throwable) {
-                                                                asyncSubject.onError(e);
-                                                                asyncSubject.onComplete();
-                                                            }
-                                                        });
-                                            }, {
-                                                asyncSubject.onError(it);
-                                                asyncSubject.onComplete();
-                                            });
-                                    Completable.fromAction {
-                                        updateResult(getUpdateItem(remote, t));
-                                    }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe({
-                                                loadFromDb().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                                                        .subscribe(object : SingleObserver<V> {
-                                                            override fun onSuccess(t: V) {
-                                                                asyncSubject.onNext(t);
-                                                                asyncSubject.onComplete();
-                                                            }
-
-                                                            override fun onSubscribe(d: Disposable) {
-
-                                                            }
-
-                                                            override fun onError(e: Throwable) {
-                                                                asyncSubject.onError(e);
-                                                                asyncSubject.onComplete();
-                                                            }
-                                                        });
-                                            }, {
-                                                asyncSubject.onError(it);
-                                                asyncSubject.onComplete();
-                                            });
+                                    one.zipWith(two, BiFunction<Int, Int, Int> { t1, t2 -> t1 + t2; }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+                                        loadFromDb().toObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                                                .subscribe({
+                                                    asyncSubject.onNext(it);
+                                                    asyncSubject.onComplete();
+                                                }, {
+                                                    asyncSubject.onError(it);
+                                                    asyncSubject.onComplete();
+                                                });
+                                    }, {
+                                        asyncSubject.onError(it);
+                                        asyncSubject.onComplete();
+                                    });
                                 }, {
                                     asyncSubject.onError(it);
                                     asyncSubject.onComplete();
-                                });
+                                })
                     }
 
                     override fun onSubscribe(d: Disposable) {
@@ -77,42 +58,34 @@ abstract class AbstractNetworkCreateAndUpdateSourceReturnRx<T, V> @MainThread co
                     override fun onError(e: Throwable) {
                         createCall().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ remote ->
-                                    Completable.fromAction {
+                                    val one = Observable.create<Int> {
                                         insertResult(getInsertItem(remote, null));
-                                    }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe({
-                                                loadFromDb().toObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                                                        .subscribe({
-                                                            asyncSubject.onNext(it);
-                                                            asyncSubject.onComplete();
-                                                        }, {
-                                                            asyncSubject.onError(it);
-                                                            asyncSubject.onComplete();
-                                                        });
-                                            }, {
-                                                asyncSubject.onError(it);
-                                                asyncSubject.onComplete();
-                                            });
-                                    Completable.fromAction {
+                                        it.onNext(1);
+                                        it.onComplete();
+                                    };
+                                    val two = Observable.create<Int> {
                                         updateResult(getUpdateItem(remote, null));
-                                    }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe({
-                                                loadFromDb().toObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                                                        .subscribe({
-                                                            asyncSubject.onNext(it);
-                                                            asyncSubject.onComplete();
-                                                        }, {
-                                                            asyncSubject.onError(it);
-                                                            asyncSubject.onComplete();
-                                                        });
-                                            }, {
-                                                asyncSubject.onError(it);
-                                                asyncSubject.onComplete();
-                                            });
+                                        it.onNext(2);
+                                        it.onComplete();
+                                    };
+
+                                    one.zipWith(two, BiFunction<Int, Int, Int> { t1, t2 -> t1 + t2; }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+                                        loadFromDb().toObservable().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                                                .subscribe({
+                                                    asyncSubject.onNext(it);
+                                                    asyncSubject.onComplete();
+                                                }, {
+                                                    asyncSubject.onError(it);
+                                                    asyncSubject.onComplete();
+                                                });
+                                    }, {
+                                        asyncSubject.onError(it);
+                                        asyncSubject.onComplete();
+                                    });
                                 }, {
                                     asyncSubject.onError(it);
                                     asyncSubject.onComplete();
-                                });
+                                })
                     }
                 });
     }

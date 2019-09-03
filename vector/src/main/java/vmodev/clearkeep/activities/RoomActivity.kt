@@ -31,6 +31,8 @@ import butterknife.BindView
 import butterknife.OnClick
 import butterknife.OnLongClick
 import butterknife.OnTouch
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import im.vector.Matrix
 import im.vector.R
@@ -79,9 +81,14 @@ import org.matrix.androidsdk.rest.model.User
 import org.matrix.androidsdk.rest.model.message.Message
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.fragments.MessageListFragment
+import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
+import vmodev.clearkeep.repositories.MessageRepository
+import vmodev.clearkeep.repositories.RoomRepository
 import vmodev.clearkeep.ultis.ReadMarkerManager
 import vmodev.clearkeep.ultis.RoomMediasSender
 import java.util.*
+import javax.inject.Inject
+import kotlin.collections.HashMap
 
 class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPreviewDataListener,
         MatrixMessageListFragment.IEventSendingListener,
@@ -164,6 +171,10 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     private var mDefaultTopic: String? = null
 
     private var mLatestChatMessageCache: MXLatestChatMessageCache? = null
+
+    private var isEditedMode = false;
+    private var currentEvent: Event? = null;
+    private var currentMessageEdit: String? = null;
 
     @BindView(R.id.room_sending_message_layout)
     lateinit var mSendingMessagesLayout: View
@@ -278,6 +289,11 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     lateinit var imageViewVideoCall: ImageView;
     @BindView(R.id.image_view_voice_call)
     lateinit var imageViewVoiceCall: ImageView;
+    @BindView(R.id.image_view_cancel_edit)
+    lateinit var imageViewCancelEdit: ImageView;
+
+    @Inject
+    lateinit var messageRepository: MessageRepository;
 
     // network events
     private val mNetworkEventListener = IMXNetworkEventListener {
@@ -1823,6 +1839,60 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         })
     }
 
+    private fun editTextMessage() {
+        if (mIsMarkDowning) {
+            return
+        }
+
+        // ensure that a message is not sent twice
+        // markdownToHtml seems being slow in some cases
+//        mSendImageView!!.isEnabled = false
+        mIsMarkDowning = true
+
+        var textToSend = mEditText!!.text.toString().trim { it <= ' ' }
+
+        val handleSlashCommand: Boolean
+        if (textToSend.startsWith("\\/")) {
+            handleSlashCommand = false
+            textToSend = textToSend.substring(1)
+        } else {
+            handleSlashCommand = true
+        }
+
+
+
+        VectorApp.markdownToHtml(textToSend) { text, htmlText ->
+            runOnUiThread {
+                mIsMarkDowning = false
+                enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
+                currentEvent?.let {
+                    if (textToSend.isNullOrEmpty())
+                        return@let ;
+                    val mapNewContent = HashMap<String, String>();
+                    mapNewContent.put("msgtype", Message.MSGTYPE_TEXT);
+                    mapNewContent.put("body", textToSend);
+                    textToSend = "* $textToSend";
+                    val jsonObject = JsonObject()
+                    jsonObject.addProperty("body", textToSend);
+                    jsonObject.addProperty("msgtype", "m.text");
+                    val gson = Gson();
+                    jsonObject.add("m.new_content", gson.toJsonTree(mapNewContent));
+                    val event = Event("m.room.message", jsonObject, it.sender, it.roomId);
+                    event.eventId = it.eventId;
+                    messageRepository.editMessageRx(event).subscribe({
+                        Toast.makeText(this@RoomActivity, "Edited", Toast.LENGTH_SHORT).show();
+                    }, {
+                        Toast.makeText(this@RoomActivity, it.message, Toast.LENGTH_SHORT).show();
+                    })
+                }
+                mEditText!!.setText("")
+                currentEvent = null;
+                isEditedMode = false;
+                currentMessageEdit = null;
+            }
+        }
+    }
+
     /**
      * Send a text message with its formatted format
      *
@@ -2294,27 +2364,44 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      * Display UI buttons according to user input text.
      */
     private fun manageSendMoreButtons() {
-        var img = R.drawable.ic_material_file
-        if (!PreferencesManager.sendMessageWithEnter(this) && mEditText!!.text.length > 0) {
-            img = R.drawable.ic_material_send_green
-            buttonSend.setBackgroundResource(R.drawable.background_radius_green)
-            buttonSend.setTextColor(Color.parseColor("#FFFFFF"))
-        } else {
-            buttonSend.setBackgroundResource(R.drawable.background_border_radius_gray)
-            val typeValue = TypedValue();
-            theme.resolveAttribute(R.attr.text_not_available_send, typeValue, true);
+        if (!isEditedMode) {
+            var img = R.drawable.ic_material_file
+            if (!PreferencesManager.sendMessageWithEnter(this) && mEditText!!.text.length > 0) {
+                img = R.drawable.ic_material_send_green
+                buttonSend.setBackgroundResource(R.drawable.background_radius_green)
+                buttonSend.setTextColor(Color.parseColor("#FFFFFF"))
+            } else {
+                buttonSend.setBackgroundResource(R.drawable.background_border_radius_gray)
+                val typeValue = TypedValue();
+                theme.resolveAttribute(R.attr.text_not_available_send, typeValue, true);
 //            buttonSend.setTextColor(Color.parseColor("#000000"))
-            buttonSend.setTextColor(typeValue.data);
-            when (PreferencesManager.getSelectedDefaultMediaSource(this)) {
-                MEDIA_SOURCE_VOICE -> if (PreferencesManager.isSendVoiceFeatureEnabled(this)) {
-                    img = R.drawable.vector_micro_green
+                buttonSend.setTextColor(typeValue.data);
+                when (PreferencesManager.getSelectedDefaultMediaSource(this)) {
+                    MEDIA_SOURCE_VOICE -> if (PreferencesManager.isSendVoiceFeatureEnabled(this)) {
+                        img = R.drawable.vector_micro_green
+                    }
+                    MEDIA_SOURCE_STICKER -> img = R.drawable.ic_send_sticker
+                    MEDIA_SOURCE_PHOTO -> img = R.drawable.ic_material_camera
+                    MEDIA_SOURCE_VIDEO -> img = R.drawable.ic_material_videocam
                 }
-                MEDIA_SOURCE_STICKER -> img = R.drawable.ic_send_sticker
-                MEDIA_SOURCE_PHOTO -> img = R.drawable.ic_material_camera
-                MEDIA_SOURCE_VIDEO -> img = R.drawable.ic_material_videocam
+            }
+//        mSendImageView!!.setImageResource(img)
+        } else {
+            if (!PreferencesManager.sendMessageWithEnter(this) && mEditText!!.text.length > 0 && !TextUtils.equals(mEditText.text.toString(), currentMessageEdit)) {
+                buttonSend.setBackgroundResource(R.drawable.background_radius_green)
+                buttonSend.setTextColor(Color.parseColor("#FFFFFF"))
+            } else {
+                buttonSend.setBackgroundResource(R.drawable.background_border_radius_gray)
+                val typeValue = TypedValue();
+                theme.resolveAttribute(R.attr.text_not_available_send, typeValue, true);
+                buttonSend.setTextColor(typeValue.data);
+                when (PreferencesManager.getSelectedDefaultMediaSource(this)) {
+                    MEDIA_SOURCE_VOICE -> if (PreferencesManager.isSendVoiceFeatureEnabled(this)) {
+
+                    }
+                }
             }
         }
-//        mSendImageView!!.setImageResource(img)
     }
 
     /**
@@ -2415,6 +2502,22 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 mEditText!!.text.insert(mEditText!!.selectionStart, "\n" + quote)
             }
         }
+    }
+
+    fun insertSelectedMessageInTextEditor(event: Event, textMsg: String?) {
+        currentEvent = event;
+        isEditedMode = true;
+        imageViewCancelEdit.visibility = View.VISIBLE;
+        mEditText.setText(textMsg);
+        textMsg?.let { mEditText.setSelection(it.length); }
+    }
+
+    @OnClick(R.id.image_view_cancel_edit)
+    internal fun onClickCancelEdit() {
+        isEditedMode = false;
+        currentEvent = null;
+        mEditText.setText("");
+        imageViewCancelEdit.visibility = View.GONE;
     }
 
     /* ==========================================================================================
@@ -3755,7 +3858,11 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     @OnClick(R.id.button_send)
     internal fun onClickSend() {
-        sendTextMessage();
+        imageViewCancelEdit.visibility = View.GONE;
+        if (!isEditedMode)
+            sendTextMessage();
+        else
+            editTextMessage();
     }
 
     @SuppressLint("SetTextI18n")

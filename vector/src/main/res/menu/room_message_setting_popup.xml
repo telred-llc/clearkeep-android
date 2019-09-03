@@ -72,4 +72,9 @@
         android:title="@string/device_information"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/ic_action_edit"
+        android:title="@string/edit"
+        app:showAsAction="never" />
+
 </menu>

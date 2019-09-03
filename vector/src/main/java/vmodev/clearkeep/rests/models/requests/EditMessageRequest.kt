@@ -7,6 +7,6 @@ data class EditMessageRequest(
         val ciphertext: String,
         @SerializedName("device_id") val deviceId: String,
         val algorithm: String,
-        @SerializedName("sender_id") val senderId: String,
+        @SerializedName("sender_key") val senderId: String,
         @SerializedName("m.relates_to") val relatesTo: Map<String, String>
 )

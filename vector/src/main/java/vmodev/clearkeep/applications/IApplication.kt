@@ -6,5 +6,7 @@ interface IApplication {
     fun getCurrentTheme(): Int;
     fun setCurrentTheme(theme: Int);
     fun getApplication(): Application;
-    fun startAutoKeyBackup(password: String);
+    fun startAutoKeyBackup(password: String?);
+    fun setEventHandler();
+    fun removeEventHandler();
 }

@@ -25,6 +25,7 @@ class AESCrypto @Inject constructor(private val generateKey: IGenerateKey) : ICr
 
     override fun decrypt(secretKey: String, encryptedData: String): String {
         val cipher: Cipher = Cipher.getInstance("AES");
+        val iv = cipher.iv;
         val encryptedDatas = encryptedData.split(":");
         val keyAndSalt = generateKey.generate(secretKey, Base64.decode(encryptedDatas[0], Base64.DEFAULT)).split(":");
         var key = keyAndSalt[1].toByteArray(Charsets.UTF_8);
