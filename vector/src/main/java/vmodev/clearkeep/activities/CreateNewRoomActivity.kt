@@ -20,6 +20,7 @@ import javax.inject.Inject
 
 class CreateNewRoomActivity : DataBindingDaggerActivity(), IActivity {
 
+    private var isClicked : Boolean = false
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractCreateNewRoomActivityViewModel>;
 
@@ -61,12 +62,21 @@ class CreateNewRoomActivity : DataBindingDaggerActivity(), IActivity {
 
                 }
         binding.textViewRightToolbar.setOnClickListener { v ->
-            if (binding.editTextRoomTopic.text.isNullOrEmpty()) binding.editTextRoomTopic.text = binding.editTextRoomName.text;
-            viewModelFactory.getViewModel().setCreateNewRoom(binding.editTextRoomName.text.toString(), binding.editTextRoomTopic.text.toString(), if (binding.switchRoomVisibility.isChecked) "public" else "private")
+            if (!isClicked){
+                isClicked = true
+                if (binding.editTextRoomTopic.text.isNullOrEmpty()) binding.editTextRoomTopic.text = binding.editTextRoomName.text;
+                viewModelFactory.getViewModel().setCreateNewRoom(binding.editTextRoomName.text.toString(), binding.editTextRoomTopic.text.toString(), if (binding.switchRoomVisibility.isChecked) "public" else "private")
+            }
+
         }
     }
 
     override fun getActivity(): FragmentActivity {
         return this;
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isClicked = false
     }
 }

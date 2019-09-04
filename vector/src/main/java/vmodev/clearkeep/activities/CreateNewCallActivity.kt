@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class CreateNewCallActivity : DataBindingDaggerActivity(), ICreateNewCallActivity {
+    private var isClicked : Boolean = false
 
     @Inject
     lateinit var viewModelFactory: ICreateNewCallActivityViewModelFactory;
@@ -74,17 +75,20 @@ class CreateNewCallActivity : DataBindingDaggerActivity(), ICreateNewCallActivit
         binding.room = viewModelFactory.getViewModel().getCreateNewRoomResult();
 
         binding.textViewCreate.setOnClickListener {
-            var name = "Call:"
-            var topic = "";
-            if (listSelected.size <= 1) {
-                topic = "You are in 1:1 calling";
-            } else {
-                topic = "You are in conference calling";
+            if (!isClicked){
+                isClicked = true
+                var name = "Call:"
+                var topic = "";
+                if (listSelected.size <= 1) {
+                    topic = "You are in 1:1 calling";
+                } else {
+                    topic = "You are in conference calling";
+                }
+                listSelected.forEach {
+                    name += it.value.name + ",";
+                }
+                viewModelFactory.getViewModel().setCreateNewRoom(name, topic, "private");
             }
-            listSelected.forEach {
-                name += it.value.name + ",";
-            }
-            viewModelFactory.getViewModel().setCreateNewRoom(name, topic, "private");
         }
 
         binding.recyclerViewListUser.adapter = listUserAdapter;
@@ -129,5 +133,10 @@ class CreateNewCallActivity : DataBindingDaggerActivity(), ICreateNewCallActivit
 
     companion object {
         const val USER_ID = "USER_ID";
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isClicked = false
     }
 }
