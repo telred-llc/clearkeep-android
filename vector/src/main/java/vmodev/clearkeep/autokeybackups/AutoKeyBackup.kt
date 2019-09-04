@@ -3,6 +3,7 @@ package vmodev.clearkeep.autokeybackups
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.text.InputType
+import android.text.TextUtils
 import android.widget.EditText
 import android.widget.Toast
 import im.vector.R
@@ -162,7 +163,12 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
                                             }
                                         }, {});
                             }, {
-                                Toast.makeText(application, it.message, Toast.LENGTH_SHORT).show();
+                                if (TextUtils.equals(it.message,"Invalid recovery key")){
+                                    showAlertForRetypeOrNewKey(userId, decryptedData);
+                                }
+                                else{
+                                    Toast.makeText(application, it.message, Toast.LENGTH_SHORT).show();
+                                }
                             });
                 }, {
                     Toast.makeText(application, it.message, Toast.LENGTH_SHORT).show();
@@ -186,6 +192,30 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
                 }, {
                     Toast.makeText(application, it.message, Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private fun showAlertForRetypeOrNewKey(userId: String, decryptedData: String) {
+        AlertDialog.Builder(VectorApp.getCurrentActivity()).setMessage("Try again or using new key (Old data will be lost)")
+                .setTitle("Error")
+                .setNegativeButton("Try again") { dialogInterface, i ->
+                    handleRestoreDeleteAndExportNewKey(userId, decryptedData);
+                }
+                .setPositiveButton("New key") { dialogInterface, i ->
+                    matrixService.deleteKeyBackup(userId)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({
+                                matrixService.exportNewBackupKey(decryptedData).subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread()).subscribe({
+                                            Toast.makeText(application, R.string.export_key_successfully, Toast.LENGTH_SHORT).show();
+                                        }, {
+                                            Toast.makeText(application, it.message, Toast.LENGTH_SHORT).show();
+                                        });
+                            }, {
+                                Toast.makeText(application, it.message, Toast.LENGTH_SHORT).show();
+                            });
+                }
+                .show();
     }
 
     private fun showEnterPassphraseAlertDialog(): Observable<String> {
