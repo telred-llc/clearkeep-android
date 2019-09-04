@@ -102,12 +102,12 @@ class InviteUsersToRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
         });
         roomViewModel.getInviteUsersToRoomResult().observe(this, Observer { t ->
             t?.let {
-                when(it.status){
-                    Status.ERROR ->{
-                        Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
+                when (it.status) {
+                    Status.ERROR -> {
+                        finish();
                     }
-                    Status.SUCCESS->{
-                        it.data?.let {resource ->
+                    Status.SUCCESS -> {
+                        it.data?.let { resource ->
                             if (createFromNewRoom)
                                 joinRoom(resource.id)
                             else {
@@ -115,7 +115,7 @@ class InviteUsersToRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
                             }
                         }
                     }
-                    else->{
+                    else -> {
 
                     }
                 }
