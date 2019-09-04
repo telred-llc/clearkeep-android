@@ -26,6 +26,7 @@ import org.matrix.androidsdk.core.callback.ApiCallback
 import org.matrix.androidsdk.core.model.MatrixError
 import vmodev.clearkeep.adapters.ListUserToInviteRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
@@ -100,11 +101,23 @@ class InviteUsersToRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
             listSelected.clear();
         });
         roomViewModel.getInviteUsersToRoomResult().observe(this, Observer { t ->
-            t?.data?.let { resource ->
-                if (createFromNewRoom)
-                    joinRoom(resource.id)
-                else {
-                    finish();
+            t?.let {
+                when (it.status) {
+                    Status.ERROR -> {
+                        finish();
+                    }
+                    Status.SUCCESS -> {
+                        it.data?.let { resource ->
+                            if (createFromNewRoom)
+                                joinRoom(resource.id)
+                            else {
+                                finish();
+                            }
+                        }
+                    }
+                    else -> {
+
+                    }
                 }
             }
         })
