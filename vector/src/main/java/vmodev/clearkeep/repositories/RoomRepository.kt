@@ -214,11 +214,9 @@ class RoomRepository @Inject constructor(
     }
 
     fun inviteUsersToRoom(data: InviteUsersToRoomObject): LiveData<Resource<Room>> {
-        return object : AbstractNetworkNonBoundSource<Room>() {
-            override fun createCall(): LiveData<Room> {
-                return LiveDataReactiveStreams.fromPublisher(matrixService.inviteUsersToRoom(data.roomId, data.userIds).subscribeOn(Schedulers.newThread())
-                        .observeOn(Schedulers.newThread())
-                        .toFlowable(BackpressureStrategy.LATEST));
+        return object : AbstractNetworkNonBoundSourceRx<Room>() {
+            override fun createCall(): Observable<Room> {
+                return matrixService.inviteUsersToRoom(data.roomId, data.userIds);
             }
         }.asLiveData();
     }

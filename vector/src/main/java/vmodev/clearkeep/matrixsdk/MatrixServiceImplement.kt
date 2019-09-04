@@ -747,7 +747,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                 }
 
                 override fun onMatrixError(p0: MatrixError?) {
-                    emitter.onNext(matrixRoomToRoom(room))
+                    emitter.onError(Throwable(p0?.message));
                     emitter.onComplete();
                 }
 
