@@ -86,6 +86,10 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
             })
 
         }, {
+            if (password.isNullOrEmpty()) {
+                logout();
+                return@subscribe;
+            }
             val encryptedPassphrase = crypto.encrypt(passwordForGenerateKey, password + "COLIAKIP")
             matrixService.createPassphrase(encryptedPassphrase).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ passphrase ->
                 Toast.makeText(application, R.string.create_new_passphrase_successfully, Toast.LENGTH_SHORT).show();
@@ -115,7 +119,7 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
                         0, 1 -> {
                             matrixService.checkBackupKeyStateWhenStart().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({
-                                        autoKeyBackupWhenCreatePassphrase(userId, password,decryptedData, passphrase);
+                                        autoKeyBackupWhenCreatePassphrase(userId, password, decryptedData, passphrase);
                                     }, {
                                         Toast.makeText(application, it.message, Toast.LENGTH_SHORT).show();
                                     });
@@ -211,7 +215,7 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
     }
 
     @SuppressLint("CheckResult")
-    private fun autoKeyBackupWhenCreatePassphrase(userId: String, password: String?,decryptedData : String ,passphraseResponse: PassphraseResponse) {
+    private fun autoKeyBackupWhenCreatePassphrase(userId: String, password: String?, decryptedData: String, passphraseResponse: PassphraseResponse) {
         matrixService.getKeyBackUpData(passphraseResponse.data.id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
             when (it.state) {
                 6, 7, 4 -> {
