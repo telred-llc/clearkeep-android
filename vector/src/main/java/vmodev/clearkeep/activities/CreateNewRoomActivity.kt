@@ -8,6 +8,7 @@ import android.databinding.DataBindingUtil
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
+import android.widget.Toast
 import com.jakewharton.rxbinding2.widget.RxTextView
 import im.vector.R
 import im.vector.databinding.ActivityCreateNewRoomBinding
@@ -15,6 +16,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractCreateNewRoomActivityViewModel
 import javax.inject.Inject
 
@@ -42,11 +44,28 @@ class CreateNewRoomActivity : DataBindingDaggerActivity(), IActivity {
         binding.lifecycleOwner = this;
         binding.room = viewModelFactory.getViewModel().createNewRoomResult();
         viewModelFactory.getViewModel().createNewRoomResult().observe(this, Observer { t ->
-            t?.data?.let { room ->
-                val intent = Intent(this, InviteUsersToRoomActivity::class.java);
-                intent.putExtra("ROOM_ID", room.id);
-                startActivity(intent);
-                finish();
+            t?.let {
+                when (it.status) {
+                    Status.LOADING -> {
+                        binding.textViewRightToolbar.setText(R.string.creating);
+                        binding.textViewRightToolbar.isClickable = false;
+                    }
+                    Status.SUCCESS -> {
+                        binding.textViewRightToolbar.setText(R.string.create);
+                        binding.textViewRightToolbar.isClickable = true;
+                        it.data?.let {
+                            val intent = Intent(this, InviteUsersToRoomActivity::class.java);
+                            intent.putExtra("ROOM_ID", it.id);
+                            startActivity(intent);
+                            finish();
+                        }
+                    }
+                    Status.ERROR -> {
+                        binding.textViewRightToolbar.setText(R.string.create);
+                        binding.textViewRightToolbar.isClickable = true;
+                        Toast.makeText(this@CreateNewRoomActivity, it.message, Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         })
         RxTextView.textChanges(binding.editTextRoomName).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())

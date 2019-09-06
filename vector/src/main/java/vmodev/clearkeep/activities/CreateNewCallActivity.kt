@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v7.util.DiffUtil
 import android.util.Log
+import android.widget.Toast
 import com.jakewharton.rxbinding2.widget.RxTextView
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
@@ -22,6 +23,7 @@ import vmodev.clearkeep.adapters.ListUserToInviteRecyclerViewAdapter
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.ICreateNewCallActivityViewModelFactory
+import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodelobjects.User
 import java.util.HashMap
 import java.util.concurrent.TimeUnit
@@ -93,10 +95,25 @@ class CreateNewCallActivity : DataBindingDaggerActivity(), ICreateNewCallActivit
             listUserAdapter.submitList(it?.data);
         });
         viewModelFactory.getViewModel().getCreateNewRoomResult().observe(this, Observer {
-            it?.data?.let {
-                if (it.id != currentRoomId) {
-                    currentRoomId = it.id
-                    gotoRoom(currentRoomId)
+            it?.let {
+                when (it.status) {
+                    Status.LOADING -> {
+                        binding.textViewCreate.setText(R.string.creating);
+                        binding.textViewCreate.isClickable = false;
+                    }
+                    Status.SUCCESS -> {
+                        binding.textViewCreate.setText(R.string.create);
+                        binding.textViewCreate.isClickable = true;
+                        it.data?.let {
+                            currentRoomId = it.id
+                            gotoRoom(currentRoomId)
+                        }
+                    }
+                    Status.ERROR -> {
+                        binding.textViewCreate.setText(R.string.create);
+                        binding.textViewCreate.isClickable = true;
+                        Toast.makeText(this@CreateNewCallActivity, it.message, Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         })
