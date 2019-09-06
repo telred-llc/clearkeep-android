@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.support.v4.app.Fragment
 import android.support.v7.widget.SwitchCompat
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -72,24 +73,24 @@ class FragmentBindingAdapters constructor(val fragment: Fragment) : ImageViewBin
             val parser = JsonParser();
             val gson = Gson();
             val event = Event(message?.messageType, parser.parse(message.encryptedContent).asJsonObject, message.userId, message.roomId);
-            if (message.messageType.compareTo("m.room.message") != 0)
-                return;
-//            try {
-//                val result = session.dataHandler.crypto.decryptEvent(event, null);
-//                result?.let {
-//                    //                    Log.d("MessageType", result.mClearEvent.toString())
-//                    val json = result.mClearEvent.asJsonObject;
-//                    val type = json.get("type").asString;
-////                    Log.d("MessageType", type);
-//                    if (!type.isNullOrEmpty() && type.compareTo("m.room.message") == 0) {
-//                        val message = gson.fromJson(result.mClearEvent, MessageContent::class.java);
-//                        textView.text = message.getContent().getBody();
-//                    }
-//                }
-//            } catch (e: MXDecryptionException) {
-//                android.util.Log.d("Decrypt Error", e.message)
-//            }
-
+            if (message.messageType.compareTo("m.room.encrypted") != 0) {
+                textView.text = message.encryptedContent;
+            } else {
+                try {
+                    val result = session.dataHandler.crypto.decryptEvent(event, null);
+                    result?.let {
+                        val json = result.mClearEvent.asJsonObject;
+                        val type = json.get("type").asString;
+                        Log.d("LastMsg", type);
+                        if (!type.isNullOrEmpty() && type.compareTo("m.room.message") == 0) {
+                            val message = gson.fromJson(result.mClearEvent, MessageContent::class.java);
+                            textView.text = message.getContent().getBody();
+                        }
+                    }
+                } catch (e: MXDecryptionException) {
+                    textView.text = message.encryptedContent;
+                }
+            }
         }
 
     }
@@ -123,12 +124,11 @@ class FragmentBindingAdapters constructor(val fragment: Fragment) : ImageViewBin
     override fun bindStatusFromListUser(imageView: ImageView, users: List<User>?, currentUserId: String?) {
         users?.let { us ->
             currentUserId?.let { id ->
-                for (u in us){
-                    if (u.id.compareTo(id) != 0 && u.status.compareTo(0) != 0){
+                for (u in us) {
+                    if (u.id.compareTo(id) != 0 && u.status.compareTo(0) != 0) {
                         imageView.setImageResource(R.color.app_green);
                         break;
-                    }
-                    else{
+                    } else {
                         imageView.setImageResource(R.color.main_text_color_hint);
                     }
                 }

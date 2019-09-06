@@ -18,7 +18,7 @@ import com.google.gson.annotations.SerializedName
 @Entity(
         foreignKeys = [
             ForeignKey(entity = Message::class
-                    , parentColumns = ["id"]
+                    , parentColumns = ["message_id"]
                     , childColumns = ["message_id"]
                     , onDelete = ForeignKey.CASCADE)
         ]

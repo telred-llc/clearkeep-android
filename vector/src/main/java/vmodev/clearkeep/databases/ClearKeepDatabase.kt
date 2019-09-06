@@ -5,7 +5,7 @@ import android.arch.persistence.room.RoomDatabase
 import vmodev.clearkeep.viewmodelobjects.*
 
 @Database(entities = [User::class, Room::class, RoomUserJoin::class, DeviceSettings::class, BackupKeyPath::class, Message::class, Signature::class
-    , KeyBackup::class, LocalSettings::class], version = 9, exportSchema = false)
+    , KeyBackup::class, LocalSettings::class], version = 10, exportSchema = false)
 abstract class ClearKeepDatabase : RoomDatabase() {
     abstract fun userDao(): AbstractUserDao;
     abstract fun roomDao(): AbstractRoomDao;

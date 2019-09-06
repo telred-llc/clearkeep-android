@@ -1005,6 +1005,17 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
         String eventId = event.eventId;
         String eventType = event.getType();
 
+        if ((null != eventId) && mHiddenEventIds.contains(eventId)) {
+            return ROW_TYPE_HIDDEN;
+        }
+        // never cache the view type of the encrypted messages
+        if (Event.EVENT_TYPE_MESSAGE_ENCRYPTED.equals(eventType)) {
+            //Hide message when this message is encrypted
+//            return ROW_TYPE_TEXT;
+            //Hide message when this message is encrypted
+            return ROW_TYPE_HIDDEN;
+        }
+
         if (event.contentJson != null) {
             JsonObject content = event.contentJson.getAsJsonObject();
             JsonObject relatesTo = content.getAsJsonObject("m.relates_to");
@@ -1020,22 +1031,9 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
             }
         }
 
-        if ((null != eventId) && mHiddenEventIds.contains(eventId)) {
-            return ROW_TYPE_HIDDEN;
-        }
-
         if (editedMessageMap.containsKey(eventId)) {
             return ROW_TYPE_TEXT_EDITED;
         }
-
-        // never cache the view type of the encrypted messages
-        if (Event.EVENT_TYPE_MESSAGE_ENCRYPTED.equals(eventType)) {
-            //Hide message when this message is encrypted
-//            return ROW_TYPE_TEXT;
-            //Hide message when this message is encrypted
-            return ROW_TYPE_HIDDEN;
-        }
-
         if (event instanceof EventGroup) {
             return ROW_TYPE_MERGE;
         }
