@@ -179,8 +179,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     @BindView(R.id.room_sending_message_layout)
     lateinit var mSendingMessagesLayout: View
 
-//    @BindView(R.id.room_send_image_view)
-//    lateinit var mSendImageView: ImageView
+    @BindView(R.id.imgFile)
+    lateinit var mSendImageView: ImageView
 
     @BindView(R.id.editText_messageBox)
     lateinit var mEditText: VectorAutoCompleteTextView
@@ -1867,7 +1867,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
                 currentEvent?.let {
                     if (textToSend.isNullOrEmpty())
-                        return@let ;
+                        return@let;
                     val mapNewContent = HashMap<String, String>();
                     mapNewContent.put("msgtype", Message.MSGTYPE_TEXT);
                     mapNewContent.put("body", textToSend);
@@ -2385,7 +2385,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     MEDIA_SOURCE_VIDEO -> img = R.drawable.ic_material_videocam
                 }
             }
-//        mSendImageView!!.setImageResource(img)
+//            mSendImageView!!.setImageResource(img)
         } else {
             if (!PreferencesManager.sendMessageWithEnter(this) && mEditText!!.text.length > 0 && !TextUtils.equals(mEditText.text.toString(), currentMessageEdit)) {
                 buttonSend.setBackgroundResource(R.drawable.background_radius_green)
@@ -3865,6 +3865,53 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             editTextMessage();
     }
 
+    @OnClick(R.id.imgFile)
+    internal fun onClickSendFile() {
+
+        val items = ArrayList<DialogListItem>()
+
+        // Send file
+        onSendChoiceClicked(DialogListItem.SendFile)
+
+//        if (!TextUtils.isEmpty(mEditText.text) && !PreferencesManager.sendMessageWithEnter(this)) {
+//            sendTextMessage()
+//        } else {
+//            val useNativeCamera = PreferencesManager.useNativeCamera(this)
+//            val isVoiceFeatureEnabled = PreferencesManager.isSendVoiceFeatureEnabled(this)
+//
+//            when (PreferencesManager.getSelectedDefaultMediaSource(this)) {
+//                MEDIA_SOURCE_FILE -> {
+//                    onSendChoiceClicked(DialogListItem.SendFile)
+//                    return
+//                }
+//                MEDIA_SOURCE_VOICE -> if (isVoiceFeatureEnabled) {
+//                    onSendChoiceClicked(DialogListItem.SendVoice)
+//                    return
+//                }
+//                MEDIA_SOURCE_STICKER -> {
+//                    onSendChoiceClicked(DialogListItem.SendSticker)
+//                    return
+//                }
+//                MEDIA_SOURCE_PHOTO -> if (useNativeCamera) {
+//                    onSendChoiceClicked(DialogListItem.TakePhoto)
+//                    return
+//                } else {
+//                    onSendChoiceClicked(DialogListItem.TakePhotoVideo)
+//                    return
+//                }
+//                MEDIA_SOURCE_VIDEO -> if (useNativeCamera) {
+//                    onSendChoiceClicked(DialogListItem.TakeVideo)
+//                    return
+//                } else {
+//                    onSendChoiceClicked(DialogListItem.TakePhotoVideo)
+//                    return
+//                }
+//            }// show all options if voice feature is disabled
+//
+//            chooseMediaSource(useNativeCamera, isVoiceFeatureEnabled)
+//        }
+    }
+
     @SuppressLint("SetTextI18n")
     @OnClick(R.id.button_special_symbol)
     internal fun onClickSpecialSymbol() {
@@ -4008,9 +4055,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //        else if (mStartCallLayout!!.visibility == View.VISIBLE) {
 //            mStartCallLayout!!.performClick()
 //        }
-//        else if (mSendImageView!!.visibility == View.VISIBLE) {
-//            mSendImageView!!.performClick()
-//        }
+        else if (mSendImageView!!.visibility == View.VISIBLE) {
+            mSendImageView!!.performClick()
+        }
     }
 
 }

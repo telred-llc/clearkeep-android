@@ -55,7 +55,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toStartOf="@+id/message_timestamp_layout"
-                    android:layout_toLeftOf="@+id/message_timestamp_layout"
                     android:orientation="horizontal">
 
                     <include layout="@layout/vector_message_sender" />
@@ -66,7 +65,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
                     android:orientation="horizontal">
 
                     <include layout="@layout/vector_message_timestamp" />
@@ -82,8 +80,7 @@
                     android:id="@+id/messagesAdapter_body_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:layout_marginRight="4dp">
+                    android:layout_marginEnd="4dp">
 
                     <RelativeLayout
                         android:id="@+id/messagesAdapter_file_layout"
@@ -108,16 +105,14 @@
                                 android:layout_width="@dimen/chat_avatar_size"
                                 android:layout_height="@dimen/chat_avatar_size"
                                 android:layout_marginStart="4dp"
-                                android:layout_marginLeft="4dp"
                                 android:src="@drawable/filetype_image" />
 
                             <!-- the media -->
                             <TextView
                                 android:id="@+id/messagesAdapter_filename"
                                 android:layout_width="0dp"
-                                android:layout_height="@dimen/chat_avatar_size"
+                                android:layout_height="wrap_content"
                                 android:layout_marginStart="4dp"
-                                android:layout_marginLeft="4dp"
                                 android:layout_weight="1"
                                 android:autoLink="none"
                                 android:gravity="center_vertical"
