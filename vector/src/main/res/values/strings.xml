@@ -1592,5 +1592,6 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="export_key_successfully">Export new backup key successfully</string>
     <string name="get_passphrase_successfully">Get passphrase successfully</string>
     <string name="create_new_passphrase_successfully">Create new passphrase successfully</string>
+    <string name="creating">Creating...</string>
 
 </resources>
