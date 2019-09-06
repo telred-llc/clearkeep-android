@@ -15,8 +15,10 @@ import im.vector.R
 import im.vector.databinding.ActivityRoomSettingsBinding
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.binding.ActivityDataBindingComponent
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.RoomViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomSettingsActivityViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
 import javax.inject.Named
@@ -24,9 +26,8 @@ import javax.inject.Named
 class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
 
     @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractRoomSettingsActivityViewModel>;
 
-    lateinit var roomViewModel: AbstractRoomViewModel;
     lateinit var roomId: String;
 
     lateinit var binding: ActivityRoomSettingsBinding;
@@ -39,18 +40,24 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
         binding.toolbar.setNavigationOnClickListener { v ->
             onBackPressed();
         }
-        roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
+
         setupButton();
-        binding.room = roomViewModel.getRoom();
+        binding.room = viewModelFactory.getViewModel().getRoom();
+        binding.user = viewModelFactory.getViewModel().getUserResult();
+        viewModelFactory.getViewModel().getRoom().observe(this, Observer {
+            it?.data?.userCreated?.let {
+                viewModelFactory.getViewModel().setUserId(it)
+            }
+        })
         binding.lifecycleOwner = this;
         roomId = intent.getStringExtra(ROOM_ID);
-        roomViewModel.setRoomId(roomId);
+        viewModelFactory.getViewModel().setRoomId(roomId);
     }
 
     private fun setupButton() {
         binding.leaveRoomGroup.setOnClickListener { v ->
-            binding.leaveRoom = roomViewModel.getLeaveRoom();
-            roomViewModel.getLeaveRoom().observe(this, Observer { t ->
+            binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoom();
+            viewModelFactory.getViewModel().getLeaveRoom().observe(this, Observer { t ->
                 t?.let { resource ->
                     if (resource.status == Status.SUCCESS) {
                         setResult(Activity.RESULT_OK);
@@ -58,7 +65,7 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
                     }
                 }
             })
-            roomViewModel.setLeaveRoom(roomId);
+            viewModelFactory.getViewModel().setLeaveRoom(roomId);
         }
         binding.settingsGroup.setOnClickListener { v ->
             val securityIntent = Intent(this, OtherRoomSettingsActivity::class.java);
@@ -77,7 +84,7 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
             startActivity(intentAddPeople);
         }
         binding.filesGroup.setOnClickListener { v ->
-            val filesIntent = Intent(this,RoomfilesListActivity::class.java)
+            val filesIntent = Intent(this, RoomfilesListActivity::class.java)
             filesIntent.putExtra(RoomfilesListActivity.ROOM_ID, roomId);
             startActivity(filesIntent)
         }

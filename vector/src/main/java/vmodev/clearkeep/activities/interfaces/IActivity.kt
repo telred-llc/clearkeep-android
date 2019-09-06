@@ -16,5 +16,6 @@ interface IActivity {
         const val SEARCH_ACTIVITY = "SEARCH_ACTIVITY";
         const val HOME_SCREEN_ACTIVITY = "HOME_SCREEN_ACTIVITY";
         const val CREATE_NEW_ROOM_ACTIVITY = "CREATE_NEW_ROOM_ACTIVITY";
+        const val ROOM_SETTINGS_ACTIVITY = "ROOM_SETTINGS_ACTIVITY";
     }
 }

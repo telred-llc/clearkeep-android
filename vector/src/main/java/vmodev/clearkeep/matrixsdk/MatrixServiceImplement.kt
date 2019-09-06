@@ -409,12 +409,16 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         val sourceThird = if ((room.accountData?.keys
                         ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
         var timeUpdateLong: Long = 0;
-        var messageId: String = "";
+        var messageId: String? = null
         room.roomSummary?.let { roomSummary ->
             val event = roomSummary.latestReceivedEvent;
             timeUpdateLong = event.originServerTs;
             messageId = event.eventId;
         }
+
+        var userCreated : String? = null;
+        room.state?.roomCreateContent?.creator?.let { userCreated = it }
+
         val notificationState = when (session!!.dataHandler.bingRulesManager.getRoomNotificationState(room.roomId)) {
             BingRulesManager.RoomNotificationState.ALL_MESSAGES_NOISY -> 0x01;
             BingRulesManager.RoomNotificationState.ALL_MESSAGES -> 0x02;
@@ -425,7 +429,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
                 , updatedDate = timeUpdateLong, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, messageId = null
-                , encrypted = if (room.isEncrypted) 1 else 0, status = if (room.isLeaving || room.isLeft) 0 else 1, notificationState = notificationState.toByte());
+                , encrypted = if (room.isEncrypted) 1 else 0, status = if (room.isLeaving || room.isLeft) 0 else 1, notificationState = notificationState.toByte(), userCreated = null);
         return roomObj;
     }
 

@@ -14,12 +14,18 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
 
+        <import type="vmodev.clearkeep.viewmodelobjects.User"/>
+
         <variable
             name="room"
             type="LiveData&lt;Resource&lt;Room>>" />
         <variable
             name="leaveRoom"
             type="LiveData&lt;Resource&lt;String>>" />
+
+        <variable
+            name="user"
+            type="LiveData&lt;Resource&lt;User>>" />
     </data>
 
     <FrameLayout
@@ -30,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:visibleGone="@{room.status == Status.LOADING || leaveRoom.status == Status.LOADING}" />
+            app:visibleGone="@{room.status == Status.LOADING || leaveRoom.status == Status.LOADING || user.status == Status.LOADING}" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -84,7 +90,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
                     android:singleLine="true"
-                    android:text="@{@string/this_room_created_by + room.data.name + @string/at}"
+                    android:text="@{@string/this_room_created_by + ' ' + user.data.name + ' ' + @string/at + ' '}"
                     android:textColor="@color/lb_grey" />
 
                 <TextView
