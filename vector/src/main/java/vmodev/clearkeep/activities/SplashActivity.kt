@@ -203,8 +203,8 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                             var currentZipMessage: Observable<List<Message>>? = null;
                             for ((index, r) in rooms.withIndex()) {
                                 if (index == 0) {
-                                    currentZipMessage = Observable.zip(viewModelFactory.getViewModel().getUpdateLastMessageResult(r.id)
-                                            , viewModelFactory.getViewModel().getUpdateLastMessageResult(rooms[1].id)
+                                    currentZipMessage = Observable.zip(viewModelFactory.getViewModel().getUpdateLastMessageResult(r.id).onErrorReturn { Message("", "", "", "", "") }
+                                            , viewModelFactory.getViewModel().getUpdateLastMessageResult(rooms[1].id).onErrorReturn { Message("", "", "", "", "") }
                                             , BiFunction<Message, Message, List<Message>> { t1, t2 ->
                                         val mutableList = mutableListOf<Message>();
                                         mutableList.add(t1);
@@ -227,6 +227,8 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                             currentZipMessage?.let {
                                 it.subscribe({
                                     it.forEach {
+                                        if (it.roomId.isNullOrEmpty() or it.messageType.isNullOrEmpty())
+                                            return@forEach;
                                         viewModelFactory.getViewModel().updateRoomLastMessage(it.roomId, it.id);
                                     }
                                     startHomeScreen();
@@ -250,7 +252,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
         }
     }
 
-    private fun startHomeScreen(){
+    private fun startHomeScreen() {
         application.setEventHandler();
         val intent = Intent(this, HomeScreenActivity::class.java)
 //            intent.putExtra(HomeScreenActivity.START_FROM_LOGIN, startFromLogin)

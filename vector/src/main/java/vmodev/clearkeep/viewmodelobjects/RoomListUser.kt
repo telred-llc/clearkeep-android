@@ -8,6 +8,6 @@ class RoomListUser(
         var room: Room? = null,
         @Relation(parentColumn = "id", entityColumn = "room_id", entity = RoomUserJoin::class)
         var roomUserJoin: List<RoomUserJoin>? = null,
-        @Relation(parentColumn = "message_id", entityColumn = "id", entity = Message::class)
+        @Relation(parentColumn = "message_id", entityColumn = "message_id", entity = Message::class)
         var lastMessage: List<Message>? = null
 )
