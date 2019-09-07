@@ -199,6 +199,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                         it.subscribe({
                             it.forEach {
                                 viewModelFactory.getViewModel().getUpdateRoomUserJoinResult(it.roomId, it.userId);
+                                viewModelFactory.getViewModel().updateRoomUserCreated(it.roomId, it.userId);
                             }
                             var currentZipMessage: Observable<List<Message>>? = null;
                             for ((index, r) in rooms.withIndex()) {

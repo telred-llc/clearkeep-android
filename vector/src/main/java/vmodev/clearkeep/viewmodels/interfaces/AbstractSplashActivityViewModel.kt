@@ -13,4 +13,5 @@ abstract class AbstractSplashActivityViewModel : ViewModel() {
     abstract fun getUpdateLastMessageResult(roomId: String): Observable<Message>;
     abstract fun updateRoomLastMessage(roomId: String, messageId: String);
     abstract fun updateUsersFromRoom(roomId: String): Observable<List<User>>;
+    abstract fun updateRoomUserCreated(roomId: String, userId: String);
 }

@@ -21,7 +21,10 @@ import com.google.gson.annotations.SerializedName
                     , parentColumns = ["message_id"]
                     , childColumns = ["message_id"]
                     , onDelete = ForeignKey.CASCADE)
-        ]
+            , ForeignKey(entity = User::class
+                    , parentColumns = ["id"]
+                    , childColumns = ["user_id_created"]
+                    , onDelete = ForeignKey.CASCADE)]
 )
 data class Room(
         @PrimaryKey @ColumnInfo(name = "id") @field:SerializedName("id") val id: String,
@@ -36,5 +39,6 @@ data class Room(
         @ColumnInfo(name = "message_id") @field:SerializedName("message_id") val messageId: String?,
         @field:SerializedName("encrypted") val encrypted: Byte,
         @field:SerializedName("status") val status: Byte,
-        @field:SerializedName("notification_state") val notificationState: Byte
+        @field:SerializedName("notification_state") val notificationState: Byte,
+        @ColumnInfo(name = "user_id_created") @field:SerializedName("user_id_created") val userCreated: String?
 )

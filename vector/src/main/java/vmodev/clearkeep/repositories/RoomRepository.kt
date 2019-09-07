@@ -548,6 +548,10 @@ class RoomRepository @Inject constructor(
         Completable.fromAction { abstractRoomDao.updateRoomLastMessage(roomId, messageId) }.subscribeOn(Schedulers.io()).subscribe();
     }
 
+    fun updateUserCreated(roomId: String, userId: String) {
+        Completable.fromAction { abstractRoomDao.updateRoomCreatedUser(roomId, userId) }.subscribeOn(Schedulers.io()).subscribe();
+    }
+
     class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);
     class InviteUsersToRoomObject constructor(val roomId: String, val userIds: List<String>);
 }

@@ -109,6 +109,9 @@ abstract class AbstractRoomDao {
     @Query("UPDATE Room SET message_id =:messageId WHERE Room.id =:id")
     abstract fun updateRoomLastMessage(id: String, messageId: String): Int
 
+    @Query("UPDATE Room SET user_id_created =:userId WHERE Room.id =:id")
+    abstract fun updateRoomCreatedUser(id: String, userId: String): Int
+
     @Query("SELECT Room.* FROM Room WHERE Room.message_id =:messageId")
     abstract fun getRoomWithMessageId(messageId: String): List<Room>;
 

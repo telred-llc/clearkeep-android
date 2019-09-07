@@ -46,4 +46,8 @@ class SplashActivityViewModel @Inject constructor(private val roomRepository: Ro
     override fun getAllRoomResultRx(filters: Array<Int>): Observable<List<Room>> {
         return roomRepository.updateAndCreateListRoomReturnRx(filters);
     }
+
+    override fun updateRoomUserCreated(roomId: String, userId: String) {
+        return roomRepository.updateUserCreated(roomId, userId);
+    }
 }
