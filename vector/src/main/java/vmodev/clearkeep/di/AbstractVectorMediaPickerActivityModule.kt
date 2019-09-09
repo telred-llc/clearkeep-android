@@ -2,6 +2,7 @@ package vmodev.clearkeep.di
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import im.vector.activity.SASVerificationActivity
 import im.vector.activity.VectorMediaPickerActivity
 import im.vector.activity.VectorMediaViewerActivity
 import vmodev.clearkeep.activities.CallViewActivity
@@ -21,4 +22,7 @@ abstract class AbstractVectorMediaPickerActivityModule {
 
     @ContributesAndroidInjector
     abstract fun contributeUnifiedSearchActivity(): UnifiedSearchActivity;
+
+    @ContributesAndroidInjector
+    abstract fun contributeSASVerificationActivity() : SASVerificationActivity
 }
