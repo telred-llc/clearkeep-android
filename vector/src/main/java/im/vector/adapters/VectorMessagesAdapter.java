@@ -1017,17 +1017,21 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
         }
 
         if (event.contentJson != null) {
-            JsonObject content = event.contentJson.getAsJsonObject();
-            JsonObject relatesTo = content.getAsJsonObject("m.relates_to");
-            if (relatesTo != null) {
-                String eventRelatesToId = relatesTo.get("event_id").getAsString();
-                if (editedMessageMap.containsKey(eventRelatesToId)) {
-                    if (event.originServerTs > editedMessageMap.get(eventRelatesToId).originServerTs)
+            try {
+                JsonObject content = event.contentJson.getAsJsonObject();
+                JsonObject relatesTo = content.getAsJsonObject("m.relates_to");
+                if (relatesTo != null) {
+                    String eventRelatesToId = relatesTo.get("event_id").getAsString();
+                    if (editedMessageMap.containsKey(eventRelatesToId)) {
+                        if (event.originServerTs > editedMessageMap.get(eventRelatesToId).originServerTs)
+                            editedMessageMap.put(eventRelatesToId, event);
+                    } else {
                         editedMessageMap.put(eventRelatesToId, event);
-                } else {
-                    editedMessageMap.put(eventRelatesToId, event);
+                    }
+                    return ROW_TYPE_HIDDEN;
                 }
-                return ROW_TYPE_HIDDEN;
+            }catch (Exception ex){
+                Log.e("ReplyMessage",ex.getMessage());
             }
         }
 
@@ -2706,7 +2710,7 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
         }
 
         // e2e
-        menu.findItem(R.id.ic_action_device_verification).setVisible(mE2eIconByEventId.containsKey(event.eventId));
+//        menu.findItem(R.id.ic_action_device_verification).setVisible(mE2eIconByEventId.containsKey(event.eventId));
 
         // display the menu
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
