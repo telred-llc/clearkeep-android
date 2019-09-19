@@ -46,6 +46,8 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractHomeScreenActivityViewModel>;
 
+    private var doubleBackPressed : Boolean = false;
+
     lateinit var binding: ActivityHomeScreenBinding;
     lateinit var mxSession: MXSession;
 
@@ -155,6 +157,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
                 transaction.replace(R.id.frame_layout_fragment_container, fragment);
                 transaction.addToBackStack(null);
                 transaction.commitAllowingStateLoss();
+                doubleBackPressed = false
             }
         })
     }
@@ -173,11 +176,28 @@ class HomeScreenActivity : DataBindingDaggerActivity(), HomeScreenFragment.OnFra
         }
     }
 
+    override fun onBackPressed() {
+        if (doubleBackPressed) {
+            super.onBackPressed()
+            finish()
+        }
+        this.doubleBackPressed = true
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show()
+        Handler().postDelayed(Runnable {
+            doubleBackPressed = false
+        }, 3000)
+    }
+
     companion object {
         const val START_FROM_LOGIN = "START_FROM_LOGIN";
         const val WAITING_FOR_BACK_UP_KEY = 11352;
         const val EXTRA_MATRIX_ID = "EXTRA_MATRIX_ID"
         const val EXTRA_CALL_ID = "EXTRA_CALL_ID"
         const val EXTRA_CALL_SESSION_ID = "EXTRA_CALL_SESSION_ID";
+    }
+
+    override fun onResume() {
+        super.onResume()
+        doubleBackPressed = false
     }
 }

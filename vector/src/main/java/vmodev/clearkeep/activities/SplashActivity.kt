@@ -116,7 +116,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                         val intent = Intent(this@SplashActivity, SplashActivity::class.java);
                         intent.putExtra(START_FROM_LOGIN, startFromLogin);
                         startActivity(intent);
-//                        finish();
+                        finish();
 
 //                        if (null != VectorApp.getCurrentActivity()) {
 //                            VectorApp.getCurrentActivity().finish()
