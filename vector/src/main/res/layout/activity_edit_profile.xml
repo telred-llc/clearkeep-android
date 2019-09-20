@@ -93,12 +93,13 @@
                         android:textColor="@color/lb_grey" />
 
                     <EditText
+                        android:singleLine="true"
                         android:id="@+id/edit_text_display_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
                         android:hint="@string/enter_name"
-                        android:text="@{user.data.name}" />
+                        android:text="@{user.data.name.trim()}" />
                 </LinearLayout>
             </LinearLayout>
 

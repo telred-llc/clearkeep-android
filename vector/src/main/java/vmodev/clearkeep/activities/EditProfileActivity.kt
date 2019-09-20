@@ -76,8 +76,15 @@ class EditProfileActivity : DataBindingDaggerActivity(), IEditProfileActivity {
                         .setNegativeButton(R.string.close, null)
                         .show();
                 return@setOnClickListener;
+            } else if (binding.editTextDisplayName.text.toString().trim().length == 0) {
+                AlertDialog.Builder(this).setTitle(R.string.display_name_cannot_empty)
+                        .setMessage(R.string.you_need_enter_you_name)
+                        .setNegativeButton(R.string.close, null)
+                        .show();
+                return@setOnClickListener;
+            } else {
+                viewModelFactory.getViewModel().setUpdateUser(userId, binding.editTextDisplayName.text.toString().trim(), avatarImage);
             }
-            viewModelFactory.getViewModel().setUpdateUser(userId, binding.editTextDisplayName.text.toString(), avatarImage);
         }
     }
 
