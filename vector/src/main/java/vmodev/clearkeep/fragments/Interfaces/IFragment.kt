@@ -1,6 +1,6 @@
 package vmodev.clearkeep.fragments.Interfaces
 
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 
 interface IFragment {
     fun getFragment(): Fragment;
@@ -17,5 +17,10 @@ interface IFragment {
         const val SEARCH_ROOM_FRAGMENT = "SEARCH_ROOM_FRAGMENT";
         const val SEARCH_PEOPLE_FRAGMENT = "SEARCH_PEOPLE_FRAGMENT";
         const val SEARCH_FILES_FRAGMENT = "SEARCH_FILES_FRAGMENT";
+        const val HOME_SCREEN_FRAGMENT = "HOME_SCREEN_FRAGMENT";
+        const val FAVOURITES_FRAGMENT = "FAVOURITES_FRAGMENT";
+        const val CONTACTS_FRAGMENT = "CONTACTS_FRAGMENT";
+        const val LIST_ROOM_FRAGMENT = "LIST_ROOM_FRAGMENT";
+        const val BACKUP_KEY_MANAGE_FRAGMENT = "BACKUP_KEY_MANAGE_FRAGMENT";
     }
 }

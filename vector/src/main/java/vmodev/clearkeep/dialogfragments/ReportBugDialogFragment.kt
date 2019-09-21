@@ -1,21 +1,19 @@
 package vmodev.clearkeep.dialogfragments
 
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import im.vector.R
 import im.vector.databinding.DialogFragmentReportBugBinding
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
-import vmodev.clearkeep.binding.FragmentDataBindingComponent
 
 class ReportBugDialogFragment : DialogFragment() {
 
-    private val dataBindingComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
+//    private val dataBindingComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
     private lateinit var binding: DialogFragmentReportBugBinding;
     private val onSendClick: PublishSubject<SendBugObject> = PublishSubject.create();
 
@@ -25,7 +23,7 @@ class ReportBugDialogFragment : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.dialog_fragment_report_bug, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.dialog_fragment_report_bug, container, false);
         return binding.root;
     }
 
@@ -44,7 +42,7 @@ class ReportBugDialogFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     public fun getOnSendClick(): Observable<SendBugObject> {

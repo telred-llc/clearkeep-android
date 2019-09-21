@@ -1,18 +1,17 @@
-package vmodev.clearkeep.binding
+package vmodev.clearkeep.bindingadapters
 
-import android.databinding.BindingAdapter
-import android.databinding.DataBindingComponent
-import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.support.v4.app.Fragment
-import android.support.v7.widget.SwitchCompat
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.SwitchCompat
+import androidx.cardview.widget.CardView
+import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import im.vector.Matrix
@@ -26,13 +25,13 @@ import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
 
-class FragmentBindingAdapters constructor(val fragment: Fragment) : ImageViewBindingAdapters, TextViewBindingAdapters, ISwitchCompatViewBindingAdapters {
+class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapters, ISwitchCompatViewBindingAdapters, CardViewBindingAdapters {
     override fun bindImage(imageView: ImageView, imageUrl: String?, listener: RequestListener<Drawable?>?) {
-        Glide.with(fragment).load(imageUrl).listener(listener).into(imageView);
+        Glide.with(imageView.context).load(imageUrl).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).into(imageView);
     }
 
     override fun bindTime(textView: TextView, timeStamp: Long?) {
-        timeStamp?.let { l -> fragment.context?.let { context -> textView.text = l.toDateTime(context) } }
+        timeStamp?.let { l -> textView.text = l.toDateTime(textView.context) }
     }
 
     override fun bindStatus(imageView: ImageView, status: Byte?) {
@@ -69,15 +68,16 @@ class FragmentBindingAdapters constructor(val fragment: Fragment) : ImageViewBin
 
     override fun bindDecryptMessage(textView: TextView, message: Message?) {
         message?.let {
-            val session = Matrix.getInstance(fragment.activity!!.applicationContext).defaultSession;
+            val session = Matrix.getInstance(textView.context.applicationContext).defaultSession;
             val parser = JsonParser();
             val gson = Gson();
             val event = Event(message?.messageType, parser.parse(message.encryptedContent).asJsonObject, message.userId, message.roomId);
+            Log.d("MessageType", message.encryptedContent + "--" + message.messageType)
             if (message.messageType.compareTo("m.room.encrypted") != 0) {
                 textView.text = message.encryptedContent;
             } else {
                 try {
-                    val result = session.dataHandler.crypto.decryptEvent(event, null);
+                    val result = session.dataHandler.crypto?.decryptEvent(event, null);
                     result?.let {
                         val json = result.mClearEvent.asJsonObject;
                         val type = json.get("type").asString;
@@ -92,7 +92,6 @@ class FragmentBindingAdapters constructor(val fragment: Fragment) : ImageViewBin
                 }
             }
         }
-
     }
 
     override fun bindStatusValid(imageView: ImageView, validStatus: Byte?) {
@@ -105,7 +104,7 @@ class FragmentBindingAdapters constructor(val fragment: Fragment) : ImageViewBin
                 val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(room.id), if (room.name.isEmpty()) room.id else room.name, true);
                 imageView.setImageBitmap(bitmap);
             } else {
-                Glide.with(fragment).load(room.avatarUrl).listener(listener).into(imageView);
+                Glide.with(imageView.context).load(room.avatarUrl).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).into(imageView);
             }
         }
     }
@@ -116,7 +115,7 @@ class FragmentBindingAdapters constructor(val fragment: Fragment) : ImageViewBin
                 val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(user.id), if (user.name.isEmpty()) user.id else user.name, true);
                 imageView.setImageBitmap(bitmap);
             } else {
-                Glide.with(fragment).load(user.avatarUrl).apply(RequestOptions().centerCrop()).listener(listener).into(imageView);
+                Glide.with(imageView.context).load(user.avatarUrl).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).into(imageView);
             }
         }
     }
@@ -133,6 +132,30 @@ class FragmentBindingAdapters constructor(val fragment: Fragment) : ImageViewBin
                     }
                 }
             }
+        }
+    }
+
+    override fun bindStatusFromListUser(cardView: MaterialCardView, users: List<User>?, currentUserId: String?) {
+        users?.let { us ->
+            currentUserId?.let { id ->
+                for (u in us) {
+                    if (u.id.compareTo(id) != 0 && u.status.compareTo(0) != 0) {
+                        cardView.setCardBackgroundColor(ResourcesCompat.getColor(cardView.context.resources, R.color.app_green, null));
+                        break;
+                    } else {
+                        cardView.setCardBackgroundColor(ResourcesCompat.getColor(cardView.context.resources, R.color.main_text_color_hint, null));
+                    }
+                }
+            }
+        }
+    }
+
+    override fun bindStatus(cardView: MaterialCardView, status: Byte?) {
+        status?.let {
+            cardView.setCardBackgroundColor(if (it.compareTo(0) == 0)
+                ResourcesCompat.getColor(cardView.context.resources, R.color.main_text_color_hint, null)
+            else
+                ResourcesCompat.getColor(cardView.context.resources, R.color.app_green, null))
         }
     }
 }

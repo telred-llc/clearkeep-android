@@ -163,11 +163,12 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
                                             }
                                         }, {});
                             }, {
-                                if (TextUtils.equals(it.message,"Invalid recovery key")){
-                                    showAlertForRetypeOrNewKey(userId, decryptedData);
-                                }
-                                else{
-                                    Toast.makeText(application, it.message, Toast.LENGTH_SHORT).show();
+                                it.message?.let {
+                                    if (it.contains("Invalid")) {
+                                        showAlertForRetypeOrNewKey(userId, decryptedData);
+                                    } else {
+                                        Toast.makeText(application, it, Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             });
                 }, {

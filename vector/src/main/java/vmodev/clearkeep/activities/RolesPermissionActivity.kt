@@ -1,12 +1,9 @@
 package vmodev.clearkeep.activities
 
-import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import dagger.android.support.DaggerAppCompatActivity
+import androidx.databinding.DataBindingUtil
 import im.vector.R
 import im.vector.databinding.ActivityRolesPermissionBinding
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
 
 class RolesPermissionActivity : DataBindingDaggerActivity() {
 
@@ -14,7 +11,7 @@ class RolesPermissionActivity : DataBindingDaggerActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_roles_permission, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_roles_permission);
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setDisplayHomeAsUpEnabled(true);
         supportActionBar?.setDisplayShowHomeEnabled(true);

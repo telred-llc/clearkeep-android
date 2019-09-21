@@ -1,24 +1,17 @@
 package vmodev.clearkeep.fragments
 
 import android.app.AlertDialog
-import android.arch.lifecycle.Observer
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
-import android.databinding.DataBindingUtil
-import android.databinding.Observable
-import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import im.vector.R
-import kotlinx.android.synthetic.main.fragment_handler_verify_email.*
-import android.graphics.drawable.GradientDrawable
-import android.widget.RelativeLayout
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import im.vector.BuildConfig
 import im.vector.databinding.FragmentHandlerVerifyEmailBinding
 import im.vector.repositories.ServerUrlsRepository
@@ -68,7 +61,7 @@ class HandlerVerifyEmailFragment : DataBindingDaggerFragment(), IFragment {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_handler_verify_email, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_handler_verify_email, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 

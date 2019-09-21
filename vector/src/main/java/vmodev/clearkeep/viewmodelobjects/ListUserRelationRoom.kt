@@ -1,7 +1,8 @@
 package vmodev.clearkeep.viewmodelobjects
 
-import android.arch.persistence.room.Embedded
-import android.arch.persistence.room.Relation
+import androidx.room.Embedded
+import androidx.room.Relation
+
 
 data class ListUserRelationRoom(
         @Embedded var roomUserJoin: RoomUserJoin? = null

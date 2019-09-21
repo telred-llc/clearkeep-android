@@ -2,12 +2,12 @@ package vmodev.clearkeep.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
 import android.text.InputType
 import android.view.View
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
@@ -18,16 +18,21 @@ import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.core.callback.SimpleApiCallback
 import org.matrix.androidsdk.core.model.MatrixError
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.activities.interfaces.IDeactivateAccountActivity
 import vmodev.clearkeep.databases.ClearKeepDatabase
 import vmodev.clearkeep.dialogfragments.EditTextDialogFragment
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.viewmodels.interfaces.AbstractDeactivateAccountActivityViewModel
 import java.lang.Exception
 import javax.inject.Inject
 
-class DeactivateAccountActivity : DataBindingDaggerActivity(), IDeactivateAccountActivity {
+class DeactivateAccountActivity : DataBindingDaggerActivity(), IActivity {
 
     @Inject
     lateinit var clearKeepDatabase: ClearKeepDatabase;
+    @Inject
+    lateinit var viewModelFactory: IViewModelFactory<AbstractDeactivateAccountActivityViewModel>;
 
     private lateinit var binding: ActivityDeactivateUserAccountBinding;
     private lateinit var session: MXSession;
@@ -35,7 +40,7 @@ class DeactivateAccountActivity : DataBindingDaggerActivity(), IDeactivateAccoun
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_deactivate_user_account, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_deactivate_user_account, dataBinding.getDataBindingComponent());
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setTitle(R.string.deactivate_account_title);
         binding.textViewCancel.setOnClickListener { finish() };

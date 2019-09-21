@@ -10,7 +10,7 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
 
-        <import type="android.arch.lifecycle.LiveData" />
+        <import type="androidx.lifecycle.LiveData" />
 
         <import type="vmodev.clearkeep.viewmodelobjects.User" />
 
@@ -52,7 +52,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:orientation="horizontal">
 
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
@@ -68,7 +68,7 @@
                         android:layout_height="match_parent"
                         android:background="@color/app_green"
                         app:user="@{user.data}" />
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
                 <FrameLayout
                     android:id="@+id/frame_layout_search"
@@ -105,7 +105,7 @@
 
             </FrameLayout>
 
-            <android.support.design.widget.BottomNavigationView
+            <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/bottom_navigation_view_home_screen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -168,7 +168,7 @@
                     </FrameLayout>
                 </LinearLayout>
 
-            </android.support.design.widget.BottomNavigationView>
+            </com.google.android.material.bottomnavigation.BottomNavigationView>
         </LinearLayout>
 
         <ProgressBar

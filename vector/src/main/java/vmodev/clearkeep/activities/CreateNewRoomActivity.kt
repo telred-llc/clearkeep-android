@@ -1,15 +1,14 @@
 package vmodev.clearkeep.activities
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.Observer
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
 import android.widget.Toast
-import com.jakewharton.rxbinding2.widget.RxTextView
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
+import com.jakewharton.rxbinding3.widget.textChanges
 import im.vector.R
 import im.vector.databinding.ActivityCreateNewRoomBinding
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -30,7 +29,7 @@ class CreateNewRoomActivity : DataBindingDaggerActivity(), IActivity {
     @SuppressLint("CheckResult", "ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_create_new_room, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_create_new_room, dataBinding.getDataBindingComponent());
         setSupportActionBar(binding.toolbar);
         supportActionBar!!.setTitle(R.string.new_room);
         supportActionBar!!.setDisplayHomeAsUpEnabled(true);
@@ -68,17 +67,15 @@ class CreateNewRoomActivity : DataBindingDaggerActivity(), IActivity {
                 }
             }
         })
-        RxTextView.textChanges(binding.editTextRoomName).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe { t: CharSequence? ->
-                    if (!t.toString().isNullOrEmpty()) {
-                        binding.textViewRightToolbar.setTextColor(Color.parseColor("#63CD9A"))
-                        binding.textViewRightToolbar.isClickable = true;
-                    } else {
-                        binding.textViewRightToolbar.setTextColor(Color.parseColor("#B8BDC7"))
-                        binding.textViewRightToolbar.isClickable = false;
-                    }
-
-                }
+        binding.editTextRoomName.textChanges().subscribe {
+            if (!it.toString().isNullOrEmpty()) {
+                binding.textViewRightToolbar.setTextColor(Color.parseColor("#63CD9A"))
+                binding.textViewRightToolbar.isClickable = true;
+            } else {
+                binding.textViewRightToolbar.setTextColor(Color.parseColor("#B8BDC7"))
+                binding.textViewRightToolbar.isClickable = false;
+            }
+        }
         binding.textViewRightToolbar.setOnClickListener { v ->
             if (binding.editTextRoomTopic.text.isNullOrEmpty()) binding.editTextRoomTopic.text = binding.editTextRoomName.text;
             viewModelFactory.getViewModel().setCreateNewRoom(binding.editTextRoomName.text.toString(), binding.editTextRoomTopic.text.toString(), if (binding.switchRoomVisibility.isChecked) "public" else "private")

@@ -1,21 +1,20 @@
 package vmodev.clearkeep.adapters
 
-import android.databinding.DataBindingComponent
-import android.databinding.DataBindingUtil
-import android.support.v7.recyclerview.extensions.AsyncDifferConfig
-import android.support.v7.recyclerview.extensions.ListAdapter
-import android.support.v7.util.DiffUtil
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingComponent
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.AsyncDifferConfig
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import im.vector.R
-import im.vector.databinding.ItemUserBinding
 import im.vector.databinding.ItemUserWithRadioBinding
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.viewmodelobjects.User
 
 class ListUserToInviteRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<User>
-                                                      , private val dataBindingComponent: DataBindingComponent
                                                       , private val listSelected: HashMap<String, User>
+                                                      , private val dataBindingComponent : DataBindingComponent
                                                       , private val itemClick: (User, Boolean) -> Unit?)
     : ListAdapter<User, DataBoundViewHolder<ItemUserWithRadioBinding>>(AsyncDifferConfig.Builder<User>(diffCallback)
         .setBackgroundThreadExecutor(appExecutors.diskIO())

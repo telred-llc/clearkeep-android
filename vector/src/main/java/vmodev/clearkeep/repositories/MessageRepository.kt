@@ -1,9 +1,9 @@
 package vmodev.clearkeep.repositories
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.LiveDataReactiveStreams
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.LiveDataReactiveStreams
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -13,16 +13,10 @@ import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.rest.model.Event
 import vmodev.clearkeep.databases.AbstractMessageDao
 import vmodev.clearkeep.factories.messaghandler.interfaces.IMessageHandlerFactory
-import vmodev.clearkeep.jsonmodels.MessageContent
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.wayloads.*
-import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
-import vmodev.clearkeep.rests.models.requests.EditMessageRequest
 import vmodev.clearkeep.rests.models.responses.EditMessageResponse
-import vmodev.clearkeep.viewmodelobjects.Message
-import vmodev.clearkeep.viewmodelobjects.Resource
-import vmodev.clearkeep.viewmodelobjects.Room
-import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.viewmodelobjects.*
 import javax.inject.Inject
 import javax.inject.Singleton
 

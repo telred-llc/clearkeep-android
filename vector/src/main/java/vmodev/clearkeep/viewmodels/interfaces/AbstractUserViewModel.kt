@@ -1,11 +1,9 @@
 package vmodev.clearkeep.viewmodels.interfaces
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import vmodev.clearkeep.viewmodelobjects.Resource
-import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
-import vmodev.clearkeep.viewmodels.RoomViewModel
 
 /**
  * ViewModelProvider need ViewModel type to get a ViewModel instance

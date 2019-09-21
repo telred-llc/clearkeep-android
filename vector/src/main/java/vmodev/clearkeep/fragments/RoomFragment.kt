@@ -1,15 +1,16 @@
 package vmodev.clearkeep.fragments
 
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.DividerItemDecoration
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
+import dagger.android.support.DaggerFragment
 import im.vector.R
 import im.vector.databinding.FragmentRoomBinding
 import io.reactivex.Observable
@@ -19,7 +20,7 @@ import vmodev.clearkeep.activities.RoomSettingsActivity
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IRoomFragmentViewModelFactory
-import vmodev.clearkeep.fragments.Interfaces.IRoomFragment
+import vmodev.clearkeep.fragments.Interfaces.ISearchRoomFragment
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -35,7 +36,7 @@ import javax.inject.Named
  * create an instance of this fragment.
  *
  */
-class RoomFragment : DataBindingDaggerFragment(), IRoomFragment {
+class RoomFragment : DataBindingDaggerFragment(), ISearchRoomFragment {
     @Inject
     lateinit var appExecutors: AppExecutors;
     @Inject
@@ -53,7 +54,7 @@ class RoomFragment : DataBindingDaggerFragment(), IRoomFragment {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_room, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_room, container, false, dataBinding.getDataBindingComponent());
         return binding!!.root;
     }
 
@@ -61,7 +62,7 @@ class RoomFragment : DataBindingDaggerFragment(), IRoomFragment {
         super.onViewCreated(view, savedInstanceState)
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner;
-        listRoomAdapter.setDataBindingComponent(dataBindingComponent);
+//        listRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listRoomAdapter.setOnItemClick { room, i ->
             when (i) {
 //                3 -> onClickItem.onNext(room.id)

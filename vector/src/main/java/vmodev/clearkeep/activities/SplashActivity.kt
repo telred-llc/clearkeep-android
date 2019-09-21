@@ -1,28 +1,24 @@
 package vmodev.clearkeep.activities
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.support.v7.preference.PreferenceManager
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.preference.PreferenceManager
 import im.vector.ErrorListener
 import im.vector.Matrix
 import im.vector.R
 import im.vector.VectorApp
 import im.vector.activity.CommonActivityUtils
-import im.vector.analytics.TrackingEvent
 import im.vector.databinding.ActivitySplashBinding
 import im.vector.services.EventStreamServiceX
 import im.vector.util.PreferencesManager
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
-import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.core.Log
 import org.matrix.androidsdk.core.callback.ApiCallback
@@ -37,7 +33,6 @@ import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.User
 import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
@@ -57,7 +52,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_splash, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_splash);
         startFromLogin = intent.getStringExtra(START_FROM_LOGIN);
         if (!hasCredentials()) {
             val intent = Intent(this, LoginActivity::class.java);
@@ -169,7 +164,6 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
         if (!hasCorruptedStore()) {
             binding.textViewContentLoading.setText(R.string.updating_rooms);
             viewModelFactory.getViewModel().getAllRoomResultRx(arrayOf(1, 2, 65, 66, 129, 130)).subscribe({ rooms ->
-                android.util.Log.d("InsertRoom", rooms.size.toString());
                 if (rooms.isEmpty()) {
                     startHomeScreen();
                 } else {
@@ -254,6 +248,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
     }
 
     private fun startHomeScreen() {
+        android.util.Log.d("StartEvent", "Home");
         application.setEventHandler();
         val intent = Intent(this, HomeScreenActivity::class.java)
 //            intent.putExtra(HomeScreenActivity.START_FROM_LOGIN, startFromLogin)

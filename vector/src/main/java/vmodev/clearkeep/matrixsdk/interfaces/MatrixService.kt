@@ -1,11 +1,10 @@
 package vmodev.clearkeep.matrixsdk.interfaces
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 import io.reactivex.Observable
 import org.matrix.androidsdk.crypto.data.ImportRoomKeysResult
 import org.matrix.androidsdk.data.Room
 import org.matrix.androidsdk.rest.model.Event
-import vmodev.clearkeep.rests.models.requests.EditMessageRequest
 import vmodev.clearkeep.rests.models.responses.EditMessageResponse
 import vmodev.clearkeep.rests.models.responses.PassphraseResponse
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
@@ -58,4 +57,5 @@ public interface MatrixService {
     fun getPassphrase(): Observable<PassphraseResponse>;
     fun createPassphrase(passphrase: String): Observable<PassphraseResponse>;
     fun checkBackupKeyStateWhenStart(): Observable<Int>;
+    fun getRoomWithIdForCreate(roomId: String) : Observable<vmodev.clearkeep.viewmodelobjects.Room>;
 }

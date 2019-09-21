@@ -1,15 +1,15 @@
 package vmodev.clearkeep.ultis
 
-import android.support.annotation.StringRes
-import android.support.v7.app.AlertDialog
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AlertDialog
 import im.vector.R
 import im.vector.VectorApp
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorRoomActivity
 import im.vector.util.PreferencesManager
-import im.vector.util.SlashCommandsParser
+import im.vector.widgets.WidgetManagerProvider
 import im.vector.widgets.WidgetsManager
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.core.callback.SimpleApiCallback
@@ -295,9 +295,12 @@ class SlashCommandsParser {
                     isIRCCmd = true
                     isIRCCmdValid = true
 
-                    WidgetsManager.clearScalarToken(activity, session)
+                    val wm = WidgetManagerProvider.getWidgetManager(activity)
+                    if (wm != null) {
+                        wm.clearScalarToken(activity, session)
+                        Toast.makeText(activity, "Scalar token cleared", Toast.LENGTH_SHORT).show()
+                    }
 
-                    Toast.makeText(activity, "Scalar token cleared", Toast.LENGTH_SHORT).show()
                 }
 
                 if (!isIRCCmd) {

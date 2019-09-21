@@ -11,12 +11,15 @@ import vmodev.clearkeep.factories.viewmodels.interfaces.IReportActivityViewModel
 @Module
 @Suppress("unused")
 abstract class AbstractReportActivityModule {
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [ActivityBindModule::class])
     abstract fun contributeReportActivity(): ReportActivity;
 
-    @Binds
-    abstract fun bindReportActivity(activity: ReportActivity): IReportActivity;
+    @Module
+    abstract class ActivityBindModule {
+        @Binds
+        abstract fun bindReportActivity(activity: ReportActivity): IReportActivity;
 
-    @Binds
-    abstract fun bindReportActivityViewModelFactory(factory: ReportActivityViewModelFactory): IReportActivityViewModelFactory;
+        @Binds
+        abstract fun bindReportActivityViewModelFactory(factory: ReportActivityViewModelFactory): IReportActivityViewModelFactory;
+    }
 }

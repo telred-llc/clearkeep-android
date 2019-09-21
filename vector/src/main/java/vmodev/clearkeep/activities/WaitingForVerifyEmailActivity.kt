@@ -1,11 +1,11 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.Observer
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import im.vector.BuildConfig
 import im.vector.R
 import im.vector.databinding.ActivityWaitingForVerifyEmailBinding
@@ -29,7 +29,7 @@ class WaitingForVerifyEmailActivity : DataBindingDaggerActivity(), IActivity {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_waiting_for_verify_email, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_waiting_for_verify_email);
         binding.verifyEmail = viewModelFactory.getViewModel().getWaitingForVerifyEmailResult();
         binding.lifecycleOwner = this;
         val disposable = Observable.interval(0, 10, TimeUnit.SECONDS).subscribeOn(Schedulers.io())

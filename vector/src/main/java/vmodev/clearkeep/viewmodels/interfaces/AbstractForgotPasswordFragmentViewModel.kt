@@ -1,6 +1,6 @@
 package vmodev.clearkeep.viewmodels.interfaces
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 
 abstract class AbstractForgotPasswordFragmentViewModel : ViewModel() {
 }

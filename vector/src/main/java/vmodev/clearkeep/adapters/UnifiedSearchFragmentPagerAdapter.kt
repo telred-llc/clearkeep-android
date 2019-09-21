@@ -1,19 +1,14 @@
 package vmodev.clearkeep.adapters
 
 import android.content.Context
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.util.Pair
-import android.support.v4.util.SparseArrayCompat
 import android.text.TextUtils
 import android.view.ViewGroup
+import androidx.collection.SparseArrayCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import im.vector.PublicRoomsManager
 import im.vector.R
-import im.vector.fragments.VectorSearchMessagesListFragment
-import im.vector.fragments.VectorSearchPeopleListFragment
-import im.vector.fragments.VectorSearchRoomsFilesListFragment
-import im.vector.fragments.VectorSearchRoomsListFragment
 import im.vector.util.PERMISSIONS_FOR_MEMBERS_SEARCH
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.fragments.MatrixMessageListFragment
@@ -44,26 +39,26 @@ class UnifiedSearchFragmentPagerAdapter
 
         var pos = 0
         if (!searchInRoom) {
-            mFragmentsData.put(pos, Pair(R.string.tab_title_search_rooms, null))
+//            mFragmentsData.put(pos, Pair(R.string.tab_title_search_rooms, null))
             pos++
         }
 
-        mFragmentsData.put(pos, Pair(R.string.tab_title_search_messages, null))
+//        mFragmentsData.put(pos, Pair(R.string.tab_title_search_messages, null))
         pos++
 
         if (!searchInRoom) {
-            mFragmentsData.put(pos, Pair(R.string.tab_title_search_people, null))
+//            mFragmentsData.put(pos, Pair(R.string.tab_title_search_people, null))
             pos++
         }
 
-        mFragmentsData.put(pos, Pair(R.string.tab_title_search_files, null))
+//        mFragmentsData.put(pos, Pair(R.string.tab_title_search_files, null))
     }
 
     override fun getCount(): Int {
         return mFragmentsData!!.size()
     }
 
-    override fun getItem(position: Int): Fragment? {
+    override fun getItem(position: Int): Fragment {
         val pair = mFragmentsData!!.get(position)
         val titleId = if (pair == null) -1 else pair.first
         var fragment: Fragment? = pair?.second
@@ -90,7 +85,8 @@ class UnifiedSearchFragmentPagerAdapter
 
             // should never fails
             if (null == fragment) {
-                return null
+                return SearchRoomsListFragment.newInstance(mSession.myUserId,
+                        R.layout.fragment_vector_recents_list)
             }
         }
 

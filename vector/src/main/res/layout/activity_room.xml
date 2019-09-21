@@ -21,7 +21,7 @@
             <!--android:visibility="gone"-->
             <!--tools:visibility="visible" />-->
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
 
             android:layout_width="match_parent"
@@ -30,7 +30,7 @@
             app:contentInsetStart="0dp">
 
             <include layout="@layout/custom_room_activity_tool_bar" />
-        </android.support.v7.widget.Toolbar>
+        </androidx.appcompat.widget.Toolbar>
 
         <FrameLayout
             android:layout_width="match_parent"

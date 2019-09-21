@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_create_new_room"
+    app:startDestination="@id/listRoomFragment">
+    <fragment
+        android:id="@+id/listRoomFragment"
+        android:name="vmodev.clearkeep.fragments.ListRoomFragment"
+        android:label="ListRoomFragment"
+        tools:layout="@layout/fragment_list_room" >
+        <action
+            android:id="@+id/action_listRoomFragment_to_contactsFragment"
+            app:destination="@id/contactsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/contactsFragment"
+        android:name="vmodev.clearkeep.fragments.ContactsFragment"
+        android:label="fragment_contacts"
+        tools:layout="@layout/fragment_contacts" >
+        <action
+            android:id="@+id/action_contactsFragment_to_listRoomFragment"
+            app:destination="@id/listRoomFragment" />
+    </fragment>
+</navigation>

@@ -1,7 +1,7 @@
-package vmodev.clearkeep.binding
+package vmodev.clearkeep.bindingadapters
 
-import android.databinding.BindingAdapter
-import android.support.v7.widget.SwitchCompat
+import androidx.appcompat.widget.SwitchCompat
+import androidx.databinding.BindingAdapter
 
 interface ISwitchCompatViewBindingAdapters {
     @BindingAdapter(value = ["status"], requireAll = false)

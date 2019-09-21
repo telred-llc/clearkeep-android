@@ -1,22 +1,21 @@
 package vmodev.clearkeep.activities
 
 import android.content.Intent
-import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
 import im.vector.R
 import im.vector.databinding.ActivityOtherRoomSettingsBinding
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.activities.interfaces.IOtherRoomSettingsActivity
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
 
-class OtherRoomSettingsActivity : DataBindingDaggerActivity(), IOtherRoomSettingsActivity {
+class OtherRoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
 
     private lateinit var binding: ActivityOtherRoomSettingsBinding;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_other_room_settings, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_other_room_settings);
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setDisplayHomeAsUpEnabled(true);
         supportActionBar?.setDisplayShowHomeEnabled(true);

@@ -33,8 +33,8 @@ internal abstract class DialogAdapter(context: Context) :
         }
 
         (view.tag as DialogListItemHolder).let {
-            it.icon.setImageResource(getItem(position).iconRes)
-            it.text.setText(getItem(position).titleRes)
+            it.icon.setImageResource(getItem(position)!!.iconRes)
+            it.text.setText(getItem(position)!!.titleRes)
         }
 
         return view

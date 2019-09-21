@@ -1,12 +1,13 @@
 package vmodev.clearkeep.repositories
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.LiveDataReactiveStreams
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.LiveDataReactiveStreams
 import im.vector.R
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractDeviceSettingsDao
+import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.repositories.wayloads.AbstractNetworkBoundSource
 import vmodev.clearkeep.viewmodelobjects.DeviceSettings
 import vmodev.clearkeep.viewmodelobjects.Resource

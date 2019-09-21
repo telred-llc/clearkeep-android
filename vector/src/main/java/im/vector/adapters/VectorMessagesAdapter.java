@@ -27,8 +27,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -53,6 +51,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.binaryfork.spanny.Spanny;
 import com.google.gson.JsonObject;
@@ -1011,15 +1012,19 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
         // never cache the view type of the encrypted messages
         if (Event.EVENT_TYPE_MESSAGE_ENCRYPTED.equals(eventType)) {
             //Hide message when this message is encrypted
-//            return ROW_TYPE_TEXT;
+            return ROW_TYPE_TEXT;
             //Hide message when this message is encrypted
-            return ROW_TYPE_HIDDEN;
+//            return ROW_TYPE_HIDDEN;
+        }
+
+        if (event instanceof EventGroup) {
+            return ROW_TYPE_MERGE;
         }
 
         if (event.contentJson != null) {
             JsonObject content = event.contentJson.getAsJsonObject();
             JsonObject relatesTo = content.getAsJsonObject("m.relates_to");
-            if (relatesTo != null) {
+            if (relatesTo != null && relatesTo.has("rel_type")) {
                 String eventRelatesToId = relatesTo.get("event_id").getAsString();
                 if (editedMessageMap.containsKey(eventRelatesToId)) {
                     if (event.originServerTs > editedMessageMap.get(eventRelatesToId).originServerTs)
@@ -1033,9 +1038,6 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
 
         if (editedMessageMap.containsKey(eventId)) {
             return ROW_TYPE_TEXT_EDITED;
-        }
-        if (event instanceof EventGroup) {
-            return ROW_TYPE_MERGE;
         }
 
         // never cache the view type of encrypted events
@@ -2292,7 +2294,7 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
                 } else {
                     // Show the link to re-request the key
                     reRequestE2EKeyTextView.setText(R.string.e2e_re_request_encryption_key);
-
+                    mSession.getCrypto().reRequestRoomKeyForEvent(event);
                     reRequestE2EKeyTextView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

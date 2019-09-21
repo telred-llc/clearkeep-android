@@ -23,11 +23,11 @@ import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
-import android.support.v4.app.Fragment
-import androidx.core.widget.toast
+import androidx.fragment.app.Fragment
 import im.vector.R
 import im.vector.notifications.supportNotificationChannels
 import im.vector.settings.VectorLocale
+import org.jetbrains.anko.toast
 import org.matrix.androidsdk.core.Log
 import java.util.*
 
@@ -80,7 +80,7 @@ fun requestDisablingBatteryOptimization(activity: Activity, fragment: Fragment?,
  */
 fun copyToClipboard(context: Context, text: CharSequence) {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    clipboard.primaryClip = ClipData.newPlainText("", text)
+    clipboard.setPrimaryClip(ClipData.newPlainText("", text));
     context.toast(R.string.copied_to_clipboard)
 }
 

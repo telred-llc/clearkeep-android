@@ -1,28 +1,27 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.Observer
-import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.util.Log
-import dagger.android.support.DaggerAppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import im.vector.R
 import im.vector.databinding.ActivityNotificationSettingsBinding
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.activities.interfaces.INotificationSettingsActivity
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.factories.viewmodels.interfaces.INotificationSettingsActivityViewModelFactory
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.viewmodels.interfaces.AbstractNotificationSettingsActivityViewModel
 import javax.inject.Inject
 
-class NotificationSettingsActivity : DataBindingDaggerActivity(), INotificationSettingsActivity {
+class NotificationSettingsActivity : DataBindingDaggerActivity(), IActivity {
 
     @Inject
-    lateinit var viewModelFactory: INotificationSettingsActivityViewModelFactory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractNotificationSettingsActivityViewModel>;
     lateinit var userId: String;
     private lateinit var binding: ActivityNotificationSettingsBinding;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_notification_settings, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_notification_settings);
         userId = if (intent.getStringExtra(USER_ID).isNullOrEmpty()) "" else intent.getStringExtra(USER_ID);
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setTitle(R.string.notifications);

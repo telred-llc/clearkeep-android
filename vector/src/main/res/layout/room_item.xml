@@ -10,7 +10,7 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.User" />
 
-        <import type="android.arch.lifecycle.LiveData" />
+        <import type="androidx.lifecycle.LiveData" />
 
         <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
 
@@ -32,34 +32,37 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="5dp"
         android:baselineAligned="false"
         android:orientation="horizontal">
 
         <FrameLayout
             android:layout_width="70dp"
             android:layout_height="70dp">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/circle_image_view_avatar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_launcher_app"
-                app:civ_border_color="@android:color/darker_gray"
-                app:civ_border_width="2dp"
-                app:room="@{room_list_user.room}" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
+            <com.google.android.material.circularreveal.cardview.CircularRevealCardView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                app:cardCornerRadius="35dp"
+                android:layout_gravity="center">
+                <ImageView
+                    android:id="@+id/circle_image_view_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_launcher_app"
+                    app:room="@{room_list_user.room}" />
+            </com.google.android.material.circularreveal.cardview.CircularRevealCardView>
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/circle_image_view_status"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
                 android:layout_gravity="end|bottom"
-                android:src="@color/lock_background"
-                app:civ_border_color="@android:color/white"
-                app:civ_border_width="2dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                app:cardCornerRadius="7dp"
                 app:currentUserId="@{current_user_id}"
                 app:listUser="@{users.data}"
-                app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}" />
+                app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}"
+                app:cardBackgroundColor="@color/main_text_color_hint"/>
         </FrameLayout>
 
         <LinearLayout
@@ -87,7 +90,7 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_weight="1"
                 android:singleLine="true"
-                app:decryptMessage="@{room_list_user.lastMessage.get(0)}"
+                app:decryptMessage="@{room_list_user.lastMessage}"
                 android:textColor="@color/main_text_color_hint"
                 android:textSize="@dimen/text_15_sp" />
         </LinearLayout>

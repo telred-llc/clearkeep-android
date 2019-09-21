@@ -1,8 +1,6 @@
 package vmodev.clearkeep.viewmodels
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
+import androidx.lifecycle.LiveData
 import io.reactivex.Observable
 import vmodev.clearkeep.repositories.MessageRepository
 import vmodev.clearkeep.repositories.RoomRepository

@@ -13,13 +13,16 @@ import javax.inject.Named
 @Suppress("unused")
 @Module
 abstract class AbstractProfileActivityModule {
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [ActivityBindModule::class])
     abstract fun contributeProfileActivity(): ProfileActivity;
 
-    @Binds
-    @Named(IActivity.PROFILE_ACTIVITY)
-    abstract fun bindProfileActivity(activity: ProfileActivity): IActivity;
+    @Module
+    abstract class ActivityBindModule {
+        @Binds
+        @Named(IActivity.PROFILE_ACTIVITY)
+        abstract fun bindProfileActivity(activity: ProfileActivity): IActivity;
 
-    @Binds
-    abstract fun bindProfileActivityViewModelFactory(factory: ProfileActivityViewModelFactory): IViewModelFactory<AbstractProfileActivityViewModel>;
+        @Binds
+        abstract fun bindProfileActivityViewModelFactory(factory: ProfileActivityViewModelFactory): IViewModelFactory<AbstractProfileActivityViewModel>;
+    }
 }

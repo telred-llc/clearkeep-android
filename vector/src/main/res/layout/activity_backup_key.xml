@@ -6,7 +6,7 @@
 
     <data>
 
-        <import type="android.arch.lifecycle.LiveData" />
+        <import type="androidx.lifecycle.LiveData" />
 
         <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
 
@@ -28,7 +28,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -55,7 +55,7 @@
                         android:layout_margin="10dp"
                         android:text="@string/keys_backup_settings_status_not_setup" />
 
-                    <android.support.v7.widget.AppCompatButton
+                    <Button
                         android:id="@+id/button_start_backup"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

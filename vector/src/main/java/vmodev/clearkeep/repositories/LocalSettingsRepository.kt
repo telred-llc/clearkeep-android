@@ -1,6 +1,6 @@
 package vmodev.clearkeep.repositories
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 import im.vector.R
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers

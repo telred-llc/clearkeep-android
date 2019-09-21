@@ -1,8 +1,7 @@
 package vmodev.clearkeep.viewmodels.interfaces
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModel
-import dagger.Module
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User

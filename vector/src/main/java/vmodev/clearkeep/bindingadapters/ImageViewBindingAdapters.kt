@@ -1,8 +1,8 @@
-package vmodev.clearkeep.binding
+package vmodev.clearkeep.bindingadapters
 
-import android.databinding.BindingAdapter
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
+import androidx.databinding.BindingAdapter
 import com.bumptech.glide.request.RequestListener
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User

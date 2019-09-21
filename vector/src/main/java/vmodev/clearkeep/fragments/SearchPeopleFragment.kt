@@ -1,37 +1,28 @@
 package vmodev.clearkeep.fragments
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
-import android.databinding.DataBindingUtil
-import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.util.DiffUtil
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import dagger.android.support.DaggerFragment
-
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DiffUtil
 import im.vector.R
 import im.vector.databinding.FragmentSearchPeopleBinding
 import io.reactivex.Observable
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import vmodev.clearkeep.activities.ProfileActivity
 import vmodev.clearkeep.activities.UserInformationActivity
 import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapter
-import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchPeopleFragmentViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
@@ -67,7 +58,7 @@ class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search_people, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search_people, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 
@@ -82,7 +73,7 @@ class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
             override fun areContentsTheSame(p0: User, p1: User): Boolean {
                 return p0.name == p1.name && p0.avatarUrl == p1.avatarUrl;
             }
-        }, dataBindingComponent = dataBindingComponent) { user ->
+        }, dataBinding = dataBinding) { user ->
             activity?.let {
                 val intentUserProfile = Intent(it, UserInformationActivity::class.java);
                 intentUserProfile.putExtra(UserInformationActivity.USER_ID, user.id);

@@ -1,6 +1,9 @@
 package vmodev.clearkeep.viewmodelobjects
 
-import android.arch.persistence.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 import com.google.gson.annotations.SerializedName
 
 @Entity(

@@ -17,6 +17,7 @@
     <!-- Widget urls -->
     <string name="integrations_ui_url" translatable="false">"https://scalar.clearkeep.me/riot"</string>
     <string name="integrations_rest_url" translatable="false">"https://scalar.clearkeep.me/api/v1/scalar"</string>
+    <string name="integrations_jitsi_widget_url" translatable="false">"https://scalar.vector.im/api/widgets/jitsi.html"</string>
 
     <string-array name="integrations_widgets_urls" translatable="false">
         <item>https://scalar.clearkeep.me/widgets</item>

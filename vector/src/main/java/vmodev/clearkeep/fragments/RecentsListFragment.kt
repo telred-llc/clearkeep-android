@@ -1,15 +1,14 @@
 package vmodev.clearkeep.fragments
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.preference.PreferenceManager
 import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import butterknife.BindView
 import im.vector.Matrix
 import im.vector.PublicRoomsManager
@@ -17,7 +16,6 @@ import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorPublicRoomsActivity
 import im.vector.activity.VectorRoomActivity
-import im.vector.adapters.VectorRoomSummaryAdapter
 import im.vector.fragments.VectorBaseFragment
 import im.vector.services.EventStreamService
 import im.vector.ui.badge.BadgeProxy
@@ -35,7 +33,7 @@ import org.matrix.androidsdk.listeners.MXEventListener
 import org.matrix.androidsdk.rest.model.Event
 import vmodev.clearkeep.activities.PreviewInviteRoomActivity
 import vmodev.clearkeep.adapters.RoomSummaryAdapter
-import java.util.HashMap
+import java.util.*
 
 open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEventListener, RecentsExpandableListView.DragAndDropEventsListener, RoomUtils.MoreActionListener {
 

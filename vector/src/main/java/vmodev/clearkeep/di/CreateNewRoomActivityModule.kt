@@ -12,14 +12,18 @@ import vmodev.clearkeep.viewmodels.interfaces.AbstractCreateNewRoomActivityViewM
 import javax.inject.Named
 
 @Module
+@Suppress("unused")
 abstract class CreateNewRoomActivityModule {
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [ActivityBindModule::class])
     abstract fun contributeCreateNewRoomActivity(): CreateNewRoomActivity;
 
-    @Binds
-    @Named(IActivity.CREATE_NEW_ROOM_ACTIVITY)
-    abstract fun bindCreateNewRoomActivity(activity: CreateNewRoomActivity): IActivity;
+    @Module
+    abstract class ActivityBindModule {
+        @Binds
+        @Named(IActivity.CREATE_NEW_ROOM_ACTIVITY)
+        abstract fun bindCreateNewRoomActivity(activity: CreateNewRoomActivity): IActivity;
 
-    @Binds
-    abstract fun bindCreateNewRoomActivityViewModelFactory(factory: CreateNewRoomActivityViewModelFactory): IViewModelFactory<AbstractCreateNewRoomActivityViewModel>;
+        @Binds
+        abstract fun bindCreateNewRoomActivityViewModelFactory(factory: CreateNewRoomActivityViewModelFactory): IViewModelFactory<AbstractCreateNewRoomActivityViewModel>;
+    }
 }

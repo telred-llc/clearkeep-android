@@ -14,7 +14,7 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.Room" />
 
-        <import type="android.arch.lifecycle.LiveData" />
+        <import type="androidx.lifecycle.LiveData" />
 
         <variable
             name="room"
@@ -36,7 +36,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -50,7 +50,7 @@
                     android:text="@string/create"
                     android:textColor="@color/app_green"
                     android:textSize="@dimen/text_20_sp" />
-            </android.support.v7.widget.Toolbar>
+            </androidx.appcompat.widget.Toolbar>
 
             <TextView
                 android:layout_width="match_parent"

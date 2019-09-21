@@ -1,21 +1,23 @@
 package vmodev.clearkeep.repositories
 
-import android.arch.lifecycle.LiveData
-import io.reactivex.*
+import androidx.lifecycle.LiveData
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
-import vmodev.clearkeep.databases.AbstractRoomDao
-import vmodev.clearkeep.databases.AbstractUserDao
+import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.wayloads.*
-import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
-import vmodev.clearkeep.viewmodelobjects.*
+import vmodev.clearkeep.viewmodelobjects.Resource
+import vmodev.clearkeep.viewmodelobjects.RoomListUser
+import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class RoomUserJoinRepository @Inject constructor(private val roomUserJoinDao: AbstractRoomUserJoinDao, private val matrixService: MatrixService) {
+class RoomUserJoinRepository @Inject constructor(private val roomUserJoinDao: AbstractRoomUserJoinDao, private val matrixService: MatrixService, private val appExecutors: AppExecutors) {
     fun updateOrCreateRoomUserJoin(roomId: String, userId: String) {
         object : AbstractNetworkBoundSourceRx<RoomUserJoin, RoomUserJoin>() {
             override fun saveCallResult(item: RoomUserJoin) {

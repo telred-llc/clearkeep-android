@@ -1,39 +1,26 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
-import android.content.Intent
-import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.DividerItemDecoration
-import android.util.Log
-import dagger.android.support.DaggerAppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
 import im.vector.Matrix
 import im.vector.R
 import im.vector.databinding.ActivityRoomFilesListBinding
-import im.vector.databinding.ActivityRoomMemberListBinding
 import im.vector.fragments.VectorSearchRoomFilesListFragment
 import org.matrix.androidsdk.MXSession
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.activities.interfaces.IRoomFileListActivity
 import vmodev.clearkeep.adapters.ListFileRecyclerViewAdapter
-import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapter
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IRoomFileListActivityViewModelFactory
-import vmodev.clearkeep.viewmodelobjects.File
-import vmodev.clearkeep.viewmodelobjects.User
-import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomFileListActivityViewModel
 import javax.inject.Inject
 
-class RoomfilesListActivity : DataBindingDaggerActivity(), IRoomFileListActivity {
+class RoomfilesListActivity : DataBindingDaggerActivity(), IActivity {
 
     @Inject
-    lateinit var viewModelFactory: IRoomFileListActivityViewModelFactory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractRoomFileListActivityViewModel>;
     @Inject
     lateinit var appExecutors: AppExecutors;
 
@@ -45,7 +32,7 @@ class RoomfilesListActivity : DataBindingDaggerActivity(), IRoomFileListActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_room_files_list, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_room_files_list);
         roomId = intent.getStringExtra(ROOM_ID);
         session = Matrix.getInstance(applicationContext).defaultSession;
         setSupportActionBar(binding.toolbar);

@@ -1,7 +1,7 @@
 package vmodev.clearkeep.repositories.wayloads
 
 import android.annotation.SuppressLint
-import android.support.annotation.MainThread
+import androidx.annotation.MainThread
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.SingleObserver

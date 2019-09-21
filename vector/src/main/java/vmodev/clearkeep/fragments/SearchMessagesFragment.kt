@@ -1,15 +1,15 @@
 package vmodev.clearkeep.fragments
 
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.util.DiffUtil
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DiffUtil
 
 import im.vector.R
 import im.vector.databinding.FragmentSearchMessagesBinding
@@ -66,15 +66,14 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search_messages, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search_messages, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        listSearchAdapter = ListSearchMessageRecyclerViewAdapter(appExecutors = appExecutors
-                , dataBindingComponent = dataBindingComponent, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
+        listSearchAdapter = ListSearchMessageRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
             override fun areItemsTheSame(p0: MessageRoomUser, p1: MessageRoomUser): Boolean {
                 return p0.message?.id == p1.message?.id
             }
@@ -83,7 +82,7 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
                 return p0.room?.get(0)?.avatarUrl == p1.room?.get(0)?.avatarUrl && p0.message?.encryptedContent == p1.message?.encryptedContent
                         && p0.user?.get(0)?.name == p1.user?.get(0)?.name;
             }
-        }) { messageSearchText ->
+        }, dataBindingComponent = dataBinding) { messageSearchText ->
             val intentRoom = Intent(this.activity, RoomActivity::class.java);
             messageSearchText.room?.let {
                 intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, it[0].id);

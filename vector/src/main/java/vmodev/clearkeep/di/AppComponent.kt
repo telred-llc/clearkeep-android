@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [AndroidSupportInjectionModule::class, AndroidInjectionModule::class
-    , AppModule::class, AbstractSplashActivityModule::class, HomeScreenActivityModule::class, AbstractProfileActivityModule::class
+    , AppModule::class, AbstractSplashActivityModule::class, AbstractHomeScreenActivityModule::class, AbstractProfileActivityModule::class
     , PreviewInviteRoomActivityModule::class, FindAndCreateNewConversationActivityModule::class
     , CreateNewRoomActivityModule::class
     , InviteUsersToRoomActivityModule::class
@@ -43,7 +43,8 @@ import javax.inject.Singleton
     , AbstractLoginActivityModule::class
     , AbstractRoomActivityModule::class
     , AbstractLogoutActivityModule::class
-    , AbstractVectorMediaPickerActivityModule::class])
+    , AbstractVectorMediaPickerActivityModule::class
+    , AbstractNewRoomActivityModule::class])
 interface AppComponent : AndroidInjector<ClearKeepApplication> {
     override fun inject(instance: ClearKeepApplication?)
 

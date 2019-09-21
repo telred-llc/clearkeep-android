@@ -9,12 +9,10 @@ buildscript {
             url "https://plugins.gradle.org/m2/"
         }
         jcenter()
-        mavenCentral()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.0'
-        classpath 'com.google.gms:google-services:4.2.0'
+        classpath 'com.google.gms:google-services:4.3.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.2'
 
@@ -50,7 +48,13 @@ allprojects {
                 includeGroupByRegex "org\\.matrix\\.gitlab\\.matrix-org"
                 // And PhotoView
                 includeGroupByRegex "com\\.github\\.chrisbanes"
+                // Use custom matrix sdk library
+                includeGroupByRegex "com\\.github\\.telred-llc\\.matrix-android-sdk"
             }
+        }
+        // Jitsi repo
+        maven {
+            url "https://github.com/vector-im/jitsi_libre_maven/raw/master/releases"
         }
         google()
         maven {
@@ -60,10 +64,10 @@ allprojects {
         maven {
             url "https://github.com/vector-im/jitsi_libre_maven/raw/master/releases"
         }
+        jcenter()
         maven {
             url "https://s3.amazonaws.com/repo.commonsware.com"
         }
-        jcenter()
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots"
         }

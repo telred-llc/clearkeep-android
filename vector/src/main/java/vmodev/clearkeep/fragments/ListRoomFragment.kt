@@ -1,38 +1,52 @@
 package vmodev.clearkeep.fragments
 
-import android.app.Activity
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.DividerItemDecoration
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.orhanobut.dialogplus.DialogPlus
+import im.vector.Matrix
 
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.FragmentListRoomBinding
 import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.Observable
+import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.activities.*
 import vmodev.clearkeep.adapters.BottomDialogFavouriteRoomLongClick
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.applications.IApplication
+import vmodev.clearkeep.bindingadapters.DataBindingComponentImplement
+import vmodev.clearkeep.bindingadapters.interfaces.IDataBindingComponent
 import vmodev.clearkeep.databases.AbstractMessageDao
+import vmodev.clearkeep.databases.AbstractRoomDao
 import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
-import vmodev.clearkeep.factories.viewmodels.interfaces.IListRoomFragmentViewModelFactory
-import vmodev.clearkeep.fragments.Interfaces.IListRoomFragment
+import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.matrixsdk.MatrixEventHandler
+import vmodev.clearkeep.repositories.KeyBackupRepository
+import vmodev.clearkeep.repositories.SignatureRepository
+import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
+import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.viewmodels.interfaces.AbstractListRoomFragmentViewModel
+import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -50,10 +64,10 @@ private const val GO_TO_ROOM_CODE = 12432;
  * create an instance of this fragment.
  *
  */
-class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRoomRecyclerViewAdapter.ICallbackToGetUsers {
+class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecyclerViewAdapter.ICallbackToGetUsers {
 
     @Inject
-    lateinit var viewModelFactory: IListRoomFragmentViewModelFactory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractListRoomFragmentViewModel>;
     @Inject
     lateinit var applcation: IApplication;
     @Inject
@@ -65,12 +79,12 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
     @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
     lateinit var listFavouritesRoomAdapter: IListRoomRecyclerViewAdapter;
-
     @Inject
     lateinit var roomUserJoin: AbstractRoomUserJoinDao;
-
     @Inject
     lateinit var messageDao: AbstractMessageDao;
+    @Inject
+    lateinit var roomDao : AbstractRoomDao;
 
     // TODO: Rename and change types of parameters
     private var userId: String? = null
@@ -89,7 +103,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list_room, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list_room, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 
@@ -108,6 +122,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
         });
         binding.buttonStartDirectChat.setOnClickListener {
             val intentNewChat = Intent(context, FindAndCreateNewConversationActivity::class.java);
+            intentNewChat.putExtra(FindAndCreateNewConversationActivity.USER_ID, userId);
             startActivity(intentNewChat);
         }
         binding.buttonStartGroupChat.setOnClickListener {
@@ -124,7 +139,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
         }
 
 
-        binding.lifecycleOwner = this.viewLifecycleOwner;
+        binding.lifecycleOwner = viewLifecycleOwner
 
         viewModelFactory.getViewModel().setFiltersDirectRoom(arrayOf(1, 65));
         viewModelFactory.getViewModel().setFiltersGroupRoom(arrayOf(2, 66));
@@ -132,7 +147,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
     }
 
     private fun initListFavouriteChat() {
-        listFavouritesRoomAdapter.setDataBindingComponent(dataBindingComponent);
+//        listFavouritesRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listFavouritesRoomAdapter.setOnItemClick { room, i ->
             room.room?.let {
                 when (i) {
@@ -205,7 +220,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
     }
 
     private fun initListDirectChat() {
-        listDirectRoomAdapter.setDataBindingComponent(dataBindingComponent);
+//        listDirectRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listDirectRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, userId);
 
         listDirectRoomAdapter.setOnItemClick { room, i ->
@@ -280,7 +295,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
     }
 
     private fun initListGroupChat() {
-        listGroupRoomAdapter.setDataBindingComponent(dataBindingComponent);
+//        listGroupRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listGroupRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, userId);
         listGroupRoomAdapter.setOnItemLongClick { room ->
             room.room?.let {
@@ -386,7 +401,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == GO_TO_ROOM_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == GO_TO_ROOM_CODE && resultCode == -1) {
             data?.let {
                 binding.room = viewModelFactory.getViewModel().getUpdateRoomNotifyResult();
                 viewModelFactory.getViewModel().setIdForUpdateRoomNotify(it.getStringExtra(RoomActivity.RESULT_ROOM_ID))
@@ -396,7 +411,11 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
 
     private fun declideInvite(roomId: String) {
         binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult();
+
         viewModelFactory.getViewModel().setLeaveRoomId(roomId);
+//        Completable.fromAction {
+//            roomDao.deleteRoom(roomId);
+//        }.subscribeOn(Schedulers.io()).subscribe();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

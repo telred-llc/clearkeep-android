@@ -1,18 +1,14 @@
 package vmodev.clearkeep.activities
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
-import android.support.v7.app.AlertDialog
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
-import android.view.View
 import android.widget.ExpandableListView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import butterknife.BindView
 import butterknife.OnClick
 import im.vector.Matrix
@@ -20,7 +16,6 @@ import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.MXCActionBarActivity
 import im.vector.activity.VectorBaseSearchActivity
-import im.vector.activity.VectorRoomInviteMembersActivity
 import im.vector.adapters.ParticipantAdapterItem
 import im.vector.adapters.VectorParticipantsAdapter
 import im.vector.contacts.Contact
@@ -38,7 +33,6 @@ import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.User
 import java.util.*
-import java.util.regex.Pattern
 
 class RoomInviteMembersActivity : VectorBaseSearchActivity() {
     private val LOG_TAG = RoomInviteMembersActivity::class.java.simpleName

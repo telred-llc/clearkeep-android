@@ -1,11 +1,12 @@
 package vmodev.clearkeep.repositories.wayloads
 
-import android.support.annotation.MainThread
-import android.util.Log
-import io.reactivex.*
+import androidx.annotation.MainThread
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.AsyncSubject
 

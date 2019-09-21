@@ -17,9 +17,9 @@
 package im.vector.repositories
 
 import android.content.Context
-import android.support.v7.preference.PreferenceManager
 import android.text.TextUtils
 import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import im.vector.R
 
 /**
@@ -70,7 +70,7 @@ object ServerUrlsRepository {
 
         return prefs.getString(HOME_SERVER_URL_PREF,
                 prefs.getString(DEFAULT_REFERRER_HOME_SERVER_URL_PREF,
-                        getDefaultHomeServerUrl(context)))
+                        getDefaultHomeServerUrl(context)))!!
     }
 
 
@@ -82,7 +82,7 @@ object ServerUrlsRepository {
 
         return prefs.getString(IDENTITY_SERVER_URL_PREF,
                 prefs.getString(DEFAULT_REFERRER_IDENTITY_SERVER_URL_PREF,
-                        getDefaultIdentityServerUrl(context)))
+                        getDefaultIdentityServerUrl(context)))!!
     }
 
     /**

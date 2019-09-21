@@ -1,29 +1,30 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.Observer
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.support.v7.widget.DividerItemDecoration
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.orhanobut.dialogplus.DialogPlus
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.ActivityUserInformationBinding
 import org.matrix.androidsdk.MXSession
-import vmodev.clearkeep.activities.interfaces.IUserInformationActivity
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.adapters.BottomDialogFavouriteRoomLongClick
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
-import vmodev.clearkeep.factories.viewmodels.interfaces.IUserInformationActivityViewModelFactory
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.viewmodels.interfaces.AbstractUserInformationActivityViewModel
 import javax.inject.Inject
 import javax.inject.Named
 
-class UserInformationActivity : DataBindingDaggerActivity(), IUserInformationActivity {
+class UserInformationActivity : DataBindingDaggerActivity(), IActivity {
 
     @Inject
-    lateinit var viewModelFactory: IUserInformationActivityViewModelFactory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractUserInformationActivityViewModel>;
     @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
     lateinit var listDirectChatRoomAdapter: IListRoomRecyclerViewAdapter;
@@ -37,7 +38,7 @@ class UserInformationActivity : DataBindingDaggerActivity(), IUserInformationAct
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_user_information, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_user_information, dataBinding.getDataBindingComponent());
         userId = intent.getStringExtra(USER_ID);
         session = Matrix.getInstance(applicationContext).defaultSession;
         setSupportActionBar(binding.toolbar);
@@ -82,14 +83,12 @@ class UserInformationActivity : DataBindingDaggerActivity(), IUserInformationAct
     private fun setUpRecyclerView() {
         binding.recyclerViewListDirectChat.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         binding.recyclerViewListRoomChat.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        listDirectChatRoomAdapter.setDataBindingComponent(dataBindingComponent);
-        listRoomChatRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listDirectChatRoomAdapter.setOnItemClick { room, i ->
             room.room?.let {
                 when (i) {
                     3 -> {
                         val intentRoom = Intent(this, RoomActivity::class.java);
-                        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, session.myUserId);
+                        intentRoom.putExtra(RoomActivity.EXTRA_MATRIX_ID, session.myUserId);
                         intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, it.id);
                         startActivity(intentRoom);
                     }

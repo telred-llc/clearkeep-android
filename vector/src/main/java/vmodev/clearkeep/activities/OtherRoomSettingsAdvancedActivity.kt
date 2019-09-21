@@ -1,15 +1,10 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
-import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import com.google.android.gms.common.util.DataUtils
-import dagger.android.support.DaggerAppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import im.vector.R
 import im.vector.databinding.ActivityOtherRoomSettingsAdvancedBinding
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
 
@@ -23,14 +18,14 @@ class OtherRoomSettingsAdvancedActivity : DataBindingDaggerActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_other_room_settings_advanced, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_other_room_settings_advanced);
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setDisplayHomeAsUpEnabled(true);
         supportActionBar?.setDisplayShowHomeEnabled(true);
         binding.toolbar.setNavigationOnClickListener { v ->
             onBackPressed();
         }
-        roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
+        roomViewModel = ViewModelProvider(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
 
         binding.room = roomViewModel.getRoom();
         binding.lifecycleOwner = this;

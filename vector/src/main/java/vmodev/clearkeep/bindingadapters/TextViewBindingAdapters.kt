@@ -1,7 +1,7 @@
-package vmodev.clearkeep.binding
+package vmodev.clearkeep.bindingadapters
 
-import android.databinding.BindingAdapter
 import android.widget.TextView
+import androidx.databinding.BindingAdapter
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.Room
 

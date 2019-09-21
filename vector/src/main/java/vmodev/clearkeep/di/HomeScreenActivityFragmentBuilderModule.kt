@@ -1,83 +1,94 @@
 package vmodev.clearkeep.di
 
-import android.support.v7.util.DiffUtil
+import androidx.recyclerview.widget.DiffUtil
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.android.ContributesAndroidInjector
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomContactRecyclerViewAdapter
-import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.executors.AppExecutors
-import vmodev.clearkeep.factories.activitiesandfragments.*
+import vmodev.clearkeep.factories.activitiesandfragments.ContactsFragmentFactory
+import vmodev.clearkeep.factories.activitiesandfragments.FavouritesFragmentFactory
+import vmodev.clearkeep.factories.activitiesandfragments.HomeScreenFragmentFactory
+import vmodev.clearkeep.factories.activitiesandfragments.ListRoomFragmentFactory
 import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IFragmentFactory
-import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IShowListRoomFragmentFactory
-import vmodev.clearkeep.factories.viewmodels.*
+import vmodev.clearkeep.factories.viewmodels.ContactFragmentViewModelFactory
+import vmodev.clearkeep.factories.viewmodels.FavouritesFragmentViewModelFactory
+import vmodev.clearkeep.factories.viewmodels.HomeScreenFragmentViewModelFactory
+import vmodev.clearkeep.factories.viewmodels.ListRoomFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.*
-import vmodev.clearkeep.fragments.*
+import vmodev.clearkeep.fragments.ContactsFragment
+import vmodev.clearkeep.fragments.FavouritesFragment
+import vmodev.clearkeep.fragments.HomeScreenFragment
 import vmodev.clearkeep.fragments.Interfaces.*
-import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.fragments.ListRoomFragment
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
+import vmodev.clearkeep.viewmodels.interfaces.AbstractContactFragmentViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractFavouritesFragmentViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractHomeScreenFragmentViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractListRoomFragmentViewModel
 import javax.inject.Named
 
 @Suppress("unused")
 @Module
 abstract class HomeScreenActivityFragmentBuilderModule {
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [FragmentHomeScreenBindModule::class])
     abstract fun contributeHomeScreenFragment(): HomeScreenFragment;
 
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [FragmentFavouritesBindModule::class])
     abstract fun contributeFavouriteFragment(): FavouritesFragment;
 
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [FragmentContactsBindModule::class])
     abstract fun contributeContactFragment(): ContactsFragment;
 
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [FragmentListRoomBindModule::class])
     abstract fun contributeListRoomFragment(): ListRoomFragment;
 
-    @Binds
-    abstract fun bindHomeScreenFragment(fragment: HomeScreenFragment): IHomeScreenFragment;
+    @Module
+    abstract class FragmentHomeScreenBindModule {
+        @Binds
+        @Named(IFragment.HOME_SCREEN_FRAGMENT)
+        abstract fun bindHomeScreenFragment(fragment: HomeScreenFragment): IFragment;
 
-    @Binds
-    abstract fun bindFavouritesFragment(fragment: FavouritesFragment): IFavouritesFragment;
+        @Binds
+        abstract fun bindHomeScreenFragmentViewModelFactory(factory: HomeScreenFragmentViewModelFactory): IViewModelFactory<AbstractHomeScreenFragmentViewModel>;
+    }
 
-    @Binds
-    abstract fun bindContactFragment(fragment: ContactsFragment): IContactFragment;
+    @Module
+    abstract class FragmentFavouritesBindModule {
+        @Binds
+        @Named(IFragment.FAVOURITES_FRAGMENT)
+        abstract fun bindFavouritesFragment(fragment: FavouritesFragment): IFragment;
 
-    @Binds
-    abstract fun bindListRoomFragment(fragment: ListRoomFragment): IListRoomFragment;
+        @Binds
+        abstract fun bindFavouritesFragmentViewModelFactory(factory: FavouritesFragmentViewModelFactory): IViewModelFactory<AbstractFavouritesFragmentViewModel>;
+    }
 
-    @Binds
-    abstract fun bindHomeScreenFragmentViewModelFactory(factory: HomeScreenFragmentViewModelFactory): IHomeScreenFragmentViewModelFactory;
+    @Module
+    abstract class FragmentContactsBindModule {
+        @Binds
+        @Named(IFragment.CONTACTS_FRAGMENT)
+        abstract fun bindContactFragment(fragment: ContactsFragment): IFragment;
 
-    @Binds
-    abstract fun bindFavouritesFragmentViewModelFactory(factory: FavouritesFragmentViewModelFactory): IFavouritesFragmentViewModelFactory;
+        @Binds
+        abstract fun bindContactFragmentViewModelFactory(factory: ContactFragmentViewModelFactory): IViewModelFactory<AbstractContactFragmentViewModel>;
+    }
 
-    @Binds
-    abstract fun bindContactFragmentViewModelFactory(factory: ContactFragmentViewModelFactory): IContactFragmentViewModelFactory;
+    @Module
+    abstract class FragmentListRoomBindModule {
+        @Binds
+        @Named(IFragment.LIST_ROOM_FRAGMENT)
+        abstract fun bindListRoomFragment(fragment: ListRoomFragment): IFragment;
 
-    @Binds
-    abstract fun bindListRoomFragmentViewModelFactory(factory: ListRoomFragmentViewModelFactory): IListRoomFragmentViewModelFactory;
+        @Binds
+        abstract fun bindListRoomFragmentViewModelFactory(factory: ListRoomFragmentViewModelFactory): IViewModelFactory<AbstractListRoomFragmentViewModel>;
+    }
+
 
     @Module
     companion object {
-//        @Provides
-//        @JvmStatic
-//        @Named(value = IListRoomRecyclerViewAdapter.ROOM)
-//        fun provideListRoomDirectMessageAdapter(appExecutors: AppExecutors): IListRoomRecyclerViewAdapter {
-//            return ListRoomRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<Room>() {
-//                override fun areItemsTheSame(p0: Room, p1: Room): Boolean {
-//                    return p0.id == p1.id;
-//                }
-//
-//                override fun areContentsTheSame(p0: Room, p1: Room): Boolean {
-//                    return p0.name == p1.name && p0.updatedDate == p1.updatedDate && p0.avatarUrl == p1.avatarUrl
-//                            && p0.notifyCount == p1.notifyCount && p0.roomMemberStatus == p1.roomMemberStatus;
-//                }
-//            })
-//        }
-
         @Provides
         @JvmStatic
         @Named(value = IListRoomRecyclerViewAdapter.ROOM_CONTACT)

@@ -1,11 +1,10 @@
 package vmodev.clearkeep.di
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
-import vmodev.clearkeep.fragments.SearchMessagesFragment
 import vmodev.clearkeep.viewmodelproviderfactories.ClearKeepViewModelProviderFactory
 import vmodev.clearkeep.viewmodels.*
 import vmodev.clearkeep.viewmodels.interfaces.*
@@ -208,6 +207,16 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AbstractRoomSettingsActivityViewModel::class)
     abstract fun bindRoomSettingsActivityViewModel(viewModel: RoomSettingsActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractFindAndCreateNewConversationActivityViewModel::class)
+    abstract fun bindFindAndCreateNewConversationActivityViewModel(viewModel: FindAndCreateNewConversationActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractInviteUsersToRoomActivityViewModel::class)
+    abstract fun bindInviteUsersToRoomActivityViewModel(viewModel: InviteUsersToRoomActivityViewModel): ViewModel;
 
     @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;

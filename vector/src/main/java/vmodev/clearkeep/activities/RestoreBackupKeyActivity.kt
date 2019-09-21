@@ -1,24 +1,20 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.Observer
-import android.databinding.DataBindingUtil
 import android.net.Uri
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.util.Log
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import im.vector.R
 import im.vector.databinding.ActivityRestoreBackupKeyBinding
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
-import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.fragments.PassphraseRestoreBackupKeyFragment
 import vmodev.clearkeep.fragments.TextFileRestoreBackupKeyFragment
 import vmodev.clearkeep.ultis.setupSupportToolbar
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRestoreBackupKeyActivityViewModel
 import javax.inject.Inject
-import javax.inject.Named
 
 class RestoreBackupKeyActivity : DataBindingDaggerActivity(), IActivity, PassphraseRestoreBackupKeyFragment.OnFragmentInteractionListener, TextFileRestoreBackupKeyFragment.OnFragmentInteractionListener {
 
@@ -30,7 +26,7 @@ class RestoreBackupKeyActivity : DataBindingDaggerActivity(), IActivity, Passphr
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_restore_backup_key, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_restore_backup_key);
         userId = intent.getStringExtra(USER_ID);
         binding.toolbar.setupSupportToolbar(this, R.string.restore)
         binding.lifecycleOwner = this;

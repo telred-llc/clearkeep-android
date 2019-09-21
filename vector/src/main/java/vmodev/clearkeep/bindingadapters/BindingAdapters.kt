@@ -1,9 +1,7 @@
-package vmodev.clearkeep.binding
+package vmodev.clearkeep.bindingadapters
 
-import android.databinding.BindingAdapter
 import android.view.View
-import android.widget.TextView
-import vmodev.clearkeep.ultis.toDateTime
+import androidx.databinding.BindingAdapter
 
 object BindingAdapters {
     @JvmStatic

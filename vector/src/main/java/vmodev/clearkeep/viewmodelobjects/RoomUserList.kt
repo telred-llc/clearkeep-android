@@ -1,9 +1,9 @@
 package vmodev.clearkeep.viewmodelobjects
 
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.Embedded
-import android.arch.persistence.room.Ignore
-import android.arch.persistence.room.Relation
+import androidx.lifecycle.LiveData
+import androidx.room.Embedded
+import androidx.room.Ignore
+import androidx.room.Relation
 
 data class RoomUserList(
         @Embedded

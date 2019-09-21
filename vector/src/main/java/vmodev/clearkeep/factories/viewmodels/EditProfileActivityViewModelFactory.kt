@@ -1,14 +1,14 @@
 package vmodev.clearkeep.factories.viewmodels
 
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
-import vmodev.clearkeep.activities.interfaces.IEditProfileActivity
-import vmodev.clearkeep.factories.viewmodels.interfaces.IEditProfileActivityViewModelFactory
+import androidx.lifecycle.ViewModelProvider
+import vmodev.clearkeep.activities.interfaces.IActivity
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.viewmodels.interfaces.AbstractEditProfileActivityViewModel
 import javax.inject.Inject
+import javax.inject.Named
 
-class EditProfileActivityViewModelFactory @Inject constructor(activity: IEditProfileActivity, factory: ViewModelProvider.Factory) : IEditProfileActivityViewModelFactory {
-    private val viewModel: AbstractEditProfileActivityViewModel = ViewModelProviders.of(activity.getActivity(), factory).get(AbstractEditProfileActivityViewModel::class.java)
+class EditProfileActivityViewModelFactory @Inject constructor(@Named(IActivity.EDIT_PROFILE_ACTIVITY) activity: IActivity, factory: ViewModelProvider.Factory) : IViewModelFactory<AbstractEditProfileActivityViewModel> {
+    private val viewModel: AbstractEditProfileActivityViewModel = ViewModelProvider(activity.getActivity(), factory).get(AbstractEditProfileActivityViewModel::class.java)
     override fun getViewModel(): AbstractEditProfileActivityViewModel {
         return viewModel;
     }

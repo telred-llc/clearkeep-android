@@ -1,15 +1,15 @@
 package vmodev.clearkeep.activities
 
 import android.annotation.SuppressLint
-import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
 import im.vector.R
 import im.vector.databinding.ActivityPrivacyPolicyBinding
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.activities.interfaces.IPrivacyPolicyActivity
 
-class PrivacyPolicyActivity : DataBindingDaggerActivity(), IPrivacyPolicyActivity {
+class PrivacyPolicyActivity : DataBindingDaggerActivity(), IActivity {
 
     private lateinit var binding: ActivityPrivacyPolicyBinding;
     private lateinit var title: String;
@@ -17,7 +17,7 @@ class PrivacyPolicyActivity : DataBindingDaggerActivity(), IPrivacyPolicyActivit
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_privacy_policy, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_privacy_policy);
         title = intent.getStringExtra(TITLE);
         url = intent.getStringExtra(URL);
         setSupportActionBar(binding.toolbar);

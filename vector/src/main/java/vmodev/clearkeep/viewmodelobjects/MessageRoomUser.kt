@@ -1,10 +1,7 @@
 package vmodev.clearkeep.viewmodelobjects
 
-import android.arch.persistence.room.Embedded
-import android.arch.persistence.room.Relation
-import vmodev.clearkeep.viewmodelobjects.Message
-import vmodev.clearkeep.viewmodelobjects.Room
-import vmodev.clearkeep.viewmodelobjects.User
+import androidx.room.Embedded
+import androidx.room.Relation
 
 data class MessageRoomUser(
         @Embedded var message: Message? = null

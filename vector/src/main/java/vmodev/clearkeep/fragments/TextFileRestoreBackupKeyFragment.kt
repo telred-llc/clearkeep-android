@@ -1,18 +1,18 @@
 package vmodev.clearkeep.fragments
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import im.vector.R
 import im.vector.databinding.FragmentTextFileRestoreBackupKeyBinding
 import im.vector.fragments.keysbackup.restore.KeysBackupRestoreFromKeyFragment
@@ -55,7 +55,7 @@ class TextFileRestoreBackupKeyFragment : DataBindingDaggerFragment(), IFragment 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_text_file_restore_backup_key, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_text_file_restore_backup_key, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 

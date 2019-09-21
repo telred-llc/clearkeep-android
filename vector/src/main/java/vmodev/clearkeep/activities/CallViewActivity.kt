@@ -5,10 +5,8 @@ import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.graphics.Color
 import android.graphics.Point
 import android.graphics.Rect
-import android.graphics.drawable.GradientDrawable
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -29,12 +27,10 @@ import im.vector.VectorApp
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorAppCompatActivity
 import im.vector.activity.VectorCallViewActivity
-import im.vector.activity.VectorRoomActivity
 import im.vector.settings.VectorLocale
 import im.vector.ui.themes.ActivityOtherThemes
 import im.vector.util.*
 import im.vector.view.VectorPendingCallView
-import io.reactivex.Observable
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.call.CallSoundsManager
 import org.matrix.androidsdk.call.IMXCall
@@ -45,7 +41,6 @@ import org.matrix.androidsdk.crypto.data.MXDeviceInfo
 import org.matrix.androidsdk.crypto.data.MXUsersDevicesMap
 import vmodev.clearkeep.applications.IApplication
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
 

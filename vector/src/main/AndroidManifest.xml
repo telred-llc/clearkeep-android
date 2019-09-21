@@ -2,98 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="im.vector"
-    android:installLocation="auto">
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission
-        android:name="android.permission.READ_LOGS"
-        tools:ignore="ProtectedPermissions" /> <!-- universal links management -->
-    <uses-permission android:name="android.permission.REORDER_TASKS" /> <!-- for android 4.1.* devices, reported by GA -->
-    <uses-permission android:name="android.permission.GET_TASKS" /> <!-- videocall permissions -->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- required on android 6.0.0 devices -->
-    <uses-permission
-        android:name="android.permission.WRITE_SETTINGS"
-        tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" /> <!-- shared files from external application -->
-    <uses-permission
-        android:name="android.permission.MANAGE_DOCUMENTS"
-        tools:ignore="ProtectedPermissions" /> <!-- to be able to turn on display when a notification is received -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- start the background sync on boot -->
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- disable the battery optimisation on some devices to let the background sync works -->
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" /> <!-- videocall feature -->
-    <!-- android.permission.CAMERA defines android.hardware.camera -->
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false"
-        tools:replace="required" />
-    <uses-feature
-        android:name="android.hardware.camera.any"
-        android:required="false"
-        tools:replace="required" />
-    <uses-feature
-        android:name="android.hardware.camera.autofocus"
-        android:required="false"
-        tools:replace="required" />
-    <uses-feature
-        android:glEsVersion="0x00020000"
-        android:required="false"
-        tools:replace="required" /> <!-- android.permission.RECORD_AUDIO defines android.hardware.microphone -->
-    <uses-feature
-        android:name="android.hardware.microphone"
-        android:required="false"
-        tools:replace="required" /> <!-- ShortcutBadger permissions -->
-    <!-- for Samsung -->
-    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
-    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" /> <!-- for htc -->
-    <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" />
-    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" /> <!-- for sony -->
-    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
-    <uses-permission android:name="com.sonymobile.home.permission.PROVIDER_INSERT_BADGE" /> <!-- for apex -->
-    <uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" /> <!-- for solid -->
-    <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" /> <!-- for huawei -->
-    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" />
-    <uses-permission android:name="com.huawei.android.launcher.permission.READ_SETTINGS" />
-    <uses-permission android:name="com.huawei.android.launcher.permission.WRITE_SETTINGS" /> <!-- for ZUK -->
-    <uses-permission android:name="android.permission.READ_APP_BADGE" /> <!-- for OPPO -->
-    <uses-permission android:name="com.oppo.launcher.permission.READ_SETTINGS" />
-    <uses-permission android:name="com.oppo.launcher.permission.WRITE_SETTINGS" /> <!-- for EvMe -->
-    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_READ" />
-    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_WRITE" /> <!-- bluetooth headset -->
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-
-    <uses-feature
-        android:name="android.hardware.bluetooth"
-        android:required="false"
-        tools:replace="required" /> <!-- jitsi -->
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-
-    <!-- Jitsi libs require min API 21 and min is set to 16 -->
-    <uses-sdk tools:overrideLibrary="org.jitsi.meet.sdk,com.oney.WebRTCModule,co.apptailor.googlesignin,com.BV.LinearGradient,com.calendarevents,com.corbt.keepawake,com.dylanvann.fastimage,com.oblador.vectoricons,com.ocetnik.timer,com.rnimmersive,com.zmxv.RNSound,com.i18n.reactnativei18n,org.webkit.androidjsc" />
-
-    <!-- Jitsi libs adds CALENDAR permissions, but we can remove them safely according to https://github.com/jitsi/jitsi-meet/issues/4068#issuecomment-480482481 -->
-    <uses-permission
-        android:name="android.permission.READ_CALENDAR"
-        tools:node="remove" />
-    <uses-permission
-        android:name="android.permission.WRITE_CALENDAR"
-        tools:node="remove" />
-
-
-    <uses-feature
-        android:name="android.hardware.telephony"
-        android:required="false" /> <!-- New when targeting API 28 -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
+    android:installLocation="auto"> <!-- Jitsi libs require min API 21 and min is set to 16 -->
     <application
         android:name="vmodev.clearkeep.applications.ClearKeepApplication"
         android:allowBackup="false"
@@ -105,7 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         tools:replace="allowBackup,label">
-        <activity android:name="vmodev.clearkeep.activities.WaitingForVerifyEmailActivity"></activity>
+        <activity android:name="vmodev.clearkeep.activities.NewRoomActivity"></activity>
+        <activity android:name="vmodev.clearkeep.activities.WaitingForVerifyEmailActivity" />
         <activity android:name="vmodev.clearkeep.activities.PushBackupKeyActivity" />
         <activity android:name="vmodev.clearkeep.activities.RestoreBackupKeyActivity" />
         <activity android:name="vmodev.clearkeep.activities.BackupKeyActivity" />
@@ -153,9 +63,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- No limit for screen ratio: avoid black strips -->
-        <meta-data
-            android:name="android.max_aspect"
-            android:value="9.9" /> <!-- activities list starts here -->
         <activity
             android:name=".activity.VectorLauncherActivity"
             android:theme="@style/AppTheme.Launcher">
@@ -164,7 +71,7 @@
             <!-- <action android:name="android.intent.action.MAIN" /> -->
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
-        </activity>
+        </activity> <!-- activities list starts here -->
         <activity
             android:name=".activity.LoginActivity"
             android:configChanges="orientation|screenSize"
@@ -439,23 +346,45 @@
             android:name=".activity.KeysBackupManageActivity"
             android:label="@string/encryption_message_recovery" />
         <activity android:name=".activity.DebugMenuActivity" />
-
         <activity
             android:name=".activity.SASVerificationActivity"
             android:label="@string/title_activity_verify_device"
             android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".activity.ReviewTermsActivity"
+            android:label="@string/review_terms"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".activity.VectorSharedFilesActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
 
-        <!-- FileProvider -->
-        <!--<activity android:name=".activity.DebugMenuActivity" /> &lt;!&ndash; FileProvider &ndash;&gt;-->
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="*/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity> <!-- FileProvider -->
+        <!-- <activity android:name=".activity.DebugMenuActivity" /> &lt;!&ndash; FileProvider &ndash;&gt; -->
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="9.9" /> <!-- broadcast receiver -->
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/vector_provider_paths" />
-        </provider> <!-- broadcast receiver -->
+        </provider>
         <receiver
             android:name=".receiver.VectorUniversalLinkReceiver"
             android:exported="false">
@@ -504,17 +433,17 @@
                 <!-- mail validation -->
                 <data android:pathPrefix="/_matrix/" />
             </intent-filter>
-        </receiver>
+        </receiver> <!-- Exported false, should only be accessible from this app!! -->
         <receiver android:name=".receiver.VectorBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_BOOT_COMPLETED" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </receiver> <!-- Exported false, should only be accessible from this app!! -->
+        </receiver>
         <receiver
             android:name=".receiver.NotificationBroadcastReceiver"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false" /> <!-- Shared items -->
         <receiver
             android:name=".receiver.VectorReferrerReceiver"
             android:enabled="true"
@@ -522,38 +451,100 @@
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
-        </receiver> <!-- Shared items -->
-        <activity
-            android:name=".activity.VectorSharedFilesActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="*/*" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SEND_MULTIPLE" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="*/*" />
-            </intent-filter>
-        </activity>
+        </receiver>
 
         <service
             android:name=".services.EventStreamServiceX"
             android:exported="false" />
-
         <service
             android:name=".services.CallService"
             android:exported="false" />
-
-        <!--<provider-->
-        <!--android:name=".db.VectorContentProvider"-->
-        <!--android:authorities="${applicationId}.VectorApp.provider"-->
-        <!--android:exported="true" />-->
     </application>
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false"
+        tools:replace="required" />
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false"
+        tools:replace="required" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false"
+        tools:replace="required" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="false"
+        tools:replace="required" />
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="false"
+        tools:replace="required" />
+    <uses-feature
+        android:name="android.hardware.bluetooth"
+        android:required="false"
+        tools:replace="required" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" /> <!-- universal links management -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- for android 4.1.* devices, reported by GA -->
+    <uses-permission android:name="android.permission.VIBRATE" /> <!-- videocall permissions -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- required on android 6.0.0 devices -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission
+        android:name="android.permission.READ_LOGS"
+        tools:ignore="ProtectedPermissions" /> <!-- shared files from external application -->
+    <uses-permission android:name="android.permission.REORDER_TASKS" /> <!-- to be able to turn on display when a notification is received -->
+    <uses-permission android:name="android.permission.GET_TASKS" /> <!-- start the background sync on boot -->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- disable the battery optimisation on some devices to let the background sync works -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- videocall feature -->
+    <!-- android.permission.CAMERA defines android.hardware.camera -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission
+        android:name="android.permission.MANAGE_DOCUMENTS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- android.permission.RECORD_AUDIO defines android.hardware.microphone -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- ShortcutBadger permissions -->
+    <!-- for Samsung -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" /> <!-- for htc -->
+    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" /> <!-- for sony -->
+    <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" /> <!-- for apex -->
+    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" /> <!-- for solid -->
+    <uses-permission android:name="com.sonymobile.home.permission.PROVIDER_INSERT_BADGE" /> <!-- for huawei -->
+    <uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" />
+    <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" />
+    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" /> <!-- for ZUK -->
+    <uses-permission android:name="com.huawei.android.launcher.permission.READ_SETTINGS" /> <!-- for OPPO -->
+    <uses-permission android:name="com.huawei.android.launcher.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_APP_BADGE" /> <!-- for EvMe -->
+    <uses-permission android:name="com.oppo.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.oppo.launcher.permission.WRITE_SETTINGS" /> <!-- bluetooth headset -->
+    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_READ" />
+    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_WRITE" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" /> <!-- jitsi -->
+    <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- Jitsi libs adds CALENDAR permissions, but we can remove them safely according to https://github.com/jitsi/jitsi-meet/issues/4068#issuecomment-480482481 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission
+        android:name="android.permission.READ_CALENDAR"
+        tools:node="remove" />
+
+    <uses-permission
+        android:name="android.permission.WRITE_CALENDAR"
+        tools:node="remove" /> <!-- New when targeting API 28 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <uses-sdk tools:overrideLibrary="org.jitsi.meet.sdk,com.oney.WebRTCModule,co.apptailor.googlesignin,com.BV.LinearGradient,com.calendarevents,com.corbt.keepawake,com.dylanvann.fastimage,com.oblador.vectoricons,com.ocetnik.timer,com.rnimmersive,com.zmxv.RNSound,com.i18n.reactnativei18n,org.webkit.androidjsc,com.reactnativecommunity.asyncstorage" />
 
 </manifest>

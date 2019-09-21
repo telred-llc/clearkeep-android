@@ -16,23 +16,29 @@ import javax.inject.Named
 @Module
 @Suppress("unused")
 abstract class AbstractRestoreBackupKeyActivityFragmentBuilder {
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [FragmentPassphraseRestoreBackupKeyBindModule::class])
     abstract fun contributePassphraseRestoreBackupKeyFragment(): PassphraseRestoreBackupKeyFragment;
 
-    @Binds
-    @Named(IFragment.PASSPHRASE_RESTORE_BACK_UP_KEY_FRAGMENT)
-    abstract fun bindPassphraseRestoreBackupKeyFragment(fragment: PassphraseRestoreBackupKeyFragment): IFragment;
-
-    @Binds
-    abstract fun bindPassphraseRestoreBackupKeyFragmentViewModelFactory(factory: PassphraseRestoreBackupKeyFragmentViewModelFactory): IViewModelFactory<AbstractPassphraseRestoreBackupKeyFragmentViewModel>;
-
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [FragmentTextFileRestoreBackupKeyBindModule::class])
     abstract fun contributeTextFileRestoreBackupKeyFragment(): TextFileRestoreBackupKeyFragment;
 
-    @Binds
-    @Named(IFragment.TEXT_FILE_RESTORE_BACK_UP_KEY_FRAGMENT)
-    abstract fun bindTextFileRestoreBackupKeyFragment(fragment: TextFileRestoreBackupKeyFragment): IFragment;
+    @Module
+    abstract class FragmentPassphraseRestoreBackupKeyBindModule {
+        @Binds
+        @Named(IFragment.PASSPHRASE_RESTORE_BACK_UP_KEY_FRAGMENT)
+        abstract fun bindPassphraseRestoreBackupKeyFragment(fragment: PassphraseRestoreBackupKeyFragment): IFragment;
 
-    @Binds
-    abstract fun bindTextFileRestoreBackupKeyFragmentViewModelFactory(factory: TextFileRestoreBackupKeyFragmentViewModelFactory): IViewModelFactory<AbstractTextFileRestoreBackupKeyFragmentViewModel>;
+        @Binds
+        abstract fun bindPassphraseRestoreBackupKeyFragmentViewModelFactory(factory: PassphraseRestoreBackupKeyFragmentViewModelFactory): IViewModelFactory<AbstractPassphraseRestoreBackupKeyFragmentViewModel>;
+    }
+
+    @Module
+    abstract class FragmentTextFileRestoreBackupKeyBindModule {
+        @Binds
+        @Named(IFragment.TEXT_FILE_RESTORE_BACK_UP_KEY_FRAGMENT)
+        abstract fun bindTextFileRestoreBackupKeyFragment(fragment: TextFileRestoreBackupKeyFragment): IFragment;
+
+        @Binds
+        abstract fun bindTextFileRestoreBackupKeyFragmentViewModelFactory(factory: TextFileRestoreBackupKeyFragmentViewModelFactory): IViewModelFactory<AbstractTextFileRestoreBackupKeyFragmentViewModel>;
+    }
 }

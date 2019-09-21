@@ -1,12 +1,10 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.Observer
-import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.util.Log
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import im.vector.R
 import im.vector.databinding.ActivityReportBinding
 import im.vector.util.BugReporter
@@ -26,7 +24,7 @@ class ReportActivity : DataBindingDaggerActivity(), IReportActivity {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_report, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_report);
         userId = intent.getStringExtra(USER_ID);
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setTitle(R.string.report);

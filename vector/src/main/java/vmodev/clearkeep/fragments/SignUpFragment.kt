@@ -1,28 +1,22 @@
 package vmodev.clearkeep.fragments
 
-import android.app.AlertDialog
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.text.TextUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import im.vector.BuildConfig
-
 import im.vector.R
 import im.vector.databinding.FragmentSignUpBinding
 import im.vector.repositories.ServerUrlsRepository
-import kotlinx.android.synthetic.main.fragment_sign_up.*
 import vmodev.clearkeep.activities.SplashActivity
-import vmodev.clearkeep.activities.WaitingForVerifyEmailActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.ultis.isEmailValid
@@ -62,7 +56,7 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 
@@ -216,6 +210,6 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
 
 
     private fun showAlertDialog(title: String, message: String) {
-        AlertDialog.Builder(this.context).setTitle(title).setMessage(message).setNegativeButton("Close", null).show();
+        this.context?.let { AlertDialog.Builder(it).setTitle(title).setMessage(message).setNegativeButton("Close", null).show()};
     }
 }

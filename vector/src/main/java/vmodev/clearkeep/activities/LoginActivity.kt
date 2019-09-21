@@ -1,12 +1,12 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.Observer
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
 import android.view.View
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import im.vector.R
 import im.vector.databinding.ActivityLoginBinding
 import vmodev.clearkeep.activities.interfaces.IActivity
@@ -26,7 +26,7 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_login, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
 
         val loginFragment = LoginFragment.newInstance();
         changeFragment(loginFragment);

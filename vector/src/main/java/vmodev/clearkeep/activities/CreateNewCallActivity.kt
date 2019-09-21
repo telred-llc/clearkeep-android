@@ -1,38 +1,36 @@
 package vmodev.clearkeep.activities
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.Observer
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.graphics.Color
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.support.v7.util.DiffUtil
-import android.util.Log
 import android.widget.Toast
-import com.jakewharton.rxbinding2.widget.RxTextView
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DiffUtil
+import com.jakewharton.rxbinding3.widget.textChanges
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.ActivityCreateNewCallBinding
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import vmodev.clearkeep.activities.interfaces.ICreateNewCallActivity
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.adapters.ListUserToInviteRecyclerViewAdapter
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
-import vmodev.clearkeep.factories.viewmodels.interfaces.ICreateNewCallActivityViewModelFactory
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodelobjects.User
-import java.util.HashMap
+import vmodev.clearkeep.viewmodels.interfaces.AbstractCreateNewCallActivityViewModel
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class CreateNewCallActivity : DataBindingDaggerActivity(), ICreateNewCallActivity {
+class CreateNewCallActivity : DataBindingDaggerActivity(), IActivity {
 
     @Inject
-    lateinit var viewModelFactory: ICreateNewCallActivityViewModelFactory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractCreateNewCallActivityViewModel>;
     @Inject
     lateinit var appExecutors: AppExecutors;
 
@@ -44,7 +42,7 @@ class CreateNewCallActivity : DataBindingDaggerActivity(), ICreateNewCallActivit
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_create_new_call, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_create_new_call, dataBinding.getDataBindingComponent());
         userId = intent.getStringExtra(USER_ID);
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setTitle(R.string.new_call);
@@ -53,7 +51,7 @@ class CreateNewCallActivity : DataBindingDaggerActivity(), ICreateNewCallActivit
         binding.toolbar.setNavigationOnClickListener {
             onBackPressed();
         }
-        val listUserAdapter = ListUserToInviteRecyclerViewAdapter(appExecutors = appExecutors, dataBindingComponent = dataBindingComponent, listSelected = listSelected
+        val listUserAdapter = ListUserToInviteRecyclerViewAdapter(appExecutors = appExecutors, listSelected = listSelected
                 , diffCallback = object : DiffUtil.ItemCallback<User>() {
             override fun areItemsTheSame(p0: User, p1: User): Boolean {
                 return p0.id == p1.id;
@@ -62,7 +60,7 @@ class CreateNewCallActivity : DataBindingDaggerActivity(), ICreateNewCallActivit
             override fun areContentsTheSame(p0: User, p1: User): Boolean {
                 return p0.id == p1.id;
             }
-        }) { user, status ->
+        }, dataBindingComponent = dataBinding.getDataBindingComponent()) { user, status ->
             if (listSelected.size > 0) {
                 binding.textViewCreate.setTextColor(Color.parseColor("#63CD9A"))
                 binding.textViewCreate.isClickable = true;
@@ -120,15 +118,11 @@ class CreateNewCallActivity : DataBindingDaggerActivity(), ICreateNewCallActivit
 
         binding.lifecycleOwner = this;
         var disposable: Disposable? = null;
-        RxTextView.textChanges(binding.editTextQuery).subscribe { t: CharSequence? ->
+        binding.editTextQuery.textChanges().subscribe {
             disposable?.let { disposable -> disposable.dispose(); }
             disposable = Observable.timer(100, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers
                     .mainThread()).subscribe { time: Long? ->
-                run {
-                    t?.let { charSequence ->
-                        viewModelFactory.getViewModel().setQuery(charSequence.toString())
-                    }
-                }
+                viewModelFactory.getViewModel().setQuery(it.toString())
             };
         }
     }

@@ -294,11 +294,9 @@ class VectorMessagesAdapterMediasHelper {
             if (null != downloadableUrl) {
                 Glide.with(mContext)
                         .load(downloadableUrl)
-                        .apply(new RequestOptions()
-                                .override(maxImageWidth, maxImageHeight)
-                                .fitCenter()
-                                .placeholder(R.drawable.sticker_placeholder)
-                        )
+                        .override(maxImageWidth, maxImageHeight)
+                        .fitCenter()
+                        .placeholder(R.drawable.sticker_placeholder)
                         .into(imageView);
             } else {
                 // Display the placeholder

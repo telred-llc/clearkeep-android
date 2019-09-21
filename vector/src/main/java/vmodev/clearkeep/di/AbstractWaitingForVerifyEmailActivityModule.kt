@@ -1,6 +1,6 @@
 package vmodev.clearkeep.di
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -16,15 +16,18 @@ import javax.inject.Named
 @Module
 @Suppress("unused")
 abstract class AbstractWaitingForVerifyEmailActivityModule {
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [ActivityBindModule::class])
     abstract fun contributeWaitingForVerifyEmailActivity(): WaitingForVerifyEmailActivity;
 
-    @Binds
-    @Named(IActivity.WAITING_FOR_VERIFY_EMAIL_ACTIVITY)
-    abstract fun bindWaitingForVerifyEmailActivity(activity: WaitingForVerifyEmailActivity): IActivity;
+    @Module
+    abstract class ActivityBindModule {
+        @Binds
+        @Named(IActivity.WAITING_FOR_VERIFY_EMAIL_ACTIVITY)
+        abstract fun bindWaitingForVerifyEmailActivity(activity: WaitingForVerifyEmailActivity): IActivity;
 
-    @Binds
-    abstract fun bindWaitingForVerifyEmailActivityViewModelFactory(factory: WaitingForVerifyEmailActivityViewModelFactory): IViewModelFactory<AbstractWaitingForVerifyEmailActivityViewModel>;
+        @Binds
+        abstract fun bindWaitingForVerifyEmailActivityViewModelFactory(factory: WaitingForVerifyEmailActivityViewModelFactory): IViewModelFactory<AbstractWaitingForVerifyEmailActivityViewModel>;
+    }
 
     @Binds
     @IntoMap

@@ -1,29 +1,31 @@
 package vmodev.clearkeep.activities
 
-import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
 import android.util.Log
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
 import dagger.android.support.DaggerAppCompatActivity
 import im.vector.R
 import im.vector.databinding.ActivityCallSettingsBinding
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.activities.interfaces.ICallSettingsActivity
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
+import vmodev.clearkeep.di.AbstractCallSettingsActivityModule
 import vmodev.clearkeep.factories.viewmodels.interfaces.ICallSettingsActivityViewModelFactory
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.viewmodels.interfaces.AbstractCallSettingActivityViewModel
 import javax.inject.Inject
 
-class CallSettingsActivity : DataBindingDaggerActivity(), ICallSettingsActivity {
+class CallSettingsActivity : DataBindingDaggerActivity(), IActivity {
 
     @Inject
-    lateinit var viewModelFactory: ICallSettingsActivityViewModelFactory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractCallSettingActivityViewModel>;
 
     private lateinit var binding: ActivityCallSettingsBinding;
     private lateinit var userId: String;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_call_settings, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_call_settings, dataBinding.getDataBindingComponent());
         userId = if (intent.getStringExtra(USER_ID).isNullOrEmpty()) "" else intent.getStringExtra(USER_ID);
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setTitle(R.string.calls);

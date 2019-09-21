@@ -10,7 +10,6 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.support.v4.content.ContextCompat
 import android.text.Html
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -27,6 +26,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.binaryfork.spanny.Spanny
 import im.vector.R
 import im.vector.VectorApp

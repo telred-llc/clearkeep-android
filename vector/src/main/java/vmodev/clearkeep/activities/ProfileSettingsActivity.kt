@@ -1,20 +1,18 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.Observer
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import im.vector.Matrix
 import im.vector.R
 import im.vector.databinding.ActivityProfileSettingsBinding
 import vmodev.clearkeep.activities.interfaces.IActivity
-import vmodev.clearkeep.activities.interfaces.IProfileSettingsActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.viewmodels.interfaces.AbstractProfileSettingsActivityViewModel
 import java.util.*
 import javax.inject.Inject
-import javax.inject.Named
 
 class ProfileSettingsActivity : DataBindingDaggerActivity(), IActivity {
 
@@ -26,7 +24,7 @@ class ProfileSettingsActivity : DataBindingDaggerActivity(), IActivity {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_profile_settings, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_profile_settings);
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setTitle(R.string.setting);
         supportActionBar?.setDisplayHomeAsUpEnabled(true);

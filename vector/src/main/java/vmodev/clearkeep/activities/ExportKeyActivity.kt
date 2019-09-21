@@ -1,43 +1,40 @@
 package vmodev.clearkeep.activities
 
 import android.Manifest
-import android.arch.lifecycle.Observer
-import android.databinding.DataBindingUtil
-import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import dagger.android.support.DaggerAppCompatActivity
-import im.vector.R
-import im.vector.databinding.ActivityExportKeyBinding
-import vmodev.clearkeep.activities.interfaces.IExportKeyActivity
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
-import vmodev.clearkeep.dialogfragments.ExportKeyDialogFragment
-import vmodev.clearkeep.factories.viewmodels.interfaces.IExportKeyActivityViewModeFactory
-import javax.inject.Inject
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import vmodev.clearkeep.dialogfragments.ExportBackupKeyResultDialogFragment
-import vmodev.clearkeep.ultis.writeToInternal
-import vmodev.clearkeep.viewmodelobjects.Status
-import android.content.ClipboardManager
 import android.net.Uri
-import android.widget.Toast
-import vmodev.clearkeep.ultis.writeToInternalCache
-import java.util.*
+import android.os.Bundle
 import android.os.StrictMode
-import android.util.Log
+import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import im.vector.Matrix
-import im.vector.activity.CommonActivityUtils
-import im.vector.activity.VectorHomeActivity
+import im.vector.R
+import im.vector.databinding.ActivityExportKeyBinding
 import org.matrix.androidsdk.MXSession
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
-import vmodev.clearkeep.dialogfragments.ReceivedShareFileDialogFragment
+import vmodev.clearkeep.activities.interfaces.IActivity
+import vmodev.clearkeep.activities.interfaces.IExportKeyActivity
+import vmodev.clearkeep.dialogfragments.ExportBackupKeyResultDialogFragment
+import vmodev.clearkeep.dialogfragments.ExportKeyDialogFragment
+import vmodev.clearkeep.factories.viewmodels.interfaces.IExportKeyActivityViewModeFactory
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.ultis.writeToInternal
+import vmodev.clearkeep.ultis.writeToInternalCache
+import vmodev.clearkeep.viewmodelobjects.Status
+import vmodev.clearkeep.viewmodels.interfaces.AbstractExportKeyActivityViewModel
+import java.util.*
+import javax.inject.Inject
 
 
-class ExportKeyActivity : DataBindingDaggerActivity(), IExportKeyActivity, ExportKeyDialogFragment.OnFragmentInteractionListener {
+class ExportKeyActivity : DataBindingDaggerActivity(), IActivity, ExportKeyDialogFragment.OnFragmentInteractionListener {
 
     @Inject
-    lateinit var viewModelFactory: IExportKeyActivityViewModeFactory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractExportKeyActivityViewModel>;
 
     private lateinit var binding: ActivityExportKeyBinding;
     private var exportStatus = false;
@@ -46,7 +43,7 @@ class ExportKeyActivity : DataBindingDaggerActivity(), IExportKeyActivity, Expor
     private lateinit var userId: String;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_export_key, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_export_key, dataBinding.getDataBindingComponent());
         userId = intent.getStringExtra(USER_ID);
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setTitle(R.string.security);
@@ -161,7 +158,7 @@ class ExportKeyActivity : DataBindingDaggerActivity(), IExportKeyActivity, Expor
             data?.let {
                 val uri = it.data;
                 val currentTime = Calendar.getInstance().time;
-                backupKeyContent.writeToInternal(uri.path, "ClearKeep-keys-$currentTime.txt")
+                backupKeyContent.writeToInternal(uri!!.path!!, "ClearKeep-keys-$currentTime.txt")
             }
         }
     }

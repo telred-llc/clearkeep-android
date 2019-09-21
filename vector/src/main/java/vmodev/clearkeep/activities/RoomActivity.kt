@@ -15,7 +15,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Vibrator
 import android.preference.PreferenceManager
-import android.support.v7.app.AlertDialog
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -27,6 +26,7 @@ import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import butterknife.BindView
 import butterknife.OnClick
 import butterknife.OnLongClick
@@ -54,6 +54,7 @@ import im.vector.util.ReadMarkerManager.LIVE_MODE
 import im.vector.util.ReadMarkerManager.PREVIEW_MODE
 import im.vector.view.*
 import im.vector.widgets.Widget
+import im.vector.widgets.WidgetManagerProvider
 import im.vector.widgets.WidgetsManager
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.call.IMXCall
@@ -747,28 +748,33 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                         .setPositiveButton(R.string.remove) { dialog, which ->
                             showWaitingView()
 
-                            WidgetsManager.getSharedInstance().closeWidget(mxSession, currentRoom, widget.widgetId, object : ApiCallback<Void> {
-                                override fun onSuccess(info: Void?) {
-                                    hideWaitingView()
-                                }
+                            val wm = WidgetManagerProvider.getWidgetManager(this@RoomActivity)
+                            if (wm != null) {
+                                showWaitingView()
 
-                                private fun onError(errorMessage: String) {
-                                    hideWaitingView()
-                                    Toast.makeText(this@RoomActivity, errorMessage, Toast.LENGTH_SHORT).show()
-                                }
+                                wm.closeWidget(mSession, mRoom, widget.widgetId, object : ApiCallback<Void> {
+                                    override fun onSuccess(info: Void) {
+                                        hideWaitingView()
+                                    }
 
-                                override fun onNetworkError(e: Exception) {
-                                    onError(e.localizedMessage)
-                                }
+                                    private fun onError(errorMessage: String?) {
+                                        hideWaitingView()
+                                        Toast.makeText(this@RoomActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                                    }
 
-                                override fun onMatrixError(e: MatrixError) {
-                                    onError(e.localizedMessage)
-                                }
+                                    override fun onNetworkError(e: Exception) {
+                                        onError(e.localizedMessage)
+                                    }
 
-                                override fun onUnexpectedError(e: Exception) {
-                                    onError(e.localizedMessage)
-                                }
-                            })
+                                    override fun onMatrixError(e: MatrixError) {
+                                        onError(e.localizedMessage)
+                                    }
+
+                                    override fun onUnexpectedError(e: Exception) {
+                                        onError(e.localizedMessage)
+                                    }
+                                })
+                            }
                         }
                         .setNegativeButton(R.string.cancel, null)
                         .show()
@@ -836,30 +842,33 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
 
             override fun onCloseWidgetClick(widget: Widget) {
-                showWaitingView()
+                val wm = WidgetManagerProvider.getWidgetManager(this@RoomActivity)
+                if (wm != null) {
+                    showWaitingView()
 
-                WidgetsManager.getSharedInstance().closeWidget(mxSession, currentRoom, widget.widgetId, object : ApiCallback<Void> {
-                    override fun onSuccess(info: Void) {
-                        hideWaitingView()
-                    }
+                    wm.closeWidget(mSession, mRoom, widget.widgetId, object : ApiCallback<Void> {
+                        override fun onSuccess(info: Void) {
+                            hideWaitingView()
+                        }
 
-                    private fun onError(errorMessage: String) {
-                        hideWaitingView()
-                        Toast.makeText(this@RoomActivity, errorMessage, Toast.LENGTH_SHORT).show()
-                    }
+                        private fun onError(errorMessage: String?) {
+                            hideWaitingView()
+                            Toast.makeText(this@RoomActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                        }
 
-                    override fun onNetworkError(e: Exception) {
-                        onError(e.localizedMessage)
-                    }
+                        override fun onNetworkError(e: Exception) {
+                            onError(e.localizedMessage)
+                        }
 
-                    override fun onMatrixError(e: MatrixError) {
-                        onError(e.localizedMessage)
-                    }
+                        override fun onMatrixError(e: MatrixError) {
+                            onError(e.localizedMessage)
+                        }
 
-                    override fun onUnexpectedError(e: Exception) {
-                        onError(e.localizedMessage)
-                    }
-                })
+                        override fun onUnexpectedError(e: Exception) {
+                            onError(e.localizedMessage)
+                        }
+                    })
+                }
             }
 
             override fun onActiveWidgetUpdate() {
@@ -1658,33 +1667,36 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      * @param aIsVideoCall true if the call is a video one
      */
     private fun startJitsiCall(aIsVideoCall: Boolean) {
-        enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
-        showWaitingView()
+        val wm = WidgetManagerProvider.getWidgetManager(this)
+        if (wm != null) {
+            enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
+            showWaitingView()
 
-        WidgetsManager.getSharedInstance().createJitsiWidget(mxSession, currentRoom, aIsVideoCall, object : ApiCallback<Widget> {
-            override fun onSuccess(widget: Widget) {
-                hideWaitingView()
+            wm.createJitsiWidget(mSession, mRoom, aIsVideoCall, object : ApiCallback<Widget> {
+                override fun onSuccess(widget: Widget) {
+                    hideWaitingView()
 
-                launchJitsiActivity(widget, aIsVideoCall)
-            }
+                    launchJitsiActivity(widget, aIsVideoCall)
+                }
 
-            private fun onError(errorMessage: String) {
-                hideWaitingView()
-                Toast.makeText(this@RoomActivity, errorMessage, Toast.LENGTH_SHORT).show()
-            }
+                private fun onError(errorMessage: String?) {
+                    hideWaitingView()
+                    Toast.makeText(this@RoomActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                }
 
-            override fun onNetworkError(e: Exception) {
-                onError(e.localizedMessage)
-            }
+                override fun onNetworkError(e: Exception) {
+                    onError(e.localizedMessage)
+                }
 
-            override fun onMatrixError(e: MatrixError) {
-                onError(e.localizedMessage)
-            }
+                override fun onMatrixError(e: MatrixError) {
+                    onError(e.localizedMessage)
+                }
 
-            override fun onUnexpectedError(e: Exception) {
-                onError(e.localizedMessage)
-            }
-        })
+                override fun onUnexpectedError(e: Exception) {
+                    onError(e.localizedMessage)
+                }
+            })
+        }
     }
 
     /**

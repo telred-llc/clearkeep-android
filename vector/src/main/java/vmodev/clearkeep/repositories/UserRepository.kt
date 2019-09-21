@@ -1,26 +1,26 @@
 package vmodev.clearkeep.repositories
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.LiveDataReactiveStreams
-import io.reactivex.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.LiveDataReactiveStreams
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
 import vmodev.clearkeep.databases.AbstractUserDao
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.interfaces.IUserRepository
 import vmodev.clearkeep.repositories.wayloads.*
 import vmodev.clearkeep.viewmodelobjects.Resource
-import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
 import java.io.InputStream
 import javax.inject.Inject
-import javax.inject.Singleton
 
-class UserRepository @Inject constructor(private val executors: AppExecutors
-                                         , private val abstractUserDao: AbstractUserDao
-                                         , private val matrixService: MatrixService) : IUserRepository {
+class UserRepository @Inject constructor(
+        private val abstractUserDao: AbstractUserDao
+        , private val matrixService: MatrixService) : IUserRepository {
 
     override fun loadUser(userId: String): LiveData<Resource<User>> {
         return object : AbstractNetworkBoundSourceRx<User, User>() {
