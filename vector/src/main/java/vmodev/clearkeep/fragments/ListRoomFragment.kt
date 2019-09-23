@@ -9,6 +9,7 @@ import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.DividerItemDecoration
 import android.util.Log
 import android.view.LayoutInflater
@@ -78,7 +79,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
     private lateinit var binding: FragmentListRoomBinding;
     private var onGoingRoom = false;
     private var currentRoomId: String = ""
-
+    private var alertDialog : AlertDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -395,8 +396,21 @@ class ListRoomFragment : DataBindingDaggerFragment(), IListRoomFragment, IListRo
     }
 
     private fun declideInvite(roomId: String) {
-        binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult();
-        viewModelFactory.getViewModel().setLeaveRoomId(roomId);
+        if (alertDialog==null) {
+            alertDialog = AlertDialog.Builder(activity!!).setTitle(R.string.leave_room)
+                    .setMessage(R.string.do_you_want_leave_room)
+                    .setNegativeButton(R.string.no, null)
+                    .setPositiveButton(R.string.yes) { dialog, v ->
+                        binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult();
+                        viewModelFactory.getViewModel().setLeaveRoomId(roomId);
+
+                    }.show()
+        }
+        if ( alertDialog!!.isShowing){
+            Log.d("alertDialog","isShowing")
+        }else{
+           alertDialog!!.show()
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
