@@ -8,19 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-
 import im.vector.R
 import im.vector.databinding.FragmentHomeScreenBinding
-import vmodev.clearkeep.adapters.HomeScreenPagerAdapter
-import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IShowListRoomFragmentFactory
-import vmodev.clearkeep.factories.viewmodels.interfaces.IHomeScreenFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
-import vmodev.clearkeep.fragments.Interfaces.IHomeScreenFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractHomeScreenFragmentViewModel
 import javax.inject.Inject
-import javax.inject.Named
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,12 +29,6 @@ import javax.inject.Named
  */
 class HomeScreenFragment : DataBindingDaggerFragment(), IFragment {
     private var listener: OnFragmentInteractionListener? = null;
-    @Inject
-    @field:Named(value = IShowListRoomFragmentFactory.DIRECT_MESSAGE_FRAGMENT_FACTORY)
-    lateinit var directMessageFragmentFactory: IShowListRoomFragmentFactory;
-    @Inject
-    @field:Named(value = IShowListRoomFragmentFactory.ROOM_MESSAGE_FRAGMENT_FACTORY)
-    lateinit var roomMessageFragmentFactory: IShowListRoomFragmentFactory;
     @Inject
     lateinit var homeScreenFragmentViewModelFactory: IViewModelFactory<AbstractHomeScreenFragmentViewModel>;
     private lateinit var binding: FragmentHomeScreenBinding;
@@ -62,8 +49,6 @@ class HomeScreenFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        roomViewModelDirectMessage = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
-//        roomViewModelRoomMessage = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
         binding.roomsDirectMessage = homeScreenFragmentViewModelFactory.getViewModel().getListRoomDirectMessage();
         binding.roomsRoomMessage = homeScreenFragmentViewModelFactory.getViewModel().getListRoomsMessage();
         binding.lifecycleOwner = viewLifecycleOwner;
@@ -78,8 +63,6 @@ class HomeScreenFragment : DataBindingDaggerFragment(), IFragment {
 
 
     private fun setUpViewPage() {
-        val fragments: Array<Fragment> = arrayOf(directMessageFragmentFactory.createNewInstance().getFragment(), roomMessageFragmentFactory.createNewInstance().getFragment());
-        binding.viewPagerHomeScreen.adapter = HomeScreenPagerAdapter(childFragmentManager, fragments);
         binding.tabLayoutHomeScreen.setupWithViewPager(binding.viewPagerHomeScreen);
     }
 

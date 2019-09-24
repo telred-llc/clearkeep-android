@@ -5,6 +5,8 @@ apply plugin: 'realm-android'
 apply plugin: 'kotlin-android-extensions'
 import com.android.build.OutputFile
 
+apply plugin: "androidx.navigation.safeargs"
+
 buildscript {
     repositories {
         google()
@@ -39,6 +41,10 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 
     defaultConfig {
@@ -365,7 +371,7 @@ dependencies {
     /******************************** Navigation *****************************************/
     def nav_version = "2.2.0-alpha02"
     // Kotlin
-//    implementation "androidx.navigation:navigation-runtime-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-runtime-ktx:$nav_version"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 //    implementation "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"

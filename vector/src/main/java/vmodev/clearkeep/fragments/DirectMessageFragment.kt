@@ -15,7 +15,6 @@ import im.vector.databinding.FragmentDirectMessageBinding
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import vmodev.clearkeep.activities.MessageListActivity
-import vmodev.clearkeep.activities.FindAndCreateNewConversationActivity
 import vmodev.clearkeep.activities.RoomSettingsActivity
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
@@ -75,7 +74,7 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDirectMessageFragmen
         }
         binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
         binding.buttonStartDirectChat.setOnClickListener {
-            val intentNewChat = Intent(context, FindAndCreateNewConversationActivity::class.java);
+            val intentNewChat = Intent(context, FindAndCreateNewConversationFragment::class.java);
             startActivity(intentNewChat);
         }
         binding.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))

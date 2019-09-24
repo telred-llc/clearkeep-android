@@ -1,46 +1,39 @@
-package vmodev.clearkeep.activities
+package vmodev.clearkeep.fragments
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.LifecycleOwner
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.jakewharton.rxbinding3.widget.textChanges
-import im.vector.Matrix
 import im.vector.R
-import im.vector.activity.CommonActivityUtils
-import im.vector.activity.VectorRoomActivity
 import im.vector.databinding.ActivityFindAndCreateNewConversationBinding
-import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import org.matrix.androidsdk.MXSession
-import org.matrix.androidsdk.core.callback.ApiCallback
-import org.matrix.androidsdk.core.model.MatrixError
-import vmodev.clearkeep.activities.interfaces.IActivity
+import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapter
+import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractFindAndCreateNewConversationActivityViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
-import java.util.HashMap
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class FindAndCreateNewConversationActivity : DataBindingDaggerActivity(), IActivity {
+class FindAndCreateNewConversationFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractFindAndCreateNewConversationActivityViewModel>;
@@ -48,24 +41,19 @@ class FindAndCreateNewConversationActivity : DataBindingDaggerActivity(), IActiv
     lateinit var appExecutors: AppExecutors;
     @Inject
     lateinit var roomUserJoinDao: AbstractRoomUserJoinDao;
-    private lateinit var binding: ActivityFindAndCreateNewConversationBinding;
-    private var userId: String? = null;
+    @Inject
+    lateinit var application: IApplication;
 
-    @SuppressLint("CheckResult")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_find_and_create_new_conversation, dataBinding.getDataBindingComponent());
-        userId = intent.getStringExtra(USER_ID);
-        setSupportActionBar(binding.toolbar);
-        supportActionBar!!.setTitle(R.string.new_conversation);
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true);
-        supportActionBar!!.setDisplayShowHomeEnabled(true);
-        binding.toolbar.setNavigationOnClickListener { v ->
-            kotlin.run {
-                onBackPressed();
-            }
-        }
-        binding.lifecycleOwner = this;
+    private lateinit var binding: ActivityFindAndCreateNewConversationBinding;
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_find_and_create_new_conversation, container, false, dataBinding.getDataBindingComponent());
+        binding.lifecycleOwner = viewLifecycleOwner;
+        return binding.root;
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setUpViewModel();
     }
 
@@ -86,13 +74,14 @@ class FindAndCreateNewConversationActivity : DataBindingDaggerActivity(), IActiv
         binding.inviteUser = viewModelFactory.getViewModel().getInviteUserToDirectChat();
         viewModelFactory.getViewModel().joinRoomResult().observe(this, Observer {
             it?.data?.let {
-                val intentRoom = Intent(this@FindAndCreateNewConversationActivity, RoomActivity::class.java);
-                intentRoom.putExtra(RoomActivity.EXTRA_MATRIX_ID, userId);
+                val intentRoom = Intent(this.activity, RoomActivity::class.java);
+                intentRoom.putExtra(RoomActivity.EXTRA_MATRIX_ID, application.getUserId());
                 intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, it.id);
                 startActivity(intentRoom);
+                this.activity?.finish();
             }
         })
-        binding.recyclerViewUsers.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        binding.recyclerViewUsers.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewUsers.adapter = listUserAdapter;
         viewModelFactory.getViewModel().getUsers().observe(this, Observer { t ->
             kotlin.run {
@@ -107,7 +96,7 @@ class FindAndCreateNewConversationActivity : DataBindingDaggerActivity(), IActiv
                             it.data?.let { viewModelFactory.getViewModel().setJoinRoom(it.id) }
                         }
                         Status.ERROR -> {
-                            Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this.context, it.message, Toast.LENGTH_SHORT).show();
                         }
                         else -> {
 
@@ -124,19 +113,14 @@ class FindAndCreateNewConversationActivity : DataBindingDaggerActivity(), IActiv
                     .subscribe { time: Long? -> t?.let { charSequence -> viewModelFactory.getViewModel().setQuery(charSequence.toString()) } };
         }
         binding.newRoom.setOnClickListener { v ->
-            val intent = Intent(this, CreateNewRoomActivity::class.java);
-            startActivity(intent);
+            findNavController().navigate(FindAndCreateNewConversationFragmentDirections.createNewRoom());
         }
         binding.newCall.setOnClickListener {
-            userId?.let {
-                val intent = Intent(this, CreateNewCallActivity::class.java);
-                intent.putExtra(CreateNewCallActivity.USER_ID, it);
-                startActivity(intent);
-            }
+            findNavController().navigate(FindAndCreateNewConversationFragmentDirections.createNewCall());
         }
     }
 
-    override fun getActivity(): FragmentActivity {
+    override fun getFragment(): Fragment {
         return this;
     }
 

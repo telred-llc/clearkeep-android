@@ -65,6 +65,7 @@ import vmodev.clearkeep.ultis.getJoinedRoom
 import vmodev.clearkeep.viewmodelobjects.*
 import java.io.InputStream
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -1748,13 +1749,15 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                         emitter.onNext(newState.ordinal);
                         if (newState == KeysBackupStateManager.KeysBackupState.NotTrusted || newState == KeysBackupStateManager.KeysBackupState.Disabled
                                 || newState == KeysBackupStateManager.KeysBackupState.ReadyToBackUp || newState == KeysBackupStateManager.KeysBackupState.WrongBackUpVersion) {
-                            listener?.let {
-                                mxCrypto.keysBackup.removeListener(it)
-                                emitter.onComplete();
+                            listener?.let {l ->
+                                Log.d("AutoBackup", "Remove");
+                                Observable.timer(1, TimeUnit.SECONDS).subscribe { mxCrypto.keysBackup.removeListener(l) }
                             }
+                            emitter.onComplete();
                         }
                     }
                 }
+                Log.d("AutoBackup", "Add");
                 mxCrypto.keysBackup.addListener(listener);
             } ?: run {
                 emitter.onError(Throwable("Crypto is null"))

@@ -114,14 +114,20 @@ class RoomRepository @Inject constructor(
         }.getObject();
     }
 
-    @SuppressLint("CheckResult")
     fun joinRoom(id: String): LiveData<Resource<Room>> {
-        matrixService.joinRoom(id).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread()).subscribe { t: Room? ->
-            run {
-                abstractRoomDao.updateRoom(t!!.id, t!!.type);
+        return object : AbstractNetworkBoundSourceWithParamsOneTimeRx<Room, Room>() {
+            override fun saveCallResult(item: Room) {
+                abstractRoomDao.updateRoom(item.id, item.type);
             }
-        };
-        return loadRoom(id);
+
+            override fun loadFromDb(param: Room): LiveData<Room> {
+                return abstractRoomDao.findById(param.id);
+            }
+
+            override fun createCall(): Observable<Room> {
+                return matrixService.joinRoom(id);
+            }
+        }.asLiveData();
     }
 
     fun leaveRoom(id: String): LiveData<Resource<String>> {
@@ -420,8 +426,8 @@ class RoomRepository @Inject constructor(
         }.getObject();
     }
 
-    fun updateRoomName(roomId : String) : Observable<Room>{
-        return object : AbstractNetworkCallAndSaveToDBReturnRx<Room, Room>(){
+    fun updateRoomName(roomId: String): Observable<Room> {
+        return object : AbstractNetworkCallAndSaveToDBReturnRx<Room, Room>() {
             override fun saveCallResult(item: Room) {
                 Log.d("UpdateRoom", item.type.toString())
                 abstractRoomDao.updateRoom(item);

@@ -65,7 +65,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -88,13 +87,6 @@ import im.vector.listeners.YesNoListener;
 import im.vector.services.EventStreamServiceX;
 import im.vector.ui.badge.BadgeProxy;
 import im.vector.util.PreferencesManager;
-import vmodev.clearkeep.activities.CallViewActivity;
-import vmodev.clearkeep.activities.ExportKeyActivity;
-import vmodev.clearkeep.activities.FindAndCreateNewConversationActivity;
-import vmodev.clearkeep.activities.HomeScreenActivity;
-import vmodev.clearkeep.activities.InviteUsersToRoomActivity;
-import vmodev.clearkeep.activities.PreviewInviteRoomActivity;
-import vmodev.clearkeep.activities.ViewUserProfileActivity;
 
 /**
  * Contains useful functions which are called in multiple activities.
@@ -718,8 +710,8 @@ public class CommonActivityUtils {
                     public void run() {
                         // if the activity is not the home activity
 //                        if (!(fromActivity instanceof HomeScreenActivity) && !(fromActivity instanceof PreviewInviteRoomActivity)
-//                                && !(fromActivity instanceof FindAndCreateNewConversationActivity)
-//                                && !(fromActivity instanceof InviteUsersToRoomActivity) && !(fromActivity instanceof CallViewActivity)
+//                                && !(fromActivity instanceof FindAndCreateNewConversationFragment)
+//                                && !(fromActivity instanceof InviteUsersToRoomFragment) && !(fromActivity instanceof CallViewActivity)
 //                                && !(fromActivity instanceof ViewUserProfileActivity) && !(fromActivity instanceof ExportKeyActivity)) {
 //                            // pop to the home activity
 //                            Log.d(LOG_TAG, "## goToRoomPage(): start VectorHomeActivity..");

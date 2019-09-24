@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_settings"
+    app:startDestination="@+id/profileSettingsFragment">
+
+    <fragment
+        android:id="@+id/deactivateAccountFragment"
+        android:name="vmodev.clearkeep.activities.DeactivateAccountActivity"
+        android:label="Deactivate account"
+        tools:layout="@layout/activity_deactivate_user_account" >
+        <action
+            android:id="@+id/cancel"
+            app:destination="@id/profileSettingsFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+    </fragment>
+    <fragment
+        android:id="@+id/privacyPolicyFragment"
+        android:name="vmodev.clearkeep.activities.PrivacyPolicyActivity"
+        android:label="Privacy policy"
+        tools:layout="@layout/activity_privacy_policy" >
+        <argument
+            android:name="url"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/reportFragment"
+        android:name="vmodev.clearkeep.activities.ReportActivity"
+        android:label="Report"
+        tools:layout="@layout/activity_report" />
+    <fragment
+        android:id="@+id/callSettingsFragment"
+        android:name="vmodev.clearkeep.activities.CallSettingsActivity"
+        android:label="Calls"
+        tools:layout="@layout/activity_call_settings" />
+    <fragment
+        android:id="@+id/notificationSettingsFragment"
+        android:name="vmodev.clearkeep.activities.NotificationSettingsActivity"
+        android:label="Notifications"
+        tools:layout="@layout/activity_notification_settings" />
+    <fragment
+        android:id="@+id/profileSettingsFragment"
+        android:name="vmodev.clearkeep.activities.ProfileSettingsActivity"
+        android:label="Settings"
+        tools:layout="@layout/activity_profile_settings">
+        <action
+            android:id="@+id/notifications"
+            app:destination="@id/notificationSettingsFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+        <action
+            android:id="@+id/calls"
+            app:destination="@id/callSettingsFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+        <action
+            android:id="@+id/report"
+            app:destination="@id/reportFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+        <action
+            android:id="@+id/privacyPolicy"
+            app:destination="@id/privacyPolicyFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+        <action
+            android:id="@+id/deactivateAccount"
+            app:destination="@id/deactivateAccountFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+    </fragment>
+</navigation>

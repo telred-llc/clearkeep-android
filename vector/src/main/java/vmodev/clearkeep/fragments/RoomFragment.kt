@@ -10,12 +10,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
-import dagger.android.support.DaggerFragment
 import im.vector.R
 import im.vector.databinding.FragmentRoomBinding
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
-import vmodev.clearkeep.activities.CreateNewRoomActivity
 import vmodev.clearkeep.activities.RoomSettingsActivity
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
@@ -72,7 +70,7 @@ class RoomFragment : DataBindingDaggerFragment(), ISearchRoomFragment {
         }
         binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
         binding.buttonStartDirectChat.setOnClickListener {
-            val intentNewChat = Intent(context, CreateNewRoomActivity::class.java);
+            val intentNewChat = Intent(context, CreateNewRoomFragment::class.java);
             startActivity(intentNewChat);
         }
         binding.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))

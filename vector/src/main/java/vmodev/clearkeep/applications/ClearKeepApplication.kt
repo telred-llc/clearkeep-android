@@ -90,11 +90,12 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
     override fun getApplication(): Application {
         return this;
     }
-    private var boolStartingAutobackup = false;
+
     override fun startAutoKeyBackup(password: String?) {
-//        if (boolStartingAutobackup)
-//            return;
-//        boolStartingAutobackup = true;
         session?.let { autoKeyBackup.startAutoKeyBackup(it.myUserId, password) }
+    }
+
+    override fun getUserId(): String {
+        session?.let { return it.myUserId }?:run { return "" }
     }
 }

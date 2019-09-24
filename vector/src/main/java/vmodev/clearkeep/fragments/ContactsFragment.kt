@@ -3,6 +3,7 @@ package vmodev.clearkeep.fragments
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,12 +11,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.FragmentContactsBinding
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
+import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.IContactFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IContactFragment
@@ -42,22 +45,15 @@ private const val GO_TO_ROOM_CODE = 12432;
  *
  */
 class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecyclerViewAdapter.ICallbackToGetUsers {
-    private var listener: OnFragmentInteractionListener? = null
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractContactFragmentViewModel>;
     @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
     lateinit var listRoomAdapter: IListRoomRecyclerViewAdapter;
+    @Inject
+    lateinit var application: IApplication;
     lateinit var binding: FragmentContactsBinding;
-    private lateinit var userId: String;
     private var onGoingRoom = false;
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            userId = it?.getString(USER_ID, "");
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -69,7 +65,7 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val dividerItemDecoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL);
-        listRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, userId);
+        listRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, application.getUserId());
         binding.recyclerViewListContact.addItemDecoration(dividerItemDecoration);
         binding.recyclerViewListContact.adapter = listRoomAdapter.getAdapter();
         listRoomAdapter.setOnItemClick { room, i ->
@@ -79,8 +75,8 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
                     onClickGoRoom(it.id); }
             }
         }
-        listRoomAdapter.setOnItemLongClick {  }
-        listRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, userId);
+        listRoomAdapter.setOnItemLongClick { }
+        listRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, application.getUserId());
         binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
         viewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
             listRoomAdapter.getAdapter().submitList(t?.data)
@@ -97,7 +93,7 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
     // TODO: Rename method, update argument and hook method into UI event
     private fun onClickGoRoom(roomId: String) {
         val intentRoom = Intent(this.context, RoomActivity::class.java);
-        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
+        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, application.getUserId());
         intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
         startActivityForResult(intentRoom, GO_TO_ROOM_CODE);
         onGoingRoom = false;
@@ -113,37 +109,8 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
-
     override fun getFragment(): Fragment {
         return this;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
     }
 
     companion object {

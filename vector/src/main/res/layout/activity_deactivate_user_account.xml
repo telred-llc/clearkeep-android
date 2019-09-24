@@ -22,22 +22,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/text_view_cancel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_marginEnd="10dp"
-                    android:text="@string/cancel"
-                    android:textColor="@color/app_green"
-                    android:textSize="@dimen/text_20_sp" />
-            </androidx.appcompat.widget.Toolbar>
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -63,13 +47,13 @@
                     android:text="@string/deactivate_account_delete_checkbox" />
             </LinearLayout>
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_view_deactivate_account"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_margin="10dp"
                 app:cardBackgroundColor="@color/app_green"
-                app:cardCornerRadius="10dp">
+                app:cardCornerRadius="25dp">
 
                 <TextView
                     android:id="@+id/text_view_deactivate_account"
@@ -80,7 +64,24 @@
                     android:text="@string/deactivate_account_title"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/text_20_sp" />
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_view_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                app:cardBackgroundColor="@color/hard_resource_limit_exceeded"
+                app:cardCornerRadius="25dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:text="@string/cancel"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/text_20_sp" />
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 
         <ProgressBar

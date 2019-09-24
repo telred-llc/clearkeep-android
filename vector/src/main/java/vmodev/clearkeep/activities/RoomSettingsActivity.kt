@@ -10,6 +10,7 @@ import im.vector.R
 import im.vector.databinding.ActivityRoomSettingsBinding
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.fragments.InviteUsersToRoomFragment
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomSettingsActivityViewModel
 import javax.inject.Inject
@@ -69,10 +70,10 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
             startActivity(usersIntent);
         }
         binding.addPeopleGroup.setOnClickListener { v ->
-            val intentAddPeople = Intent(this, InviteUsersToRoomActivity::class.java);
-            intentAddPeople.putExtra(InviteUsersToRoomActivity.ROOM_ID, roomId);
-            intentAddPeople.putExtra(InviteUsersToRoomActivity.CREATE_FROM_NEW_ROOM, false);
-            startActivity(intentAddPeople);
+//            val intentAddPeople = Intent(this, InviteUsersToRoomFragment::class.java);
+//            intentAddPeople.putExtra(InviteUsersToRoomFragment.ROOM_ID, roomId);
+//            intentAddPeople.putExtra(InviteUsersToRoomFragment.CREATE_FROM_NEW_ROOM, false);
+//            startActivity(intentAddPeople);
         }
         binding.filesGroup.setOnClickListener { v ->
             val filesIntent = Intent(this, RoomfilesListActivity::class.java)

@@ -2,87 +2,76 @@ package vmodev.clearkeep.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import im.vector.Matrix
 import im.vector.R
 import im.vector.databinding.ActivityProfileSettingsBinding
 import vmodev.clearkeep.activities.interfaces.IActivity
+import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.fragments.DataBindingDaggerFragment
+import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractProfileSettingsActivityViewModel
 import java.util.*
 import javax.inject.Inject
 
-class ProfileSettingsActivity : DataBindingDaggerActivity(), IActivity {
+class ProfileSettingsActivity : DataBindingDaggerFragment(), IFragment {
 
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractProfileSettingsActivityViewModel>
+    @Inject
+    lateinit var application: IApplication;
 
     private lateinit var binding: ActivityProfileSettingsBinding;
-    private lateinit var userId: String;
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_profile_settings);
-        setSupportActionBar(binding.toolbar);
-        supportActionBar?.setTitle(R.string.setting);
-        supportActionBar?.setDisplayHomeAsUpEnabled(true);
-        supportActionBar?.setDisplayShowHomeEnabled(true);
-        binding.toolbar.setNavigationOnClickListener {
-            onBackPressed();
-        }
-        userId = if (intent.getStringExtra(USER_ID).isNullOrEmpty()) "" else intent.getStringExtra(USER_ID);
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_profile_settings, container, false, dataBinding.getDataBindingComponent());
+        return binding.root;
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this;
         binding.editProfileGroup.setOnClickListener {
-            val intentEditProfile = Intent(this, EditProfileActivity::class.java);
-            intentEditProfile.putExtra(EditProfileActivity.USER_ID, userId);
+            val intentEditProfile = Intent(this.activity, EditProfileActivity::class.java);
+            intentEditProfile.putExtra(EditProfileActivity.USER_ID, application.getUserId());
             startActivity(intentEditProfile);
         }
         binding.callGroup.setOnClickListener {
-            val intentCalls = Intent(this, CallSettingsActivity::class.java);
-            intentCalls.putExtra(CallSettingsActivity.USER_ID, userId);
-            startActivity(intentCalls)
+            findNavController().navigate(ProfileSettingsActivityDirections.calls())
         }
         binding.notificationGroup.setOnClickListener {
-            val intentNotifications = Intent(this, NotificationSettingsActivity::class.java);
-            intentNotifications.putExtra(NotificationSettingsActivity.USER_ID, userId);
-            startActivity(intentNotifications);
+            findNavController().navigate(ProfileSettingsActivityDirections.notifications())
         }
         binding.securityGroup.setOnClickListener {
-            val intentSecurity = Intent(this, ExportKeyActivity::class.java);
-            intentSecurity.putExtra(ExportKeyActivity.USER_ID, userId);
+            val intentSecurity = Intent(this.activity, ExportKeyActivity::class.java);
+            intentSecurity.putExtra(ExportKeyActivity.USER_ID, application.getUserId());
             startActivity(intentSecurity);
         }
         binding.textViewDeactivateAccount.setOnClickListener {
-            val deactivateAccountIntent = Intent(this, DeactivateAccountActivity::class.java);
-            startActivity(deactivateAccountIntent);
+            findNavController().navigate(ProfileSettingsActivityDirections.deactivateAccount());
         }
         binding.privacyPolicyGroup.setOnClickListener {
-            val privacyPolicyActivityIntent = Intent(this, PrivacyPolicyActivity::class.java);
-            privacyPolicyActivityIntent.putExtra(PrivacyPolicyActivity.TITLE, resources.getString(R.string.privacy_and_policy));
-            privacyPolicyActivityIntent.putExtra(PrivacyPolicyActivity.URL, "https://riot.im/privacy");
-            startActivity(privacyPolicyActivityIntent);
+            findNavController().navigate(ProfileSettingsActivityDirections.privacyPolicy().setUrl("https://riot.im/privacy"))
         }
         binding.termAndConditions.setOnClickListener {
-            val privacyPolicyActivityIntent = Intent(this, PrivacyPolicyActivity::class.java);
-            privacyPolicyActivityIntent.putExtra(PrivacyPolicyActivity.TITLE, resources.getString(R.string.term_and_conditions));
-            privacyPolicyActivityIntent.putExtra(PrivacyPolicyActivity.URL, "https://matrix.org/legal/terms-and-conditions/");
-            startActivity(privacyPolicyActivityIntent);
+            findNavController().navigate(ProfileSettingsActivityDirections.privacyPolicy().setUrl("https://matrix.org/legal/terms-and-conditions/"))
         }
         binding.copyrightGroup.setOnClickListener {
-            val privacyPolicyActivityIntent = Intent(this, PrivacyPolicyActivity::class.java);
-            privacyPolicyActivityIntent.putExtra(PrivacyPolicyActivity.TITLE, resources.getString(R.string.copyright));
-            privacyPolicyActivityIntent.putExtra(PrivacyPolicyActivity.URL, "https://riot.im/copyright");
-            startActivity(privacyPolicyActivityIntent);
+            findNavController().navigate(ProfileSettingsActivityDirections.privacyPolicy().setUrl("https://riot.im/copyright"))
         }
         binding.reportGroup.setOnClickListener {
-            val reportActivityIntent = Intent(this, ReportActivity::class.java);
-            reportActivityIntent.putExtra(ReportActivity.USER_ID, userId);
-            startActivity(reportActivityIntent);
+            findNavController().navigate(ProfileSettingsActivityDirections.report());
         }
         binding.textViewClearCache.setOnClickListener {
-            Matrix.getInstance(applicationContext).reloadSessions(applicationContext, false);
+            Matrix.getInstance(application.getApplication()).reloadSessions(application.getApplication(), false);
         }
         binding.switchCompatChangeTheme.setOnCheckedChangeListener { compoundButton, b ->
             if (b) {
@@ -100,7 +89,7 @@ class ProfileSettingsActivity : DataBindingDaggerActivity(), IActivity {
         viewModelFactory.getViewModel().setTimeToGetTheme(Calendar.getInstance().timeInMillis);
     }
 
-    override fun getActivity(): FragmentActivity {
+    override fun getFragment(): Fragment {
         return this;
     }
 

@@ -63,8 +63,8 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
             viewModelFactory.getViewModel().setCheckNeedBackupWhenSignOut(Calendar.getInstance().timeInMillis)
         }
         binding.buttonSetting.setOnClickListener {
-            val intentProfileSetting = Intent(this, ProfileSettingsActivity::class.java);
-            intentProfileSetting.putExtra(ProfileSettingsActivity.USER_ID, mxSession.myUserId);
+            val intentProfileSetting = Intent(this, SettingsActivity::class.java);
+//            intentProfileSetting.putExtra(ProfileSettingsActivity.USER_ID, mxSession.myUserId);
             startActivity(intentProfileSetting);
         }
         binding.buttonEditProfile.setOnClickListener {

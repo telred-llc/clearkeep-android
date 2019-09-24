@@ -11,4 +11,6 @@ abstract class AbstractInviteUsersToRoomActivityViewModel : ViewModel() {
     abstract fun getInviteUsersToRoomResult(): LiveData<Resource<Room>>;
     abstract fun setInviteUsersToRoom(roomId: String, userIds: List<String>);
     abstract fun setQuery(query: String);
+    abstract fun setJoinRoom(roomId: String);
+    abstract fun joinRoomResult() : LiveData<Resource<Room>>
 }

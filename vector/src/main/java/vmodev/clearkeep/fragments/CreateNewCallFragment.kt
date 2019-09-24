@@ -1,12 +1,15 @@
-package vmodev.clearkeep.activities
+package vmodev.clearkeep.fragments
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import com.jakewharton.rxbinding3.widget.textChanges
@@ -16,10 +19,12 @@ import im.vector.databinding.ActivityCreateNewCallBinding
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import vmodev.clearkeep.activities.interfaces.IActivity
+import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.ListUserToInviteRecyclerViewAdapter
+import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractCreateNewCallActivityViewModel
@@ -27,30 +32,27 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class CreateNewCallActivity : DataBindingDaggerActivity(), IActivity {
+class CreateNewCallFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractCreateNewCallActivityViewModel>;
     @Inject
     lateinit var appExecutors: AppExecutors;
+    @Inject
+    lateinit var application: IApplication;
 
     private lateinit var binding: ActivityCreateNewCallBinding;
     private val listSelected = HashMap<String, User>();
     private lateinit var userId: String;
     private var currentRoomId: String = ""
 
-    @SuppressLint("CheckResult")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_create_new_call, dataBinding.getDataBindingComponent());
-        userId = intent.getStringExtra(USER_ID);
-        setSupportActionBar(binding.toolbar);
-        supportActionBar?.setTitle(R.string.new_call);
-        supportActionBar?.setDisplayHomeAsUpEnabled(true);
-        supportActionBar?.setDisplayShowHomeEnabled(true);
-        binding.toolbar.setNavigationOnClickListener {
-            onBackPressed();
-        }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_create_new_call, container, false, dataBinding.getDataBindingComponent());
+        return binding.root;
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val listUserAdapter = ListUserToInviteRecyclerViewAdapter(appExecutors = appExecutors, listSelected = listSelected
                 , diffCallback = object : DiffUtil.ItemCallback<User>() {
             override fun areItemsTheSame(p0: User, p1: User): Boolean {
@@ -62,11 +64,11 @@ class CreateNewCallActivity : DataBindingDaggerActivity(), IActivity {
             }
         }, dataBindingComponent = dataBinding.getDataBindingComponent()) { user, status ->
             if (listSelected.size > 0) {
-                binding.textViewCreate.setTextColor(Color.parseColor("#63CD9A"))
-                binding.textViewCreate.isClickable = true;
+                binding.cardViewCreate.setCardBackgroundColor(ResourcesCompat.getColor(this.resources, R.color.app_green, null));
+                binding.cardViewCreate.isClickable = true;
             } else {
-                binding.textViewCreate.setTextColor(Color.parseColor("#B8BDC7"))
-                binding.textViewCreate.isClickable = false;
+                binding.cardViewCreate.setCardBackgroundColor(ResourcesCompat.getColor(this.resources, R.color.button_disabled_text_color, null));
+                binding.cardViewCreate.isClickable = false;
             }
         }
 
@@ -110,7 +112,7 @@ class CreateNewCallActivity : DataBindingDaggerActivity(), IActivity {
                     Status.ERROR -> {
                         binding.textViewCreate.setText(R.string.create);
                         binding.textViewCreate.isClickable = true;
-                        Toast.makeText(this@CreateNewCallActivity, it.message, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this.context, it.message, Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -128,13 +130,13 @@ class CreateNewCallActivity : DataBindingDaggerActivity(), IActivity {
     }
 
     private fun gotoRoom(roomId: String) {
-        val intentRoom = Intent(this, RoomActivity::class.java);
-        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
+        val intentRoom = Intent(this.activity, RoomActivity::class.java);
+        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, application.getUserId());
         intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
         startActivity(intentRoom);
     }
 
-    override fun getActivity(): FragmentActivity {
+    override fun getFragment(): Fragment {
         return this;
     }
 

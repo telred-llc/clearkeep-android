@@ -3,23 +3,50 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_create_new_room"
-    app:startDestination="@id/listRoomFragment">
+    app:startDestination="@id/findAndCreateMewConversationFragment">
     <fragment
-        android:id="@+id/listRoomFragment"
-        android:name="vmodev.clearkeep.fragments.ListRoomFragment"
-        android:label="ListRoomFragment"
-        tools:layout="@layout/fragment_list_room" >
-        <action
-            android:id="@+id/action_listRoomFragment_to_contactsFragment"
-            app:destination="@id/contactsFragment" />
+        android:id="@+id/inviteUsersToRoomFragment"
+        android:name="vmodev.clearkeep.fragments.InviteUsersToRoomFragment"
+        android:label="Invite users"
+        tools:layout="@layout/activity_invite_users_to_room">
+        <argument
+            android:name="roomId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
     <fragment
-        android:id="@+id/contactsFragment"
-        android:name="vmodev.clearkeep.fragments.ContactsFragment"
-        android:label="fragment_contacts"
-        tools:layout="@layout/fragment_contacts" >
+        android:id="@+id/createNewCallFragment"
+        android:name="vmodev.clearkeep.fragments.CreateNewCallFragment"
+        android:label="New call"
+        tools:layout="@layout/activity_create_new_call" />
+    <fragment
+        android:id="@+id/createNewRoomFragment"
+        android:name="vmodev.clearkeep.fragments.CreateNewRoomFragment"
+        android:label="New room"
+        tools:layout="@layout/activity_create_new_room">
         <action
-            android:id="@+id/action_contactsFragment_to_listRoomFragment"
-            app:destination="@id/listRoomFragment" />
+            android:id="@+id/inviteUsersToRoom"
+            app:destination="@id/inviteUsersToRoomFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/findAndCreateMewConversationFragment"
+        android:name="vmodev.clearkeep.fragments.FindAndCreateNewConversationFragment"
+        android:label="New conversation"
+        tools:layout="@layout/activity_find_and_create_new_conversation">
+        <action
+            android:id="@+id/createNewRoom"
+            app:destination="@id/createNewRoomFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+        <action
+            android:id="@+id/createNewCall"
+            app:destination="@id/createNewCallFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_open_exit" />
     </fragment>
 </navigation>
