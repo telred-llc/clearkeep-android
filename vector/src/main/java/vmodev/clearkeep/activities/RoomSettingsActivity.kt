@@ -10,6 +10,8 @@ import android.databinding.DataBindingUtil
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
+import android.support.v7.app.AlertDialog
+import android.util.Log
 import dagger.android.support.DaggerAppCompatActivity
 import im.vector.R
 import im.vector.databinding.ActivityRoomSettingsBinding
@@ -29,7 +31,7 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
     lateinit var viewModelFactory: IViewModelFactory<AbstractRoomSettingsActivityViewModel>;
 
     lateinit var roomId: String;
-
+    private var alertDialog : AlertDialog? = null
     lateinit var binding: ActivityRoomSettingsBinding;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,17 +57,32 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
     }
 
     private fun setupButton() {
-        binding.leaveRoomGroup.setOnClickListener { v ->
-            binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoom();
-            viewModelFactory.getViewModel().getLeaveRoom().observe(this, Observer { t ->
-                t?.let { resource ->
-                    if (resource.status == Status.SUCCESS) {
-                        setResult(Activity.RESULT_OK);
-                        finish();
-                    }
-                }
-            })
-            viewModelFactory.getViewModel().setLeaveRoom(roomId);
+        binding.leaveRoomGroup.setOnClickListener {
+
+            if (alertDialog==null) {
+                alertDialog = AlertDialog.Builder(this).setTitle(R.string.leave_room)
+                        .setMessage(R.string.do_you_want_leave_room)
+                        .setNegativeButton(R.string.no, null)
+                        .setPositiveButton(R.string.yes) { dialog, v ->
+                            binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoom();
+                            viewModelFactory.getViewModel().getLeaveRoom().observe(this, Observer { t ->
+                                t?.let { resource ->
+                                    if (resource.status == Status.SUCCESS) {
+                                        setResult(Activity.RESULT_OK);
+                                        finish();
+                                    }
+                                }
+                            })
+                            viewModelFactory.getViewModel().setLeaveRoom(roomId);
+
+                        }.show()
+            }
+            if ( alertDialog!!.isShowing){
+                Log.d("alertDialog","isShowing")
+            }else{
+                alertDialog!!.show()
+            }
+
         }
         binding.settingsGroup.setOnClickListener { v ->
             val securityIntent = Intent(this, OtherRoomSettingsActivity::class.java);
