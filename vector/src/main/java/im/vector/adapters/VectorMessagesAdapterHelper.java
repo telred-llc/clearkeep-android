@@ -182,7 +182,9 @@ class VectorMessagesAdapterHelper {
                     senderTextView.setVisibility(View.GONE);
                 } else {
                     senderTextView.setVisibility(View.VISIBLE);
-                    senderTextView.setText(row.getSenderDisplayName());
+                    String [] arr = row.getSenderDisplayName().split(" ");
+                    String DisplayName = arr[0];
+                    senderTextView.setText(DisplayName);
 
                     final String fSenderId = event.getSender();
                     final String fDisplayName = (null == senderTextView.getText()) ? "" : senderTextView.getText().toString();
