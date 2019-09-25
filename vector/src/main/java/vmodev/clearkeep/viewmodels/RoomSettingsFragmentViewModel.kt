@@ -8,10 +8,10 @@ import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
-import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomSettingsActivityViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomSettingsFragmentViewModel
 import javax.inject.Inject
 
-class RoomSettingsActivityViewModel @Inject constructor(roomRepository: RoomRepository, userRepository: UserRepository) : AbstractRoomSettingsActivityViewModel() {
+class RoomSettingsFragmentViewModel @Inject constructor(roomRepository: RoomRepository, userRepository: UserRepository) : AbstractRoomSettingsFragmentViewModel() {
 
     private val _setRoomId = MutableLiveData<String>();
     private val _setLeaveRoom = MutableLiveData<String>();

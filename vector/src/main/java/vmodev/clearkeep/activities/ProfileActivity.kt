@@ -64,7 +64,7 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
         }
         binding.buttonSetting.setOnClickListener {
             val intentProfileSetting = Intent(this, SettingsActivity::class.java);
-//            intentProfileSetting.putExtra(ProfileSettingsActivity.USER_ID, mxSession.myUserId);
+//            intentProfileSetting.putExtra(ProfileSettingsFragment.USER_ID, mxSession.myUserId);
             startActivity(intentProfileSetting);
         }
         binding.buttonEditProfile.setOnClickListener {

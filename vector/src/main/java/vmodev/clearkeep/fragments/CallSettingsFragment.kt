@@ -1,4 +1,4 @@
-package vmodev.clearkeep.activities
+package vmodev.clearkeep.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,25 +7,24 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import im.vector.R
-import im.vector.databinding.ActivityCallSettingsBinding
+import im.vector.databinding.FragmentCallSettingsBinding
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
-import vmodev.clearkeep.fragments.DataBindingDaggerFragment
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractCallSettingActivityViewModel
 import javax.inject.Inject
 
-class CallSettingsActivity : DataBindingDaggerFragment(), IFragment {
+class CallSettingsFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractCallSettingActivityViewModel>;
     @Inject
     lateinit var application: IApplication;
 
-    private lateinit var binding: ActivityCallSettingsBinding;
+    private lateinit var binding: FragmentCallSettingsBinding;
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_call_settings, container, false, dataBinding.getDataBindingComponent());
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_call_settings, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 

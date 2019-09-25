@@ -1,46 +1,52 @@
-package vmodev.clearkeep.activities
+package vmodev.clearkeep.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
-import im.vector.Matrix
 import im.vector.R
-import im.vector.databinding.ActivityRoomMemberListBinding
+import im.vector.databinding.FragmentRoomMemberListBinding
 import org.matrix.androidsdk.MXSession
+import vmodev.clearkeep.activities.ProfileActivity
+import vmodev.clearkeep.activities.ViewUserProfileActivity
 import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
 
-class RoomMemberListActivity : DataBindingDaggerActivity() {
+class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory;
     @Inject
     lateinit var appExecutors: AppExecutors;
 
-    private lateinit var binding: ActivityRoomMemberListBinding;
+    private lateinit var binding: FragmentRoomMemberListBinding;
     private lateinit var roomViewModel: AbstractRoomViewModel;
     private lateinit var listUserAdapter: ListUserRecyclerViewAdapter;
 
     private lateinit var session: MXSession;
+    private val args: RoomMemberListFragmentArgs by navArgs();
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_room_member_list);
-        session = Matrix.getInstance(applicationContext).defaultSession;
-        setSupportActionBar(binding.toolbar);
-        supportActionBar?.setDisplayHomeAsUpEnabled(true);
-        supportActionBar?.setDisplayShowHomeEnabled(true);
-        binding.toolbar.setNavigationOnClickListener { v ->
-            onBackPressed();
-        }
-        binding.recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_room_member_list, container, false, dataBinding.getDataBindingComponent());
+        return binding.root;
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.recyclerView.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         listUserAdapter = ListUserRecyclerViewAdapter(appExecutors, object : DiffUtil.ItemCallback<User>() {
             override fun areItemsTheSame(p0: User, p1: User): Boolean {
                 return p0.id == p1.id;
@@ -51,10 +57,10 @@ class RoomMemberListActivity : DataBindingDaggerActivity() {
             }
         }, dataBinding) { user ->
             if (session.myUserId.compareTo(user.id) == 0) {
-                val userIntent = Intent(this@RoomMemberListActivity, ProfileActivity::class.java);
+                val userIntent = Intent(this@RoomMemberListFragment.activity, ProfileActivity::class.java);
                 startActivity(userIntent);
             } else {
-                val otherUserIntent = Intent(this@RoomMemberListActivity, ViewUserProfileActivity::class.java);
+                val otherUserIntent = Intent(this@RoomMemberListFragment.activity, ViewUserProfileActivity::class.java);
                 otherUserIntent.putExtra(ViewUserProfileActivity.USER_ID, user.id)
                 startActivity(otherUserIntent);
             }
@@ -65,13 +71,14 @@ class RoomMemberListActivity : DataBindingDaggerActivity() {
         roomViewModel.getGetUserFromRoomIdResult().observe(this, Observer { t ->
             listUserAdapter.submitList(t?.data);
         });
-        val roomId = intent.getStringExtra(ROOM_ID);
-        binding.lifecycleOwner = this;
-        roomViewModel.setGetUserFromRoomId(roomId);
+        binding.lifecycleOwner = viewLifecycleOwner;
+        args.roomId?.let {
+            roomViewModel.setGetUserFromRoomId(it)
+        }
 
     }
 
-    companion object {
-        const val ROOM_ID = "ROOM_ID";
+    override fun getFragment(): Fragment {
+        return this;
     }
 }

@@ -14,18 +14,13 @@ import javax.inject.Singleton
     , PreviewInviteRoomActivityModule::class
     , AbstractSearchActivityModule::class
     , AbstractRoomSettingsActivityModule::class
-    , AbstractSecurityActivityModule::class
-    , AbstractRoomMemberListActivityModule::class
     , AbstractRoomFilesListActivityModule::class
     , AbstractViewUserProfileActivityModule::class
-    , AbstractOtherRoomSettingsAdvancedActivityModule::class
-    , AbstractRolesPermissionActivityModule::class
     , AbstractEditProfileActivityModule::class
     , AbstractMessageListActivityModule::class
     , AbstractExportKeyActivityModule::class
     , AbstractUserInformationActivityModule::class
     , AbstractChangeThemeActivityModule::class
-    , AbstractOtherRoomSettingsActivityModule::class
     , AbstractBackupKeyActivityModule::class
     , AbstractRestoreBackupKeyActivityModule::class
     , AbstractPushBackupKeyActivityModule::class
