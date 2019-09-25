@@ -13,12 +13,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:title="@string/settings" />
-
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="1dp"

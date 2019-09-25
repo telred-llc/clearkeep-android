@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/deactivateAccountFragment"
-        android:name="vmodev.clearkeep.activities.DeactivateAccountActivity"
+        android:name="vmodev.clearkeep.fragments.DeactivateAccountFragment"
         android:label="Deactivate account"
-        tools:layout="@layout/activity_deactivate_user_account" >
+        tools:layout="@layout/fragment_deactivate_user_account" >
         <action
             android:id="@+id/cancel"
             app:destination="@id/profileSettingsFragment"
@@ -20,9 +20,9 @@
     </fragment>
     <fragment
         android:id="@+id/privacyPolicyFragment"
-        android:name="vmodev.clearkeep.activities.PrivacyPolicyActivity"
+        android:name="vmodev.clearkeep.fragments.PrivacyPolicyFragment"
         android:label="Privacy policy"
-        tools:layout="@layout/activity_privacy_policy" >
+        tools:layout="@layout/fragment_privacy_policy" >
         <argument
             android:name="url"
             app:argType="string"
@@ -31,24 +31,24 @@
     </fragment>
     <fragment
         android:id="@+id/reportFragment"
-        android:name="vmodev.clearkeep.activities.ReportActivity"
+        android:name="vmodev.clearkeep.fragments.ReportFragment"
         android:label="Report"
-        tools:layout="@layout/activity_report" />
+        tools:layout="@layout/fragment_report" />
     <fragment
         android:id="@+id/callSettingsFragment"
-        android:name="vmodev.clearkeep.activities.CallSettingsActivity"
+        android:name="vmodev.clearkeep.fragments.CallSettingsFragment"
         android:label="Calls"
-        tools:layout="@layout/activity_call_settings" />
+        tools:layout="@layout/fragment_call_settings" />
     <fragment
         android:id="@+id/notificationSettingsFragment"
-        android:name="vmodev.clearkeep.activities.NotificationSettingsActivity"
+        android:name="vmodev.clearkeep.fragments.NotificationSettingsFragment"
         android:label="Notifications"
-        tools:layout="@layout/activity_notification_settings" />
+        tools:layout="@layout/fragment_notification_settings" />
     <fragment
         android:id="@+id/profileSettingsFragment"
-        android:name="vmodev.clearkeep.activities.ProfileSettingsActivity"
+        android:name="vmodev.clearkeep.fragments.ProfileSettingsFragment"
         android:label="Settings"
-        tools:layout="@layout/activity_profile_settings">
+        tools:layout="@layout/fragment_profile_settings">
         <action
             android:id="@+id/notifications"
             app:destination="@id/notificationSettingsFragment"

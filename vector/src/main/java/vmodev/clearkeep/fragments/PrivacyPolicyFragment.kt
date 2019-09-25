@@ -1,28 +1,23 @@
-package vmodev.clearkeep.activities
+package vmodev.clearkeep.fragments
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.navArgs
 import im.vector.R
-import im.vector.databinding.ActivityPrivacyPolicyBinding
-import vmodev.clearkeep.activities.interfaces.IActivity
-import vmodev.clearkeep.activities.interfaces.IPrivacyPolicyActivity
-import vmodev.clearkeep.fragments.DataBindingDaggerFragment
+import im.vector.databinding.FragmentPrivacyPolicyBinding
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 
-class PrivacyPolicyActivity : DataBindingDaggerFragment(), IFragment {
+class PrivacyPolicyFragment : DataBindingDaggerFragment(), IFragment {
 
-    private lateinit var binding: ActivityPrivacyPolicyBinding;
-    private val args : PrivacyPolicyActivityArgs by navArgs();
+    private lateinit var binding: FragmentPrivacyPolicyBinding;
+    private val args : PrivacyPolicyFragmentArgs by navArgs();
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_privacy_policy, container, false, dataBinding.getDataBindingComponent());
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_privacy_policy, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 

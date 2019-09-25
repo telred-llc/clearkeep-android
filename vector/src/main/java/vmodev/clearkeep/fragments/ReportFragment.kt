@@ -1,4 +1,4 @@
-package vmodev.clearkeep.activities
+package vmodev.clearkeep.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,28 +9,27 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import im.vector.R
-import im.vector.databinding.ActivityReportBinding
+import im.vector.databinding.FragmentReportBinding
 import im.vector.util.BugReporter
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.dialogfragments.ProgressDialogFragment
 import vmodev.clearkeep.dialogfragments.ReportBugDialogFragment
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
-import vmodev.clearkeep.fragments.DataBindingDaggerFragment
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractReportActivityViewModel
 import javax.inject.Inject
 
-class ReportActivity : DataBindingDaggerFragment(), IFragment {
+class ReportFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractReportActivityViewModel>;
     @Inject
     lateinit var application : IApplication;
 
-    private lateinit var binding: ActivityReportBinding;
+    private lateinit var binding: FragmentReportBinding;
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_report, container, false, dataBinding.getDataBindingComponent());
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_report, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 
@@ -53,12 +52,12 @@ class ReportActivity : DataBindingDaggerFragment(), IFragment {
                 BugReporter.sendBugReport(this.context, it.isSendLogs, it.isSendLogs, false, it.bugContent, object : BugReporter.IMXBugReportListener {
                     override fun onUploadCancelled() {
                         progressDialogFragment.dismiss();
-                        Toast.makeText(this@ReportActivity.context, R.string.cancelled, Toast.LENGTH_LONG).show();
+                        Toast.makeText(this@ReportFragment.context, R.string.cancelled, Toast.LENGTH_LONG).show();
                     }
 
                     override fun onUploadFailed(reason: String?) {
                         progressDialogFragment.dismiss();
-                        Toast.makeText(this@ReportActivity.context, reason, Toast.LENGTH_LONG).show();
+                        Toast.makeText(this@ReportFragment.context, reason, Toast.LENGTH_LONG).show();
                     }
 
                     override fun onProgress(progress: Int) {
@@ -69,7 +68,7 @@ class ReportActivity : DataBindingDaggerFragment(), IFragment {
 
                     override fun onUploadSucceed() {
                         progressDialogFragment.dismiss();
-                        Toast.makeText(this@ReportActivity.context, R.string.successed, Toast.LENGTH_LONG).show();
+                        Toast.makeText(this@ReportFragment.context, R.string.successed, Toast.LENGTH_LONG).show();
                     }
                 });
             }

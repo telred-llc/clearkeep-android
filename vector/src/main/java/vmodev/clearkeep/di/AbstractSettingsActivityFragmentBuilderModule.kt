@@ -3,9 +3,9 @@ package vmodev.clearkeep.di
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import vmodev.clearkeep.activities.*
 import vmodev.clearkeep.factories.viewmodels.*
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodels.interfaces.*
 import javax.inject.Named
@@ -14,28 +14,28 @@ import javax.inject.Named
 @Suppress("unused")
 abstract class AbstractSettingsActivityFragmentBuilderModule {
     @ContributesAndroidInjector(modules = [FragmentProfileSettingsFragmentBindModule::class])
-    abstract fun contributeProfileSettingsFragment(): ProfileSettingsActivity;
+    abstract fun contributeProfileSettingsFragment(): ProfileSettingsFragment;
 
     @ContributesAndroidInjector(modules = [FragmentNotificationSettingsBindModule::class])
-    abstract fun contributeNotificationSettingsFragment(): NotificationSettingsActivity;
+    abstract fun contributeNotificationSettingsFragment(): NotificationSettingsFragment;
 
     @ContributesAndroidInjector(modules = [FragmentCallSettingsBindModule::class])
-    abstract fun contributeCallSettingsFragment(): CallSettingsActivity;
+    abstract fun contributeCallSettingsFragment(): CallSettingsFragment;
 
     @ContributesAndroidInjector(modules = [FragmentReportBindModule::class])
-    abstract fun contributeReportFragment(): ReportActivity;
+    abstract fun contributeReportFragment(): ReportFragment;
 
     @ContributesAndroidInjector(modules = [FragmentPrivacyPolicyBindModule::class])
-    abstract fun contributePrivacyPolicyFragment(): PrivacyPolicyActivity;
+    abstract fun contributePrivacyPolicyFragment(): PrivacyPolicyFragment;
 
     @ContributesAndroidInjector(modules = [FragmentDeactivateAccountBindModule::class])
-    abstract fun contributeDeactivateAccountFragment() : DeactivateAccountActivity;
+    abstract fun contributeDeactivateAccountFragment() : DeactivateAccountFragment;
 
     @Module
     abstract class FragmentProfileSettingsFragmentBindModule {
         @Binds
         @Named(IFragment.PROFILE_SETTINGS_FRAGMENT)
-        abstract fun bindProfileSettingsFragment(fragment: ProfileSettingsActivity): IFragment;
+        abstract fun bindProfileSettingsFragment(fragment: ProfileSettingsFragment): IFragment;
 
         @Binds
         abstract fun bindProfileSettingsActivityViewModelFactory(factory: ProfileSettingsActivityViewModelFactory): IViewModelFactory<AbstractProfileSettingsActivityViewModel>;
@@ -45,7 +45,7 @@ abstract class AbstractSettingsActivityFragmentBuilderModule {
     abstract class FragmentNotificationSettingsBindModule {
         @Binds
         @Named(IFragment.NOTIFICATION_SETTINGS_FRAGMENT)
-        abstract fun bindNotificationSettingsFragment(fragment: NotificationSettingsActivity): IFragment;
+        abstract fun bindNotificationSettingsFragment(fragment: NotificationSettingsFragment): IFragment;
 
         @Binds
         abstract fun bindNotificationSettingsActivityViewModelFactory(factory: NotificationSettingsViewModelFactory): IViewModelFactory<AbstractNotificationSettingsActivityViewModel>;
@@ -55,7 +55,7 @@ abstract class AbstractSettingsActivityFragmentBuilderModule {
     abstract class FragmentCallSettingsBindModule {
         @Binds
         @Named(IFragment.CALL_SETTINGS_FRAGMENT)
-        abstract fun bindCallSettingsCallFragment(fragment: CallSettingsActivity): IFragment;
+        abstract fun bindCallSettingsCallFragment(fragment: CallSettingsFragment): IFragment;
 
         @Binds
         abstract fun bindCallSettingsActivityViewModelFactory(factory: CallSettingsActivityViewModelFactory): IViewModelFactory<AbstractCallSettingActivityViewModel>;
@@ -65,7 +65,7 @@ abstract class AbstractSettingsActivityFragmentBuilderModule {
     abstract class FragmentReportBindModule {
         @Binds
         @Named(IFragment.REPORT_FRAGMENT)
-        abstract fun bindReportFragment(fragment: ReportActivity): IFragment;
+        abstract fun bindReportFragment(fragment: ReportFragment): IFragment;
 
         @Binds
         abstract fun bindReportActivityViewModelFactory(factory: ReportActivityViewModelFactory): IViewModelFactory<AbstractReportActivityViewModel>;
@@ -75,14 +75,14 @@ abstract class AbstractSettingsActivityFragmentBuilderModule {
     abstract class FragmentPrivacyPolicyBindModule {
         @Binds
         @Named(IFragment.PRIVACY_POLICY_FRAGMENT)
-        abstract fun bindPrivacyPolicyFragment(fragment: PrivacyPolicyActivity): IFragment;
+        abstract fun bindPrivacyPolicyFragment(fragment: PrivacyPolicyFragment): IFragment;
     }
 
     @Module
     abstract class FragmentDeactivateAccountBindModule {
         @Binds
         @Named(IFragment.DEACTIVATE_ACCOUNT_FRAGMENT)
-        abstract fun bindDeactivateAccountFragment(fragment : DeactivateAccountActivity): IFragment;
+        abstract fun bindDeactivateAccountFragment(fragment : DeactivateAccountFragment): IFragment;
 
         @Binds
         abstract fun bindDeactivateAccountActivityViewModelFactory(factory: DeactivateAccountActivityViewModelFactory): IViewModelFactory<AbstractDeactivateAccountActivityViewModel>;

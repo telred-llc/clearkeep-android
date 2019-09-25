@@ -205,8 +205,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(AbstractRoomSettingsActivityViewModel::class)
-    abstract fun bindRoomSettingsActivityViewModel(viewModel: RoomSettingsActivityViewModel): ViewModel;
+    @ViewModelKey(AbstractRoomSettingsFragmentViewModel::class)
+    abstract fun bindRoomSettingsActivityViewModel(viewModel: RoomSettingsFragmentViewModel): ViewModel;
 
     @Binds
     @IntoMap

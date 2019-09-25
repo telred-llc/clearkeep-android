@@ -1,4 +1,4 @@
-package vmodev.clearkeep.activities
+package vmodev.clearkeep.fragments
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,32 +7,31 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import im.vector.Matrix
 import im.vector.R
-import im.vector.databinding.ActivityProfileSettingsBinding
-import vmodev.clearkeep.activities.interfaces.IActivity
+import im.vector.databinding.FragmentProfileSettingsBinding
+import vmodev.clearkeep.activities.EditProfileActivity
+import vmodev.clearkeep.activities.ExportKeyActivity
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
-import vmodev.clearkeep.fragments.DataBindingDaggerFragment
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractProfileSettingsActivityViewModel
 import java.util.*
 import javax.inject.Inject
 
-class ProfileSettingsActivity : DataBindingDaggerFragment(), IFragment {
+class ProfileSettingsFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractProfileSettingsActivityViewModel>
     @Inject
     lateinit var application: IApplication;
 
-    private lateinit var binding: ActivityProfileSettingsBinding;
+    private lateinit var binding: FragmentProfileSettingsBinding;
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_profile_settings, container, false, dataBinding.getDataBindingComponent());
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile_settings, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 
@@ -45,10 +44,10 @@ class ProfileSettingsActivity : DataBindingDaggerFragment(), IFragment {
             startActivity(intentEditProfile);
         }
         binding.callGroup.setOnClickListener {
-            findNavController().navigate(ProfileSettingsActivityDirections.calls())
+            findNavController().navigate(ProfileSettingsFragmentDirections.calls())
         }
         binding.notificationGroup.setOnClickListener {
-            findNavController().navigate(ProfileSettingsActivityDirections.notifications())
+            findNavController().navigate(ProfileSettingsFragmentDirections.notifications())
         }
         binding.securityGroup.setOnClickListener {
             val intentSecurity = Intent(this.activity, ExportKeyActivity::class.java);
@@ -56,19 +55,19 @@ class ProfileSettingsActivity : DataBindingDaggerFragment(), IFragment {
             startActivity(intentSecurity);
         }
         binding.textViewDeactivateAccount.setOnClickListener {
-            findNavController().navigate(ProfileSettingsActivityDirections.deactivateAccount());
+            findNavController().navigate(ProfileSettingsFragmentDirections.deactivateAccount());
         }
         binding.privacyPolicyGroup.setOnClickListener {
-            findNavController().navigate(ProfileSettingsActivityDirections.privacyPolicy().setUrl("https://riot.im/privacy"))
+            findNavController().navigate(ProfileSettingsFragmentDirections.privacyPolicy().setUrl("https://riot.im/privacy"))
         }
         binding.termAndConditions.setOnClickListener {
-            findNavController().navigate(ProfileSettingsActivityDirections.privacyPolicy().setUrl("https://matrix.org/legal/terms-and-conditions/"))
+            findNavController().navigate(ProfileSettingsFragmentDirections.privacyPolicy().setUrl("https://matrix.org/legal/terms-and-conditions/"))
         }
         binding.copyrightGroup.setOnClickListener {
-            findNavController().navigate(ProfileSettingsActivityDirections.privacyPolicy().setUrl("https://riot.im/copyright"))
+            findNavController().navigate(ProfileSettingsFragmentDirections.privacyPolicy().setUrl("https://riot.im/copyright"))
         }
         binding.reportGroup.setOnClickListener {
-            findNavController().navigate(ProfileSettingsActivityDirections.report());
+            findNavController().navigate(ProfileSettingsFragmentDirections.report());
         }
         binding.textViewClearCache.setOnClickListener {
             Matrix.getInstance(application.getApplication()).reloadSessions(application.getApplication(), false);
