@@ -80,7 +80,7 @@ public class VectorMarkdownParser extends WebView {
             getSettings().setJavaScriptEnabled(true);
 
             // java <-> web interface
-            addJavascriptInterface(mMarkDownWebAppInterface, "Android");
+//            addJavascriptInterface(mMarkDownWebAppInterface, "Android");
 
             getSettings().setAllowUniversalAccessFromFileURLs(true);
 

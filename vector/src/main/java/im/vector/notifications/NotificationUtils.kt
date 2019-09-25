@@ -655,9 +655,13 @@ object NotificationUtils {
                 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
-    fun showNotificationMessage(context: Context, tag: String?, id: Int, notification: Notification) {
+    fun showNotificationMessage(context: Context, tag: String?, id: Int, notification: Notification, body : String?) {
         with(NotificationManagerCompat.from(context)) {
-            notify(tag, id, notification)
+            if (body==null){
+                notify(tag, id, notification)
+            }else if (!body!!.startsWith("*")){
+                notify(tag, id, notification)
+            }
         }
     }
 

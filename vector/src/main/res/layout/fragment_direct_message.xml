@@ -48,7 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:text="@string/you_have_no_chat_here"
+                android:text="@string/you_have_no_chat_derect"
                 android:textAlignment="center"
                 android:textColor="@color/lb_grey" />
 

@@ -3,6 +3,7 @@ package vmodev.clearkeep.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
@@ -22,6 +23,8 @@ import javax.inject.Inject
 class HomeScreenActivity : DataBindingDaggerActivity(), IActivity {
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractHomeScreenActivityViewModel>;
+
+    private var doubleBackPressed : Boolean = false;
 
     lateinit var binding: ActivityHomeScreenBinding;
     lateinit var mxSession: MXSession;
@@ -85,10 +88,27 @@ class HomeScreenActivity : DataBindingDaggerActivity(), IActivity {
         }
     }
 
+    override fun onBackPressed() {
+        if (doubleBackPressed) {
+            super.onBackPressed()
+            finish()
+        }
+        this.doubleBackPressed = true
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show()
+        Handler().postDelayed(Runnable {
+            doubleBackPressed = false
+        }, 3000)
+    }
+
     companion object {
         const val WAITING_FOR_BACK_UP_KEY = 11352;
         const val EXTRA_MATRIX_ID = "EXTRA_MATRIX_ID"
         const val EXTRA_CALL_ID = "EXTRA_CALL_ID"
         const val EXTRA_CALL_SESSION_ID = "EXTRA_CALL_SESSION_ID";
+    }
+
+    override fun onResume() {
+        super.onResume()
+        doubleBackPressed = false
     }
 }

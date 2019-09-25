@@ -45,7 +45,7 @@ class NotificationDrawerManager(val context: Context) {
 
     //The first time the notification drawer is refreshed, we force re-render of all notifications
     private var firstTime = true
-
+    private var body: String? = null
     private var eventList = loadEventInfo()
     private var myUserDisplayName: String = ""
     private var myUserAvatarUrl: String = ""
@@ -216,6 +216,7 @@ class NotificationDrawerManager(val context: Context) {
                 val event = eventIterator.next()
                 if (event is NotifiableMessageEvent) {
                     val roomId = event.roomId
+                    body = event.body
                     var roomEvents = roomIdToEventMap[roomId]
                     if (roomEvents == null) {
                         roomEvents = ArrayList()
@@ -225,7 +226,9 @@ class NotificationDrawerManager(val context: Context) {
                     if (shouldIgnoreMessageEventInRoom(roomId) || outdatedDetector?.isMessageOutdated(event) == true) {
                         //forget this event
                         eventIterator.remove()
-                    } else {
+                    } else if (body == null) {
+                        roomEvents.add(event)
+                    } else if (!body!!.startsWith("*")) {
                         roomEvents.add(event)
                     }
                 } else {
@@ -319,7 +322,7 @@ class NotificationDrawerManager(val context: Context) {
                             ?.let {
                                 //is there an id for this room?
                                 notifications.add(it)
-                                NotificationUtils.showNotificationMessage(context, roomId, ROOM_MESSAGES_NOTIFICATION_ID, it)
+                                NotificationUtils.showNotificationMessage(context, roomId, ROOM_MESSAGES_NOTIFICATION_ID, it, body)
                             }
                     hasNewEvent = true
                     summaryIsNoisy = summaryIsNoisy || roomGroup.shouldBing
@@ -335,7 +338,7 @@ class NotificationDrawerManager(val context: Context) {
                 if (firstTime || !event.hasBeenDisplayed) {
                     NotificationUtils.buildSimpleEventNotification(context, event, null, myUserDisplayName)?.let {
                         notifications.add(it)
-                        NotificationUtils.showNotificationMessage(context, event.eventId, ROOM_EVENT_NOTIFICATION_ID, it)
+                        NotificationUtils.showNotificationMessage(context, event.eventId, ROOM_EVENT_NOTIFICATION_ID, it, body)
                         event.hasBeenDisplayed = true //we can consider it as displayed
                         hasNewEvent = true
                         summaryIsNoisy = summaryIsNoisy || event.noisy
@@ -372,7 +375,7 @@ class NotificationDrawerManager(val context: Context) {
                         noisy = hasNewEvent && summaryIsNoisy,
                         lastMessageTimestamp = globalLastMessageTimestamp
                 )?.let {
-                    NotificationUtils.showNotificationMessage(context, null, SUMMARY_NOTIFICATION_ID, it)
+                    NotificationUtils.showNotificationMessage(context, null, SUMMARY_NOTIFICATION_ID, it, body)
                 }
 
                 if (hasNewEvent && summaryIsNoisy) {
