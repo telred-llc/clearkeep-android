@@ -1,12 +1,12 @@
 package vmodev.clearkeep.activities
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
@@ -19,12 +19,9 @@ import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.databases.*
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
-import vmodev.clearkeep.repositories.interfaces.IRepository
 import vmodev.clearkeep.viewmodels.interfaces.AbstractProfileActivityViewModel
 import java.util.*
 import javax.inject.Inject
-import javax.inject.Provider
-import kotlin.reflect.KClass
 
 class ProfileActivity : DataBindingDaggerActivity(), IActivity {
 
@@ -44,15 +41,13 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
     lateinit var roomUserJoinDao: AbstractRoomUserJoinDao;
     @Inject
     lateinit var messageDao: AbstractMessageDao;
-    @Inject
-    lateinit var clearkeepAplication : IApplication;
 
     lateinit var binding: ActivityProfileBinding;
     lateinit var mxSession: MXSession;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_profile, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_profile, dataBinding.getDataBindingComponent());
         mxSession = Matrix.getInstance(this.applicationContext).defaultSession;
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setTitle(R.string.profile);
@@ -68,8 +63,8 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
             viewModelFactory.getViewModel().setCheckNeedBackupWhenSignOut(Calendar.getInstance().timeInMillis)
         }
         binding.buttonSetting.setOnClickListener {
-            val intentProfileSetting = Intent(this, ProfileSettingsActivity::class.java);
-            intentProfileSetting.putExtra(ProfileSettingsActivity.USER_ID, mxSession.myUserId);
+            val intentProfileSetting = Intent(this, SettingsActivity::class.java);
+//            intentProfileSetting.putExtra(ProfileSettingsActivity.USER_ID, mxSession.myUserId);
             startActivity(intentProfileSetting);
         }
         binding.buttonEditProfile.setOnClickListener {
@@ -124,7 +119,7 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
                 .setTitle(R.string.action_sign_out)
                 .setMessage(R.string.action_sign_out_confirmation_simple)
                 .setPositiveButton(R.string.action_sign_out) { dialog, which ->
-                    clearkeepAplication.removeEventHandler();
+                    application.removeEventHandler();
                     Completable.fromAction {
                         messageDao.delete();
                         roomUserJoinDao.delete();

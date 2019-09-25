@@ -13,13 +13,16 @@ import javax.inject.Named
 @Module
 @Suppress("unused")
 abstract class AbstractPushBackupKeyActivityModule {
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [ActivityBindModule::class])
     abstract fun contributePushBackupKeyActivity(): PushBackupKeyActivity;
 
-    @Binds
-    @Named(IActivity.PUSH_BACKUP_KEY)
-    abstract fun bindPushBackupKeyActivity(activity: PushBackupKeyActivity): IActivity;
+    @Module
+    abstract class ActivityBindModule {
+        @Binds
+        @Named(IActivity.PUSH_BACKUP_KEY)
+        abstract fun bindPushBackupKeyActivity(activity: PushBackupKeyActivity): IActivity;
 
-    @Binds
-    abstract fun bindPushBackupKeyActivityViewModelFactory(factory: PushBackupKeyActivityViewModelFactory): IViewModelFactory<AbstractPushBackupKeyActivityViewModel>;
+        @Binds
+        abstract fun bindPushBackupKeyActivityViewModelFactory(factory: PushBackupKeyActivityViewModelFactory): IViewModelFactory<AbstractPushBackupKeyActivityViewModel>;
+    }
 }

@@ -1,36 +1,23 @@
 package vmodev.clearkeep.applications
 
-import android.app.Activity
 import android.app.Application
-import android.app.Fragment
-import android.app.Service
-import android.content.BroadcastReceiver
-import android.content.ContentProvider
 import com.google.errorprone.annotations.ForOverride
-import dagger.android.*
+import dagger.android.AndroidInjector
+import dagger.android.DaggerApplication
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
 import dagger.internal.Beta
 import im.vector.VectorApp
 import javax.inject.Inject
 
+
 @Beta
 abstract class DaggerVectorApp : VectorApp()
-        , HasActivityInjector
-        , HasFragmentInjector
-        , HasServiceInjector
-        , HasBroadcastReceiverInjector
-        , HasContentProviderInjector {
+        , HasAndroidInjector {
+
     @Inject
-    lateinit var activityInjector: DispatchingAndroidInjector<Activity>;
-    @Inject
-    lateinit var broadcastReceiverInjector: DispatchingAndroidInjector<BroadcastReceiver>;
-    @Inject
-    lateinit var fragmentInjector: DispatchingAndroidInjector<Fragment>;
-    @Inject
-    lateinit var serviceInjector: DispatchingAndroidInjector<Service>;
-    @Inject
-    lateinit var contentProviderInjector: DispatchingAndroidInjector<ContentProvider>;
     @Volatile
-    private var needToInject = true
+    lateinit var androidInjector: DispatchingAndroidInjector<Any>
 
     override fun onCreate() {
         super.onCreate()
@@ -41,7 +28,7 @@ abstract class DaggerVectorApp : VectorApp()
      * Implementations should return an [AndroidInjector] for the concrete [ ]. Typically, that injector is a [dagger.Component].
      */
     @ForOverride
-    protected abstract fun applicationInjector(): AndroidInjector<out DaggerVectorApp>
+    protected abstract fun applicationInjector(): AndroidInjector<out DaggerApplication>
 
     /**
      * Lazily injects the [DaggerApplication]'s members. Injection cannot be performed in [ ][Application.onCreate] since [android.content.ContentProvider]s' [ ][android.content.ContentProvider.onCreate] method will be called first and might
@@ -50,46 +37,22 @@ abstract class DaggerVectorApp : VectorApp()
      * allowing for a partially-constructed instance to escape.
      */
     private fun injectIfNecessary() {
-        if (needToInject) {
+//        if (androidInjector == null) {
             synchronized(this) {
-                if (needToInject) {
+//                if (androidInjector == null) {
                     val applicationInjector = applicationInjector() as AndroidInjector<DaggerVectorApp>
                     applicationInjector.inject(this)
-                    if (needToInject) {
-                        throw IllegalStateException(
-                                "The AndroidInjector returned from applicationInjector() did not inject the " + "DaggerApplication")
-                    }
-                }
-            }
+                    checkNotNull(androidInjector) { "The AndroidInjector returned from applicationInjector() did not inject the " + "DaggerApplication" }
+//                }
+//            }
         }
     }
 
-    @Inject
-    internal fun setInjected() {
-        needToInject = false
-    }
-
-    override fun activityInjector(): DispatchingAndroidInjector<Activity>? {
-        return activityInjector
-    }
-
-    override fun fragmentInjector(): DispatchingAndroidInjector<Fragment>? {
-        return fragmentInjector
-    }
-
-    override fun broadcastReceiverInjector(): DispatchingAndroidInjector<BroadcastReceiver>? {
-        return broadcastReceiverInjector
-    }
-
-    override fun serviceInjector(): DispatchingAndroidInjector<Service>? {
-        return serviceInjector
-    }
-
-    // injectIfNecessary is called here but not on the other *Injector() methods because it is the
-    // only one that should be called (in AndroidInjection.inject(ContentProvider)) before
-    // Application.onCreate()
-    override fun contentProviderInjector(): AndroidInjector<ContentProvider>? {
+    override fun androidInjector(): AndroidInjector<Any>? {
+        // injectIfNecessary should already be called unless we are about to inject a ContentProvider,
+        // which can happen before Application.onCreate()
         injectIfNecessary()
-        return contentProviderInjector
+
+        return androidInjector
     }
 }

@@ -6,7 +6,7 @@
 
     <data>
 
-        <import type="android.arch.lifecycle.LiveData" />
+        <import type="androidx.lifecycle.LiveData" />
 
         <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
 
@@ -34,7 +34,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -51,7 +51,7 @@
                     android:layout_weight="1"
                     android:text="@string/notifications_on_this_device" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_compat_notification_on_this_device"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -70,7 +70,7 @@
                     android:layout_weight="1"
                     android:text="@string/show_decrypted_content" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_compat_show_decrypted_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -96,7 +96,7 @@
                     android:layout_weight="1"
                     android:text="@string/pin_rooms_with_missed_notifications" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_compat_pin_rooms_with_missed_notifications"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -115,7 +115,7 @@
                     android:layout_weight="1"
                     android:text="@string/pin_rooms_with_unread_messages" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_compat_pin_rooms_with_unread_messages"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />

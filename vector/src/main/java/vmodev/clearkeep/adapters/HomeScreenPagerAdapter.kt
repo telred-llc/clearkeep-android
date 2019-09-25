@@ -1,10 +1,8 @@
 package vmodev.clearkeep.adapters
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
-import vmodev.clearkeep.fragments.DirectMessageFragment
-import vmodev.clearkeep.fragments.RoomFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
 
 class HomeScreenPagerAdapter(fragmentManager: FragmentManager, fragments : Array<Fragment>) : FragmentStatePagerAdapter(fragmentManager) {
 

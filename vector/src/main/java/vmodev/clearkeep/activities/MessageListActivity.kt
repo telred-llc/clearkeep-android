@@ -1,34 +1,31 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.Observer
 import android.content.Intent
-import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.support.v7.util.DiffUtil
 import android.util.Log
-import dagger.android.support.DaggerAppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DiffUtil
 import im.vector.Matrix
 import im.vector.R
 import im.vector.databinding.ActivityMessageListBinding
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import org.matrix.androidsdk.MXSession
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.activities.interfaces.IMessageListActivity
 import vmodev.clearkeep.adapters.ListMessageRecyclerViewAdapter
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IMessageListActivityViewModelFactory
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.User
-import java.util.concurrent.TimeUnit
+import vmodev.clearkeep.viewmodels.interfaces.AbstractMessageListActivityViewModel
 import javax.inject.Inject
 
-class MessageListActivity : DataBindingDaggerActivity(), IMessageListActivity {
+class MessageListActivity : DataBindingDaggerActivity(), IActivity {
 
     @Inject
-    lateinit var viewModelFactory: IMessageListActivityViewModelFactory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractMessageListActivityViewModel>;
     @Inject
     lateinit var appExecutors: AppExecutors;
 
@@ -39,7 +36,7 @@ class MessageListActivity : DataBindingDaggerActivity(), IMessageListActivity {
     private val members = HashMap<String, User>();
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_message_list, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_message_list);
         roomId = intent.getStringExtra(ROOM_ID);
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setDisplayHomeAsUpEnabled(true);
@@ -55,7 +52,7 @@ class MessageListActivity : DataBindingDaggerActivity(), IMessageListActivity {
         session = Matrix.getInstance(applicationContext).defaultSession;
         binding.messages = viewModelFactory.getViewModel().getListMessageResult();
         binding.room = viewModelFactory.getViewModel().getRoomResult();
-        val adapter = ListMessageRecyclerViewAdapter(session.myUserId, members, appExecutors, dataBindingComponent, object : DiffUtil.ItemCallback<Message>() {
+        val adapter = ListMessageRecyclerViewAdapter(session.myUserId, members, appExecutors, object : DiffUtil.ItemCallback<Message>() {
             override fun areItemsTheSame(p0: Message, p1: Message): Boolean {
                 return p0.id == p1.id;
             }

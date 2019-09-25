@@ -1,9 +1,11 @@
 package vmodev.clearkeep.repositories.wayloads
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
-import android.support.annotation.MainThread
-import android.support.annotation.WorkerThread
+import android.annotation.SuppressLint
+import androidx.annotation.MainThread
+import androidx.annotation.WorkerThread
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -14,7 +16,7 @@ abstract class AbstractNetworkBoundSourceOneTimeWithParams<T, V> @MainThread con
 
     init {
         result.value = Resource.loading(null);
-        fetchFromNetwork();
+        startCall();
     }
 
     private fun setValue(newValue: Resource<T>) {
@@ -22,26 +24,23 @@ abstract class AbstractNetworkBoundSourceOneTimeWithParams<T, V> @MainThread con
             result.value = newValue;
     }
 
-    private fun fetchFromNetwork() {
-        val apiResponse = createCall();
-        result.addSource(apiResponse) { responseData ->
-            result.removeSource(apiResponse)
-            if (responseData != null) {
-                Observable.create<V> { emitter ->
-                    saveCallResult(responseData)
-                    emitter.onNext(responseData);
-                    emitter.onComplete();
-                }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
-                    val dbSource = loadFromDb(it);
-                    result.addSource(dbSource) { d ->
-                        result.removeSource(dbSource);
-                        setValue(Resource.success(d))
-                    }
+    @SuppressLint("CheckResult")
+    private fun startCall() {
+        createCall().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+            Completable.fromAction {
+                saveCallResult(it)
+            }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe ({
+                val dbSource = loadFromDb(it);
+                result.addSource(dbSource) { d ->
+                    result.removeSource(dbSource);
+                    setValue(Resource.success(d))
                 }
-            } else {
-                setValue(Resource.error("Error", null))
-            }
-        }
+            }, {
+                setValue(Resource.error(it.message, null))
+            })
+        },{
+            setValue(Resource.error(it.message, null))
+        });
     }
 
     fun asLiveData() = result as LiveData<Resource<T>>
@@ -52,5 +51,5 @@ abstract class AbstractNetworkBoundSourceOneTimeWithParams<T, V> @MainThread con
     protected abstract fun loadFromDb(param: V): LiveData<T>
 
     @MainThread
-    protected abstract fun createCall(): LiveData<V>
+    protected abstract fun createCall(): Observable<V>
 }

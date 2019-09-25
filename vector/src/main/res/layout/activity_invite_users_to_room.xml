@@ -2,7 +2,66 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="vmodev.clearkeep.activities.InviteUsersToRoomActivity">
+    tools:context="vmodev.clearkeep.fragments.InviteUsersToRoomFragment">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/edit_text_query"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:hint="@string/search"
+                    android:singleLine="true" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardView_invite"
+                    android:layout_width="100dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="10dp"
+                    app:cardBackgroundColor="@color/app_green"
+                    app:cardCornerRadius="20dp">
+
+                    <TextView
+                        android:id="@+id/text_view_invite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/invite"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold" />
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_list_user"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_user" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:visibleGone="@{users.status == Status.LOADING || room.status == Status.LOADING}" />
+    </FrameLayout>
 
     <data>
 
@@ -14,7 +73,7 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.Status" />
 
-        <import type="android.arch.lifecycle.LiveData" />
+        <import type="androidx.lifecycle.LiveData" />
 
         <import type="vmodev.clearkeep.viewmodelobjects.Room" />
 
@@ -26,54 +85,4 @@
             name="room"
             type="LiveData&lt;Resource&lt;Room>>" />
     </data>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:visibleGone="@{users.status == Status.LOADING || room.status == Status.LOADING}" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/text_view_right_toolbar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="end"
-                    android:layout_marginEnd="10dp"
-                    android:text="@string/invite"
-                    android:textColor="@color/main_text_color_hint"
-                    android:clickable="false"
-                    android:textSize="@dimen/text_20_sp" />
-            </android.support.v7.widget.Toolbar>
-
-            <EditText
-                android:id="@+id/edit_text_query"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:hint="@string/search"
-                android:singleLine="true" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_view_list_user"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_user" />
-        </LinearLayout>
-    </FrameLayout>
 </layout>

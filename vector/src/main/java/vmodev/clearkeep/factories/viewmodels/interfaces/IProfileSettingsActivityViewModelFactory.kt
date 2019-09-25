@@ -1,8 +1,5 @@
 package vmodev.clearkeep.factories.viewmodels.interfaces
 
-import android.arch.lifecycle.LiveData
-import vmodev.clearkeep.viewmodelobjects.LocalSettings
-import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodels.interfaces.AbstractProfileSettingsActivityViewModel
 
 interface IProfileSettingsActivityViewModelFactory : IViewModelFactory<AbstractProfileSettingsActivityViewModel> {

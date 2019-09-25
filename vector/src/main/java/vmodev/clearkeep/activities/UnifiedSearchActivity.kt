@@ -3,13 +3,13 @@ package vmodev.clearkeep.activities
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.view.ViewPager
 import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils

@@ -1,17 +1,16 @@
 package vmodev.clearkeep.matrixsdk
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
 import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import im.vector.Matrix
 import im.vector.R
 import im.vector.util.HomeRoomsViewModel
-import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Function
@@ -227,7 +226,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                 }
                 for ((index, value) in rooms.withIndex()) {
 //                    addLastMessage(value).subscribeOn(Schedulers.io()).subscribe({
-                    listRoom.add(matrixRoomToRoom(value));
+                    listRoom.add(matrixRoomToRoomWithNonMessageAndUserCreated(value));
 //                    addLastMessage(value.roomId).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe();
 //                        if (index >= rooms.size) {
 //                            emitter.onNext(listRoom);
@@ -268,6 +267,20 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                 emitter.onNext(matrixRoomToRoom(room));
                 emitter.onComplete();
             } else {
+                emitter.onError(NullPointerException());
+                emitter.onComplete();
+            }
+        }
+    }
+
+    override fun getRoomWithIdForCreate(roomId: String) : Observable<vmodev.clearkeep.viewmodelobjects.Room> {
+        setMXSession();
+        return ObservableAll.create { emitter ->
+            var room : Room? = session!!.dataHandler.getRoom(roomId);
+            room?.let {
+                emitter.onNext(matrixRoomToRoomWithNonMessageAndUserCreated(room));
+                emitter.onComplete();
+            } ?: run {
                 emitter.onError(NullPointerException());
                 emitter.onComplete();
             }
@@ -428,8 +441,43 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
+                , updatedDate = timeUpdateLong, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, messageId = messageId
+                , encrypted = if (room.isEncrypted) 1 else 0, status = if (room.isLeaving || room.isLeft) 0 else 1, notificationState = notificationState.toByte(), userCreated = userCreated);
+        return roomObj;
+    }
+
+    private fun matrixRoomToRoomWithNonMessageAndUserCreated(room: Room): vmodev.clearkeep.viewmodelobjects.Room {
+        var sourcePrimary = 1;// = if (room.isDirect) 0b00000001 else 0b00000010;
+        if (room.isInvited) {
+            sourcePrimary = if (room.isDirectChatInvitation) 0b00000001 else 0b00000010;
+        } else {
+            sourcePrimary = if (room.isDirect) 0b00000001 else 0b00000010;
+        }
+        val sourceSecondary = if (room.isInvited) 0b01000000 else 0b00000000;
+        val sourceThird = if ((room.accountData?.keys
+                        ?: emptySet()).contains(RoomTag.ROOM_TAG_FAVOURITE)) 0b10000000 else 0b00000000;
+        var timeUpdateLong: Long = 0;
+//        var messageId: String? = null
+//        room.roomSummary?.let { roomSummary ->
+//            val event = roomSummary.latestReceivedEvent;
+//            timeUpdateLong = event.originServerTs;
+//            messageId = event.eventId;
+//        }
+//
+//        var userCreated : String? = null;
+//        room.state?.roomCreateContent?.creator?.let { userCreated = it }
+
+//        val notificationState = when (session!!.dataHandler.bingRulesManager.getRoomNotificationState(room.roomId)) {
+//            BingRulesManager.RoomNotificationState.ALL_MESSAGES_NOISY -> 0x01;
+//            BingRulesManager.RoomNotificationState.ALL_MESSAGES -> 0x02;
+//            BingRulesManager.RoomNotificationState.MENTIONS_ONLY -> 0x04;
+//            BingRulesManager.RoomNotificationState.MUTE -> 0x08;
+//        }
+        val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
+        val roomObj: vmodev.clearkeep.viewmodelobjects.Room = Room(id = room.roomId, name = room.getRoomDisplayName(application)
+                , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
                 , updatedDate = timeUpdateLong, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, messageId = null
-                , encrypted = if (room.isEncrypted) 1 else 0, status = if (room.isLeaving || room.isLeft) 0 else 1, notificationState = notificationState.toByte(), userCreated = null);
+                , encrypted = if (room.isEncrypted) 1 else 0, status = if (room.isLeaving || room.isLeft) 0 else 1, notificationState = 0x01, userCreated = null);
         return roomObj;
     }
 
@@ -616,7 +664,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                         override fun onSuccess(p0: String?) {
                             p0?.let { s ->
                                 val room = session!!.dataHandler.getRoom(s);
-                                emitter.onNext(matrixRoomToRoom(room));
+                                emitter.onNext(matrixRoomToRoomWithNonMessageAndUserCreated(room));
                                 emitter.onComplete();
                             }
                         }
@@ -713,7 +761,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                 override fun onSuccess(p0: String?) {
                     p0?.let { s ->
                         val room = session!!.dataHandler.getRoom(s)
-                        emitter.onNext(matrixRoomToRoom(room));
+                        emitter.onNext(matrixRoomToRoomWithNonMessageAndUserCreated(room));
                         emitter.onComplete();
                     }
                 }
@@ -1701,13 +1749,15 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                         emitter.onNext(newState.ordinal);
                         if (newState == KeysBackupStateManager.KeysBackupState.NotTrusted || newState == KeysBackupStateManager.KeysBackupState.Disabled
                                 || newState == KeysBackupStateManager.KeysBackupState.ReadyToBackUp || newState == KeysBackupStateManager.KeysBackupState.WrongBackUpVersion) {
-                            listener?.let {
-                                mxCrypto.keysBackup.removeListener(it)
-                                emitter.onComplete();
+                            listener?.let {l ->
+                                Log.d("AutoBackup", "Remove");
+                                Observable.timer(1, TimeUnit.SECONDS).subscribe { mxCrypto.keysBackup.removeListener(l) }
                             }
+                            emitter.onComplete();
                         }
                     }
                 }
+                Log.d("AutoBackup", "Add");
                 mxCrypto.keysBackup.addListener(listener);
             } ?: run {
                 emitter.onError(Throwable("Crypto is null"))

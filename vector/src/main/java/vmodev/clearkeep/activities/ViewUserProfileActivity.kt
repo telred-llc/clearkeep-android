@@ -1,10 +1,10 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.Observer
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
@@ -14,21 +14,22 @@ import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.core.callback.ApiCallback
 import org.matrix.androidsdk.core.model.MatrixError
 import vmodev.clearkeep.activities.interfaces.IViewUserProfileActivity
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewUserProfileActivityViewModelFactory
-import java.util.*
+import vmodev.clearkeep.viewmodels.interfaces.AbstractViewUserProfileActivityViewModel
 import javax.inject.Inject
 
 class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileActivity {
 
     @Inject
-    lateinit var viewModelFactory: IViewUserProfileActivityViewModelFactory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractViewUserProfileActivityViewModel>;
 
     private lateinit var binding: ActivityViewUserProfileBinding;
     private lateinit var session: MXSession;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_view_user_profile, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_view_user_profile, dataBinding.getDataBindingComponent());
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setTitle(R.string.profile);
         supportActionBar?.setDisplayHomeAsUpEnabled(true);

@@ -1,28 +1,23 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
-import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import dagger.android.DaggerActivity
-import dagger.android.support.DaggerAppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorRoomActivity
 import im.vector.databinding.ActivityPreviewInviteRoomBinding
 import org.matrix.androidsdk.MXSession
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
-import java.util.HashMap
+import java.util.*
 import javax.inject.Inject
 
-class PreviewInviteRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
+class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -31,7 +26,7 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = DataBindingUtil.setContentView<ActivityPreviewInviteRoomBinding>(this, R.layout.activity_preview_invite_room, dataBindingComponent);
+        val binding = DataBindingUtil.setContentView<ActivityPreviewInviteRoomBinding>(this, R.layout.activity_preview_invite_room, dataBinding.getDataBindingComponent());
         val roomId: String = intent.getStringExtra(ROOM_ID) ?: ""
         mxSession = Matrix.getInstance(applicationContext).defaultSession;
         setSupportActionBar(binding.toolbar);
@@ -44,7 +39,7 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
             }
         }
         var index: Int = 0;
-        val roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
+        val roomViewModel = ViewModelProvider(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
         binding.room = roomViewModel.getRoom();
         roomViewModel.getRoom().observe(this, Observer { t ->
             kotlin.run {
@@ -84,6 +79,10 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), LifecycleOwner {
         binding.buttonDecline.setOnClickListener { v ->
             roomViewModel.setLeaveRoom(roomId)
         }
+    }
+
+    override fun getActivity(): FragmentActivity {
+        return this;
     }
 
     companion object {

@@ -1,6 +1,6 @@
 package vmodev.clearkeep.repositories.wayloads
 
-import android.support.annotation.MainThread
+import androidx.annotation.MainThread
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable

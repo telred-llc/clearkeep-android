@@ -1,18 +1,16 @@
 package vmodev.clearkeep.dialogfragments
 
-import android.databinding.DataBindingComponent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import im.vector.R
 import im.vector.databinding.DialogFragmentEditTextBinding
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
-import vmodev.clearkeep.binding.FragmentDataBindingComponent
 
 private const val TITLE = "TITLE"
 private const val CONTENT = "CONTENT"
@@ -23,7 +21,7 @@ private const val CANCEL_TITLE = "CANCEL_TITLE";
 
 class EditTextDialogFragment : DialogFragment() {
 
-    private val dataBindingComponent = FragmentDataBindingComponent(this);
+//    private val dataBindingComponent = FragmentDataBindingComponent(this);
     private lateinit var binding: DialogFragmentEditTextBinding;
     private var title: String = "";
     private var content: String = "";
@@ -36,17 +34,17 @@ class EditTextDialogFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            title = it.getString(TITLE)
-            content = it.getString(CONTENT)
-            editTextHint = it.getString(EDIT_TEXT_HINT);
+            title = it.getString(TITLE, "")
+            content = it.getString(CONTENT, "")
+            editTextHint = it.getString(EDIT_TEXT_HINT, "");
             editTextInputType = it.getInt(EDIT_TEXT_INPUT_TYPE);
-            okTitle = it.getString(OK_TITLE);
-            cancelTitle = it.getString(CANCEL_TITLE);
+            okTitle = it.getString(OK_TITLE, "");
+            cancelTitle = it.getString(CANCEL_TITLE, "");
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.dialog_fragment_edit_text, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.dialog_fragment_edit_text, container, false);
         binding.textViewTitle.text = title;
         binding.textViewContent.text = content;
         binding.editTextContent.hint = editTextHint;

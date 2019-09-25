@@ -1,19 +1,18 @@
 package vmodev.clearkeep.fragments
 
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.app.AlertDialog
-import android.support.v7.util.DiffUtil
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DiffUtil
 
 import im.vector.R
 import im.vector.databinding.FragmentBackupKeyManageBinding
@@ -22,6 +21,7 @@ import vmodev.clearkeep.adapters.ListSignatureRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IBackupKeyManageFragment
+import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodelobjects.Signature
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractBackupKeyManageFragmentViewModel
@@ -40,7 +40,7 @@ private const val USER_ID = "USER_ID"
  * create an instance of this fragment.
  *
  */
-class BackupKeyManageFragment : DataBindingDaggerFragment(), IBackupKeyManageFragment {
+class BackupKeyManageFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractBackupKeyManageFragmentViewModel>
@@ -56,20 +56,20 @@ class BackupKeyManageFragment : DataBindingDaggerFragment(), IBackupKeyManageFra
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            userId = it.getString(USER_ID)
+            userId = it.getString(USER_ID, "")
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_backup_key_manage, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_backup_key_manage, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapterListSignature = ListSignatureRecyclerViewAdapter(appExecutors, dataBindingComponent, object : DiffUtil.ItemCallback<Signature>() {
+        val adapterListSignature = ListSignatureRecyclerViewAdapter(appExecutors, dataBinding.getDataBindingComponent(),object : DiffUtil.ItemCallback<Signature>() {
             override fun areItemsTheSame(p0: Signature, p1: Signature): Boolean {
                 return p0.id == p1.id;
             }

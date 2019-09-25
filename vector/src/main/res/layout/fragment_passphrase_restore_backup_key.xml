@@ -5,7 +5,7 @@
 
     <data>
 
-        <import type="android.arch.lifecycle.LiveData" />
+        <import type="androidx.lifecycle.LiveData" />
 
         <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
 

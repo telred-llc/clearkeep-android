@@ -10,7 +10,7 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
 
-        <import type="android.arch.lifecycle.LiveData" />
+        <import type="androidx.lifecycle.LiveData" />
 
         <import type="vmodev.clearkeep.viewmodelobjects.User" />
 
@@ -52,7 +52,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:orientation="horizontal">
 
-                <android.support.v7.widget.CardView
+                <androidx.cardview.widget.CardView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
@@ -68,7 +68,7 @@
                         android:layout_height="match_parent"
                         android:background="@color/app_green"
                         app:user="@{user.data}" />
-                </android.support.v7.widget.CardView>
+                </androidx.cardview.widget.CardView>
 
                 <FrameLayout
                     android:id="@+id/frame_layout_search"
@@ -97,21 +97,25 @@
                     android:tint="@color/app_green" />
             </LinearLayout>
 
-            <FrameLayout
+            <fragment
                 android:id="@+id/frame_layout_fragment_container"
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                app:defaultNavHost="true"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                app:navGraph="@navigation/navigation_home_activity">
 
-            </FrameLayout>
+            </fragment>
 
-            <android.support.design.widget.BottomNavigationView
+            <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/bottom_navigation_view_home_screen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:itemIconTint="@color/home_bottom_nav_view_tint"
                 app:itemTextColor="@color/home_bottom_nav_view_tint"
-                app:menu="@menu/home_screen_bottom_navigation_view_menu">
+                app:menu="@menu/home_screen_bottom_navigation_view_menu"
+                app:labelVisibilityMode="labeled">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -168,7 +172,7 @@
                     </FrameLayout>
                 </LinearLayout>
 
-            </android.support.design.widget.BottomNavigationView>
+            </com.google.android.material.bottomnavigation.BottomNavigationView>
         </LinearLayout>
 
         <ProgressBar

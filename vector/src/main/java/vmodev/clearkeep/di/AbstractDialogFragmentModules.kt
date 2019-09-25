@@ -10,8 +10,9 @@ import vmodev.clearkeep.factories.viewmodels.interfaces.IDirectMessageFragmentVi
 import vmodev.clearkeep.factories.viewmodels.interfaces.IRoomFragmentViewModelFactory
 import vmodev.clearkeep.fragments.DirectMessageFragment
 import vmodev.clearkeep.fragments.Interfaces.IDirectMessageFragment
-import vmodev.clearkeep.fragments.Interfaces.IRoomFragment
+import vmodev.clearkeep.fragments.Interfaces.ISearchRoomFragment
 import vmodev.clearkeep.fragments.RoomFragment
+import javax.inject.Named
 
 @Module
 @Suppress("unused")
@@ -26,7 +27,8 @@ abstract class AbstractDialogFragmentModules {
     abstract fun contributeReceivedShareFileDialogFragment(): ReceivedShareFileDialogFragment;
 
     @Binds
-    abstract fun bindRoomFragment(fragment: RoomFragment): IRoomFragment;
+    @Named(ISearchRoomFragment.SEARCH_ROOM_FRAGMENT)
+    abstract fun bindRoomFragment(fragment: RoomFragment): ISearchRoomFragment;
 
     @Binds
     abstract fun bindDirectMessageFragment(fragment: DirectMessageFragment): IDirectMessageFragment;

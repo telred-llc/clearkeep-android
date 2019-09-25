@@ -1,51 +1,46 @@
 package vmodev.clearkeep.activities
 
-import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.util.Log
-import dagger.android.support.DaggerAppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import im.vector.R
 import im.vector.databinding.ActivityCallSettingsBinding
-import vmodev.clearkeep.activities.interfaces.ICallSettingsActivity
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
-import vmodev.clearkeep.factories.viewmodels.interfaces.ICallSettingsActivityViewModelFactory
+import vmodev.clearkeep.applications.IApplication
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.fragments.DataBindingDaggerFragment
+import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.viewmodels.interfaces.AbstractCallSettingActivityViewModel
 import javax.inject.Inject
 
-class CallSettingsActivity : DataBindingDaggerActivity(), ICallSettingsActivity {
+class CallSettingsActivity : DataBindingDaggerFragment(), IFragment {
 
     @Inject
-    lateinit var viewModelFactory: ICallSettingsActivityViewModelFactory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractCallSettingActivityViewModel>;
+    @Inject
+    lateinit var application: IApplication;
 
     private lateinit var binding: ActivityCallSettingsBinding;
-    private lateinit var userId: String;
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_call_settings, dataBindingComponent);
-        userId = if (intent.getStringExtra(USER_ID).isNullOrEmpty()) "" else intent.getStringExtra(USER_ID);
-        setSupportActionBar(binding.toolbar);
-        supportActionBar?.setTitle(R.string.calls);
-        supportActionBar?.setDisplayHomeAsUpEnabled(true);
-        supportActionBar?.setDisplayShowHomeEnabled(true);
-        binding.toolbar.setNavigationOnClickListener {
-            onBackPressed();
-        }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_call_settings, container, false, dataBinding.getDataBindingComponent());
+        return binding.root;
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.switchCompatIntegratedCalling.setOnCheckedChangeListener { buttonView, isChecked ->
-            viewModelFactory.getViewModel().setChangeDeviceSettingValue(userId, if (isChecked) 1 else 0);
+            viewModelFactory.getViewModel().setChangeDeviceSettingValue(application.getUserId(), if (isChecked) 1 else 0);
         }
         binding.deviceSettings = viewModelFactory.getViewModel().getDeviceSettingsResult();
         binding.deviceSettingsChanged = viewModelFactory.getViewModel().getChangeDeviceSettingsResult();
         binding.lifecycleOwner = this;
-        viewModelFactory.getViewModel().setIdForDeviceSettingsResult(userId);
+        viewModelFactory.getViewModel().setIdForDeviceSettingsResult(application.getUserId());
     }
 
-    override fun getActivity(): FragmentActivity {
+    override fun getFragment(): Fragment {
         return this;
-    }
-
-    companion object {
-        const val USER_ID = "USER_ID";
     }
 }

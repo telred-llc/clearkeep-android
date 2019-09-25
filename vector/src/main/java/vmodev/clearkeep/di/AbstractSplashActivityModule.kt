@@ -11,12 +11,15 @@ import vmodev.clearkeep.factories.viewmodels.interfaces.ISplashActivityViewModel
 @Module
 @Suppress("unused")
 abstract class AbstractSplashActivityModule {
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [ActivityBindModule::class])
     abstract fun contributeSplashActivity(): SplashActivity;
 
-    @Binds
-    abstract fun bindSplashActivity(activity: SplashActivity): ISplashActivity;
+    @Module
+    abstract class ActivityBindModule {
+        @Binds
+        abstract fun bindSplashActivity(activity: SplashActivity): ISplashActivity;
 
-    @Binds
-    abstract fun bindSplashActivityViewModelFactory(factory: SplashActivityViewModelFactory): ISplashActivityViewModelFactory;
+        @Binds
+        abstract fun bindSplashActivityViewModelFactory(factory: SplashActivityViewModelFactory): ISplashActivityViewModelFactory;
+    }
 }

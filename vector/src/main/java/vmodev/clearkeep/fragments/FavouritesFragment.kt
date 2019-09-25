@@ -1,17 +1,17 @@
 package vmodev.clearkeep.fragments
 
 import android.app.Activity
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.DividerItemDecoration
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.orhanobut.dialogplus.DialogPlus
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
@@ -22,9 +22,12 @@ import vmodev.clearkeep.adapters.BottomDialogFavouriteRoomLongClick
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IFavouritesFragmentViewModelFactory
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFavouritesFragment
+import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.viewmodels.interfaces.AbstractFavouritesFragmentViewModel
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -42,14 +45,14 @@ private const val GO_TO_ROOM_CODE = 12432;
  * create an instance of this fragment.
  *
  */
-class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment, IListRoomRecyclerViewAdapter.ICallbackToGetUsers {
+class FavouritesFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecyclerViewAdapter.ICallbackToGetUsers {
     // TODO: Rename and change types of parameters
     // You can declare variable to pass from activity is here
 
     private var listener: OnFragmentInteractionListener? = null
 
     @Inject
-    lateinit var viewModelFactory: IFavouritesFragmentViewModelFactory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractFavouritesFragmentViewModel>;
     @Inject
     lateinit var appExecutors: AppExecutors;
     @Inject
@@ -73,7 +76,7 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment, ILi
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_favourites2, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_favourites2, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 
@@ -82,8 +85,8 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFavouritesFragment, ILi
         binding.lifecycleOwner = viewLifecycleOwner;
         listDirectRecyclerViewAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, userId);
         listGroupRecyclerViewAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, userId);
-        listGroupRecyclerViewAdapter.setDataBindingComponent(dataBindingComponent);
-        listDirectRecyclerViewAdapter.setDataBindingComponent(dataBindingComponent);
+//        listGroupRecyclerViewAdapter.setDataBindingComponent(dataBindingComponent);
+//        listDirectRecyclerViewAdapter.setDataBindingComponent(dataBindingComponent);
         listGroupRecyclerViewAdapter.setOnItemClick { room, i ->
             if (!onGoingRoom) {
                 onGoingRoom = true;

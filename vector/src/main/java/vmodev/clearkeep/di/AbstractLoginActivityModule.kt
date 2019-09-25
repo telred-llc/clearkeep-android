@@ -1,6 +1,6 @@
 package vmodev.clearkeep.di
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -9,7 +9,6 @@ import dagger.multibindings.IntoMap
 import vmodev.clearkeep.activities.LoginActivity
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.applications.IApplication
-import vmodev.clearkeep.factories.viewmodels.ForgotPasswordFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.LoginActivityViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.matrixsdk.MatrixLoginService
@@ -23,15 +22,18 @@ import javax.inject.Singleton
 @Module
 @Suppress("unused")
 abstract class AbstractLoginActivityModule {
-    @ContributesAndroidInjector(modules = [AbstractLoginActivityFragmentBuilderModule::class])
+    @ContributesAndroidInjector(modules = [AbstractLoginActivityFragmentBuilderModule::class, ActivityBindModule::class])
     abstract fun contributeLoginActivity(): LoginActivity;
 
-    @Binds
-    @Named(IActivity.LOGIN_ACTIVITY)
-    abstract fun bindLoginActivity(activity: LoginActivity): IActivity;
+    @Module
+    abstract class ActivityBindModule {
+        @Binds
+        @Named(IActivity.LOGIN_ACTIVITY)
+        abstract fun bindLoginActivity(activity: LoginActivity): IActivity;
 
-    @Binds
-    abstract fun bindLoginActivityViewModelFactory(factory: LoginActivityViewModelFactory): IViewModelFactory<AbstractLoginActivityViewModel>
+        @Binds
+        abstract fun bindLoginActivityViewModelFactory(factory: LoginActivityViewModelFactory): IViewModelFactory<AbstractLoginActivityViewModel>
+    }
 
     @Binds
     @IntoMap

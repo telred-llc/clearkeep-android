@@ -16,8 +16,6 @@
 package im.vector.view
 
 import android.content.Context
-import android.support.transition.TransitionManager
-import android.support.v7.preference.PreferenceManager
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextUtils
@@ -30,6 +28,8 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.edit
+import androidx.preference.PreferenceManager
+import androidx.transition.TransitionManager
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -95,7 +95,7 @@ class UrlPreviewView @JvmOverloads constructor(
                     it.text = SpannableString(preview.title)
                             .apply {
                                 setSpan(object : ClickableSpan() {
-                                    override fun onClick(widget: View?) {
+                                    override fun onClick(widget: View) {
                                         openUrlInExternalBrowser(context, preview.requestedURL)
                                     }
                                 }, 0, preview.title.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -107,7 +107,7 @@ class UrlPreviewView @JvmOverloads constructor(
                     it.text = SpannableString(preview.requestedURL)
                             .apply {
                                 setSpan(object : ClickableSpan() {
-                                    override fun onClick(widget: View?) {
+                                    override fun onClick(widget: View) {
                                         openUrlInExternalBrowser(context, preview.requestedURL)
                                     }
                                 }, 0, preview.requestedURL.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)

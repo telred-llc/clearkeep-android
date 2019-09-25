@@ -1,15 +1,14 @@
 package vmodev.clearkeep.fragments
 
-import android.app.Activity
-import android.arch.lifecycle.Observer
 import android.content.Context
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 
 import im.vector.R
 import im.vector.databinding.FragmentPassphraseRestoreBackupKeyBinding
@@ -53,7 +52,7 @@ class PassphraseRestoreBackupKeyFragment : DataBindingDaggerFragment(), IFragmen
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_passphrase_restore_backup_key, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_passphrase_restore_backup_key, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 
@@ -77,7 +76,7 @@ class PassphraseRestoreBackupKeyFragment : DataBindingDaggerFragment(), IFragmen
                         restoreStatus = false;
                         binding.buttonRestore.setText(R.string.restore);
                         Toast.makeText(this.context, "Success restore " + it.successfullyNumberOfImportedKeys + "/" + it.totalNumberOfKeys + " total number keys", Toast.LENGTH_LONG).show();
-                        activity?.setResult(Activity.RESULT_OK);
+                        activity?.setResult(-1);
                         activity?.finish();
                     }
                 }

@@ -1,14 +1,10 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.ViewModelProvider
-import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import dagger.android.support.DaggerAppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import im.vector.R
-import im.vector.databinding.ActivitySearchBinding
 import im.vector.databinding.ActivitySecurityBinding
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import javax.inject.Inject
 
 class SecurityActivity : DataBindingDaggerActivity() {
@@ -20,7 +16,7 @@ class SecurityActivity : DataBindingDaggerActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_security, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_security);
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setDisplayHomeAsUpEnabled(true);
         supportActionBar!!.setDisplayShowHomeEnabled(true);

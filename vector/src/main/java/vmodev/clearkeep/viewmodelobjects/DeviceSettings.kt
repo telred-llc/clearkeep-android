@@ -1,7 +1,6 @@
 package vmodev.clearkeep.viewmodelobjects
 
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
+import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 
 @Entity(primaryKeys = ["id"])

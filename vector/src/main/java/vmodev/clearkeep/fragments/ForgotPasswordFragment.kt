@@ -2,14 +2,13 @@ package vmodev.clearkeep.fragments
 
 import android.app.AlertDialog
 import android.content.Context
-import android.databinding.DataBindingUtil
-import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 
 import im.vector.R
 import im.vector.databinding.FragmentForgotPasswordBinding
@@ -17,7 +16,6 @@ import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.ultis.isEmailValid
 import vmodev.clearkeep.viewmodels.interfaces.AbstractForgotPasswordFragmentViewModel
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
@@ -52,7 +50,7 @@ class ForgotPasswordFragment : DataBindingDaggerFragment(), IFragment {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_forgot_password, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_forgot_password, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 

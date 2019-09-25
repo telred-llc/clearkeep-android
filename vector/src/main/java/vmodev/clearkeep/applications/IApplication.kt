@@ -9,4 +9,5 @@ interface IApplication {
     fun startAutoKeyBackup(password: String?);
     fun setEventHandler();
     fun removeEventHandler();
+    fun getUserId() : String;
 }

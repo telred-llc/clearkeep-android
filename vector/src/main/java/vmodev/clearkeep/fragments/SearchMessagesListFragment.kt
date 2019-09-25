@@ -1,6 +1,7 @@
 package vmodev.clearkeep.fragments
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
@@ -17,7 +18,6 @@ import org.matrix.androidsdk.data.timeline.EventTimeline
 import org.matrix.androidsdk.fragments.MatrixMessageListFragment
 import org.matrix.androidsdk.rest.model.Event
 import vmodev.clearkeep.activities.RoomActivity
-import java.util.*
 
 open class SearchMessagesListFragment : BaseMessageListFragment() {
 
@@ -46,14 +46,8 @@ open class SearchMessagesListFragment : BaseMessageListFragment() {
         }
     }
 
-    /**
-     * Called when a fragment is first attached to its activity.
-     * [.onCreate] will be called after this.
-     *
-     * @param aHostActivity parent activity
-     */
-    override fun onAttach(aHostActivity: Activity?) {
-        super.onAttach(aHostActivity)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         mProgressView = activity!!.findViewById(R.id.search_load_oldest_progress)
     }
 

@@ -17,9 +17,9 @@
 package im.vector.settings
 
 import android.content.res.Configuration
-import android.support.v7.preference.PreferenceManager
 import android.text.TextUtils
 import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import im.vector.R
 import im.vector.VectorApp
 
@@ -82,7 +82,7 @@ object FontScale {
                 putString(APPLICATION_FONT_SCALE_KEY, scalePreferenceValue)
             }
         } else {
-            scalePreferenceValue = preferences.getString(APPLICATION_FONT_SCALE_KEY, FONT_SCALE_NORMAL)
+            scalePreferenceValue = preferences.getString(APPLICATION_FONT_SCALE_KEY, FONT_SCALE_NORMAL)!!
         }
 
         return scalePreferenceValue

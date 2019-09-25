@@ -8,6 +8,6 @@ import vmodev.clearkeep.fragments.ListRoomFragment
 
 class ListRoomFragmentFactory constructor(private val application: IApplication) : IFragmentFactory {
     override fun createNewInstance(): IFragment {
-        return ListRoomFragment.newInstance(Matrix.getInstance(application.getApplication()).defaultSession.myUserId);
+        return ListRoomFragment();
     };
 }

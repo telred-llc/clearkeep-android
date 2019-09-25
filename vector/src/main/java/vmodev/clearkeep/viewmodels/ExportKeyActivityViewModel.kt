@@ -1,10 +1,8 @@
 package vmodev.clearkeep.viewmodels
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
-import android.util.Log
-import vmodev.clearkeep.di.AbstractExportKeyActivityModule
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import vmodev.clearkeep.repositories.BackupKeyPathRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodels.interfaces.AbstractExportKeyActivityViewModel

@@ -1,13 +1,12 @@
 package vmodev.clearkeep.adapters
 
-import android.databinding.DataBindingComponent
-import android.databinding.DataBindingUtil
-import android.databinding.ViewDataBinding
-import android.support.v7.recyclerview.extensions.AsyncDifferConfig
-import android.support.v7.recyclerview.extensions.ListAdapter
-import android.support.v7.util.DiffUtil
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.AsyncDifferConfig
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import im.vector.R
 import im.vector.databinding.ItemMessageReceivedWithAvatarBinding
 import im.vector.databinding.ItemMessageReceivedWithNoAvatarBinding
@@ -17,14 +16,14 @@ import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.User
 
-class ListMessageRecyclerViewAdapter constructor(private val ownerUserId: String, private val members: Map<String, User>, appExecutors: AppExecutors, private val dataBindingComponent: DataBindingComponent, diffCall: DiffUtil.ItemCallback<Message>)
+class ListMessageRecyclerViewAdapter constructor(private val ownerUserId: String, private val members: Map<String, User>, appExecutors: AppExecutors, diffCall: DiffUtil.ItemCallback<Message>)
     : ListAdapter<Message, DataBoundViewHolder<ViewDataBinding>>(AsyncDifferConfig.Builder<Message>(diffCall)
         .setBackgroundThreadExecutor(appExecutors.diskIO()).build()) {
 
     private val views: Array<Int> = arrayOf(R.layout.item_message_received_with_avatar, R.layout.item_message_received_with_no_avatar, R.layout.item_message_sent_with_no_avatar, R.layout.item_message_sent_with_avatar);
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DataBoundViewHolder<ViewDataBinding> {
-        val binding = DataBindingUtil.inflate<ViewDataBinding>(LayoutInflater.from(p0.context), views[p1], p0, false, dataBindingComponent);
+        val binding = DataBindingUtil.inflate<ViewDataBinding>(LayoutInflater.from(p0.context), views[p1], p0, false);
         return DataBoundViewHolder(binding);
     }
 

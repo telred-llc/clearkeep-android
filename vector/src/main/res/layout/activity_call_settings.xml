@@ -6,7 +6,7 @@
 
     <data>
 
-        <import type="android.arch.lifecycle.LiveData" />
+        <import type="androidx.lifecycle.LiveData" />
 
         <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
 
@@ -38,7 +38,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -62,7 +62,7 @@
                     android:layout_weight="1"
                     android:text="@string/integrated_calling" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_compat_integrated_calling"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

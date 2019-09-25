@@ -1,8 +1,7 @@
 package vmodev.clearkeep.databases
 
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.*
-import io.reactivex.Flowable
+import androidx.lifecycle.LiveData
+import androidx.room.*
 import io.reactivex.Single
 import vmodev.clearkeep.viewmodelobjects.User
 

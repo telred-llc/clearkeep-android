@@ -1,8 +1,7 @@
 package vmodev.clearkeep.viewmodelobjects
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.ForeignKey
+import androidx.room.ColumnInfo
+import androidx.room.Entity
 
 @Entity(primaryKeys = ["id"])
 data class KeyBackup(

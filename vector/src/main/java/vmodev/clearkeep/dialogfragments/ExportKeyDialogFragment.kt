@@ -1,20 +1,19 @@
 package vmodev.clearkeep.dialogfragments
 
 import android.content.Context
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import im.vector.R
 import im.vector.databinding.DialogFragmentExportKeyBinding
-import vmodev.clearkeep.binding.FragmentDataBindingComponent
 
 public class ExportKeyDialogFragment : DialogFragment() {
     private var listener: OnFragmentInteractionListener? = null;
-    private val dataBindingComponent = FragmentDataBindingComponent(this);
+//    private val dataBindingComponent = FragmentDataBindingComponent(this);
     private lateinit var binding: DialogFragmentExportKeyBinding;
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +21,7 @@ public class ExportKeyDialogFragment : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.dialog_fragment_export_key, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.dialog_fragment_export_key, container, false);
         return binding.root;
     }
 
@@ -44,7 +43,7 @@ public class ExportKeyDialogFragment : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        this.dialog.window.setLayout(-1, -2);
+        this.dialog?.window?.setLayout(-1, -2);
     }
 
     private fun onExportButtonClick(passphrase: String) {

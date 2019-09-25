@@ -28,11 +28,11 @@ import org.matrix.androidsdk.rest.model.message.*
 import java.util.HashMap
 
 internal class MessagesAdapterMediasHelper constructor(private val mContext: Context,
-                                                 private val mSession: MXSession,
-                                                 private val mMaxImageWidth: Int,
-                                                 private val mMaxImageHeight: Int,
-                                                 private val mNotSentMessageTextColor: Int,
-                                                 private val mDefaultMessageTextColor: Int) {
+                                                       private val mSession: MXSession,
+                                                       private val mMaxImageWidth: Int,
+                                                       private val mMaxImageHeight: Int,
+                                                       private val mNotSentMessageTextColor: Int,
+                                                       private val mDefaultMessageTextColor: Int) {
     private val mMediasCache: MXMediaCache
     private var mVectorMessagesAdapterEventsListener: IMessagesAdapterActionsListener? = null
 
@@ -237,11 +237,9 @@ internal class MessagesAdapterMediasHelper constructor(private val mContext: Con
             if (null != downloadableUrl) {
                 Glide.with(mContext)
                         .load(downloadableUrl)
-                        .apply(RequestOptions()
-                                .override(maxImageWidth, maxImageHeight)
-                                .fitCenter()
-                                .placeholder(R.drawable.sticker_placeholder)
-                        )
+                        .override(maxImageWidth, maxImageHeight)
+                        .fitCenter()
+                        .placeholder(R.drawable.sticker_placeholder)
                         .into(imageView)
             } else {
                 // Display the placeholder

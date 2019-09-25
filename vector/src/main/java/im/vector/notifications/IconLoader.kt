@@ -19,8 +19,8 @@ package im.vector.notifications
 import android.content.Context
 import android.os.Handler
 import android.os.HandlerThread
-import android.support.annotation.WorkerThread
-import android.support.v4.graphics.drawable.IconCompat
+import androidx.annotation.WorkerThread
+import androidx.core.graphics.drawable.IconCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.request.RequestOptions
@@ -111,7 +111,6 @@ class IconLoader(val context: Context,
             Glide.with(context)
                     .asBitmap()
                     .load(path)
-                    .apply(RequestOptions.circleCropTransform().format(DecodeFormat.PREFER_ARGB_8888))
                     .submit()
                     .get()?.let { bitmap ->
                         return IconCompat.createWithBitmap(bitmap)

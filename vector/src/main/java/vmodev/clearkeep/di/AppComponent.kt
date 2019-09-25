@@ -10,10 +10,8 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [AndroidSupportInjectionModule::class, AndroidInjectionModule::class
-    , AppModule::class, AbstractSplashActivityModule::class, HomeScreenActivityModule::class, AbstractProfileActivityModule::class
-    , PreviewInviteRoomActivityModule::class, FindAndCreateNewConversationActivityModule::class
-    , CreateNewRoomActivityModule::class
-    , InviteUsersToRoomActivityModule::class
+    , AppModule::class, AbstractSplashActivityModule::class, AbstractHomeScreenActivityModule::class, AbstractProfileActivityModule::class
+    , PreviewInviteRoomActivityModule::class
     , AbstractSearchActivityModule::class
     , AbstractRoomSettingsActivityModule::class
     , AbstractSecurityActivityModule::class
@@ -22,28 +20,21 @@ import javax.inject.Singleton
     , AbstractViewUserProfileActivityModule::class
     , AbstractOtherRoomSettingsAdvancedActivityModule::class
     , AbstractRolesPermissionActivityModule::class
-    , AbstractProfileSettingsActivityModule::class
     , AbstractEditProfileActivityModule::class
-    , AbstractCallSettingsActivityModule::class
-    , AbstractNotificationSettingsActivityModule::class
     , AbstractMessageListActivityModule::class
-    , AbstractNotificationSettingsActivityModule::class
     , AbstractExportKeyActivityModule::class
     , AbstractUserInformationActivityModule::class
     , AbstractChangeThemeActivityModule::class
     , AbstractOtherRoomSettingsActivityModule::class
-    , AbstractDeactivateAccountActivityModule::class
-    , AbstractPrivacyPolicyActivityModule::class
-    , AbstractReportActivityModule::class
-    , AbstractCreateNewCallActivityModule::class
-    , AbstractCreateNewCallActivityModule::class
     , AbstractBackupKeyActivityModule::class
     , AbstractRestoreBackupKeyActivityModule::class
     , AbstractPushBackupKeyActivityModule::class
     , AbstractLoginActivityModule::class
     , AbstractRoomActivityModule::class
     , AbstractLogoutActivityModule::class
-    , AbstractVectorMediaPickerActivityModule::class])
+    , AbstractVectorMediaPickerActivityModule::class
+    , AbstractNewRoomActivityModule::class
+    , AbstractSettingsActivityModule::class])
 interface AppComponent : AndroidInjector<ClearKeepApplication> {
     override fun inject(instance: ClearKeepApplication?)
 

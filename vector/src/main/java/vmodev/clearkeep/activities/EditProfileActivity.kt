@@ -2,38 +2,36 @@ package vmodev.clearkeep.activities
 
 import android.Manifest
 import android.app.Activity
-import android.arch.lifecycle.Observer
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.graphics.Bitmap
+import android.graphics.Bitmap.CompressFormat
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
 import android.widget.Toast
-import dagger.android.support.DaggerAppCompatActivity
+import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
+import im.vector.R
 import im.vector.databinding.ActivityEditProfileBinding
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
-import vmodev.clearkeep.activities.interfaces.IEditProfileActivity
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
-import vmodev.clearkeep.factories.viewmodels.interfaces.IEditProfileActivityViewModelFactory
+import vmodev.clearkeep.activities.interfaces.IActivity
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.viewmodelobjects.Status
+import vmodev.clearkeep.viewmodels.interfaces.AbstractEditProfileActivityViewModel
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
 import javax.inject.Inject
-import android.graphics.Bitmap.CompressFormat
-import android.graphics.Bitmap.createBitmap
-import android.graphics.Matrix
-import android.support.v7.app.AlertDialog
-import im.vector.R
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 
 
-class EditProfileActivity : DataBindingDaggerActivity(), IEditProfileActivity {
+class EditProfileActivity : DataBindingDaggerActivity(), IActivity {
 
     @Inject
-    lateinit var viewModelFactory: IEditProfileActivityViewModelFactory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractEditProfileActivityViewModel>;
 
     private lateinit var binding: ActivityEditProfileBinding;
     private lateinit var userId: String;
@@ -41,7 +39,7 @@ class EditProfileActivity : DataBindingDaggerActivity(), IEditProfileActivity {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_edit_profile, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_edit_profile, dataBinding.getDataBindingComponent());
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setTitle(R.string.edit_profile);
         supportActionBar?.setDisplayHomeAsUpEnabled(true);
@@ -97,7 +95,7 @@ class EditProfileActivity : DataBindingDaggerActivity(), IEditProfileActivity {
         if (resultCode === Activity.RESULT_OK) {
             if (requestCode == RESULT_LOAD_IMG) {
                 try {
-                    val imageUri = data?.data;
+                    val imageUri = data?.data!!;
                     val inputStream = contentResolver.openInputStream(imageUri);
                     var selectedImage = BitmapFactory.decodeStream(inputStream);
                     selectedImage = getResizedBitmap(selectedImage, 512, 512);

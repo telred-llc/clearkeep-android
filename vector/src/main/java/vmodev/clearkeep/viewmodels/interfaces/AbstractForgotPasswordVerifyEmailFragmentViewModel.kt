@@ -1,7 +1,7 @@
 package vmodev.clearkeep.viewmodels.interfaces
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import org.matrix.androidsdk.rest.model.pid.ThreePid
 import vmodev.clearkeep.viewmodelobjects.Resource
 

@@ -1,11 +1,11 @@
 package vmodev.clearkeep.adapters
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
 
-class SearchViewPagerAdapter(fm: FragmentManager?, fragments: Array<ISearchFragment>) : FragmentStatePagerAdapter(fm) {
+class SearchViewPagerAdapter(fm: FragmentManager?, fragments: Array<ISearchFragment>) : FragmentPagerAdapter(fm!!, fragments.size) {
     private val fragments = fragments;
     private val titles = arrayOf("Rooms", "Messages", "People", "Files");
 

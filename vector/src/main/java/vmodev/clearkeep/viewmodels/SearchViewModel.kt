@@ -1,8 +1,8 @@
 package vmodev.clearkeep.viewmodels
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import vmodev.clearkeep.repositories.SearchRepository
 import vmodev.clearkeep.viewmodelobjects.MessageSearchText
 import vmodev.clearkeep.viewmodelobjects.Resource

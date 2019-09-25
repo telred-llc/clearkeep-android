@@ -1,21 +1,20 @@
 package vmodev.clearkeep.fragments
 
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.DividerItemDecoration
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import im.vector.R
 import im.vector.databinding.FragmentDirectMessageBinding
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import vmodev.clearkeep.activities.MessageListActivity
-import vmodev.clearkeep.activities.FindAndCreateNewConversationActivity
 import vmodev.clearkeep.activities.RoomSettingsActivity
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
@@ -58,14 +57,14 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDirectMessageFragmen
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_direct_message, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_direct_message, container, false, dataBinding.getDataBindingComponent());
         return binding!!.root;
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner;
-        listRoomAdapter.setDataBindingComponent(dataBindingComponent);
+//        listRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listRoomAdapter.setOnItemClick { room, i ->
             when (i) {
 //                3 -> onClickItem.onNext(room.id);
@@ -75,7 +74,7 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDirectMessageFragmen
         }
         binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
         binding.buttonStartDirectChat.setOnClickListener {
-            val intentNewChat = Intent(context, FindAndCreateNewConversationActivity::class.java);
+            val intentNewChat = Intent(context, FindAndCreateNewConversationFragment::class.java);
             startActivity(intentNewChat);
         }
         binding.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))

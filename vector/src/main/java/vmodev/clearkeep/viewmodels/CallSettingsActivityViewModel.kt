@@ -1,8 +1,7 @@
 package vmodev.clearkeep.viewmodels
-
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
-import android.arch.lifecycle.Transformations
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.Transformations
 import vmodev.clearkeep.repositories.DeviceSettingsRepository
 import vmodev.clearkeep.viewmodelobjects.DeviceSettings
 import vmodev.clearkeep.viewmodelobjects.Resource

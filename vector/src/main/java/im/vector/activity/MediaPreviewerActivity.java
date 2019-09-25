@@ -3,14 +3,15 @@ package im.vector.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -124,8 +125,7 @@ public class MediaPreviewerActivity extends MXCActionBarActivity implements Medi
                 mPreviewerVideoThumbnail.setVisibility(View.GONE);
                 mPlayCircleView.setVisibility(View.GONE);
                 Glide.with(this)
-                        .load(uri)
-                        .apply(new RequestOptions().fitCenter())
+                        .load(uri).fitCenter()
                         .into(mPreviewerImageView);
             } else if (mimeType.startsWith("video")) {
                 mPreviewerImageView.setVisibility(View.GONE);
@@ -134,7 +134,7 @@ public class MediaPreviewerActivity extends MXCActionBarActivity implements Medi
                 mPlayCircleView.setVisibility(View.VISIBLE);
                 Glide.with(this)
                         .load(uri)
-                        .apply(new RequestOptions().fitCenter().frame(0))
+                        .fitCenter().frame(0)
                         .into(mPreviewerVideoThumbnail);
                 mPreviewerVideoView.setVideoURI(uri);
                 mPreviewerVideoView.seekTo(0);
@@ -148,7 +148,7 @@ public class MediaPreviewerActivity extends MXCActionBarActivity implements Medi
     }
 
     private void setupRecyclerView(@NonNull final List<RoomMediaMessage> sharedDataItems) {
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
         mPreviewerRecyclerView.setLayoutManager(linearLayoutManager);
         final MediaPreviewAdapter mediaPreviewAdapter = new MediaPreviewAdapter(sharedDataItems, this);
         mPreviewerRecyclerView.setAdapter(mediaPreviewAdapter);

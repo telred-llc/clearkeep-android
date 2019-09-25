@@ -1,6 +1,5 @@
 package vmodev.clearkeep.factories.activitiesandfragments.interfaces
 
-import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.fragments.Interfaces.ISearchRoomFragment
 
 interface IShowListRoomFragmentFactory {

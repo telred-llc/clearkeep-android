@@ -1,29 +1,20 @@
 package vmodev.clearkeep.activities
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.databinding.DataBindingComponent
-import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.support.v7.app.AlertDialog
 import android.util.Log
-import dagger.android.support.DaggerAppCompatActivity
+import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import im.vector.R
 import im.vector.databinding.ActivityRoomSettingsBinding
 import vmodev.clearkeep.activities.interfaces.IActivity
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.viewmodelobjects.Status
-import vmodev.clearkeep.viewmodels.RoomViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomSettingsActivityViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
-import javax.inject.Named
 
 class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
 
@@ -35,7 +26,7 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
     lateinit var binding: ActivityRoomSettingsBinding;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_room_settings, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_room_settings, dataBinding.getDataBindingComponent());
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setDisplayHomeAsUpEnabled(true);
         supportActionBar?.setDisplayShowHomeEnabled(true);
@@ -95,10 +86,10 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
             startActivity(usersIntent);
         }
         binding.addPeopleGroup.setOnClickListener { v ->
-            val intentAddPeople = Intent(this, InviteUsersToRoomActivity::class.java);
-            intentAddPeople.putExtra(InviteUsersToRoomActivity.ROOM_ID, roomId);
-            intentAddPeople.putExtra(InviteUsersToRoomActivity.CREATE_FROM_NEW_ROOM, false);
-            startActivity(intentAddPeople);
+//            val intentAddPeople = Intent(this, InviteUsersToRoomFragment::class.java);
+//            intentAddPeople.putExtra(InviteUsersToRoomFragment.ROOM_ID, roomId);
+//            intentAddPeople.putExtra(InviteUsersToRoomFragment.CREATE_FROM_NEW_ROOM, false);
+//            startActivity(intentAddPeople);
         }
         binding.filesGroup.setOnClickListener { v ->
             val filesIntent = Intent(this, RoomfilesListActivity::class.java)

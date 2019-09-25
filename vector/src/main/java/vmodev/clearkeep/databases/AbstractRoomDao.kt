@@ -1,19 +1,16 @@
 package vmodev.clearkeep.databases
 
-import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.*
-import io.reactivex.Flowable
-import io.reactivex.Observable
+import androidx.lifecycle.LiveData
+import androidx.room.*
 import io.reactivex.Single
 import vmodev.clearkeep.viewmodelobjects.Room
-import vmodev.clearkeep.viewmodelobjects.User
 
 @Dao
 abstract class AbstractRoomDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    abstract fun insert(room: Room): Long;
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun insert(room: Room);
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insertRooms(rooms: List<Room>): List<Long>;
 
     @Query("SELECT * FROM room WHERE id =:id")
@@ -106,13 +103,13 @@ abstract class AbstractRoomDao {
     @Query("SELECT room.* FROM room INNER JOIN roomUserJoin ON room.id = roomUserJoin.room_id INNER JOIN user ON user.id = roomUserJoin.user_id WHERE roomUserJoin.user_id =:userId AND (room.type == 2 OR room.type == 66 OR room.type == 130)")
     abstract fun getRoomChatRoomWithUserId(userId: String): LiveData<List<Room>>;
 
-    @Query("UPDATE Room SET message_id =:messageId WHERE Room.id =:id")
+    @Query("UPDATE Room SET last_message_id =:messageId WHERE Room.id =:id")
     abstract fun updateRoomLastMessage(id: String, messageId: String): Int
 
     @Query("UPDATE Room SET user_id_created =:userId WHERE Room.id =:id")
     abstract fun updateRoomCreatedUser(id: String, userId: String): Int
 
-    @Query("SELECT Room.* FROM Room WHERE Room.message_id =:messageId")
+    @Query("SELECT Room.* FROM Room WHERE Room.last_message_id =:messageId")
     abstract fun getRoomWithMessageId(messageId: String): List<Room>;
 
     fun loadWithType(filters: Array<Int>): LiveData<List<Room>> {

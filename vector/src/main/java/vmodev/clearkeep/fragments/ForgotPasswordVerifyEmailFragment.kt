@@ -1,24 +1,20 @@
 package vmodev.clearkeep.fragments
 
-import android.arch.lifecycle.Observer
 import android.content.Context
-import android.databinding.DataBindingUtil
-import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import im.vector.R
-import im.vector.databinding.FragmentForgotPasswordBinding
 import im.vector.databinding.FragmentForgotPasswordVerifyEmailBinding
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import org.matrix.androidsdk.rest.model.login.ThreePidCredentials
 import org.matrix.androidsdk.rest.model.pid.ThreePid
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
@@ -64,7 +60,7 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_forgot_password_verify_email, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_forgot_password_verify_email, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 

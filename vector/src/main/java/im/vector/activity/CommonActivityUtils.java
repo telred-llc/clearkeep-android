@@ -34,19 +34,20 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.preference.PreferenceManager;
 
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.core.Log;
@@ -64,7 +65,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -87,13 +87,6 @@ import im.vector.listeners.YesNoListener;
 import im.vector.services.EventStreamServiceX;
 import im.vector.ui.badge.BadgeProxy;
 import im.vector.util.PreferencesManager;
-import vmodev.clearkeep.activities.CallViewActivity;
-import vmodev.clearkeep.activities.ExportKeyActivity;
-import vmodev.clearkeep.activities.FindAndCreateNewConversationActivity;
-import vmodev.clearkeep.activities.HomeScreenActivity;
-import vmodev.clearkeep.activities.InviteUsersToRoomActivity;
-import vmodev.clearkeep.activities.PreviewInviteRoomActivity;
-import vmodev.clearkeep.activities.ViewUserProfileActivity;
 
 /**
  * Contains useful functions which are called in multiple activities.
@@ -717,8 +710,8 @@ public class CommonActivityUtils {
                     public void run() {
                         // if the activity is not the home activity
 //                        if (!(fromActivity instanceof HomeScreenActivity) && !(fromActivity instanceof PreviewInviteRoomActivity)
-//                                && !(fromActivity instanceof FindAndCreateNewConversationActivity)
-//                                && !(fromActivity instanceof InviteUsersToRoomActivity) && !(fromActivity instanceof CallViewActivity)
+//                                && !(fromActivity instanceof FindAndCreateNewConversationFragment)
+//                                && !(fromActivity instanceof InviteUsersToRoomFragment) && !(fromActivity instanceof CallViewActivity)
 //                                && !(fromActivity instanceof ViewUserProfileActivity) && !(fromActivity instanceof ExportKeyActivity)) {
 //                            // pop to the home activity
 //                            Log.d(LOG_TAG, "## goToRoomPage(): start VectorHomeActivity..");

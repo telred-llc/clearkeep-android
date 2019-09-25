@@ -1,14 +1,14 @@
 package vmodev.clearkeep.fragments
 
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
@@ -19,7 +19,6 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
-import vmodev.clearkeep.binding.FragmentDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
@@ -55,7 +54,6 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
     @Inject
     lateinit var listRoomNormalRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
 
-    private val bindingDataComponent: FragmentDataBindingComponent = FragmentDataBindingComponent(this);
     private lateinit var binding: FragmentSearchRoomsBinding;
     private var disposable: Disposable? = null;
 
@@ -69,15 +67,12 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search_rooms, container, false, bindingDataComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search_rooms, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        listRoomInviteRecyclerViewAdapter.setDataBindingComponent(bindingDataComponent)
-        listRoomFavouriteRecyclerViewAdapter.setDataBindingComponent(bindingDataComponent);
-        listRoomNormalRecyclerViewAdapter.setDataBindingComponent(dataBindingComponent);
         listRoomInviteRecyclerViewAdapter.setOnItemClick { roomListUser, i ->
             roomListUser.room?.let {
                 when (i) {

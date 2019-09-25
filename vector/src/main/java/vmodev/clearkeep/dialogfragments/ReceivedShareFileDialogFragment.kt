@@ -2,28 +2,22 @@ package vmodev.clearkeep.dialogfragments
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.jakewharton.rxbinding2.support.design.widget.RxTabLayout
-import com.jakewharton.rxbinding2.widget.RxTextView
+import androidx.databinding.DataBindingUtil
+import dagger.android.support.DaggerDialogFragment
 import im.vector.R
 import im.vector.databinding.DialogFragmentReceivedShareFileBinding
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.HomeScreenPagerAdapter
 import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IShowListRoomFragmentFactory
-import vmodev.clearkeep.fragments.DirectMessageFragment
-import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.fragments.Interfaces.ISearchRoomFragment
-import vmodev.clearkeep.fragments.RoomFragment
 import javax.inject.Inject
 import javax.inject.Named
 
-class ReceivedShareFileDialogFragment : DataBindingDaggerDialogFragment() {
+class ReceivedShareFileDialogFragment : DaggerDialogFragment() {
     private lateinit var binding: DialogFragmentReceivedShareFileBinding;
     @Inject
     @field:Named(value = IShowListRoomFragmentFactory.DIRECT_MESSAGE_FRAGMENT_FACTORY)
@@ -35,25 +29,25 @@ class ReceivedShareFileDialogFragment : DataBindingDaggerDialogFragment() {
     private lateinit var fragments: Array<ISearchRoomFragment>;
     private lateinit var currentFragment: ISearchRoomFragment;
     private lateinit var userId: String;
-    private lateinit var intentData: Intent;
+    private var intentData: Intent? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fragments = arrayOf(directMessageFragmentFactory.createNewInstance(), roomMessageFragmentFactory.createNewInstance());
         arguments?.let {
-            userId = it.getString(USER_ID);
+            userId = it.getString(USER_ID, "");
             intentData = it.getParcelable(INTENT_DATA);
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.dialog_fragment_received_share_file, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.dialog_fragment_received_share_file, container, false);
         return binding.root;
     }
 
     override fun onStart() {
         super.onStart()
-        dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     @SuppressLint("CheckResult")
@@ -63,12 +57,12 @@ class ReceivedShareFileDialogFragment : DataBindingDaggerDialogFragment() {
         binding.imageViewClose.setOnClickListener {
             this.dismiss();
         }
-        RxTabLayout.selections(binding.tabLayout).subscribe {
-            currentFragment = fragments[it.position]
-        }
-        RxTextView.textChanges(binding.editTextQuery).subscribe {
-            currentFragment.setQuery(it.toString());
-        }
+//        RxTabLayout.selections(binding.tabLayout).subscribe {
+//            currentFragment = fragments[it.position]
+//        }
+//        RxTextView.textChanges(binding.editTextQuery).subscribe {
+//            currentFragment.setQuery(it.toString());
+//        }
         fragments.forEach {
             it.onClickItemtRoom().subscribe {
                 val roomIntent = Intent(this.context, RoomActivity::class.java);

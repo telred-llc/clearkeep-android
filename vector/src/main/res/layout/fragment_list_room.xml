@@ -5,7 +5,7 @@
 
     <data>
 
-        <import type="android.arch.lifecycle.LiveData" />
+        <import type="androidx.lifecycle.LiveData" />
 
         <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
 
@@ -43,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.NestedScrollView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -89,11 +89,11 @@
                     android:layout_height="match_parent"
                     app:el_expanded="true">
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view_list_favourites_chat"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/room_item" />
                 </net.cachapa.expandablelayout.ExpandableLayout>
 
@@ -167,11 +167,11 @@
                     android:layout_height="match_parent"
                     app:el_expanded="true">
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view_list_direct_chat"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/room_item" />
                 </net.cachapa.expandablelayout.ExpandableLayout>
 
@@ -246,15 +246,15 @@
                     android:layout_height="match_parent"
                     app:el_expanded="true">
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view_list_group_chat"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/room_item" />
                 </net.cachapa.expandablelayout.ExpandableLayout>
             </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
 
 
         <ProgressBar

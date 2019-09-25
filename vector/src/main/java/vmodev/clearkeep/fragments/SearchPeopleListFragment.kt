@@ -9,7 +9,6 @@ import butterknife.BindView
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.VectorBaseSearchActivity
-import im.vector.activity.VectorMemberDetailsActivity
 import im.vector.adapters.ParticipantAdapterItem
 import im.vector.adapters.VectorParticipantsAdapter
 import im.vector.contacts.Contact

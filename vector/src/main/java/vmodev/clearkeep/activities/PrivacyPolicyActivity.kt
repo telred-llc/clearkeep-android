@@ -1,42 +1,38 @@
 package vmodev.clearkeep.activities
 
 import android.annotation.SuppressLint
-import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.navigation.fragment.navArgs
 import im.vector.R
 import im.vector.databinding.ActivityPrivacyPolicyBinding
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.activities.interfaces.IPrivacyPolicyActivity
+import vmodev.clearkeep.fragments.DataBindingDaggerFragment
+import vmodev.clearkeep.fragments.Interfaces.IFragment
 
-class PrivacyPolicyActivity : DataBindingDaggerActivity(), IPrivacyPolicyActivity {
+class PrivacyPolicyActivity : DataBindingDaggerFragment(), IFragment {
 
     private lateinit var binding: ActivityPrivacyPolicyBinding;
-    private lateinit var title: String;
-    private lateinit var url: String;
-    @SuppressLint("SetJavaScriptEnabled")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_privacy_policy, dataBindingComponent);
-        title = intent.getStringExtra(TITLE);
-        url = intent.getStringExtra(URL);
-        setSupportActionBar(binding.toolbar);
-        supportActionBar?.title = title;
-        supportActionBar?.setDisplayHomeAsUpEnabled(true);
-        supportActionBar?.setDisplayShowHomeEnabled(true);
-        binding.toolbar.setNavigationOnClickListener {
-            onBackPressed();
-        }
+    private val args : PrivacyPolicyActivityArgs by navArgs();
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_privacy_policy, container, false, dataBinding.getDataBindingComponent());
+        return binding.root;
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.webViewPrivacyPolicy.settings.javaScriptEnabled = true;
-        binding.webViewPrivacyPolicy.loadUrl(url);
+        args.url?.let { binding.webViewPrivacyPolicy.loadUrl(it); }
     }
 
-    override fun getActivity(): FragmentActivity {
+    override fun getFragment(): Fragment {
         return this;
-    }
-
-    companion object {
-        const val TITLE = "TITLE";
-        const val URL = "URL";
     }
 }

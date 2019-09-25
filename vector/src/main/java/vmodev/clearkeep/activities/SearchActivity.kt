@@ -1,12 +1,10 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.Observer
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.support.v7.widget.SearchView
-import android.util.Log
-import com.jakewharton.rxbinding2.support.v4.view.RxViewPager
+import androidx.appcompat.widget.SearchView
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import com.jakewharton.rxbinding3.viewpager.pageSelections
 import im.vector.R
 import im.vector.databinding.ActivitySearchBinding
 import io.reactivex.Observable
@@ -46,7 +44,7 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding: ActivitySearchBinding = DataBindingUtil.setContentView(this, R.layout.activity_search, dataBindingComponent);
+        val binding: ActivitySearchBinding = DataBindingUtil.setContentView(this, R.layout.activity_search, dataBinding.getDataBindingComponent());
         userId = intent.getStringExtra(USER_ID);
         arraySearchFragment = arrayOf(SearchRoomsFragment.newInstance(userId), SearchMessagesFragment.newInstance(userId),
                 SearchPeopleFragment.newInstance(), SearchFilesFragment.newInstance(userId));
@@ -68,14 +66,10 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
                 return false;
             }
         });
-
-        disposable = RxViewPager.pageSelections(binding.viewPager).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe { t: Int? ->
-                    t?.let { i ->
-                        currentSearchFragment?.unSelectedFragment();
-                        currentSearchFragment = arraySearchFragment[i].selectedFragment(binding.searchView.query.toString());
-                    };
-                }
+        disposable = binding.viewPager.pageSelections().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
+            currentSearchFragment?.unSelectedFragment();
+            currentSearchFragment = arraySearchFragment[it].selectedFragment(binding.searchView.query.toString());
+        }
         binding.lifecycleOwner = this;
     }
 

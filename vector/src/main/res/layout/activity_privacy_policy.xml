@@ -13,21 +13,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
 
-        <LinearLayout
+        <WebView
+            android:id="@+id/web_view_privacy_policy"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <WebView
-                android:id="@+id/web_view_privacy_policy"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-        </LinearLayout>
+            android:layout_height="match_parent" />
     </FrameLayout>
 </layout>

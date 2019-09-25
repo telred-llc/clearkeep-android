@@ -4,16 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
-import android.widget.ExpandableListView
 import android.widget.Toast
 import im.vector.Matrix
 import im.vector.PublicRoomsManager
 import im.vector.R
-import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorPublicRoomsActivity
-import im.vector.activity.VectorRoomActivity
-import im.vector.adapters.VectorRoomSummaryAdapter
-import im.vector.fragments.VectorRecentsListFragment
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.core.callback.ApiCallback
 import org.matrix.androidsdk.core.model.MatrixError

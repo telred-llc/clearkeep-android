@@ -1,24 +1,16 @@
 package vmodev.clearkeep.activities
 
-import android.app.Activity
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
-import android.speech.RecognizerIntent
-import android.support.annotation.CallSuper
-import android.support.v7.app.ActionBar
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.SearchView
 import android.text.TextUtils
-import android.text.TextWatcher
-import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.CallSuper
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.widget.SearchView
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.MXCActionBarActivity

@@ -12,7 +12,7 @@
 
         <import type="java.util.List" />
 
-        <import type="android.arch.lifecycle.LiveData" />
+        <import type="androidx.lifecycle.LiveData" />
 
         <import type="vmodev.clearkeep.viewmodelobjects.Message" />
 
@@ -51,7 +51,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -100,7 +100,7 @@
                         android:background="@drawable/circle_background_blue"
                         android:src="@mipmap/ic_global_search" />
                 </LinearLayout>
-            </android.support.v7.widget.Toolbar>
+            </androidx.appcompat.widget.Toolbar>
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -114,12 +114,12 @@
                 android:indeterminate="true"
                 app:visibleGone="@{messagesUpdate.status == Status.LOADING}" />
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_list_message"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_message_sent_with_no_avatar" />
 
             <FrameLayout

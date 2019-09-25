@@ -1,30 +1,27 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.Observer
-import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import dagger.android.support.DaggerAppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import im.vector.R
 import im.vector.databinding.ActivityChangeThemeBinding
-import vmodev.clearkeep.activities.interfaces.IChangeThemeActivity
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
-import vmodev.clearkeep.factories.viewmodels.interfaces.IChangeThemeActivityViewModelFactory
+import vmodev.clearkeep.activities.interfaces.IActivity
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.viewmodels.interfaces.AbstractChangeThemeActivityViewModel
 import javax.inject.Inject
 
-class ChangeThemeActivity : DataBindingDaggerActivity(), IChangeThemeActivity {
+class ChangeThemeActivity : DataBindingDaggerActivity(), IActivity {
 
     @Inject
-    lateinit var viewModelFactory: IChangeThemeActivityViewModelFactory;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractChangeThemeActivityViewModel>;
 
-    private val bindingDataComponent = ActivityDataBindingComponent(this);
     private lateinit var binding: ActivityChangeThemeBinding;
     private lateinit var userId: String;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_change_theme, bindingDataComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_change_theme, dataBinding.getDataBindingComponent());
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setTitle(R.string.theme);
         supportActionBar?.setDisplayHomeAsUpEnabled(true);

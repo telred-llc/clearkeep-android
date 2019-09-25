@@ -1,25 +1,20 @@
 package vmodev.clearkeep.activities
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.databinding.DataBindingUtil
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.DividerItemDecoration
-import dagger.android.support.DaggerAppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DividerItemDecoration
 import im.vector.Matrix
 import im.vector.R
 import im.vector.databinding.ActivityRoomMemberListBinding
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapter
-import vmodev.clearkeep.binding.ActivityDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractUserViewModel
 import javax.inject.Inject
 
 class RoomMemberListActivity : DataBindingDaggerActivity() {
@@ -37,7 +32,7 @@ class RoomMemberListActivity : DataBindingDaggerActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_room_member_list, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_room_member_list);
         session = Matrix.getInstance(applicationContext).defaultSession;
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setDisplayHomeAsUpEnabled(true);
@@ -54,7 +49,7 @@ class RoomMemberListActivity : DataBindingDaggerActivity() {
             override fun areContentsTheSame(p0: User, p1: User): Boolean {
                 return p0.avatarUrl == p1.avatarUrl && p0.name == p1.name;
             }
-        }, dataBindingComponent) { user ->
+        }, dataBinding) { user ->
             if (session.myUserId.compareTo(user.id) == 0) {
                 val userIntent = Intent(this@RoomMemberListActivity, ProfileActivity::class.java);
                 startActivity(userIntent);
@@ -64,7 +59,7 @@ class RoomMemberListActivity : DataBindingDaggerActivity() {
                 startActivity(otherUserIntent);
             }
         }
-        roomViewModel = ViewModelProviders.of(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
+        roomViewModel = ViewModelProvider(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
         binding.users = roomViewModel.getGetUserFromRoomIdResult();
         binding.recyclerView.adapter = listUserAdapter;
         roomViewModel.getGetUserFromRoomIdResult().observe(this, Observer { t ->

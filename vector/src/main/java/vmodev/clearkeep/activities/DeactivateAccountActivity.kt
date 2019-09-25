@@ -2,12 +2,16 @@ package vmodev.clearkeep.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
 import android.text.InputType
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.navigation.fragment.findNavController
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
@@ -18,28 +22,40 @@ import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.core.callback.SimpleApiCallback
 import org.matrix.androidsdk.core.model.MatrixError
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.activities.interfaces.IDeactivateAccountActivity
+import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.databases.ClearKeepDatabase
 import vmodev.clearkeep.dialogfragments.EditTextDialogFragment
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
+import vmodev.clearkeep.fragments.DataBindingDaggerFragment
+import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.viewmodels.interfaces.AbstractDeactivateAccountActivityViewModel
 import java.lang.Exception
 import javax.inject.Inject
 
-class DeactivateAccountActivity : DataBindingDaggerActivity(), IDeactivateAccountActivity {
+class DeactivateAccountActivity : DataBindingDaggerFragment(), IFragment {
 
     @Inject
     lateinit var clearKeepDatabase: ClearKeepDatabase;
+    @Inject
+    lateinit var viewModelFactory: IViewModelFactory<AbstractDeactivateAccountActivityViewModel>
+    @Inject
+    lateinit var application: IApplication;
 
     private lateinit var binding: ActivityDeactivateUserAccountBinding;
     private lateinit var session: MXSession;
     private var deactivateAccountStatus = false;
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_deactivate_user_account, dataBindingComponent);
-        setSupportActionBar(binding.toolbar);
-        supportActionBar?.setTitle(R.string.deactivate_account_title);
-        binding.textViewCancel.setOnClickListener { finish() };
-        session = Matrix.getInstance(applicationContext).defaultSession;
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_deactivate_user_account, container, false, dataBinding.getDataBindingComponent());
+        return binding.root;
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.cardViewCancel.setOnClickListener { findNavController().navigate(DeactivateAccountActivityDirections.cancel()) };
+        session = Matrix.getInstance(application.getApplication()).defaultSession;
         binding.cardViewDeactivateAccount.setOnClickListener {
             if (deactivateAccountStatus)
                 return@setOnClickListener;
@@ -49,10 +65,10 @@ class DeactivateAccountActivity : DataBindingDaggerActivity(), IDeactivateAccoun
                     , resources.getString(R.string.deactivate_account_prompt_password)
                     , resources.getString(R.string.password), InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
                     , resources.getString(R.string.auth_submit), resources.getString(R.string.cancel));
-            dialogFragment.show(supportFragmentManager, "");
+            dialogFragment.show(childFragmentManager, "");
             dialogFragment.getOnClickOk().subscribe {
                 binding.progressBar.visibility = View.VISIBLE;
-                CommonActivityUtils.deactivateAccount(this, session, it, binding.checkboxAccept.isChecked, object : SimpleApiCallback<Void>() {
+                CommonActivityUtils.deactivateAccount(this.context, session, it, binding.checkboxAccept.isChecked, object : SimpleApiCallback<Void>() {
                     @SuppressLint("CheckResult")
                     override fun onSuccess(info: Void?) {
                         Observable.create<Int> { emmiter ->
@@ -61,9 +77,9 @@ class DeactivateAccountActivity : DataBindingDaggerActivity(), IDeactivateAccoun
                             emmiter.onComplete();
                         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
                             binding.progressBar.visibility = View.INVISIBLE;
-                            val loginActivityIntent = Intent(this@DeactivateAccountActivity, LoginActivity::class.java);
+                            val loginActivityIntent = Intent(this@DeactivateAccountActivity.activity, LoginActivity::class.java);
                             startActivity(loginActivityIntent);
-                            finish();
+                            this@DeactivateAccountActivity.activity?.finish();
                         }
                     }
 
@@ -72,7 +88,7 @@ class DeactivateAccountActivity : DataBindingDaggerActivity(), IDeactivateAccoun
                         deactivateAccountStatus = false;
                         binding.progressBar.visibility = View.INVISIBLE;
                         e?.message?.let {
-                            Toast.makeText(this@DeactivateAccountActivity, it, Toast.LENGTH_LONG).show();
+                            Toast.makeText(this@DeactivateAccountActivity.activity, it, Toast.LENGTH_LONG).show();
                         }
                         super.onNetworkError(e)
                     }
@@ -82,7 +98,7 @@ class DeactivateAccountActivity : DataBindingDaggerActivity(), IDeactivateAccoun
                         deactivateAccountStatus = false;
                         binding.progressBar.visibility = View.INVISIBLE;
                         e?.message?.let {
-                            Toast.makeText(this@DeactivateAccountActivity, it, Toast.LENGTH_LONG).show();
+                            Toast.makeText(this@DeactivateAccountActivity.activity, it, Toast.LENGTH_LONG).show();
                         }
                         super.onMatrixError(e)
                     }
@@ -92,7 +108,7 @@ class DeactivateAccountActivity : DataBindingDaggerActivity(), IDeactivateAccoun
                         deactivateAccountStatus = false;
                         binding.progressBar.visibility = View.INVISIBLE;
                         e?.message?.let {
-                            Toast.makeText(this@DeactivateAccountActivity, it, Toast.LENGTH_LONG).show();
+                            Toast.makeText(this@DeactivateAccountActivity.activity, it, Toast.LENGTH_LONG).show();
                         }
                         super.onUnexpectedError(e)
                     }
@@ -101,7 +117,7 @@ class DeactivateAccountActivity : DataBindingDaggerActivity(), IDeactivateAccoun
         }
     }
 
-    override fun getActivity(): FragmentActivity {
+    override fun getFragment(): Fragment {
         return this;
     }
 }

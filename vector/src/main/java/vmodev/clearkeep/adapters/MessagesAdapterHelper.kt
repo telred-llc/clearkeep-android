@@ -5,7 +5,6 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
-import android.support.annotation.ColorRes
 import android.text.Html
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -18,9 +17,9 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.ColorRes
 import com.google.gson.JsonNull
 import im.vector.R
-import im.vector.adapters.VectorMessagesAdapter
 import im.vector.listeners.IMessagesAdapterActionsListener
 import im.vector.settings.VectorLocale
 import im.vector.ui.themes.ThemeUtils

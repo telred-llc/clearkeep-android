@@ -1,9 +1,9 @@
 package vmodev.clearkeep.viewmodelobjects
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.ForeignKey
-import android.arch.persistence.room.PrimaryKey
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -19,7 +19,7 @@ import com.google.gson.annotations.SerializedName
         foreignKeys = [
             ForeignKey(entity = Message::class
                     , parentColumns = ["message_id"]
-                    , childColumns = ["message_id"]
+                    , childColumns = ["last_message_id"]
                     , onDelete = ForeignKey.CASCADE)
             , ForeignKey(entity = User::class
                     , parentColumns = ["id"]
@@ -36,7 +36,7 @@ data class Room(
         @field:SerializedName("notifyCount") val notifyCount: Int,
         @field:SerializedName("version") val version: Int,
         @field:SerializedName("highlightCount") val highlightCount: Int,
-        @ColumnInfo(name = "message_id") @field:SerializedName("message_id") val messageId: String?,
+        @ColumnInfo(name = "last_message_id") @field:SerializedName("last_message_id") val messageId: String?,
         @field:SerializedName("encrypted") val encrypted: Byte,
         @field:SerializedName("status") val status: Byte,
         @field:SerializedName("notification_state") val notificationState: Byte,

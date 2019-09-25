@@ -1,16 +1,16 @@
 package vmodev.clearkeep.fragments
 
-import android.app.AlertDialog
-import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import im.vector.R
 import im.vector.databinding.FragmentLoginBinding
 import vmodev.clearkeep.activities.SplashActivity
@@ -51,7 +51,7 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false, dataBindingComponent);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 
@@ -59,14 +59,14 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
         super.onViewCreated(view, savedInstanceState)
         binding.user = viewModelFactory.getViewModel().getLoginResult();
         viewModelFactory.getViewModel().getLoginResult().observe(viewLifecycleOwner, Observer {
-            it?.let {
-                if (it.status == Status.SUCCESS) {
-                    it.data?.let {
+            it?.let {resource ->
+                if (resource.status == Status.SUCCESS) {
+                    resource.data?.let {
                         gotoHomeActivity();
                     }
                 }
-                if (it.status == Status.ERROR) {
-                    AlertDialog.Builder(activity).setTitle(R.string.sign_in_error).setMessage(it.message).setNegativeButton(R.string.close, null).show();
+                if (resource.status == Status.ERROR) {
+                    this.context?.let { AlertDialog.Builder(it).setTitle(R.string.sign_in_error).setMessage(resource.message).setNegativeButton(R.string.close, null).show(); }
                 }
             }
         });

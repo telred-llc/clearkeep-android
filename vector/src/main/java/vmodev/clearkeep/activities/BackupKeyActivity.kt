@@ -1,14 +1,12 @@
 package vmodev.clearkeep.activities
 
-import android.app.Activity
-import android.arch.lifecycle.Observer
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.util.Log
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
 import im.vector.R
 import im.vector.databinding.ActivityBackupKeyBinding
 import vmodev.clearkeep.activities.interfaces.IBackupKeyActivity
@@ -28,7 +26,7 @@ class BackupKeyActivity : DataBindingDaggerActivity(), IBackupKeyActivity, Backu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_backup_key, dataBindingComponent);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_backup_key, dataBinding.getDataBindingComponent());
         userId = intent.getStringExtra(USER_ID);
         binding.toolbar.setupSupportToolbar(this, R.string.keys_backup);
         binding.keyBackup = viewModelFactory.getViewModel().getKeyBackupResult();
@@ -56,7 +54,7 @@ class BackupKeyActivity : DataBindingDaggerActivity(), IBackupKeyActivity, Backu
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == HANDLE_PUSH_BACKUP_KEY && resultCode == Activity.RESULT_OK) {
+        if (requestCode == HANDLE_PUSH_BACKUP_KEY && resultCode == -1) {
             viewModelFactory.getViewModel().setIdForGetKeyBackup(userId);
         }
     }

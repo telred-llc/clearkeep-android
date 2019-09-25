@@ -17,17 +17,16 @@
 package im.vector.fragments.base
 
 import android.content.Context
-import android.support.v4.app.DialogFragment
 import org.matrix.androidsdk.core.Log
 
 /**
  * this class can be used as a parent class for DialogFragment to manager the listener
  */
-abstract class VectorBaseDialogFragment<LISTENER> : DialogFragment() {
+abstract class VectorBaseDialogFragment<LISTENER> : androidx.fragment.app.DialogFragment() {
 
     protected var listener: LISTENER? = null
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
 
         // Cannot use (context is LISTENER)
