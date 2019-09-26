@@ -14,7 +14,7 @@ import javax.inject.Named
 
 @Module
 @Suppress("unused")
-abstract class AbstractMessageListActivityModule {
+abstract class  AbstractMessageListActivityModule {
 
     @ContributesAndroidInjector(modules = [ActivityBindModule::class])
     abstract fun contributeMessageListActivity(): MessageListActivity;

@@ -71,7 +71,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:src="@color/app_green"
-                        app:imageUrl="@{user.data.avatarUrl}" />
+                        app:user="@{user.data}" />
 
                     <ImageView
                         android:id="@+id/image_view_take_camera"

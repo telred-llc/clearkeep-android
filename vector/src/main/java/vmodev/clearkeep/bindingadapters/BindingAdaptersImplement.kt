@@ -27,7 +27,7 @@ import vmodev.clearkeep.viewmodelobjects.User
 
 class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapters, ISwitchCompatViewBindingAdapters, CardViewBindingAdapters {
     override fun bindImage(imageView: ImageView, imageUrl: String?, listener: RequestListener<Drawable?>?) {
-        Glide.with(imageView.context).load(imageUrl).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).into(imageView);
+        imageUrl?.let { Glide.with(imageView.context).load(it).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).into(imageView); }
     }
 
     override fun bindTime(textView: TextView, timeStamp: Long?) {

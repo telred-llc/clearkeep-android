@@ -27,4 +27,10 @@
     <dimen name="text_18_sp">18sp</dimen>
     <item name="dialog_width_ratio" format="float" type="dimen">0.75</item>
 
+<!--    image profile status-->
+    <dimen name="image_avatar_status_size">60dp</dimen>
+    <dimen name="status_image_size">14dp</dimen>
+    <dimen name="status_image_margin">3dp</dimen>
+    <dimen name="status_oline_margin">3dp</dimen>
+
 </resources>

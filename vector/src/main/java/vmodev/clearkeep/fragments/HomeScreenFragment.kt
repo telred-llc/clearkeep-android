@@ -29,6 +29,7 @@ import javax.inject.Inject
  */
 class HomeScreenFragment : DataBindingDaggerFragment(), IFragment {
     private var listener: OnFragmentInteractionListener? = null;
+
     @Inject
     lateinit var homeScreenFragmentViewModelFactory: IViewModelFactory<AbstractHomeScreenFragmentViewModel>;
     private lateinit var binding: FragmentHomeScreenBinding;
