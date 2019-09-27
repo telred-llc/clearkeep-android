@@ -8,12 +8,19 @@ import dagger.android.DaggerApplication
 import im.vector.Matrix
 import im.vector.R
 import io.reactivex.Observable
+import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.callback.ApiCallback
+import org.matrix.androidsdk.core.callback.SimpleApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
+import org.matrix.androidsdk.crypto.data.MXDeviceInfo
 import vmodev.clearkeep.autokeybackups.interfaces.IAutoKeyBackup
 import vmodev.clearkeep.databases.AbstractRoomDao
+import vmodev.clearkeep.databases.AbstractUserDao
 import vmodev.clearkeep.databases.ClearKeepDatabase
 import vmodev.clearkeep.di.DaggerAppComponent
 import vmodev.clearkeep.executors.AppExecutors
@@ -22,6 +29,8 @@ import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
 import vmodev.clearkeep.repositories.KeyBackupRepository
 import vmodev.clearkeep.repositories.SignatureRepository
 import vmodev.clearkeep.repositories.UserRepository
+import vmodev.clearkeep.viewmodelobjects.User
+import java.lang.Exception
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -45,6 +54,8 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
     lateinit var roomDao: AbstractRoomDao
     @Inject
     lateinit var appExecutors: AppExecutors
+    @Inject
+    lateinit var userDao : AbstractUserDao;
 
     private var session: MXSession? = null;
 
@@ -93,9 +104,48 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
 
     override fun startAutoKeyBackup(password: String?) {
         session?.let { autoKeyBackup.startAutoKeyBackup(it.myUserId, password) }
+        session?.let { s ->
+            s.crypto?.let {crypto ->
+                userDao.findAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<List<User>>{
+                    override fun onSuccess(t: List<User>) {
+                        t.forEach { u ->
+                            crypto.getUserDevices(u.id).forEach {
+                                Log.d("DeviceId", it.userId + "----" + it.mVerified + "----" + it.displayName() + "---" + it.deviceId);
+                                crypto.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, it.deviceId, u.id, object : ApiCallback<Void>{
+                                    override fun onSuccess(info: Void?) {
+
+                                    }
+
+                                    override fun onUnexpectedError(e: Exception?) {
+
+                                    }
+
+                                    override fun onMatrixError(e: MatrixError?) {
+
+                                    }
+
+                                    override fun onNetworkError(e: Exception?) {
+
+                                    }
+                                });
+
+                            }
+                        }
+                    }
+
+                    override fun onSubscribe(d: Disposable) {
+
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Log.d("DeviceId", e.message)
+                    }
+                })
+            }
+        }
     }
 
     override fun getUserId(): String {
-        session?.let { return it.myUserId }?:run { return "" }
+        session?.let { return it.myUserId } ?: run { return "" }
     }
 }
