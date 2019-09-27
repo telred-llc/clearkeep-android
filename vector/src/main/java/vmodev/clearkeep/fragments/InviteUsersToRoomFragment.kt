@@ -11,6 +11,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -54,6 +55,11 @@ class InviteUsersToRoomFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.toolbar.setTitle(getString(R.string.add_members))
+        binding.toolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_green)
+        binding.toolbar.setNavigationOnClickListener {
+            this.activity?.finish()
+        }
         val listUserAdapter = ListUserToInviteRecyclerViewAdapter(appExecutors = appExecutors, listSelected = listSelected, dataBindingComponent = dataBinding.getDataBindingComponent()
                 , diffCallback = object : DiffUtil.ItemCallback<User>() {
             override fun areItemsTheSame(p0: User, p1: User): Boolean {
@@ -94,7 +100,9 @@ class InviteUsersToRoomFragment : DataBindingDaggerFragment(), IFragment {
                             roomIntent.putExtra(RoomActivity.EXTRA_MATRIX_ID, application.getUserId());
                             roomIntent.putExtra(RoomActivity.EXTRA_ROOM_ID, it.id);
                             startActivity(roomIntent);
-                            this.activity?.finish();
+//                            findNavController().navigate(InviteUsersToRoomFragmentDirections.done());
+                            findNavController().popBackStack(R.id.action_home, false)
+
                         }
                     }
                     else -> {
@@ -149,4 +157,5 @@ class InviteUsersToRoomFragment : DataBindingDaggerFragment(), IFragment {
     override fun getFragment(): Fragment {
         return this;
     }
+
 }

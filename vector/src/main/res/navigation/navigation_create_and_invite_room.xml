@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_create_and_invite_room"
+    app:startDestination="@id/createNewRoomFragment">
+
+    <fragment
+        android:id="@+id/createNewRoomFragment"
+        android:name="vmodev.clearkeep.fragments.CreateNewRoomFragment"
+        android:label="createNewRoom"
+        tools:layout="@layout/activity_create_new_room" >
+        <action
+            android:id="@+id/invite"
+            app:destination="@id/InviteUsersToRoomFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_enter"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_enter" />
+    </fragment>
+    <fragment
+        android:id="@+id/InviteUsersToRoomFragment"
+        android:name="vmodev.clearkeep.fragments.InviteUsersToRoomFragment"
+        android:label="inviteUsers"
+        tools:layout="@layout/activity_invite_users_to_room" >
+        <argument
+            android:name="roomId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+</navigation>

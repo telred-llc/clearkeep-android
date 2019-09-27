@@ -36,6 +36,7 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding.room = viewModelFactory.getViewModel().createNewRoomResult();
         viewModelFactory.getViewModel().createNewRoomResult().observe(this, Observer{
             it?.let {
@@ -48,7 +49,8 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
                         binding.textViewCreate.setText(R.string.create);
                         binding.cardViewCreate.isClickable = true;
                         it.data?.let {
-                            findNavController().navigate(CreateNewRoomFragmentDirections.inviteUsersToRoom().setRoomId(it.id));
+                            findNavController().navigate(CreateNewRoomFragmentDirections.invite().setRoomId(it.id));
+
                         }
                     }
                     Status.ERROR -> {

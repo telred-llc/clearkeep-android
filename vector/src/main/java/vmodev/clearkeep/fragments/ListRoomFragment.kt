@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.orhanobut.dialogplus.DialogPlus
 import im.vector.R
@@ -84,21 +85,19 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
             }
         });
         binding.buttonStartDirectChat.setOnClickListener {
-            val intentNewChat = Intent(context, FindAndCreateNewConversationFragment::class.java);
-            intentNewChat.putExtra(FindAndCreateNewConversationFragment.USER_ID, applcation.getUserId());
-            startActivity(intentNewChat);
+            findNavController().navigate(ListRoomFragmentDirections.newConversation());
         }
         binding.buttonStartGroupChat.setOnClickListener {
             val intentNewChat = Intent(context, CreateNewRoomFragment::class.java);
             startActivity(intentNewChat);
         }
         binding.imageViewCreateNewRoom.setOnClickListener {
-            val intentNewChat = Intent(context, CreateNewRoomFragment::class.java);
-            startActivity(intentNewChat);
+//            findNavController().navigate(ListRoomFragmentDirections.creatRoom())
+            val roomIntent = Intent(this.activity, CreateNewRoomActivity::class.java);
+            startActivity(roomIntent);
         }
         binding.imageViewCreateNewDirect.setOnClickListener {
-            val intentNewChat = Intent(context, FindAndCreateNewConversationFragment::class.java);
-            startActivity(intentNewChat);
+            findNavController().navigate(ListRoomFragmentDirections.newConversation());
         }
 
         binding.lifecycleOwner = viewLifecycleOwner

@@ -9,10 +9,81 @@
         android:id="@+id/action_home"
         android:name="vmodev.clearkeep.fragments.ListRoomFragment"
         android:label="ListRoomsFragment"
-        tools:layout="@layout/fragment_list_room"/>
+        tools:layout="@layout/fragment_list_room">
+        <action
+            android:id="@+id/newConversation"
+            app:destination="@id/findAndCreateConversationFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+        <action
+            android:id="@+id/creatRoom"
+            app:destination="@id/createNewRoomFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_enter"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_enter" />
+    </fragment>
     <fragment
         android:id="@+id/action_contacts"
         android:name="vmodev.clearkeep.fragments.ContactsFragment"
         android:label="ContactsFragment"
         tools:layout="@layout/fragment_contacts"/>
+    <fragment
+        android:id="@+id/findAndCreateConversationFragment"
+        android:name="vmodev.clearkeep.fragments.FindAndCreateNewConversationFragment"
+        android:label="New conversation"
+        tools:layout="@layout/activity_find_and_create_new_conversation" >
+        <action
+            android:id="@+id/createNewCall"
+            app:destination="@id/createNewCallFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_enter"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_enter" />
+        <action
+            android:id="@+id/creatNewRoom"
+            app:destination="@id/createNewRoomFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createNewRoomFragment"
+        android:name="vmodev.clearkeep.fragments.CreateNewRoomFragment"
+        android:label="CreateNewRoomFragment"
+        tools:layout="@layout/activity_create_new_room" >
+        <action
+            android:id="@+id/inviteUsersToRoom"
+            app:destination="@id/inviteUsersToRoomFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_enter"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_enter" />
+    </fragment>
+    <fragment
+        android:id="@+id/inviteUsersToRoomFragment"
+        android:name="vmodev.clearkeep.fragments.InviteUsersToRoomFragment"
+        android:label="Invite users"
+        tools:layout="@layout/activity_invite_users_to_room" >
+        <argument
+            android:name="roomId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/done"
+            app:destination="@+id/action_home" />
+    </fragment>
+    <fragment
+        android:id="@+id/createNewCallFragment"
+        android:name="vmodev.clearkeep.fragments.CreateNewCallFragment"
+        android:label="newCall"
+        tools:layout="@layout/activity_create_new_call" >
+        <action
+            android:id="@+id/done"
+            app:destination="@id/action_home"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_enter"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_enter" />
+    </fragment>
 </navigation>

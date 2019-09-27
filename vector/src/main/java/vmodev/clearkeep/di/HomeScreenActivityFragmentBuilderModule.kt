@@ -19,11 +19,8 @@ import vmodev.clearkeep.factories.viewmodels.FavouritesFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.HomeScreenFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.ListRoomFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.*
-import vmodev.clearkeep.fragments.ContactsFragment
-import vmodev.clearkeep.fragments.FavouritesFragment
-import vmodev.clearkeep.fragments.HomeScreenFragment
+import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.fragments.Interfaces.*
-import vmodev.clearkeep.fragments.ListRoomFragment
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
 import vmodev.clearkeep.viewmodels.interfaces.AbstractContactFragmentViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractFavouritesFragmentViewModel
@@ -45,6 +42,18 @@ abstract class HomeScreenActivityFragmentBuilderModule {
 
     @ContributesAndroidInjector(modules = [FragmentListRoomBindModule::class])
     abstract fun contributeListRoomFragment(): ListRoomFragment;
+
+    @ContributesAndroidInjector(modules = [AbstractNewRoomActivityBuilderFragmentBuilderModule.FragmentFindAndCreateNewConversationBindModule::class])
+    abstract fun contributeFindAndCreateNewConversationFragment() : FindAndCreateNewConversationFragment;
+
+    @ContributesAndroidInjector(modules = [AbstractNewRoomActivityBuilderFragmentBuilderModule.CreateNewRoomFragmentBindModule :: class])
+    abstract fun contributeCreatNewRoomFragment() : CreateNewRoomFragment
+
+    @ContributesAndroidInjector(modules = [AbstractNewRoomActivityBuilderFragmentBuilderModule.InviteUsersToRoomFragmentBindModule::class])
+    abstract fun contributeInviteUsersToRoomFragment() : InviteUsersToRoomFragment
+
+    @ContributesAndroidInjector(modules = [AbstractNewRoomActivityBuilderFragmentBuilderModule.CreateNewCallFragmentBindModule::class])
+    abstract fun contributeCreatNewCallfragment() : CreateNewCallFragment
 
     @Module
     abstract class FragmentHomeScreenBindModule {
