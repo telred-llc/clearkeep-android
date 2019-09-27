@@ -20,6 +20,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import vmodev.clearkeep.activities.CreateNewRoomActivity
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapter
 import vmodev.clearkeep.applications.IApplication
@@ -113,7 +114,9 @@ class FindAndCreateNewConversationFragment : DataBindingDaggerFragment(), IFragm
                     .subscribe { time: Long? -> t?.let { charSequence -> viewModelFactory.getViewModel().setQuery(charSequence.toString()) } };
         }
         binding.newRoom.setOnClickListener { v ->
-            findNavController().navigate(FindAndCreateNewConversationFragmentDirections.createNewRoom());
+//            findNavController().navigate(FindAndCreateNewConversationFragmentDirections.creatNewRoom());
+            val roomIntent = Intent(this.activity, CreateNewRoomActivity::class.java);
+            startActivity(roomIntent);
         }
         binding.newCall.setOnClickListener {
             findNavController().navigate(FindAndCreateNewConversationFragmentDirections.createNewCall());

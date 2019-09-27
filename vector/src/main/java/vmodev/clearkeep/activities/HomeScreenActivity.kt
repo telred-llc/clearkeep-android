@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.view.View
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
@@ -65,6 +66,18 @@ class HomeScreenActivity : DataBindingDaggerActivity(), IActivity {
         }
 
         val navController = Navigation.findNavController(this@HomeScreenActivity, R.id.frame_layout_fragment_container);
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            when(destination.id){
+                R.id.action_home, R.id.action_contacts ->{
+                    binding.bottomNavigationViewHomeScreen.visibility = View.VISIBLE
+                    binding.layoutToolbar.visibility = View.VISIBLE
+                }
+                else ->{
+                    binding.bottomNavigationViewHomeScreen.visibility = View.GONE
+                    binding.layoutToolbar.visibility = View.GONE
+                }
+            }
+        }
         binding.bottomNavigationViewHomeScreen.setupWithNavController(navController);
     }
 
@@ -89,15 +102,21 @@ class HomeScreenActivity : DataBindingDaggerActivity(), IActivity {
     }
 
     override fun onBackPressed() {
-        if (doubleBackPressed) {
-            super.onBackPressed()
-            finish()
-        }
-        this.doubleBackPressed = true
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show()
-        Handler().postDelayed(Runnable {
-            doubleBackPressed = false
-        }, 3000)
+//        val count = supportFragmentManager.backStackEntryCount
+//        if (count == 0) {
+//            if (doubleBackPressed) {
+//                super.onBackPressed()
+//                finish()
+//            }
+//            this.doubleBackPressed = true
+//            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show()
+//            Handler().postDelayed(Runnable {
+//                doubleBackPressed = false
+//            }, 3000)
+//        } else {
+//            supportFragmentManager.popBackStack()
+//        }
+        super.onBackPressed()
     }
 
     companion object {
