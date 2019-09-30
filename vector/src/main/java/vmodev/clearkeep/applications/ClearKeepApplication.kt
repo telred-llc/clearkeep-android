@@ -109,8 +109,9 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
                 userDao.findAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<List<User>>{
                     override fun onSuccess(t: List<User>) {
                         t.forEach { u ->
+//                            Log.d("User", u.id)
                             crypto.getUserDevices(u.id).forEach {
-                                Log.d("DeviceId", it.userId + "----" + it.mVerified + "----" + it.displayName() + "---" + it.deviceId);
+//                                Log.d("DeviceId", it.userId + "----" + it.mVerified + "----" + it.displayName() + "---" + it.deviceId);
                                 crypto.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, it.deviceId, u.id, object : ApiCallback<Void>{
                                     override fun onSuccess(info: Void?) {
 
