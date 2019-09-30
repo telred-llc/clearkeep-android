@@ -4,43 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_create_new_room"
     app:startDestination="@id/findAndCreateMewConversationFragment">
-    <fragment
-        android:id="@+id/inviteUsersToRoomFragment"
-        android:name="vmodev.clearkeep.fragments.InviteUsersToRoomFragment"
-        android:label="Invite users"
-        tools:layout="@layout/activity_invite_users_to_room">
-        <argument
-            android:name="roomId"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
-    </fragment>
+    <include app:graph="@navigation/navigation_new_room"/>
     <fragment
         android:id="@+id/createNewCallFragment"
         android:name="vmodev.clearkeep.fragments.CreateNewCallFragment"
         android:label="New call"
         tools:layout="@layout/activity_create_new_call" />
     <fragment
-        android:id="@+id/createNewRoomFragment"
-        android:name="vmodev.clearkeep.fragments.CreateNewRoomFragment"
-        android:label="New room"
-        tools:layout="@layout/activity_create_new_room">
-        <action
-            android:id="@+id/inviteUsersToRoom"
-            app:destination="@id/inviteUsersToRoomFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/findAndCreateMewConversationFragment"
         android:name="vmodev.clearkeep.fragments.FindAndCreateNewConversationFragment"
         android:label="New conversation"
         tools:layout="@layout/activity_find_and_create_new_conversation">
-        <action
-            android:id="@+id/createNewRoom"
-            app:destination="@id/createNewRoomFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
         <action
             android:id="@+id/createNewCall"
             app:destination="@id/createNewCallFragment"
@@ -48,5 +22,12 @@
             app:exitAnim="@anim/fragment_open_exit"
             app:popEnterAnim="@anim/fragment_close_enter"
             app:popExitAnim="@anim/fragment_open_exit" />
+        <action
+            android:id="@+id/createNewRoom"
+            app:destination="@id/navigationNewRoom"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
     </fragment>
 </navigation>

@@ -59,7 +59,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
     private lateinit var binding: FragmentListRoomBinding;
     private var onGoingRoom = false;
     private var currentRoomId: String = ""
-    private var alertDialog : AlertDialog? = null
+    private var alertDialog: AlertDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -70,6 +70,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list_room, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initListDirectChat();
@@ -84,20 +85,23 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
             }
         });
         binding.buttonStartDirectChat.setOnClickListener {
-            val intentNewChat = Intent(context, FindAndCreateNewConversationFragment::class.java);
-            intentNewChat.putExtra(FindAndCreateNewConversationFragment.USER_ID, applcation.getUserId());
+            val intentNewChat = Intent(context, NewRoomActivity::class.java);
+            intentNewChat.putExtra(NewRoomActivity.START_WITH, 0);
             startActivity(intentNewChat);
         }
         binding.buttonStartGroupChat.setOnClickListener {
-            val intentNewChat = Intent(context, CreateNewRoomFragment::class.java);
+            val intentNewChat = Intent(context, NewRoomActivity::class.java);
+            intentNewChat.putExtra(NewRoomActivity.START_WITH, 1);
             startActivity(intentNewChat);
         }
         binding.imageViewCreateNewRoom.setOnClickListener {
-            val intentNewChat = Intent(context, CreateNewRoomFragment::class.java);
+            val intentNewChat = Intent(context, NewRoomActivity::class.java);
+            intentNewChat.putExtra(NewRoomActivity.START_WITH, 1);
             startActivity(intentNewChat);
         }
         binding.imageViewCreateNewDirect.setOnClickListener {
-            val intentNewChat = Intent(context, FindAndCreateNewConversationFragment::class.java);
+            val intentNewChat = Intent(context, NewRoomActivity::class.java);
+            intentNewChat.putExtra(NewRoomActivity.START_WITH, 0);
             startActivity(intentNewChat);
         }
 
@@ -372,21 +376,14 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
     }
 
     private fun declineInvite(roomId: String) {
-        if (alertDialog==null) {
-            alertDialog = AlertDialog.Builder(activity!!).setTitle(R.string.leave_room)
-                    .setMessage(R.string.do_you_want_leave_room)
-                    .setNegativeButton(R.string.no, null)
-                    .setPositiveButton(R.string.yes) { dialog, v ->
-                        binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult();
-                        viewModelFactory.getViewModel().setLeaveRoomId(roomId);
+        AlertDialog.Builder(activity!!).setTitle(R.string.leave_room)
+                .setMessage(R.string.do_you_want_leave_room)
+                .setNegativeButton(R.string.no, null)
+                .setPositiveButton(R.string.yes) { dialog, v ->
+                    binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult();
+                    viewModelFactory.getViewModel().setLeaveRoomId(roomId);
 
-                    }.show()
-        }
-        if ( alertDialog!!.isShowing){
-            Log.d("alertDialog","isShowing")
-        }else{
-           alertDialog!!.show()
-        }
+                }.show();
     }
 
     override fun getFragment(): Fragment {
