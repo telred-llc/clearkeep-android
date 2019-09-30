@@ -28,10 +28,12 @@
     <dimen name="image_avatar_status_size">60dp</dimen>
 
     <!--    image profile status-->
-    <dimen name="status_image_size">14dp</dimen>
-    <dimen name="status_image_margin">3dp</dimen>
-    <dimen name="status_oline_margin">3dp</dimen>
+    <dimen name="status_online_size">14dp</dimen>
+    <dimen name="margin_status_online">3dp</dimen>
     <dimen name="margin_xxl">30dp</dimen>
+    <dimen name="radius_border_online_status">7dp</dimen>
+    <dimen name="radius_online_status">6dp</dimen>
+    <dimen name="padding_status_online">1dp</dimen>
 
     <!-- Margin -->
     <dimen name="margin_xl">25dp</dimen>
