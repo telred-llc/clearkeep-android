@@ -53,9 +53,7 @@
                 android:layout_gravity="end|bottom"
                 android:layout_marginEnd="@dimen/status_image_margin"
                 android:layout_marginBottom="@dimen/status_image_margin"
-                android:background="@drawable/direct_chat_circle_white"
-
-                >
+                android:background="@drawable/direct_chat_circle_white">
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/circle_image_view_status"
                     android:layout_width="match_parent"
@@ -85,7 +83,7 @@
                 android:id="@+id/text_view_name"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginHorizontal="10dp"
+                android:layout_marginHorizontal="@dimen/margin_normal"
                 android:layout_weight="1"
                 android:singleLine="true"
                 android:text="@{room_list_user.room.name}"
@@ -96,7 +94,7 @@
                 android:id="@+id/text_view_last_message"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginHorizontal="10dp"
+                android:layout_marginHorizontal="@dimen/margin_normal"
                 android:layout_weight="1"
                 android:singleLine="true"
                 app:decryptMessage="@{room_list_user.lastMessage}"

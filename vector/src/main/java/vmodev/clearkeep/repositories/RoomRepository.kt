@@ -130,7 +130,7 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
-    fun leaveRoom(id: String): LiveData<Resource<String>> {
+        fun leaveRoom(id: String): LiveData<Resource<String>> {
         return object : AbstractNetworkBoundSource<String, String>() {
             override fun saveCallResult(item: String) {
                 abstractRoomDao.deleteRoom(item)
