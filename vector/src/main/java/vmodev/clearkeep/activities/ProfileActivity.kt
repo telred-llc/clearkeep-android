@@ -60,7 +60,18 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
         binding.checkNeedBackup = viewModelFactory.getViewModel().getNeedBackupWhenLogout();
         viewModelFactory.getViewModel().setIdForGetCurrentUser(mxSession.myUserId);
         binding.buttonSignOut.setOnClickListener {
-            viewModelFactory.getViewModel().setCheckNeedBackupWhenSignOut(Calendar.getInstance().timeInMillis)
+            if (mxSession.crypto?.keysBackup?.isEnabled == true) {
+                viewModelFactory.getViewModel().setCheckNeedBackupWhenSignOut(Calendar.getInstance().timeInMillis)
+            } else {
+                AlertDialog.Builder(this).setTitle(R.string.action_sign_out).setMessage(R.string.sign_out_bottom_sheet_warning_backup_not_active)
+                        .setNegativeButton(R.string.backup_key) { dialogInterface, i ->
+
+                            val intentBackupKey = Intent(this, PushBackupKeyActivity::class.java);
+                            startActivityForResult(intentBackupKey, WAITING_FOR_BACK_UP_KEY);
+                        }
+                        .setPositiveButton(R.string.keep_sign_out) { dialogInterface, i -> signOut() }
+                        .show();
+            }
         }
         binding.buttonSetting.setOnClickListener {
             val intentProfileSetting = Intent(this, SettingsActivity::class.java);
