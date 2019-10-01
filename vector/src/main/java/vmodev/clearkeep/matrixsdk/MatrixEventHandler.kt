@@ -189,7 +189,7 @@ class MatrixEventHandler @Inject constructor(
     }
 
     protected fun finalize() {
-        mxSession!!.crypto?.keysBackup?.removeListener(this);
+        mxSession?.crypto?.keysBackup?.removeListener(this);
     }
 
     override fun onStateChange(newState: KeysBackupStateManager.KeysBackupState

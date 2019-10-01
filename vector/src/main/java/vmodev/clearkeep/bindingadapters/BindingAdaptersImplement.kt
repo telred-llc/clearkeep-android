@@ -9,6 +9,7 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.google.android.material.card.MaterialCardView
@@ -27,7 +28,7 @@ import vmodev.clearkeep.viewmodelobjects.User
 
 class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapters, ISwitchCompatViewBindingAdapters, CardViewBindingAdapters {
     override fun bindImage(imageView: ImageView, imageUrl: String?, listener: RequestListener<Drawable?>?) {
-        Glide.with(imageView.context).load(imageUrl).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).into(imageView);
+        imageUrl?.let { Glide.with(imageView.context).load(it).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).into(imageView); }
     }
 
     override fun bindTime(textView: TextView, timeStamp: Long?) {
@@ -104,7 +105,7 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
                 val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(room.id), if (room.name.isEmpty()) room.id else room.name, true);
                 imageView.setImageBitmap(bitmap);
             } else {
-                Glide.with(imageView.context).load(room.avatarUrl).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).into(imageView);
+                Glide.with(imageView.context).load(room.avatarUrl).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).error(R.drawable.ic_launcher_app).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
             }
         }
     }

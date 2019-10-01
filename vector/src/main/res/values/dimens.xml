@@ -25,6 +25,27 @@
     <dimen name="text_13_sp">13sp</dimen>
     <dimen name="text_40_sp">25sp</dimen>
     <dimen name="text_18_sp">18sp</dimen>
+    <dimen name="image_avatar_status_size">60dp</dimen>
+
+    <!--    image profile status-->
+    <dimen name="status_online_size">14dp</dimen>
+    <dimen name="margin_status_online">3dp</dimen>
+    <dimen name="margin_xxl">30dp</dimen>
+    <dimen name="radius_border_online_status">7dp</dimen>
+    <dimen name="radius_online_status">6dp</dimen>
+    <dimen name="padding_status_online">1dp</dimen>
+
+    <!-- Margin -->
+    <dimen name="margin_xl">25dp</dimen>
+    <dimen name="margin_large">20dp</dimen>
+    <dimen name="margin_medium">15dp</dimen>
+    <dimen name="margin_normal">10dp</dimen>
+    <dimen name="margin_small">6dp</dimen>
+    <dimen name="margin_left">16dp</dimen>
+    <dimen name="margin_right">16dp</dimen>
+    <dimen name="padding_normal">10dp</dimen>
+    <!--   padding-->
+    <dimen name="padding_small">5dp</dimen>
     <item name="dialog_width_ratio" format="float" type="dimen">0.75</item>
 
 </resources>
