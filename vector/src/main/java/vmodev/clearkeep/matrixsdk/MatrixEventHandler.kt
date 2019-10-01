@@ -35,15 +35,16 @@ class MatrixEventHandler @Inject constructor(
     override fun onAccountDataUpdated() {
         super.onAccountDataUpdated()
         val user = mxSession!!.myUser;
-        Log.d("UserId:", user.user_id);
-        val userAvatarUrl = if (user.avatarUrl.isNullOrEmpty()) "" else user.avatarUrl;
-        userRepository.updateUser(user.user_id, user.displayname, userAvatarUrl);
+        val userAvatarUrl = mxSession!!.contentManager.getDownloadableUrl(user.avatarUrl, false);
+        userRepository.updateUser(user.user_id, user.displayname, if (userAvatarUrl.isNullOrEmpty()) "" else userAvatarUrl);
     }
 
     override fun onAccountInfoUpdate(myUser: MyUser?) {
         super.onAccountInfoUpdate(myUser)
-        val avatarUrl = mxSession!!.contentManager.getDownloadableUrl(myUser!!.avatarUrl);
-        userRepository.updateUser(myUser!!.user_id, myUser.displayname, avatarUrl!!);
+        myUser?.let {
+            val avatarUrl = mxSession!!.contentManager.getDownloadableUrl(it.avatarUrl, false);
+            userRepository.updateUser(it.user_id, myUser.displayname, if (avatarUrl.isNullOrEmpty()) "" else avatarUrl);
+        }
     }
 
     override fun onDirectMessageChatRoomsListUpdate() {
@@ -75,11 +76,11 @@ class MatrixEventHandler @Inject constructor(
 
             }
             IMatrixEventHandler.M_ROOM_MEMBER -> {
-                roomRepository.updateRoomName(event.roomId).subscribeOn(Schedulers.io()).subscribe ();
+                roomRepository.updateRoomName(event.roomId).subscribeOn(Schedulers.io()).subscribe();
             }
             else -> {
                 event?.let {
-                    roomRepository.updateRoomName(event.roomId).subscribeOn(Schedulers.io()).subscribe ();
+                    roomRepository.updateRoomName(event.roomId).subscribeOn(Schedulers.io()).subscribe();
                 }
             }
         }
@@ -188,7 +189,7 @@ class MatrixEventHandler @Inject constructor(
     }
 
     protected fun finalize() {
-        mxSession!!.crypto?.keysBackup?.removeListener(this);
+        mxSession?.crypto?.keysBackup?.removeListener(this);
     }
 
     override fun onStateChange(newState: KeysBackupStateManager.KeysBackupState

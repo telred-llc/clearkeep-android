@@ -1136,6 +1136,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
     }
 
     override fun updateUser(name: String): Observable<String> {
+        setMXSession();
         return Observable.create<String> {
             session!!.myUser.updateDisplayName(name, object : ApiCallback<Void> {
                 override fun onSuccess(p0: Void?) {
@@ -1883,8 +1884,8 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
     }
 
     override fun editMessage(event: Event): Observable<EditMessageResponse> {
+        setMXSession();
         return Observable.create { emitter ->
-
             session!!.crypto?.let { crypto ->
                 val room = session!!.dataHandler.getRoom(event.roomId)
                 crypto.encryptEventContent(event.contentJson, "m.room.message", room, object : ApiCallback<MXEncryptEventContentResult> {
@@ -1907,21 +1908,22 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                     emitter.onNext(it);
                                     emitter.onComplete();
                                 }, {
+                                    Toast.makeText(application, it.message, Toast.LENGTH_SHORT).show();
                                     emitter.onError(it);
                                     emitter.onComplete();
                                 })
                     }
 
                     override fun onUnexpectedError(e: java.lang.Exception?) {
-                        Log.d("", "");
+                        Toast.makeText(application, e?.message, Toast.LENGTH_SHORT).show();
                     }
 
                     override fun onMatrixError(e: MatrixError?) {
-                        Log.d("", "");
+                        Toast.makeText(application, e?.message, Toast.LENGTH_SHORT).show();
                     }
 
                     override fun onNetworkError(e: java.lang.Exception?) {
-                        Log.d("", "");
+                        Toast.makeText(application, e?.message, Toast.LENGTH_SHORT).show();
                     }
                 })
             }

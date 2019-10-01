@@ -14,35 +14,46 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="@dimen/margin_normal"
         android:baselineAligned="false"
         android:orientation="horizontal">
 
         <FrameLayout
-            android:layout_width="70dp"
-            android:layout_height="70dp">
-            <com.google.android.material.circularreveal.cardview.CircularRevealCardView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                app:cardCornerRadius="35dp"
-                android:layout_gravity="center">
+            android:layout_width="@dimen/image_avatar_status_size"
+            android:layout_height="@dimen/image_avatar_status_size">
+
+            <vmodev.clearkeep.widget.RoundedCornerLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <ImageView
                     android:id="@+id/circle_image_view_avatar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_launcher_app"
                     app:room="@{room_list_user.room}" />
-            </com.google.android.material.circularreveal.cardview.CircularRevealCardView>
+            </vmodev.clearkeep.widget.RoundedCornerLayout>
+
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/circle_image_view_status"
-                android:layout_width="14dp"
-                android:layout_height="14dp"
+                android:layout_width="@dimen/status_online_size"
+                android:layout_height="@dimen/status_online_size"
                 android:layout_gravity="end|bottom"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="5dp"
-                app:cardCornerRadius="7dp"
-                app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}"
-                app:cardBackgroundColor="@color/main_text_color_hint"/>
+                android:layout_marginEnd="@dimen/margin_status_online"
+                android:layout_marginBottom="@dimen/margin_status_online"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="@dimen/radius_border_online_status"
+                app:cardElevation="0dp"
+                app:contentPadding="@dimen/padding_status_online"
+                app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/circle_image_view_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/main_text_color_hint"
+                    app:cardCornerRadius="@dimen/radius_online_status"
+                    app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}" />
+            </com.google.android.material.card.MaterialCardView>
         </FrameLayout>
 
         <LinearLayout

@@ -130,7 +130,7 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
-    fun leaveRoom(id: String): LiveData<Resource<String>> {
+        fun leaveRoom(id: String): LiveData<Resource<String>> {
         return object : AbstractNetworkBoundSource<String, String>() {
             override fun saveCallResult(item: String) {
                 abstractRoomDao.deleteRoom(item)
@@ -411,13 +411,17 @@ class RoomRepository @Inject constructor(
     }
 
     fun insertRoomToDB(roomId: String): Observable<Room> {
-        return object : AbstractNetworkCallAndSaveToDBReturnRx<Room, Room>() {
+        return object : AbstractNetworkBoundSourceReturnRx<Room, Room>(){
+            override fun shouldFetch(data: Room?): Boolean {
+                return data == null;
+            }
+
             override fun saveCallResult(item: Room) {
                 abstractRoomDao.insert(item);
             }
 
-            override fun loadFromDb(item: Room): Single<Room> {
-                return abstractRoomDao.findByIdRx(item.id);
+            override fun loadFromDb(): Single<Room> {
+                return abstractRoomDao.findByIdRx(roomId);
             }
 
             override fun createCall(): Observable<Room> {

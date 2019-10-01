@@ -104,21 +104,31 @@ class KeyRequestHandler(val session: MXSession) : VerificationManager.Verificati
                             session.getDevicesList(object : ApiCallback<DevicesListResponse> {
                                 override fun onSuccess(info: DevicesListResponse) =
                                         info.devices.find { it.device_id == deviceId }?.let {
-                                            postAlert(context, userId, deviceId, true, deviceInfo, it)
+//                                            postAlert(context, userId, deviceId, true, deviceInfo, it)
+                                            val mappingKey = keyForMap(deviceId, userId);
+                                            shareAllSessions(mappingKey);
                                         } ?: run {
-                                            postAlert(context, userId, deviceId, true, deviceInfo)
+//                                            postAlert(context, userId, deviceId, true, deviceInfo)
+                                            val mappingKey = keyForMap(deviceId, userId);
+                                            shareAllSessions(mappingKey);
                                         }
 
                                 override fun onUnexpectedError(e: java.lang.Exception?) {
-                                    postAlert(context, userId, deviceId, true, deviceInfo)
+//                                    postAlert(context, userId, deviceId, true, deviceInfo)
+                                    val mappingKey = keyForMap(deviceId, userId);
+                                    shareAllSessions(mappingKey);
                                 }
 
                                 override fun onNetworkError(e: java.lang.Exception?) {
-                                    postAlert(context, userId, deviceId, true, deviceInfo)
+//                                    postAlert(context, userId, deviceId, true, deviceInfo)
+                                    val mappingKey = keyForMap(deviceId, userId);
+                                    shareAllSessions(mappingKey);
                                 }
 
                                 override fun onMatrixError(e: MatrixError?) {
-                                    postAlert(context, userId, deviceId, true, deviceInfo)
+//                                    postAlert(context, userId, deviceId, true, deviceInfo)
+                                    val mappingKey = keyForMap(deviceId, userId);
+                                    shareAllSessions(mappingKey);
                                 }
 
                             })
@@ -126,7 +136,11 @@ class KeyRequestHandler(val session: MXSession) : VerificationManager.Verificati
                         }
                     })
                 } else {
-                    postAlert(context, userId, deviceId, false, deviceInfo)
+                    //Show popup
+//                    postAlert(context, userId, deviceId, false, deviceInfo)
+                    // Auto share key request
+                    val mappingKey = keyForMap(deviceId, userId);
+                    shareAllSessions(mappingKey);
                 }
             }
 
