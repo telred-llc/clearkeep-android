@@ -2695,7 +2695,7 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
                 if (Message.MSGTYPE_IMAGE.equals(message.msgtype)
                         || Message.MSGTYPE_VIDEO.equals(message.msgtype)
                         || Message.MSGTYPE_FILE.equals(message.msgtype)) {
-                    menu.findItem(R.id.ic_action_vector_save).setVisible(true);
+                    menu.findItem(R.id.ic_action_vector_save).setVisible(true);                    menu.findItem(R.id.ic_action_vector_share).setVisible(true);
                 }
 
                 // offer to report a message content
