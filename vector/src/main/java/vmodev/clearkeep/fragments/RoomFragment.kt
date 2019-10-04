@@ -58,7 +58,6 @@ class RoomFragment : DataBindingDaggerFragment(), ISearchRoomFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner;
 //        listRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listRoomAdapter.setOnItemClick { room, i ->
@@ -76,7 +75,7 @@ class RoomFragment : DataBindingDaggerFragment(), ISearchRoomFragment {
         binding.recyclerViewListConversation.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewListConversation.adapter = listRoomAdapter.getAdapter();
         viewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer {
-//            listRoomAdapter.getAdapter().submitList(it?.data);
+            listRoomAdapter.getAdapter().submitList(it?.data);
         });
         viewModelFactory.getViewModel().getSearchResult().observe(viewLifecycleOwner, Observer {
 //            listRoomAdapter.getAdapter().submitList(it?.data);

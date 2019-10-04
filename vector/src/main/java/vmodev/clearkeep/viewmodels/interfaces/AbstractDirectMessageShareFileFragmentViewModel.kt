@@ -6,7 +6,7 @@ import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
 
-abstract class AbstractRoomFragmentViewModel : ViewModel() {
+abstract class AbstractDirectMessageShareFileFragmentViewModel : ViewModel() {
     abstract fun getListRoomByType(): LiveData<Resource<List<RoomListUser>>>;
     abstract fun setListType(types: Array<Int>);
     abstract fun getAddToFavouriteResult(): LiveData<Resource<Room>>;

@@ -9,6 +9,7 @@ import dagger.Provides
 import im.vector.BuildConfig
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
+import vmodev.clearkeep.adapters.ShareFileRecyclerViewAdapter
 import vmodev.clearkeep.aes.AESCrypto
 import vmodev.clearkeep.aes.interfaces.ICrypto
 import vmodev.clearkeep.applications.ClearKeepApplication
@@ -20,8 +21,12 @@ import vmodev.clearkeep.bindingadapters.DataBindingComponentImplement
 import vmodev.clearkeep.bindingadapters.interfaces.IDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.activitiesandfragments.DirectMessageFragmentFactory
+import vmodev.clearkeep.factories.activitiesandfragments.DirectMessageShareFileFragmentFactory
 import vmodev.clearkeep.factories.activitiesandfragments.RoomMessageFragmentFactory
+import vmodev.clearkeep.factories.activitiesandfragments.RoomShareFragmentFactory
+import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IShareFileFragmentFactory
 import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IShowListRoomFragmentFactory
+import vmodev.clearkeep.factories.viewmodels.RoomShareFileFragmentViewModelFactory
 import vmodev.clearkeep.pbkdf2.PBKDF2GenerateKey
 import vmodev.clearkeep.pbkdf2.interfaces.IGenerateKey
 import vmodev.clearkeep.rests.ClearKeepApis
@@ -60,6 +65,16 @@ abstract class AppModule {
     @Binds
     abstract fun bindDataBindingComponent(dataBindingComponent: DataBindingComponentImplement): IDataBindingComponent;
 
+
+    @Binds
+    @Named(value = IShareFileFragmentFactory.DIRECT_MESSAGE_SHARE_FILE_FRAGMENT_FACTORY)
+    abstract fun bindDirectMessageShareFileFragmentFactory(directMessageShareFileFragmentFactory: DirectMessageShareFileFragmentFactory): IShareFileFragmentFactory;
+
+    @Binds
+    @Named(value = IShareFileFragmentFactory.ROOM_MESSAGE_SHARE_FILE_FRAGMENT_FACTORY)
+    abstract fun bindRoomMessageShareFileFragmentFactory(roomShareFileFragmentViewModelFactory: RoomShareFragmentFactory): IShareFileFragmentFactory;
+
+
     @Module
     companion object {
         @Provides
@@ -78,7 +93,27 @@ abstract class AppModule {
                             && TextUtils.equals(p0.lastMessage?.id, p1.lastMessage?.id);
                 }
             }, dataBindingComponent = dataBindingComponent)
+
         }
+
+        @Provides
+        @JvmStatic
+        @Named(value = IListRoomRecyclerViewAdapter.SHARE_FILE)
+        fun provideListShareFileAdapter(appExecutors: AppExecutors, dataBindingComponent : IDataBindingComponent): IListRoomRecyclerViewAdapter {
+            return ShareFileRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<vmodev.clearkeep.viewmodelobjects.RoomListUser>() {
+                override fun areItemsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
+                    return TextUtils.equals(p0.room?.id, p1.room?.id);
+                }
+
+                override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
+                    return p0.room?.name == p1.room?.name && p0.room?.updatedDate == p1.room?.updatedDate && p0.room?.avatarUrl == p1.room?.avatarUrl
+                            && p0.room?.notifyCount == p1.room?.notifyCount && p0.room?.type == p1.room?.type
+                            && p0.room?.messageId == p1.room?.messageId && p0.room?.notificationState == p1.room?.notificationState
+                            && TextUtils.equals(p0.lastMessage?.id, p1.lastMessage?.id);
+                }
+            }, dataBindingComponent = dataBindingComponent)
+        }
+
 
         @Provides
         @Singleton

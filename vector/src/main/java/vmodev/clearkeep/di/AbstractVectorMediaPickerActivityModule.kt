@@ -3,6 +3,7 @@ package vmodev.clearkeep.di
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import im.vector.activity.*
+import vmodev.clearkeep.activities.ShareFileActivity
 import vmodev.clearkeep.activities.CallViewActivity
 import vmodev.clearkeep.activities.UnifiedSearchActivity
 
@@ -26,6 +27,4 @@ abstract class AbstractVectorMediaPickerActivityModule {
 
     @ContributesAndroidInjector
     abstract fun contributeVectorSharedFilesActivity(): VectorSharedFilesActivity
-    @ContributesAndroidInjector
-    abstract fun contributeVectorHomeActivity(): VectorHomeActivity
 }

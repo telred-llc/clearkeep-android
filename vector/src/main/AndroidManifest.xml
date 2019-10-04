@@ -342,8 +342,7 @@
             android:label="@string/review_terms"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name=".activity.VectorSharedFilesActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:name="vmodev.clearkeep.activities.ShareFileActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 

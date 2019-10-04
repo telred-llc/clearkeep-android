@@ -220,4 +220,14 @@ abstract class ViewModelModule {
 
     @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractRoomShareFileFragmentViewModel::class)
+    abstract fun bindRoomShareFileFragmentViewModel(viewModel: RoomShareFileFragmentViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractDirectMessageShareFileFragmentViewModel::class)
+    abstract fun bindDirectMessageShareFileFragmentViewModel(viewModel: DirectMessageShareFileFragmentViewModel): ViewModel;
 }
