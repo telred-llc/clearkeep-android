@@ -433,7 +433,6 @@ class RoomRepository @Inject constructor(
     fun updateRoomName(roomId: String): Observable<Room> {
         return object : AbstractNetworkCallAndSaveToDBReturnRx<Room, Room>() {
             override fun saveCallResult(item: Room) {
-                Log.d("UpdateRoom", item.type.toString())
                 abstractRoomDao.updateRoom(item);
             }
 

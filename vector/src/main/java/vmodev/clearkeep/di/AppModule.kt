@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.android.ContributesAndroidInjector
 import im.vector.BuildConfig
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
@@ -18,6 +19,7 @@ import vmodev.clearkeep.autokeybackups.interfaces.IAutoKeyBackup
 import vmodev.clearkeep.bindingadapters.BindingAdaptersImplement
 import vmodev.clearkeep.bindingadapters.DataBindingComponentImplement
 import vmodev.clearkeep.bindingadapters.interfaces.IDataBindingComponent
+import vmodev.clearkeep.di.worker.AbstractWorkerModule
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.activitiesandfragments.DirectMessageFragmentFactory
 import vmodev.clearkeep.factories.activitiesandfragments.RoomMessageFragmentFactory
@@ -27,6 +29,9 @@ import vmodev.clearkeep.pbkdf2.interfaces.IGenerateKey
 import vmodev.clearkeep.rests.ClearKeepApis
 import vmodev.clearkeep.rests.IRetrofit
 import vmodev.clearkeep.rests.RetrofitBuilder
+import vmodev.clearkeep.workermanager.UpdateDatabaseFromMatrixEvent
+import vmodev.clearkeep.workermanager.UpdateDatabaseFromMatrixEventWorker
+import vmodev.clearkeep.workermanager.interfaces.IUpdateDatabaseFromMatrixEvent
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -59,6 +64,10 @@ abstract class AppModule {
 
     @Binds
     abstract fun bindDataBindingComponent(dataBindingComponent: DataBindingComponentImplement): IDataBindingComponent;
+
+    @Binds
+    @Singleton
+    abstract fun bindUpdateDatabaseFromMatrixEvent(updateDatabaseFromMatrixEvent: UpdateDatabaseFromMatrixEvent) : IUpdateDatabaseFromMatrixEvent;
 
     @Module
     companion object {

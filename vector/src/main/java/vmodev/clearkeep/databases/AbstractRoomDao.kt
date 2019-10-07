@@ -112,6 +112,12 @@ abstract class AbstractRoomDao {
     @Query("SELECT Room.* FROM Room WHERE Room.last_message_id =:messageId")
     abstract fun getRoomWithMessageId(messageId: String): List<Room>;
 
+    @Query("UPDATE Room SET name =:roomName WHERE id =:roomId")
+    abstract fun updateRoomName(roomId : String, roomName : String)
+
+    @Query("UPDATE Room SET last_message_id=:lastMessage WHERE id=:roomId")
+    abstract fun updateLastMessage(roomId: String, lastMessage : String);
+
     fun loadWithType(filters: Array<Int>): LiveData<List<Room>> {
         when (filters.size) {
             1 -> return loadWithType(filters[0]);

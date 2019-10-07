@@ -16,6 +16,8 @@ import vmodev.clearkeep.databases.AbstractRoomDao
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
 import vmodev.clearkeep.repositories.*
+import vmodev.clearkeep.workermanager.UpdateDatabaseFromMatrixEvent
+import vmodev.clearkeep.workermanager.interfaces.IUpdateDatabaseFromMatrixEvent
 import javax.inject.Inject
 
 class MatrixEventHandler @Inject constructor(
@@ -29,7 +31,8 @@ class MatrixEventHandler @Inject constructor(
 //        , private val roomUserJoinDao: AbstractRoomUserJoinDao
 //        , private val matrixService: MatrixService
         , private val roomDao: AbstractRoomDao
-        , private val appExecutors: AppExecutors)
+        , private val appExecutors: AppExecutors
+        , private val updateDatabaseFromMatrixEvent: IUpdateDatabaseFromMatrixEvent)
     : MXEventListener(), IMatrixEventHandler, KeysBackupStateManager.KeysBackupStateListener {
     private var mxSession: MXSession? = null;
     override fun onAccountDataUpdated() {
@@ -59,28 +62,34 @@ class MatrixEventHandler @Inject constructor(
     override fun onLiveEvent(event: Event?, roomState: RoomState?) {
 
         Log.d("EventType:", event?.type + "--" + event?.roomId);
+        event?.let {
+//            updateDatabaseFromMatrixEvent.insertMessage(it.roomId, it.contentJson.toString(), it.type, it.roomId, it.sender);
+            when (event.type) {
+                IMatrixEventHandler.M_ROOM_CREATE -> {
+                    roomRepository.insertRoomToDB(event.roomId).subscribe {
+                        roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribeOn(Schedulers.io()).subscribe();
+                    };
+                }
+                IMatrixEventHandler.M_ROOM_JOIN_RULES -> {
+                    roomRepository.insertRoomToDB(event.roomId).subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread()).subscribe {
+                                roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId)
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread()).subscribe()
+                            }
 
-        when (event?.type) {
-            IMatrixEventHandler.M_ROOM_CREATE -> {
-                roomRepository.insertRoomToDB(event.roomId).subscribe {
-                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribeOn(Schedulers.io()).subscribe();
-                };
-            }
-            IMatrixEventHandler.M_ROOM_JOIN_RULES -> {
-                roomRepository.insertRoomToDB(event.roomId).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread()).subscribe {
-                            roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread()).subscribe()
-                        }
-
-            }
-            IMatrixEventHandler.M_ROOM_MEMBER -> {
-                roomRepository.updateRoomName(event.roomId).subscribeOn(Schedulers.io()).subscribe();
-            }
-            else -> {
-                event?.let {
+                }
+                IMatrixEventHandler.M_ROOM_MEMBER -> {
                     roomRepository.updateRoomName(event.roomId).subscribeOn(Schedulers.io()).subscribe();
+                }
+                IMatrixEventHandler.M_ROOM_NAME -> {
+                    val name = event.contentJson.asJsonObject.get("name").asString;
+                    roomState?.let { updateDatabaseFromMatrixEvent.updateRoomName(event.roomId, name) }
+                }
+                else -> {
+                    event?.let {
+                        roomRepository.updateRoomName(event.roomId).subscribeOn(Schedulers.io()).subscribe();
+                    }
                 }
             }
         }

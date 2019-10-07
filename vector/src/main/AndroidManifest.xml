@@ -15,6 +15,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         tools:replace="allowBackup,label">
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            android:exported="false"
+            tools:node="remove" />
         <activity android:name="vmodev.clearkeep.activities.RoomSettingsActivity"></activity>
         <activity android:name="vmodev.clearkeep.activities.SettingsActivity" />
         <activity android:name="vmodev.clearkeep.activities.NewRoomActivity" />
@@ -367,7 +372,8 @@
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileProvider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true"
+            >
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/vector_provider_paths" />
