@@ -63,7 +63,7 @@ class MatrixEventHandler @Inject constructor(
 
         Log.d("EventType:", event?.type + "--" + event?.roomId);
         event?.let {
-//            updateDatabaseFromMatrixEvent.insertMessage(it.roomId, it.contentJson.toString(), it.type, it.roomId, it.sender);
+            updateDatabaseFromMatrixEvent.insertMessage(it.roomId, it.contentJson.toString(), it.type, it.roomId, it.sender, it.originServerTs);
             when (event.type) {
                 IMatrixEventHandler.M_ROOM_CREATE -> {
                     roomRepository.insertRoomToDB(event.roomId).subscribe {

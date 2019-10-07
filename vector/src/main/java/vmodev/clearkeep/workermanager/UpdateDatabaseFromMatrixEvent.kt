@@ -17,13 +17,14 @@ class UpdateDatabaseFromMatrixEvent @Inject constructor (private val application
         WorkManager.getInstance(application.getApplication()).enqueue(updateRoomNameWorker);
     }
 
-    override fun insertMessage(id: String, content: String, type: String, roomId: String, userId: String) {
+    override fun insertMessage(id: String, content: String, type: String, roomId: String, userId: String, createdAt : Long) {
         val inputData = Data.Builder();
         inputData.putString(UpdateDatabaseFromMatrixEventWorker.InsertNewEventWorker.ID, id);
         inputData.putString(UpdateDatabaseFromMatrixEventWorker.InsertNewEventWorker.CONTENT, content);
         inputData.putString(UpdateDatabaseFromMatrixEventWorker.InsertNewEventWorker.TYPE, type);
         inputData.putString(UpdateDatabaseFromMatrixEventWorker.InsertNewEventWorker.ROOM_ID, roomId);
         inputData.putString(UpdateDatabaseFromMatrixEventWorker.InsertNewEventWorker.USER_ID, userId);
+        inputData.putLong(UpdateDatabaseFromMatrixEventWorker.InsertNewEventWorker.CREATED_AT, createdAt);
         val insertMessageWorker = OneTimeWorkRequestBuilder<UpdateDatabaseFromMatrixEventWorker.InsertNewEventWorker>()
                 .setInputData(inputData.build()).build();
         WorkManager.getInstance(application.getApplication()).enqueue(insertMessageWorker);

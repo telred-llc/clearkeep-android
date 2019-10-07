@@ -198,8 +198,8 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                             var currentZipMessage: Observable<List<Message>>? = null;
                             for ((index, r) in rooms.withIndex()) {
                                 if (index == 0) {
-                                    currentZipMessage = Observable.zip(viewModelFactory.getViewModel().getUpdateLastMessageResult(r.id).onErrorReturn { Message("", "", "", "", "") }
-                                            , viewModelFactory.getViewModel().getUpdateLastMessageResult(rooms[1].id).onErrorReturn { Message("", "", "", "", "") }
+                                    currentZipMessage = Observable.zip(viewModelFactory.getViewModel().getUpdateLastMessageResult(r.id).onErrorReturn { Message("", "", "", "", "", 0) }
+                                            , viewModelFactory.getViewModel().getUpdateLastMessageResult(rooms[1].id).onErrorReturn { Message("", "", "", "", "", 0) }
                                             , BiFunction<Message, Message, List<Message>> { t1, t2 ->
                                         val mutableList = mutableListOf<Message>();
                                         mutableList.add(t1);
@@ -208,7 +208,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                                     })
                                 } else if (index > 1) {
                                     currentZipMessage?.let {
-                                        currentZipMessage = it.zipWith(viewModelFactory.getViewModel().getUpdateLastMessageResult(r.id).onErrorReturn { Message("", "", "", "", "") }
+                                        currentZipMessage = it.zipWith(viewModelFactory.getViewModel().getUpdateLastMessageResult(r.id).onErrorReturn { Message("", "", "", "", "", 0) }
                                                 , BiFunction<List<Message>, Message, List<Message>> { t1, t2 ->
                                             val mutableList = mutableListOf<Message>();
                                             mutableList.addAll(t1);

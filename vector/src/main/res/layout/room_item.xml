@@ -139,7 +139,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:textAlignment="textEnd"
-                    app:timeStamp="@{room_list_user.room.updatedDate}" />
+                    app:timeStamp="@{room_list_user.lastMessage.createdAt}" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="wrap_content"

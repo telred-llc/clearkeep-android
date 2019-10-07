@@ -48,8 +48,9 @@ sealed class UpdateDatabaseFromMatrixEventWorker {
                 val type = inputData.getString(TYPE);
                 val roomId = inputData.getString(ROOM_ID);
                 val userId = inputData.getString(USER_ID);
+                val createdAt = inputData.getLong(CREATED_AT, 0);
                 id?.let {id-> content?.let { content -> type?.let { type->roomId?.let { roomId->userId?.let { userId->
-                    val message = Message(id=id, encryptedContent = content, messageType = type, roomId = roomId, userId = userId);
+                    val message = Message(id=id, encryptedContent = content, messageType = type, roomId = roomId, userId = userId, createdAt = createdAt);
                     messageDao.insert(message);
                     roomDao.updateRoomLastMessage(roomId, id);
                 } } } } }
@@ -65,6 +66,7 @@ sealed class UpdateDatabaseFromMatrixEventWorker {
             const val TYPE = "TYPE";
             const val ROOM_ID = "ROOM_ID";
             const val USER_ID = "USER_ID";
+            const val CREATED_AT = "CREATED_AT";
         }
     }
 }
