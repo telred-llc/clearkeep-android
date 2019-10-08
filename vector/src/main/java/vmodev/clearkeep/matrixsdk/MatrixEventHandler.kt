@@ -16,7 +16,12 @@ import vmodev.clearkeep.databases.AbstractRoomDao
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
 import vmodev.clearkeep.repositories.*
-import vmodev.clearkeep.workermanager.UpdateDatabaseFromMatrixEvent
+import vmodev.clearkeep.ultis.matrixUrlToRealUrl
+import vmodev.clearkeep.ultis.toMessage
+import vmodev.clearkeep.ultis.toRoomCreate
+import vmodev.clearkeep.ultis.toRoomInvite
+import vmodev.clearkeep.viewmodelobjects.Message
+import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.workermanager.interfaces.IUpdateDatabaseFromMatrixEvent
 import javax.inject.Inject
 
@@ -28,8 +33,6 @@ class MatrixEventHandler @Inject constructor(
         , private val keyBackupRepository: KeyBackupRepository
         , private val roomUserJoinRepository: RoomUserJoinRepository
         , private val messageRepository: MessageRepository
-//        , private val roomUserJoinDao: AbstractRoomUserJoinDao
-//        , private val matrixService: MatrixService
         , private val roomDao: AbstractRoomDao
         , private val appExecutors: AppExecutors
         , private val updateDatabaseFromMatrixEvent: IUpdateDatabaseFromMatrixEvent)
@@ -60,111 +63,58 @@ class MatrixEventHandler @Inject constructor(
     }
 
     override fun onLiveEvent(event: Event?, roomState: RoomState?) {
-
-        Log.d("EventType:", event?.type + "--" + event?.roomId);
-        event?.let {
-            updateDatabaseFromMatrixEvent.insertMessage(it.roomId, it.contentJson.toString(), it.type, it.roomId, it.sender, it.originServerTs);
+        Log.d("EventType", event?.type + "--" + event?.roomId);
+        event?.let { e ->
             when (event.type) {
                 IMatrixEventHandler.M_ROOM_CREATE -> {
-                    roomRepository.insertRoomToDB(event.roomId).subscribe {
-                        roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribeOn(Schedulers.io()).subscribe();
-                    };
+                    roomState?.let { rs ->
+                        rs.toRoomCreate(mxSession)?.let {
+                            roomRepository.insertRoomInvite(it).subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread()).subscribe {
+                                        messageRepository.insertMessage(event.toMessage()).subscribeOn(Schedulers.io())
+                                                .subscribe { roomRepository.updateLastMessage(event.roomId, event.eventId) }
+                                        roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId)
+                                                .subscribeOn(Schedulers.io())
+                                                .observeOn(AndroidSchedulers.mainThread()).subscribe()
+                                    }
+                        }
+                    }
                 }
                 IMatrixEventHandler.M_ROOM_JOIN_RULES -> {
-                    roomRepository.insertRoomToDB(event.roomId).subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread()).subscribe {
-                                roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId)
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread()).subscribe()
-                            }
-
+                    roomState?.let { rs ->
+                        Log.d("UpdateRoom", event.contentJson.toString())
+                        val selfMember = rs.getMember(mxSession!!.myUserId);
+                        Log.d("UpdateRoom", selfMember.isDirect.toString());
+                        rs.toRoomInvite(mxSession)?.let {
+                            roomRepository.insertRoomInvite(it).subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread()).subscribe {
+                                        messageRepository.insertMessage(event.toMessage()).subscribeOn(Schedulers.io())
+                                                .subscribe { roomRepository.updateLastMessage(event.roomId, event.eventId).subscribe() }
+                                        roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId)
+                                                .subscribeOn(Schedulers.io())
+                                                .observeOn(AndroidSchedulers.mainThread()).subscribe()
+                                    }
+                        }
+                    }
                 }
                 IMatrixEventHandler.M_ROOM_MEMBER -> {
-                    roomRepository.updateRoomName(event.roomId).subscribeOn(Schedulers.io()).subscribe();
+                    messageRepository.insertMessage(event.toMessage())
+                            .subscribeOn(Schedulers.io()).subscribe {
+                                roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe();
+                            };
                 }
                 IMatrixEventHandler.M_ROOM_NAME -> {
                     val name = event.contentJson.asJsonObject.get("name").asString;
-                    roomState?.let { updateDatabaseFromMatrixEvent.updateRoomName(event.roomId, name) }
+                    roomRepository.updateRoomName(event.roomId, name).subscribeOn(Schedulers.io()).subscribe();
                 }
                 else -> {
-                    event?.let {
-                        roomRepository.updateRoomName(event.roomId).subscribeOn(Schedulers.io()).subscribe();
-                    }
+                    messageRepository.insertMessage(event.toMessage())
+                            .subscribeOn(Schedulers.io()).subscribe {
+                                roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe();
+                            };
                 }
             }
         }
-
-//        if (event?.type?.compareTo("m.room.join_rules") == 0) {
-//            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe {
-//                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                    messageRepository.getLastMessageOfRoom(event.roomId).subscribe({
-//                        roomRepository.updateLastMessage(it.roomId, it.id);
-//                    }, {
-//                        Toast.makeText(application, "Can't get last message", Toast.LENGTH_SHORT).show();
-//                    });
-//                }, {
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//
-//                });
-//            };
-//        }
-//        if (event?.type?.compareTo("m.room.name") == 0) {
-//            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe {
-//                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                    messageRepository.getLastMessageOfRoom(event.roomId).subscribe({
-//                        roomRepository.updateLastMessage(it.roomId, it.id);
-//                    }, {
-//                        Toast.makeText(application, "Can't get last message", Toast.LENGTH_SHORT).show();
-//                    });
-//                }, {
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                });
-//            };
-//        }
-//        if (event?.type?.compareTo("m.room.member") == 0) {
-//            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe {
-//                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                    messageRepository.getLastMessageOfRoom(event.roomId).subscribe({
-//                        roomRepository.updateLastMessage(it.roomId, it.id);
-//                    }, {
-//                        Toast.makeText(application, "Can't get last message", Toast.LENGTH_SHORT).show();
-//                    });
-//                }, {
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                });
-//            };
-//        }
-//        if (event?.type?.compareTo("m.room.message") == 0) {
-//            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe {
-//                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                    messageRepository.getLastMessageOfRoom(event.roomId).subscribe({
-//                        roomRepository.updateLastMessage(it.roomId, it.id);
-//                    }, {
-//                        Toast.makeText(application, "Can't get last message", Toast.LENGTH_SHORT).show();
-//                    });
-//                }, {
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                });
-//            };
-//        }
-//        if (event?.type?.compareTo("m.room.encrypted") == 0) {
-//            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe {
-//                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                    messageRepository.getLastMessageOfRoom(event.roomId).subscribe({
-//                        roomRepository.updateLastMessage(it.roomId, it.id);
-//                    }, {
-//                        Toast.makeText(application, "Can't get last message", Toast.LENGTH_SHORT).show();
-//                    });
-//                }, {
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                });
-//            };
-//        }
     }
 
     /**

@@ -22,49 +22,46 @@ abstract class AbstractRoomDao {
     @Query("SELECT name FROM room WHERE id =:id")
     abstract fun findNameById(id: String): LiveData<String>;
 
-    @Query("UPDATE room SET name =:name, type =:type, updatedDate =:updatedDate, avatarUrl =:avatarUrl, notifyCount =:notifyCount  WHERE id =:id")
-    abstract fun updateRoom(id: String, name: String, type: Int, updatedDate: Long, avatarUrl: String, notifyCount: Int)
-
-    @Query("UPDATE room SET type =:type WHERE id =:id")
+    @Query("UPDATE Room SET type =:type WHERE id =:id")
     abstract fun updateRoom(id: String, type: Int);
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo ORDER BY updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo ORDER BY Message.created_at DESC")
     abstract fun loadWithTypeOnlyTime(filterOne: Int, filterTwo: Int): LiveData<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type = :type ORDER BY updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type = :type ORDER BY Message.created_at DESC")
     abstract fun loadWithType(type: Int): LiveData<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithType(filterOne: Int, filterTwo: Int): LiveData<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithType(filterOne: Int, filterTwo: Int, filterThree: Int): LiveData<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithType(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int): LiveData<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithType(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int, filterFive: Int): LiveData<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive OR type =:filterSix ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive OR type =:filterSix ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithType(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int, filterFive: Int, filterSix: Int): LiveData<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type = :type ORDER BY updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type = :type ORDER BY Message.created_at DESC")
     abstract fun loadWithTypeRx(type: Int): Single<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int): Single<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int, filterThree: Int): Single<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int): Single<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int, filterFive: Int): Single<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive OR type =:filterSix ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive OR type =:filterSix ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int, filterFive: Int, filterSix: Int): Single<List<Room>>;
 
     @Query("DELETE FROM room WHERE id =:id")

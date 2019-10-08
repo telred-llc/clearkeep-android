@@ -216,4 +216,8 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
             }
         }.getObject();
     }
+
+    fun insertMessage(message : Message) : Completable{
+        return Completable.fromAction { messageDao.insert(message) }
+    }
 }

@@ -2,11 +2,13 @@ package vmodev.clearkeep.autokeybackups
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.text.InputType
 import android.text.TextUtils
 import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import im.vector.R
 import im.vector.VectorApp
 import im.vector.activity.CommonActivityUtils
@@ -65,7 +67,6 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
                                 });
                     }
                     else -> {
-
                         matrixService.checkBackupKeyStateWhenStart().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({
                                     if (it == 4 || it == 6) {
@@ -80,8 +81,7 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
                                                         handleRestoreDeleteAndExportNewKey(userId, decryptedData);
                                                     }
                                                 });
-                                    }
-                                    else if (it == 3){
+                                    } else if (it == 3) {
                                         if (password.isNullOrEmpty()) {
                                             logout();
                                             return@subscribe;
@@ -99,18 +99,22 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
             })
 
         }, {
-            if (password.isNullOrEmpty()) {
-                logout();
-                return@subscribe;
-            }
+            matrixService.checkBackupKeyStateWhenStart().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        if (it == 4 || it == 6 || it == 3) {
+                            if (password.isNullOrEmpty()) {
+                                logout();
+                                return@subscribe;
+                            }
 
-            createNewKey(password, userId);
-
+                            createNewKey(password, userId);
+                        }
+                    }
         })
     }
 
     @SuppressLint("CheckResult")
-    private fun createNewKey(password: String, userId: String){
+    private fun createNewKey(password: String, userId: String) {
         val passwordForGenerateKey = userId + "COLIAKIP";
         val encryptedPassphrase = crypto.encrypt(passwordForGenerateKey, password + "COLIAKIP")
         matrixService.createPassphrase(encryptedPassphrase).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ passphrase ->
@@ -122,7 +126,7 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
     }
 
     @SuppressLint("CheckResult")
-    private fun exportNewKey(passphrase : PassphraseResponse, password: String?){
+    private fun exportNewKey(passphrase: PassphraseResponse, password: String?) {
         val passwordForGenerateKey = passphrase.data.id + "COLIAKIP";
         val decryptedData = crypto.decrypt(passwordForGenerateKey, passphrase.data.passphrase);
         matrixService.getKeyBackUpData(passphrase.data.id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
@@ -204,21 +208,28 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
 
     @SuppressLint("CheckResult")
     private fun logout() {
-        Completable.fromAction {
-            roomDao.delete();
-            userDao.delete();
-            roomUserJoinDao.delete();
-            messageDao.delete();
-            deviceSettingsDao.delete();
-            keyBackupDao.delete();
-        }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    CommonActivityUtils.logout(null, true);
-                }, {
-                    Toast.makeText(application, it.message, Toast.LENGTH_SHORT).show();
-                });
+        AlertDialog.Builder(application).setMessage(application.resources.getString(R.string.auto_backup_key_logout_content))
+                .setNegativeButton(application.getString(R.string.logout)) { dialogInterface, i ->
+                    Completable.fromAction {
+                        roomDao.delete();
+                        userDao.delete();
+                        roomUserJoinDao.delete();
+                        messageDao.delete();
+                        deviceSettingsDao.delete();
+                        keyBackupDao.delete();
+                    }
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({
+                                CommonActivityUtils.logout(null, true);
+                            }, {
+                                Toast.makeText(application, it.message, Toast.LENGTH_SHORT).show();
+                            });
+                }
+                .setPositiveButton(application.getString(R.string.close)) { dialogInterface, i ->
+                    Toast.makeText(application, "Auto key backup is not enabled", Toast.LENGTH_SHORT).show();
+                }.show();
+
     }
 
     private fun showAlertForRetypeOrNewKey(userId: String, decryptedData: String) {

@@ -2,6 +2,7 @@ package vmodev.clearkeep.ultis
 
 import android.content.Context
 import android.os.Environment
+import org.matrix.androidsdk.MXSession
 import java.io.File
 import java.io.FileWriter
 import java.net.URI
@@ -52,4 +53,10 @@ fun String.isEmailValid(): Boolean {
     val matcher = pattern.matcher(this);
 
     return matcher.matches();
+}
+
+fun String.matrixUrlToRealUrl(session: MXSession?): String? {
+    if (session == null)
+        return null;
+    return session.contentManager.getDownloadableUrl(this, false);
 }

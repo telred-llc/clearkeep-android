@@ -402,48 +402,20 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
-    fun updateLastMessage(roomId: String, messageId: String) {
-        Completable.fromAction { abstractRoomDao.updateRoomLastMessage(roomId, messageId) }.subscribeOn(Schedulers.io()).subscribe();
+    fun updateLastMessage(roomId: String, messageId: String) : Completable {
+        return Completable.fromAction { abstractRoomDao.updateRoomLastMessage(roomId, messageId) };
     }
 
     fun updateUserCreated(roomId: String, userId: String) {
         Completable.fromAction { abstractRoomDao.updateRoomCreatedUser(roomId, userId) }.subscribeOn(Schedulers.io()).subscribe();
     }
 
-    fun insertRoomToDB(roomId: String): Observable<Room> {
-        return object : AbstractNetworkBoundSourceReturnRx<Room, Room>(){
-            override fun shouldFetch(data: Room?): Boolean {
-                return data == null;
-            }
-
-            override fun saveCallResult(item: Room) {
-                abstractRoomDao.insert(item);
-            }
-
-            override fun loadFromDb(): Single<Room> {
-                return abstractRoomDao.findByIdRx(roomId);
-            }
-
-            override fun createCall(): Observable<Room> {
-                return matrixService.getRoomWithIdForCreate(roomId);
-            }
-        }.getObject();
+    fun insertRoomInvite(room : Room): Completable {
+        return Completable.fromAction { abstractRoomDao.insert(room) }
     }
 
-    fun updateRoomName(roomId: String): Observable<Room> {
-        return object : AbstractNetworkCallAndSaveToDBReturnRx<Room, Room>() {
-            override fun saveCallResult(item: Room) {
-                abstractRoomDao.updateRoom(item);
-            }
-
-            override fun loadFromDb(item: Room): Single<Room> {
-                return abstractRoomDao.findByIdRx(item.id);
-            }
-
-            override fun createCall(): Observable<Room> {
-                return matrixService.getRoomWithIdForCreate(roomId);
-            }
-        }.getObject();
+    fun updateRoomName(roomId: String, roomName : String) : Completable {
+        return Completable.fromAction { abstractRoomDao.updateRoomName(roomId, roomName) }
     }
 
     class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);
