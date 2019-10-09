@@ -8,10 +8,10 @@ import vmodev.clearkeep.viewmodelobjects.RoomListUser
 
 @Dao
 abstract class AbstractRoomDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insert(room: Room);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insertRooms(rooms: List<Room>): List<Long>;
 
     @Query("SELECT * FROM room WHERE id =:id")
@@ -23,58 +23,55 @@ abstract class AbstractRoomDao {
     @Query("SELECT name FROM room WHERE id =:id")
     abstract fun findNameById(id: String): LiveData<String>;
 
-    @Query("UPDATE room SET name =:name, type =:type, updatedDate =:updatedDate, avatarUrl =:avatarUrl, notifyCount =:notifyCount  WHERE id =:id")
-    abstract fun updateRoom(id: String, name: String, type: Int, updatedDate: Long, avatarUrl: String, notifyCount: Int)
-
-    @Query("UPDATE room SET type =:type WHERE id =:id")
+    @Query("UPDATE Room SET type =:type WHERE id =:id")
     abstract fun updateRoom(id: String, type: Int);
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo ORDER BY updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo ORDER BY Message.created_at DESC")
     abstract fun loadWithTypeOnlyTime(filterOne: Int, filterTwo: Int): LiveData<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type = :type ORDER BY updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type = :type ORDER BY Message.created_at DESC")
     abstract fun loadWithType(type: Int): LiveData<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithType(filterOne: Int, filterTwo: Int): LiveData<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithType(filterOne: Int, filterTwo: Int, filterThree: Int): LiveData<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithType(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int): LiveData<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithType(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int, filterFive: Int): LiveData<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive OR type =:filterSix ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive OR type =:filterSix ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithType(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int, filterFive: Int, filterSix: Int): LiveData<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type = :type ORDER BY updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type = :type ORDER BY Message.created_at DESC")
     abstract fun loadWithTypeRx(type: Int): Single<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int): Single<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int, filterThree: Int): Single<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int): Single<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int, filterFive: Int): Single<List<Room>>;
 
-    @Query("SELECT * FROM room WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive OR type =:filterSix ORDER BY type DESC, updatedDate DESC")
+    @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive OR type =:filterSix ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int, filterFive: Int, filterSix: Int): Single<List<Room>>;
 
-    @Query("DELETE FROM room WHERE id =:id")
+    @Query("DELETE FROM Room WHERE id =:id")
     abstract fun deleteRoom(id: String);
 
-    @Query("UPDATE room SET type =:type WHERE id =:id")
+    @Query("UPDATE Room SET type =:type WHERE id =:id")
     abstract fun updateType(id: String, type: Int)
 
-    @Query("SELECT * FROM room WHERE id IN (:ids)")
+    @Query("SELECT Room.* FROM Room WHERE id IN (:ids)")
     abstract fun getListRoomWithListId(ids: List<String>): LiveData<List<Room>>;
 
     @Update
@@ -92,7 +89,7 @@ abstract class AbstractRoomDao {
     @Query("SELECT * FROM room WHERE (type =:filterOne OR type =:filterTwo) AND name LIKE :query")
     abstract fun searchWithDisplayName(filterOne: Int, filterTwo: Int, query: String): LiveData<List<Room>>
 
-    @Query("SELECT RoomUserJoin.room_id, Room.*, User.id FROM room LEFT JOIN RoomUserJoin ON RoomUserJoin.room_id = Room.id LEFT JOIN User ON User.id = RoomUserJoin.user_id WHERE  (Room.type =:filterOne OR Room.type =:filterTwo) AND Room.name LIKE :query")
+    @Query("SELECT RoomUserJoin.room_id, Room.*, Message.*, User.id FROM room LEFT JOIN RoomUserJoin ON RoomUserJoin.room_id = Room.id LEFT JOIN User ON User.id = RoomUserJoin.user_id LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE  (Room.type =:filterOne OR Room.type =:filterTwo) AND Room.name LIKE :query")
     abstract fun searchWithDisplayNameReturnRoomListUser(filterOne: Int, filterTwo: Int, query: String): LiveData<List<RoomListUser>>
 
     @Query("UPDATE room SET notificationState =:state WHERE room.id =:id")
@@ -115,6 +112,18 @@ abstract class AbstractRoomDao {
 
     @Query("SELECT Room.* FROM Room WHERE Room.last_message_id =:messageId")
     abstract fun getRoomWithMessageId(messageId: String): List<Room>;
+
+    @Query("UPDATE Room SET name =:roomName WHERE id =:roomId")
+    abstract fun updateRoomName(roomId : String, roomName : String)
+
+    @Query("UPDATE Room SET last_message_id=:lastMessage WHERE id=:roomId")
+    abstract fun updateLastMessage(roomId: String, lastMessage : String);
+
+    @Query("UPDATE Room SET type =:type WHERE id =:roomId")
+    abstract fun updateRoomType(roomId: String, type: Int) : Int
+
+    @Query("UPDATE Room SET avatarUrl =:url WHERE id=:roomId")
+    abstract fun updateRoomAvatar(roomId: String, url : String);
 
     fun loadWithType(filters: Array<Int>): LiveData<List<Room>> {
         when (filters.size) {

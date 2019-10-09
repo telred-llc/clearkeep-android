@@ -87,15 +87,15 @@
                     android:text="@{@string/this_room_created_by + ' ' + user.data.name + ' ' + @string/at + ' '}"
                     android:textColor="@color/lb_grey" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:singleLine="true"
-                    android:textColor="@color/lb_grey"
-                    app:timeStamp="@{room.data.updatedDate}" />
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="10dp"-->
+<!--                    android:layout_marginEnd="10dp"-->
+<!--                    android:layout_marginBottom="10dp"-->
+<!--                    android:singleLine="true"-->
+<!--                    android:textColor="@color/lb_grey"-->
+<!--                    app:timeStamp="@{room.data.updatedDate}" />-->
             </LinearLayout>
 
             <FrameLayout

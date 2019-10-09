@@ -6,10 +6,13 @@ import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
 import vmodev.clearkeep.applications.ClearKeepApplication
+import vmodev.clearkeep.di.worker.AbstractWorkerModule
+import vmodev.clearkeep.workermanager.ClearKeepWorkerFactory
+import vmodev.clearkeep.workermanager.interfaces.IWorkerFactory
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AndroidSupportInjectionModule::class, AndroidInjectionModule::class
+@Component(modules = [AndroidSupportInjectionModule::class, AndroidInjectionModule::class, AbstractWorkerModule::class, AbstractWorkerModule.ClearKeepAssistedInjectModule::class
     , AppModule::class, AbstractSplashActivityModule::class, AbstractHomeScreenActivityModule::class, AbstractProfileActivityModule::class
     , PreviewInviteRoomActivityModule::class
     , AbstractSearchActivityModule::class
@@ -41,4 +44,6 @@ interface AppComponent : AndroidInjector<ClearKeepApplication> {
 
         fun build(): AppComponent
     }
+
+    fun workerFactory() : ClearKeepWorkerFactory;
 }

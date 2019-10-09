@@ -155,8 +155,10 @@ class RoomShareFileFragment : DataBindingDaggerFragment(), IRoomShareFileFragmen
         var newListData = ArrayList<RoomListUser>()
         if (listDataDirect!!.isNotEmpty() && !TextUtils.isEmpty(textSearch)) {
             for (item in listDataDirect!!) {
-                if (item.room!!.name.indexOf(textSearch) > -1) {
-                    newListData.add(item)
+                item.room?.name?.let {
+                    if (it.indexOf(textSearch) > -1) {
+                        newListData.add(item)
+                    }
                 }
             }
         } else {

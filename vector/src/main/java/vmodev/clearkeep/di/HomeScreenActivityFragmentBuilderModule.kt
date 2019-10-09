@@ -99,7 +99,7 @@ abstract class HomeScreenActivityFragmentBuilderModule {
                 }
 
                 override fun areContentsTheSame(p0: RoomListUser, p1: RoomListUser): Boolean {
-                    return p0.room?.name == p1.room?.name && p0.room?.updatedDate == p1.room?.updatedDate && p0.room?.avatarUrl == p1.room?.avatarUrl
+                    return p0.room?.name == p1.room?.name && p0.room?.avatarUrl == p1.room?.avatarUrl
                             && p0.room?.notifyCount == p1.room?.notifyCount;
                 }
             })

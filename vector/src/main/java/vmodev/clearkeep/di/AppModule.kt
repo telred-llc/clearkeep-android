@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.android.ContributesAndroidInjector
 import im.vector.BuildConfig
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
@@ -19,6 +20,7 @@ import vmodev.clearkeep.autokeybackups.interfaces.IAutoKeyBackup
 import vmodev.clearkeep.bindingadapters.BindingAdaptersImplement
 import vmodev.clearkeep.bindingadapters.DataBindingComponentImplement
 import vmodev.clearkeep.bindingadapters.interfaces.IDataBindingComponent
+import vmodev.clearkeep.di.worker.AbstractWorkerModule
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.activitiesandfragments.DirectMessageFragmentFactory
 import vmodev.clearkeep.factories.activitiesandfragments.DirectMessageShareFileFragmentFactory
@@ -32,6 +34,9 @@ import vmodev.clearkeep.pbkdf2.interfaces.IGenerateKey
 import vmodev.clearkeep.rests.ClearKeepApis
 import vmodev.clearkeep.rests.IRetrofit
 import vmodev.clearkeep.rests.RetrofitBuilder
+import vmodev.clearkeep.workermanager.UpdateDatabaseFromMatrixEvent
+import vmodev.clearkeep.workermanager.UpdateDatabaseFromMatrixEventWorker
+import vmodev.clearkeep.workermanager.interfaces.IUpdateDatabaseFromMatrixEvent
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -75,6 +80,10 @@ abstract class AppModule {
     abstract fun bindRoomMessageShareFileFragmentFactory(roomShareFileFragmentViewModelFactory: RoomShareFragmentFactory): IShareFileFragmentFactory;
 
 
+    @Binds
+    @Singleton
+    abstract fun bindUpdateDatabaseFromMatrixEvent(updateDatabaseFromMatrixEvent: UpdateDatabaseFromMatrixEvent) : IUpdateDatabaseFromMatrixEvent;
+
     @Module
     companion object {
         @Provides
@@ -87,10 +96,11 @@ abstract class AppModule {
                 }
 
                 override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
-                    return p0.room?.name == p1.room?.name && p0.room?.updatedDate == p1.room?.updatedDate && p0.room?.avatarUrl == p1.room?.avatarUrl
+                    return p0.room?.name == p1.room?.name && p0.room?.avatarUrl == p1.room?.avatarUrl
                             && p0.room?.notifyCount == p1.room?.notifyCount && p0.room?.type == p1.room?.type
                             && p0.room?.messageId == p1.room?.messageId && p0.room?.notificationState == p1.room?.notificationState
-                            && TextUtils.equals(p0.lastMessage?.id, p1.lastMessage?.id);
+                            && TextUtils.equals(p0.lastMessage?.id, p1.lastMessage?.id)
+                            && p0.lastMessage?.createdAt == p1.lastMessage?.createdAt;
                 }
             }, dataBindingComponent = dataBindingComponent)
 
@@ -106,14 +116,14 @@ abstract class AppModule {
                 }
 
                 override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
-                    return p0.room?.name == p1.room?.name && p0.room?.updatedDate == p1.room?.updatedDate && p0.room?.avatarUrl == p1.room?.avatarUrl
+                    return p0.room?.name == p1.room?.name && p0.room?.avatarUrl == p1.room?.avatarUrl
                             && p0.room?.notifyCount == p1.room?.notifyCount && p0.room?.type == p1.room?.type
                             && p0.room?.messageId == p1.room?.messageId && p0.room?.notificationState == p1.room?.notificationState
-                            && TextUtils.equals(p0.lastMessage?.id, p1.lastMessage?.id);
+                            && TextUtils.equals(p0.lastMessage?.id, p1.lastMessage?.id)
+                            && p0.lastMessage?.createdAt == p1.lastMessage?.createdAt;
                 }
             }, dataBindingComponent = dataBindingComponent)
         }
-
 
         @Provides
         @Singleton

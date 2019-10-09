@@ -101,8 +101,8 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
 
     override fun bindImage(imageView: ImageView, room: Room?, listener: RequestListener<Drawable?>?) {
         room?.let {
-            if (room.avatarUrl.isEmpty()) {
-                val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(room.id), if (room.name.isEmpty()) room.id else room.name, true);
+            if (room.avatarUrl.isNullOrEmpty()) {
+                val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(room.id), if (room.name.isNullOrEmpty()) room.id else room.name, true);
                 imageView.setImageBitmap(bitmap);
             } else {
                 Glide.with(imageView.context).load(room.avatarUrl).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).error(R.drawable.ic_launcher_app).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);

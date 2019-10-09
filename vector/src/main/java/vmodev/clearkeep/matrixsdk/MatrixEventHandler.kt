@@ -1,6 +1,8 @@
 package vmodev.clearkeep.matrixsdk
 
+import android.text.TextUtils
 import android.util.Log
+import im.vector.R
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
@@ -16,6 +18,13 @@ import vmodev.clearkeep.databases.AbstractRoomDao
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
 import vmodev.clearkeep.repositories.*
+import vmodev.clearkeep.ultis.matrixUrlToRealUrl
+import vmodev.clearkeep.ultis.toMessage
+import vmodev.clearkeep.ultis.toRoomCreate
+import vmodev.clearkeep.ultis.toRoomInvite
+import vmodev.clearkeep.viewmodelobjects.Message
+import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.workermanager.interfaces.IUpdateDatabaseFromMatrixEvent
 import javax.inject.Inject
 
 class MatrixEventHandler @Inject constructor(
@@ -26,10 +35,9 @@ class MatrixEventHandler @Inject constructor(
         , private val keyBackupRepository: KeyBackupRepository
         , private val roomUserJoinRepository: RoomUserJoinRepository
         , private val messageRepository: MessageRepository
-//        , private val roomUserJoinDao: AbstractRoomUserJoinDao
-//        , private val matrixService: MatrixService
         , private val roomDao: AbstractRoomDao
-        , private val appExecutors: AppExecutors)
+        , private val appExecutors: AppExecutors
+        , private val updateDatabaseFromMatrixEvent: IUpdateDatabaseFromMatrixEvent)
     : MXEventListener(), IMatrixEventHandler, KeysBackupStateManager.KeysBackupStateListener {
     private var mxSession: MXSession? = null;
     override fun onAccountDataUpdated() {
@@ -57,105 +65,97 @@ class MatrixEventHandler @Inject constructor(
     }
 
     override fun onLiveEvent(event: Event?, roomState: RoomState?) {
-
-        Log.d("EventType:", event?.type + "--" + event?.roomId);
-
-        when (event?.type) {
-            IMatrixEventHandler.M_ROOM_CREATE -> {
-                roomRepository.insertRoomToDB(event.roomId).subscribe {
-                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribeOn(Schedulers.io()).subscribe();
-                };
-            }
-            IMatrixEventHandler.M_ROOM_JOIN_RULES -> {
-                roomRepository.insertRoomToDB(event.roomId).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread()).subscribe {
-                            roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread()).subscribe()
+        Log.d("EventType", event?.type + "--" + event?.roomId);
+        event?.let { e ->
+            when (event.type) {
+                IMatrixEventHandler.M_ROOM_CREATE -> {
+                    roomState?.let { rs ->
+                        rs.toRoomCreate(mxSession)?.let {
+                            roomRepository.insertRoomInvite(it).subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread()).subscribe {
+                                        messageRepository.insertMessage(event.toMessage()).subscribeOn(Schedulers.io())
+                                                .subscribe {
+                                                    roomRepository.updateLastMessage(event.roomId, event.eventId).subscribeOn(Schedulers.io()).subscribe()
+                                                }
+                                        roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId)
+                                                .subscribeOn(Schedulers.io())
+                                                .observeOn(AndroidSchedulers.mainThread()).subscribe();
+                                    }
                         }
+                    }
+                }
+                IMatrixEventHandler.M_ROOM_JOIN_RULES -> {
+                    roomState?.let { rs ->
+                        rs.toRoomInvite(mxSession)?.let {
+                            roomRepository.insertRoomInvite(it).subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread()).subscribe {
+                                        messageRepository.insertMessage(event.toMessage()).subscribeOn(Schedulers.io())
+                                                .subscribe { roomRepository.updateLastMessage(event.roomId, event.eventId).subscribe() }
+                                        roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId)
+                                                .subscribeOn(Schedulers.io())
+                                                .observeOn(AndroidSchedulers.mainThread()).subscribe()
+                                    }
+                        }
+                    }
+                }
+                IMatrixEventHandler.M_ROOM_MEMBER -> {
+                    messageRepository.insertMessage(event.toMessage())
+                            .subscribeOn(Schedulers.io()).subscribe {
+                                roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe();
+                                val contentObject = event.contentJson.asJsonObject;
+                                if (contentObject.has("membership") && TextUtils.equals(contentObject.get("membership").asString, "invite")
+                                        && contentObject.has("is_direct") && contentObject.get("is_direct").asBoolean) {
+                                    roomState?.let {
+                                        val selfMember = it.getMember(mxSession!!.myUserId);
+                                        if (selfMember != null) {
+                                            roomRepository.updateRoomType(event.roomId, 1).subscribeOn(Schedulers.io()).subscribe();
+                                            roomRepository.updateRoomName(event.roomId, contentObject.get("displayname").asString).subscribeOn(Schedulers.io()).subscribe();
+                                            if (contentObject.has("avatar_url") && !contentObject.get("avatar_url").asString.isNullOrEmpty()){
+                                                contentObject.get("avatar_url").asString.matrixUrlToRealUrl(mxSession)?.let {
+                                                    roomRepository.updateRoomAvatar(event.roomId, it).subscribeOn(Schedulers.io()).subscribe();
+                                                }
+                                            }
+                                            else{
 
-            }
-            IMatrixEventHandler.M_ROOM_MEMBER -> {
-                roomRepository.updateRoomName(event.roomId).subscribeOn(Schedulers.io()).subscribe();
-            }
-            else -> {
-                event?.let {
-                    roomRepository.updateRoomName(event.roomId).subscribeOn(Schedulers.io()).subscribe();
+                                            }
+                                        } else {
+                                            val member = it.getMember(event.sender);
+                                            roomRepository.updateRoomType(event.roomId, 1 or 64).subscribeOn(Schedulers.io()).subscribe();
+                                            roomRepository.updateRoomName(event.roomId, String.format(application.resources.getString(R.string.room_displayname_invite_from), member.displayname))
+                                                    .subscribeOn(Schedulers.io()).subscribe();
+                                            member.avatarUrl.matrixUrlToRealUrl(mxSession)?.let {
+                                                roomRepository.updateRoomAvatar(event.roomId, it)
+                                                        .subscribeOn(Schedulers.io()).subscribe()
+                                            }
+                                        }
+                                    }
+                                }
+                            };
+                }
+                IMatrixEventHandler.M_ROOM_NAME -> {
+                    val name = event.contentJson.asJsonObject.get("name").asString;
+                    roomRepository.updateRoomName(event.roomId, name).subscribeOn(Schedulers.io()).subscribe();
+                }
+                IMatrixEventHandler.M_ROOM_POWER_LEVELS -> {
+
+                }
+                IMatrixEventHandler.M_ROOM_ENCRYPTION -> {
+
+                }
+                IMatrixEventHandler.M_ROOM_HISTORY_VISIBILITY -> {
+
+                }
+                IMatrixEventHandler.M_ROOM_GUEST_ACCESS -> {
+
+                }
+                else -> {
+                    messageRepository.insertMessage(event.toMessage())
+                            .subscribeOn(Schedulers.io()).subscribe {
+                                roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe();
+                            };
                 }
             }
         }
-
-//        if (event?.type?.compareTo("m.room.join_rules") == 0) {
-//            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe {
-//                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                    messageRepository.getLastMessageOfRoom(event.roomId).subscribe({
-//                        roomRepository.updateLastMessage(it.roomId, it.id);
-//                    }, {
-//                        Toast.makeText(application, "Can't get last message", Toast.LENGTH_SHORT).show();
-//                    });
-//                }, {
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//
-//                });
-//            };
-//        }
-//        if (event?.type?.compareTo("m.room.name") == 0) {
-//            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe {
-//                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                    messageRepository.getLastMessageOfRoom(event.roomId).subscribe({
-//                        roomRepository.updateLastMessage(it.roomId, it.id);
-//                    }, {
-//                        Toast.makeText(application, "Can't get last message", Toast.LENGTH_SHORT).show();
-//                    });
-//                }, {
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                });
-//            };
-//        }
-//        if (event?.type?.compareTo("m.room.member") == 0) {
-//            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe {
-//                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                    messageRepository.getLastMessageOfRoom(event.roomId).subscribe({
-//                        roomRepository.updateLastMessage(it.roomId, it.id);
-//                    }, {
-//                        Toast.makeText(application, "Can't get last message", Toast.LENGTH_SHORT).show();
-//                    });
-//                }, {
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                });
-//            };
-//        }
-//        if (event?.type?.compareTo("m.room.message") == 0) {
-//            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe {
-//                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                    messageRepository.getLastMessageOfRoom(event.roomId).subscribe({
-//                        roomRepository.updateLastMessage(it.roomId, it.id);
-//                    }, {
-//                        Toast.makeText(application, "Can't get last message", Toast.LENGTH_SHORT).show();
-//                    });
-//                }, {
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                });
-//            };
-//        }
-//        if (event?.type?.compareTo("m.room.encrypted") == 0) {
-//            roomRepository.updateOrCreateRoomFromRemoteRx(event.roomId).subscribe {
-//                userRepository.updateOrCreateNewUserFromRemoteRx(event.roomId).subscribe({
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                    messageRepository.getLastMessageOfRoom(event.roomId).subscribe({
-//                        roomRepository.updateLastMessage(it.roomId, it.id);
-//                    }, {
-//                        Toast.makeText(application, "Can't get last message", Toast.LENGTH_SHORT).show();
-//                    });
-//                }, {
-//                    roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId).subscribe();
-//                });
-//            };
-//        }
     }
 
     /**
