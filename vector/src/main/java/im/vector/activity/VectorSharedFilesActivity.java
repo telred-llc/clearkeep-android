@@ -46,6 +46,7 @@ public class VectorSharedFilesActivity extends VectorAppCompatActivity {
 
     private final String SHARED_FOLDER = "VectorShared";
 
+
     @Override
     public int getLayoutRes() {
         return R.layout.activity_empty;

@@ -7,11 +7,15 @@ import org.matrix.androidsdk.core.Log
 import org.matrix.androidsdk.data.RoomMediaMessage
 import java.io.File
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
+import im.vector.Matrix
 import im.vector.R
+import im.vector.activity.CommonActivityUtils
 import im.vector.activity.SplashActivity
+import im.vector.activity.VectorHomeActivity
 import im.vector.adapters.VectorRoomsSelectionAdapter
 import im.vector.databinding.ActivityShareFileBinding
 import org.matrix.androidsdk.MXSession
@@ -43,12 +47,14 @@ class ShareFileActivity : DataBindingDaggerActivity(), IActivity {
     private val SHARED_FOLDER = "VectorShared"
     private var session: MXSession? = null
 
-    private lateinit var binding : ActivityShareFileBinding;
+    private lateinit var binding: ActivityShareFileBinding;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_share_file, dataBinding.getDataBindingComponent());
-        setUpViewPage();
+//        setUpViewPage();
+        initUiAndData()
+        setEvent()
     }
 
     private fun setUpViewPage() {
@@ -72,59 +78,63 @@ class ShareFileActivity : DataBindingDaggerActivity(), IActivity {
 //        return R.layout.activity_share_file
 //    }
 
-//    override fun initUiAndData() {
-//        // retrieve the current intent
-//        val anIntent = intent
-//
-//        if (null != anIntent) {
-//            val action = anIntent.action
-//            val type = anIntent.type
-//
-//            Log.d(LOG_TAG, "onCreate : action $action type $type")
-//
-//            // send files from external application
-//            // check the params
-//            if ((Intent.ACTION_SEND == action || Intent.ACTION_SEND_MULTIPLE == action) && type != null) {
-//                var hasCredentials = false
-//                var isLaunched = false
-//
-//                try {
-//                     session = Matrix.getInstance(this)!!.defaultSession
-//
-//                    if (null != session) {
-//                        hasCredentials = true
-//                        isLaunched = session!!.dataHandler.store.isReady
-//                    }
-//                } catch (e: Exception) {
-//                    Log.e(LOG_TAG, "## onCreate() : failed " + e.message, e)
-//                }
-//
-//                // go to the home screen if the application is launched
-//                if (hasCredentials) {
-//                    launchActivity(anIntent, isLaunched)
-//                } else {
-//                    Log.d(LOG_TAG, "onCreate : go to login screen")
-//
-//                    // don't know what to do, go to the login screen
-//                    val loginIntent = Intent(this, LoginActivity::class.java)
-//                    startActivity(loginIntent)
-//                }
-//            } else {
-//                Log.d(LOG_TAG, "onCreate : unsupported action")
-//
-//                val homeIntent = Intent(this, VectorHomeActivity::class.java)
-//                homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-//                startActivity(homeIntent)
-//            }
-//        } else {
-//            Log.d(LOG_TAG, "onCreate : null intent")
-//
-//            val homeIntent = Intent(this, VectorHomeActivity::class.java)
-//            homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-//            startActivity(homeIntent)
-//        }
-//
-//    }
+    fun initUiAndData() {
+        // retrieve the current intent
+        val anIntent = intent
+
+        if (null != anIntent) {
+            val action = anIntent.action
+            val type = anIntent.type
+
+            Log.d(LOG_TAG, "onCreate : action $action type $type")
+
+            // send files from external application
+            // check the params
+            if ((Intent.ACTION_SEND == action || Intent.ACTION_SEND_MULTIPLE == action) && type != null) {
+                var hasCredentials = false
+                var isLaunched = false
+
+                try {
+                    session = Matrix.getInstance(this)!!.defaultSession
+
+                    if (null != session) {
+                        hasCredentials = true
+                        isLaunched = session!!.dataHandler.store.isReady
+                    }
+                } catch (e: Exception) {
+                    Log.e(LOG_TAG, "## onCreate() : failed " + e.message, e)
+                }
+
+                // go to the home screen if the application is launched
+                if (hasCredentials) {
+                    launchActivity(anIntent, isLaunched)
+                } else {
+                    Log.d(LOG_TAG, "onCreate : go to login screen")
+
+                    // don't know what to do, go to the login screen
+                    val loginIntent = Intent(this, LoginActivity::class.java)
+                    startActivity(loginIntent)
+                }
+            } else {
+                Log.d(LOG_TAG, "onCreate : unsupported action")
+
+                setUpViewPage()
+            }
+        } else {
+            Log.d(LOG_TAG, "onCreate : null intent")
+            setUpViewPage()
+        }
+
+    }
+
+    private fun setEvent() {
+        binding.imgCancel.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                onBackPressed()
+            }
+
+        })
+    }
 
     /**
      * Extract the medias list, copy them into a tmp directory and provide them to the home activity
@@ -132,42 +142,42 @@ class ShareFileActivity : DataBindingDaggerActivity(), IActivity {
      * @param intent        the intent
      * @param isAppLaunched true if the application is resumed
      */
-//    private fun launchActivity(intent: Intent, isAppLaunched: Boolean) {
-//        val sharedFolder = File(cacheDir, SHARED_FOLDER)
-//
-//        /**
-//         * Clear the existing folder to reduce storage memory usage
-//         */
-//        if (sharedFolder.exists()) {
-//            FileContentUtils.deleteDirectory(sharedFolder)
-//        }
-//
-//        sharedFolder.mkdir()
-//
-//        val cachedFiles = ArrayList(RoomMediaMessage.listRoomMediaMessages(intent))
-//
-//        if (null != cachedFiles) {
-//            for (sharedDataItem in cachedFiles) {
-//                sharedDataItem.saveMedia(this, sharedFolder)
-//            }
-//        }
-//
-//        Log.d(LOG_TAG, "onCreate : launch home activity with the files list " + cachedFiles.size + " files")
-//
-//        val activityIntent: Intent
-//
-//        if (isAppLaunched) {
-//            sendFilesTo()
-//        } else {
-//            activityIntent = Intent(this, SplashActivity::class.java)
-//            activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-//            startActivity(activityIntent)
-//        }
-//    }
-//
+    private fun launchActivity(intent: Intent, isAppLaunched: Boolean) {
+        val sharedFolder = File(cacheDir, SHARED_FOLDER)
+
+        /**
+         * Clear the existing folder to reduce storage memory usage
+         */
+        if (sharedFolder.exists()) {
+            FileContentUtils.deleteDirectory(sharedFolder)
+        }
+
+        sharedFolder.mkdir()
+
+        val cachedFiles = ArrayList(RoomMediaMessage.listRoomMediaMessages(intent))
+
+        if (null != cachedFiles) {
+            for (sharedDataItem in cachedFiles) {
+                sharedDataItem.saveMedia(this, sharedFolder)
+            }
+        }
+
+        Log.d(LOG_TAG, "onCreate : launch home activity with the files list " + cachedFiles.size + " files")
+
+        val activityIntent: Intent
+
+        if (isAppLaunched) {
+            setUpViewPage()
+        } else {
+            activityIntent = Intent(this, SplashActivity::class.java)
+            activityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(activityIntent)
+        }
+    }
+
 //
 //    private fun sendFilesTo() {
-//        if (null == session || !session!!.isAlive ||this.isFinishing) {
+//        if (null == session || !session!!.isAlive || this.isFinishing) {
 //            return
 //        }
 //
@@ -202,10 +212,16 @@ class ShareFileActivity : DataBindingDaggerActivity(), IActivity {
 //        })
 //        val adapter = VectorRoomsSelectionAdapter(this, R.layout.adapter_item_vector_recent_room, session)
 //        adapter.addAll(mergedSummaries)
-//        Toast.makeText(this,adapter.count.toString(),Toast.LENGTH_LONG).show()
+//        Toast.makeText(this, adapter.count.toString(), Toast.LENGTH_LONG).show()
 //    }
+
 
     override fun getActivity(): FragmentActivity {
         return this;
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
     }
 }

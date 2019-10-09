@@ -9,8 +9,8 @@
         android:orientation="vertical">
 
         <RelativeLayout
+
             android:id="@+id/rlHeader"
-            android:padding="@dimen/padding_normal"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -21,20 +21,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Send to"
+                android:text="@string/send_files_in"
                 android:textSize="@dimen/text_20_sp"
 
                 />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgCancel"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:text="Cancel"
-                android:textSize="@dimen/text_20_sp" />
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                app:srcCompat="@drawable/vector_cancel_upload_download"
+                android:layout_marginStart="@dimen/margin_normal"
+            
+                />
 
-
-
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_line_grey"
+                android:layout_alignParentBottom="true"
+                android:background="@color/lb_grey"
+                />
 
         </RelativeLayout>
 

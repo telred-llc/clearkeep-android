@@ -15,7 +15,7 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.Room" />
 
-        <import type="vmodev.clearkeep.viewmodelobjects.RoomListUser"/>
+        <import type="vmodev.clearkeep.viewmodelobjects.RoomListUser" />
 
         <variable
             name="rooms"
@@ -30,15 +30,30 @@
             type="LiveData&lt;Resource&lt;Room>>" />
     </data>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-<!--        <ProgressBar-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="center"-->
-<!--            app:visibleGone="@{rooms.status == Status.LOADING || room.status == Status.LOADING || roomObject.status == Status.LOADING}" />-->
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchDirect"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:background="@drawable/search_view_background"
+                android:layout_margin="@dimen/margin_normal"/>
+
+        </LinearLayout>
+<!--        <androidx.appcompat.widget.SearchView-->
+<!--            android:id="@+id/searchDirect"-->
+<!--            android:background="@drawable/bg_search_color_grey"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_margin="@dimen/margin_normal"-->
+<!--            android:layout_height="wrap_content"/>-->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_list_direct_message"
@@ -46,5 +61,5 @@
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/room_item" />
-    </FrameLayout>
+    </LinearLayout>
 </layout>

@@ -13,12 +13,14 @@ import im.vector.R
 import im.vector.databinding.ItemRoomDirectShareFileBinding
 import im.vector.databinding.RoomInviteItemBinding
 import im.vector.databinding.RoomItemBinding
+import org.matrix.androidsdk.core.Log
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.bindingadapters.interfaces.IDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.ultis.OnSingleClickListener
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
 
-class ShareFileRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<RoomListUser>, private val dataBindingComponent : IDataBindingComponent)
+class ShareFileRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<RoomListUser>, private val dataBindingComponent: IDataBindingComponent)
 
     : ListAdapter<RoomListUser, DataBoundViewHolder<ViewDataBinding>>(AsyncDifferConfig.Builder(diffCallback)
         .setBackgroundThreadExecutor(appExecutors.diskIO())
@@ -36,16 +38,20 @@ class ShareFileRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffC
         val binding: ViewDataBinding;
         if (p1 == 0) {
             binding = DataBindingUtil.inflate<ItemRoomDirectShareFileBinding>(LayoutInflater.from(p0.context), R.layout.item_room_direct_share_file, p0, false, dataBindingComponent.getDataBindingComponent());
-            binding.root.setOnClickListener { binding.roomListUser?.let { itemClick?.invoke(it, 0) } }
+            binding.root.setOnClickListener(object :OnSingleClickListener(){
+                override fun onSingleClick(v: View) {
+                    binding.roomListUser?.let { itemClick?.invoke(it, 0) }
+                }
+            })
 //            binding.buttonJoin.setOnClickListener { binding.roomListUser?.let { itemClick?.invoke(it, 1) } }
 //            binding.buttonDecline.setOnClickListener { binding.roomListUser?.let { itemClick?.invoke(it, 2) } }
         } else {
             binding = DataBindingUtil.inflate<ItemRoomDirectShareFileBinding>(LayoutInflater.from(p0.context), R.layout.item_room_direct_share_file, p0, false, dataBindingComponent.getDataBindingComponent());
-            binding.root.setOnClickListener { binding.roomListUser?.let { itemClick?.invoke(it, 3) } }
-            binding.root.setOnLongClickListener { v: View? ->
-                binding.roomListUser?.let { itemLongClick?.invoke(it) }
-                return@setOnLongClickListener true
-            }
+            binding.root.setOnClickListener(object :OnSingleClickListener(){
+                override fun onSingleClick(v: View) {
+                    binding.roomListUser?.let { itemClick?.invoke(it, 3) }
+                }
+            })
         }
         lifecycleOwner?.let { binding.lifecycleOwner = lifecycleOwner }
         return DataBoundViewHolder(binding);
@@ -58,25 +64,28 @@ class ShareFileRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffC
         } else {
             (p0.binding as ItemRoomDirectShareFileBinding).roomListUser = getItem(p1);
             p0.binding.executePendingBindings();
-            //p0.binding.currentUserId = currentUserId;
+//            p0.binding.currentUserId = currentUserId;
             callbackToGetUsers?.let { callback ->
                 getItem(p1).roomUserJoin?.let {
                     val userIds = Array(it.size) { i -> it[i].userId };
+//                  p0.binding.roomListUser =  callback.getUsers(userIds)
                     //p0.binding. = callback.getUsers(userIds);
                 }
             }
         }
     }
+
     override fun getItemViewType(position: Int): Int {
         return if (getItem(position).room?.type != 65 && getItem(position).room?.type != 66) 1 else 0;
 
     }
+
     override fun setOnItemClick(itemClick: (RoomListUser, Int) -> Unit?) {
         this.itemClick = itemClick;
     }
 
     override fun setOnItemLongClick(itemLongClick: (RoomListUser) -> Unit?) {
-        this.itemLongClick = itemLongClick;
+//        this.itemLongClick = itemLongClick;
     }
 
     override fun getAdapter(): ListAdapter<RoomListUser, *> {
@@ -88,6 +97,5 @@ class ShareFileRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffC
         this.lifecycleOwner = lifecycleOwner;
         this.currentUserId = currentUserId;
     }
-
 
 }

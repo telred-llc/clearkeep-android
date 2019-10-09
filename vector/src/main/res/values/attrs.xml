@@ -91,5 +91,29 @@
         <!-- Widget banner background -->
         <attr name="vctr_widget_banner_background" format="color" />
 
+        <declare-styleable name="CustomEdittext">
+
+            <attr name="inputStyle" format="enum">
+                <enum name="text" value="0"/>
+                <enum name="password" value="1"/>
+                <enum name="number" value="2"/>
+                <enum name="email" value="3"/>
+                <enum name="text_multiline" value="4"/>
+            </attr>
+            <attr name="background_input" format="reference"/>
+            <attr name="icon_input" format="reference" />
+            <attr name="text_hint" format="string"/>
+            <attr name="text_hint_color" format="color"/>
+            <attr name="text_color" format="color"/>
+            <attr name="text_color_error" format="color" />
+            <attr name="icon_clear" format="reference"/>
+            <attr name="icon_edit" format="reference"/>
+            <attr name="text_enable" format="boolean"/>
+            <attr name="text_error_enable" format="boolean"/>
+            <attr name="number_lines" format="integer"/>
+
+        </declare-styleable>
+
+
     </declare-styleable>
 </resources>
