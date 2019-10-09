@@ -6,10 +6,9 @@ import vmodev.clearkeep.viewmodelobjects.Room
 
 fun RoomState.toRoomInvite(session: MXSession?): Room? {
     if (session != null){
-        val mxRoom = session.dataHandler.getRoom(this.roomId);
         return Room(id = this.roomId, userCreated = null, avatarUrl = if (this.avatarUrl.isNullOrEmpty()) null else this.avatarUrl.matrixUrlToRealUrl(session)
                 , encrypted = if (this.isEncrypted()) 0x01 else 0x00, highlightCount = this.highlightCount, name = this.name, notifyCount = this.notificationCount
-                , messageId = null, notificationState = 0x0, topic = this.topic, type = if (mxRoom.isDirectChatInvitation) 1 or 64 else 2 or 64
+                , messageId = null, notificationState = 0x0, topic = this.topic, type = 2 or 64
                 , version = 0)
     }
     return null
@@ -17,10 +16,9 @@ fun RoomState.toRoomInvite(session: MXSession?): Room? {
 
 fun RoomState.toRoomCreate(session: MXSession?): Room? {
     if (session != null){
-        val mxRoom = session.dataHandler.getRoom(this.roomId);
         return Room(id = this.roomId, userCreated = null, avatarUrl = if (this.avatarUrl.isNullOrEmpty()) null else this.avatarUrl.matrixUrlToRealUrl(session)
                 , encrypted = if (this.isEncrypted()) 0x01 else 0x00, highlightCount = this.highlightCount, name = this.name, notifyCount = this.notificationCount
-                , messageId = null, notificationState = 0x0, topic = this.topic, type = if (mxRoom.isDirectChatInvitation) 1 else 2
+                , messageId = null, notificationState = 0x0, topic = this.topic, type = 2
                 , version = 0)
     }
     return null

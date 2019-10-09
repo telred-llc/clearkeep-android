@@ -7,10 +7,10 @@ import vmodev.clearkeep.viewmodelobjects.Room
 
 @Dao
 abstract class AbstractRoomDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insert(room: Room);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insertRooms(rooms: List<Room>): List<Long>;
 
     @Query("SELECT * FROM room WHERE id =:id")
@@ -64,13 +64,13 @@ abstract class AbstractRoomDao {
     @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour OR type =:filterFive OR type =:filterSix ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int, filterFive: Int, filterSix: Int): Single<List<Room>>;
 
-    @Query("DELETE FROM room WHERE id =:id")
+    @Query("DELETE FROM Room WHERE id =:id")
     abstract fun deleteRoom(id: String);
 
-    @Query("UPDATE room SET type =:type WHERE id =:id")
+    @Query("UPDATE Room SET type =:type WHERE id =:id")
     abstract fun updateType(id: String, type: Int)
 
-    @Query("SELECT * FROM room WHERE id IN (:ids)")
+    @Query("SELECT Room.* FROM Room WHERE id IN (:ids)")
     abstract fun getListRoomWithListId(ids: List<String>): LiveData<List<Room>>;
 
     @Update
@@ -114,6 +114,12 @@ abstract class AbstractRoomDao {
 
     @Query("UPDATE Room SET last_message_id=:lastMessage WHERE id=:roomId")
     abstract fun updateLastMessage(roomId: String, lastMessage : String);
+
+    @Query("UPDATE Room SET type =:type WHERE id =:roomId")
+    abstract fun updateRoomType(roomId: String, type: Int) : Int
+
+    @Query("UPDATE Room SET avatarUrl =:url WHERE id=:roomId")
+    abstract fun updateRoomAvatar(roomId: String, url : String);
 
     fun loadWithType(filters: Array<Int>): LiveData<List<Room>> {
         when (filters.size) {

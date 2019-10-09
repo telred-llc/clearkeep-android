@@ -8,10 +8,8 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractRoomDao
-import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.wayloads.*
 import vmodev.clearkeep.viewmodelobjects.Resource
@@ -416,6 +414,14 @@ class RoomRepository @Inject constructor(
 
     fun updateRoomName(roomId: String, roomName : String) : Completable {
         return Completable.fromAction { abstractRoomDao.updateRoomName(roomId, roomName) }
+    }
+
+    fun updateRoomType(roomId: String, type : Int) : Completable{
+        return Completable.fromAction { abstractRoomDao.updateRoomType(roomId, type) }
+    }
+
+    fun updateRoomAvatar(roomId: String, url : String) : Completable{
+        return Completable.fromAction { abstractRoomDao.updateRoomAvatar(roomId, url) }
     }
 
     class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);

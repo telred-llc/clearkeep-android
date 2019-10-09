@@ -77,14 +77,14 @@ abstract class AppModule {
         fun provideListRoomDirectMessageAdapter(appExecutors: AppExecutors, dataBindingComponent : IDataBindingComponent): IListRoomRecyclerViewAdapter {
             return ListRoomRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<vmodev.clearkeep.viewmodelobjects.RoomListUser>() {
                 override fun areItemsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
-                    return TextUtils.equals(p0.room?.id, p1.room?.id);
+                    return p0.room?.id == p1.room?.id;
                 }
 
                 override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
                     return p0.room?.name == p1.room?.name && p0.room?.avatarUrl == p1.room?.avatarUrl
                             && p0.room?.notifyCount == p1.room?.notifyCount && p0.room?.type == p1.room?.type
-                            && p0.room?.messageId == p1.room?.messageId && p0.room?.notificationState == p1.room?.notificationState
-                            && TextUtils.equals(p0.lastMessage?.id, p1.lastMessage?.id);
+                            && p0.room?.notificationState == p1.room?.notificationState
+                            && p0.lastMessage?.createdAt == p1.lastMessage?.createdAt && p0.lastMessage?.encryptedContent == p1.lastMessage?.encryptedContent;
                 }
             }, dataBindingComponent = dataBindingComponent)
         }
