@@ -205,6 +205,7 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
         }.getObject();
     }
 
+
     fun editMessageRx(event : Event) : Observable<EditMessageResponse>{
         return object : AbstractLoadFromNetworkReturnRx<EditMessageResponse>(){
             override fun createCall(): Observable<EditMessageResponse> {

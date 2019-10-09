@@ -49,6 +49,7 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
                         binding.cardViewCreate.isClickable = true;
                         it.data?.let {
                             findNavController().navigate(CreateNewRoomFragmentDirections.inviteUsersToRoom().setRoomId(it.id));
+
                         }
                     }
                     Status.ERROR -> {
