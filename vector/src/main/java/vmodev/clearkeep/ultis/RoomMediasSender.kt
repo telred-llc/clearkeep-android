@@ -226,7 +226,7 @@ class RoomMediasSender constructor(val roomActivity: RoomActivity, val vectorMes
         // content only text -> insert it in the room editor
         // to let the user decides to send the message
         if (!TextUtils.isEmpty(sequence) && null == htmlText) {
-            Handler(Looper.getMainLooper()).post { mVectorRoomActivity!!.insertTextInTextEditor(sequence!!.toString()) }
+            Handler(Looper.getMainLooper()).post { mVectorRoomActivity!!.sendTextMessage(sequence!!.toString()) }
         } else {
 
             var text: String? = null

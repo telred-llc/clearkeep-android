@@ -630,13 +630,13 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             val imeActionId = actionId and EditorInfo.IME_MASK_ACTION
 
             if (EditorInfo.IME_ACTION_DONE == imeActionId || EditorInfo.IME_ACTION_SEND == imeActionId) {
-                sendTextMessage()
+                sendTextMessage(mEditText.text.toString())
                 return@OnEditorActionListener true
             }
 
             if (((null != keyEvent) && !keyEvent!!.isShiftPressed && keyEvent!!.keyCode == KeyEvent.KEYCODE_ENTER
                             && resources.configuration.keyboard != Configuration.KEYBOARD_NOKEYS)) {
-                sendTextMessage()
+                sendTextMessage(mEditText.text.toString())
                 return@OnEditorActionListener true
             }
             false
@@ -1816,7 +1816,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     /**
      * Send the editText text.
      */
-    private fun sendTextMessage() {
+     fun sendTextMessage(textMsg: String?) {
         if (mIsMarkDowning) {
             return
         }
@@ -1826,10 +1826,10 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //        mSendImageView!!.isEnabled = false
         mIsMarkDowning = true
 
-        var textToSend = mEditText!!.text.toString().trim { it <= ' ' }
+        var textToSend =textMsg?.trim { it <= ' ' }
 
         val handleSlashCommand: Boolean
-        if (textToSend.startsWith("\\/")) {
+        if (textToSend!!.startsWith("\\/")) {
             handleSlashCommand = false
             textToSend = textToSend.substring(1)
         } else {
@@ -2452,12 +2452,13 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      * @param text the text
      */
     fun insertTextInTextEditor(text: String) {
-        // another user
-        if (TextUtils.isEmpty(mEditText!!.text)) {
-            mEditText!!.append(text)
-        } else {
-            mEditText!!.text.insert(mEditText!!.selectionStart, "$text ")
-        }
+//        // another user
+//        if (TextUtils.isEmpty(mEditText!!.text)) {
+//            mEditText!!.append(text)
+//        } else {
+//            mEditText!!.text.insert(mEditText!!.selectionStart, "$text ")
+//        }
+        sendTextMessage(text)
     }
 
     /**
@@ -3823,7 +3824,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     //    @OnClick(R.id.room_send_image_view)
     internal fun onSendClick() {
         if (!TextUtils.isEmpty(mEditText!!.text) && !PreferencesManager.sendMessageWithEnter(this)) {
-            sendTextMessage()
+            sendTextMessage(mEditText.text.toString())
         } else {
             val useNativeCamera = PreferencesManager.useNativeCamera(this)
             val isVoiceFeatureEnabled = PreferencesManager.isSendVoiceFeatureEnabled(this)
@@ -3872,7 +3873,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     internal fun onClickSend() {
         imageViewCancelEdit.visibility = View.GONE;
         if (!isEditedMode)
-            sendTextMessage();
+            sendTextMessage(mEditText.text.toString());
         else
             editTextMessage();
     }

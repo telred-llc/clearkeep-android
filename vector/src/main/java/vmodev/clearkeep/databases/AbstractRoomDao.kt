@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.reactivex.Single
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.RoomListUser
 
 @Dao
 abstract class AbstractRoomDao {
@@ -87,6 +88,9 @@ abstract class AbstractRoomDao {
 
     @Query("SELECT * FROM room WHERE (type =:filterOne OR type =:filterTwo) AND name LIKE :query")
     abstract fun searchWithDisplayName(filterOne: Int, filterTwo: Int, query: String): LiveData<List<Room>>
+
+    @Query("SELECT RoomUserJoin.room_id, Room.*, Message.*, User.id FROM room LEFT JOIN RoomUserJoin ON RoomUserJoin.room_id = Room.id LEFT JOIN User ON User.id = RoomUserJoin.user_id LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE  (Room.type =:filterOne OR Room.type =:filterTwo) AND Room.name LIKE :query")
+    abstract fun searchWithDisplayNameReturnRoomListUser(filterOne: Int, filterTwo: Int, query: String): LiveData<List<RoomListUser>>
 
     @Query("UPDATE room SET notificationState =:state WHERE room.id =:id")
     abstract fun updateNotificationState(id: String, state: Byte): Int;

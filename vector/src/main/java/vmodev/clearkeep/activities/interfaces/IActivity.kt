@@ -34,5 +34,6 @@ interface IActivity {
         const val INVITE_USERS_TO_ROOM_ACTIVITY = "INVITE_USERS_TO_ROOM_ACTIVITY";
         const val NEW_ROOM_ACTIVITY = "NEW_ROOM_ACTIVITY";
         const val SETTINGS_ACTIVITY = "SETTINGS_ACTIVITY";
+        const val SHARE_FILE_ACTIVITY = "SHARE_FILE_ACTIVITY";
     }
 }

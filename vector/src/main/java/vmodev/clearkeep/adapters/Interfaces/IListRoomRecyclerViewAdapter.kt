@@ -16,6 +16,7 @@ interface IListRoomRecyclerViewAdapter {
     companion object {
         const val ROOM = "ROOM";
         const val ROOM_CONTACT = "ROOM_CONTACT";
+        const val SHARE_FILE ="SHARE_FILE"
     }
 
     interface ICallbackToGetUsers {

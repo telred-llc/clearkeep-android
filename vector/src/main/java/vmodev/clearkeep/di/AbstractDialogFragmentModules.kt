@@ -17,25 +17,31 @@ import javax.inject.Named
 @Module
 @Suppress("unused")
 abstract class AbstractDialogFragmentModules {
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [FragmentRoomBindModule::class])
     abstract fun contributeRoomFragment(): RoomFragment;
 
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [FragmentDirectBindModule::class])
     abstract fun contributeDirectMessageFragment(): DirectMessageFragment;
 
-    @ContributesAndroidInjector
-    abstract fun contributeReceivedShareFileDialogFragment(): ReceivedShareFileDialogFragment;
+//    @ContributesAndroidInjector
+//    abstract fun contributeReceivedShareFileDialogFragment(): ReceivedShareFileDialogFragment;
 
-    @Binds
-    @Named(ISearchRoomFragment.SEARCH_ROOM_FRAGMENT)
-    abstract fun bindRoomFragment(fragment: RoomFragment): ISearchRoomFragment;
+    @Module
+    abstract class FragmentRoomBindModule {
+        @Binds
+        @Named(ISearchRoomFragment.SEARCH_ROOM_FRAGMENT)
+        abstract fun bindRoomFragment(fragment: RoomFragment): ISearchRoomFragment;
 
-    @Binds
-    abstract fun bindDirectMessageFragment(fragment: DirectMessageFragment): IDirectMessageFragment;
+        @Binds
+        abstract fun bindRoomFragmentViewModelFactory(factory: RoomFragmentViewModelFactory): IRoomFragmentViewModelFactory;
+    }
 
-    @Binds
-    abstract fun bindDirectMessageFragmentViewModelFactory(factory: DirectMessageFragmentViewModelFactory): IDirectMessageFragmentViewModelFactory;
+    @Module
+    abstract class FragmentDirectBindModule {
+        @Binds
+        abstract fun bindDirectMessageFragment(fragment: DirectMessageFragment): IDirectMessageFragment;
 
-    @Binds
-    abstract fun bindRoomFragmentViewModelFactory(factory: RoomFragmentViewModelFactory): IRoomFragmentViewModelFactory;
+        @Binds
+        abstract fun bindDirectMessageFragmentViewModelFactory(factory: DirectMessageFragmentViewModelFactory): IDirectMessageFragmentViewModelFactory;
+    }
 }

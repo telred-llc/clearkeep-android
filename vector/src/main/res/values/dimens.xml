@@ -34,6 +34,7 @@
     <dimen name="radius_border_online_status">7dp</dimen>
     <dimen name="radius_online_status">6dp</dimen>
     <dimen name="padding_status_online">1dp</dimen>
+    <dimen name="height_line_grey">0.5dp</dimen>
 
     <!-- Margin -->
     <dimen name="margin_xl">25dp</dimen>

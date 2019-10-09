@@ -29,47 +29,37 @@
             type="LiveData&lt;Resource&lt;Room>>" />
     </data>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:visibleGone="@{rooms.status == Status.LOADING || room.status == Status.LOADING || roomObject.status == Status.LOADING}" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:visibleGone="@{rooms.data.size == 0}">
+            android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="match_parent"
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_room"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="@string/you_have_no_chat_room"
-                android:textAlignment="center"
-                android:textColor="@color/lb_grey" />
+                android:background="@drawable/search_view_background"
+                android:layout_margin="@dimen/margin_normal"/>
 
-            <Button
-                android:id="@+id/button_start_direct_chat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginEnd="30dp"
-                android:background="@drawable/button_border_background_grey_color"
-                android:text="@string/start_room_chat"
-                android:textColor="@color/app_green" />
         </LinearLayout>
 
+
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_list_conversation"
+            android:id="@+id/rv_list_room"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/room_item"
-            app:visibleGone="@{rooms.data.size > 0}"/>
-    </FrameLayout>
+            />
+
+    </LinearLayout>
+
+
+
 </layout>

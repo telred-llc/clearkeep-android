@@ -2706,7 +2706,7 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
                 }
             }
         }
-
+        menu.findItem(R.id.ic_action_vector_share).setVisible(true);
         // e2e
         menu.findItem(R.id.ic_action_device_verification).setVisible(mE2eIconByEventId.containsKey(event.eventId));
 

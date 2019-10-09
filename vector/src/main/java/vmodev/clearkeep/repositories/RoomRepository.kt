@@ -14,6 +14,7 @@ import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.wayloads.*
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.RoomListUser
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -346,10 +347,10 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
-    fun searchRoomByDisplayName(filters: Array<Int>, query: String): LiveData<Resource<List<Room>>> {
-        return object : AbstractLocalLoadSouce<List<Room>>() {
-            override fun loadFromDB(): LiveData<List<Room>> {
-                return abstractRoomDao.searchWithDisplayName(filters[0], filters[1], query);
+    fun searchRoomByDisplayName(filters: Array<Int>, query: String): LiveData<Resource<List<RoomListUser>>> {
+        return object : AbstractLocalLoadSouce<List<RoomListUser>>() {
+            override fun loadFromDB(): LiveData<List<RoomListUser>> {
+                return abstractRoomDao.searchWithDisplayNameReturnRoomListUser(filters[0], filters[1], query);
             }
         }.asLiveData();
     }

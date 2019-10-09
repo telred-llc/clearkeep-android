@@ -72,7 +72,7 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDirectMessageFragmen
         }
         listRoomAdapter.setOnItemLongClick { room ->
         }
-        binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
+//        binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
         binding.buttonStartDirectChat.setOnClickListener {
             val intentNewChat = Intent(context, FindAndCreateNewConversationFragment::class.java);
             startActivity(intentNewChat);
@@ -127,7 +127,7 @@ class DirectMessageFragment : DataBindingDaggerFragment(), IDirectMessageFragmen
         if (!::binding.isInitialized || !::viewModelFactory.isInitialized)
             return;
         if (query.isEmpty()) {
-            binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
+//            binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
             viewModelFactory.getViewModel().setListType(arrayOf(1, 129))
         } else {
             binding.rooms = viewModelFactory.getViewModel().getSearchResult();

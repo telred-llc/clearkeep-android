@@ -1,0 +1,65 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="vmodev.clearkeep.fragments.DirectMessageFragment">
+
+    <data>
+
+        <import type="java.util.List" />
+
+        <import type="androidx.lifecycle.LiveData" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Status" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Room" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.RoomListUser" />
+
+        <variable
+            name="rooms"
+            type="LiveData&lt;Resource&lt;List&lt;RoomListUser>>>" />
+
+        <variable
+            name="room"
+            type="LiveData&lt;Resource&lt;String>>" />
+
+        <variable
+            name="roomObject"
+            type="LiveData&lt;Resource&lt;Room>>" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchDirect"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:background="@drawable/search_view_background"
+                android:layout_margin="@dimen/margin_normal"/>
+
+        </LinearLayout>
+<!--        <androidx.appcompat.widget.SearchView-->
+<!--            android:id="@+id/searchDirect"-->
+<!--            android:background="@drawable/bg_search_color_grey"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_margin="@dimen/margin_normal"-->
+<!--            android:layout_height="wrap_content"/>-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_list_direct_message"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/room_item" />
+    </LinearLayout>
+</layout>
