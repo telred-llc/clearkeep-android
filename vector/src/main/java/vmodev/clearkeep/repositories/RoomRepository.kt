@@ -8,10 +8,8 @@ import io.reactivex.BackpressureStrategy
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractRoomDao
-import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.wayloads.*
 import vmodev.clearkeep.viewmodelobjects.Resource
@@ -402,49 +400,28 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
-    fun updateLastMessage(roomId: String, messageId: String) {
-        Completable.fromAction { abstractRoomDao.updateRoomLastMessage(roomId, messageId) }.subscribeOn(Schedulers.io()).subscribe();
+    fun updateLastMessage(roomId: String, messageId: String) : Completable {
+        return Completable.fromAction { abstractRoomDao.updateRoomLastMessage(roomId, messageId) };
     }
 
     fun updateUserCreated(roomId: String, userId: String) {
         Completable.fromAction { abstractRoomDao.updateRoomCreatedUser(roomId, userId) }.subscribeOn(Schedulers.io()).subscribe();
     }
 
-    fun insertRoomToDB(roomId: String): Observable<Room> {
-        return object : AbstractNetworkBoundSourceReturnRx<Room, Room>(){
-            override fun shouldFetch(data: Room?): Boolean {
-                return data == null;
-            }
-
-            override fun saveCallResult(item: Room) {
-                abstractRoomDao.insert(item);
-            }
-
-            override fun loadFromDb(): Single<Room> {
-                return abstractRoomDao.findByIdRx(roomId);
-            }
-
-            override fun createCall(): Observable<Room> {
-                return matrixService.getRoomWithIdForCreate(roomId);
-            }
-        }.getObject();
+    fun insertRoomInvite(room : Room): Completable {
+        return Completable.fromAction { abstractRoomDao.insert(room) }
     }
 
-    fun updateRoomName(roomId: String): Observable<Room> {
-        return object : AbstractNetworkCallAndSaveToDBReturnRx<Room, Room>() {
-            override fun saveCallResult(item: Room) {
-                Log.d("UpdateRoom", item.type.toString())
-                abstractRoomDao.updateRoom(item);
-            }
+    fun updateRoomName(roomId: String, roomName : String) : Completable {
+        return Completable.fromAction { abstractRoomDao.updateRoomName(roomId, roomName) }
+    }
 
-            override fun loadFromDb(item: Room): Single<Room> {
-                return abstractRoomDao.findByIdRx(item.id);
-            }
+    fun updateRoomType(roomId: String, type : Int) : Completable{
+        return Completable.fromAction { abstractRoomDao.updateRoomType(roomId, type) }
+    }
 
-            override fun createCall(): Observable<Room> {
-                return matrixService.getRoomWithIdForCreate(roomId);
-            }
-        }.getObject();
+    fun updateRoomAvatar(roomId: String, url : String) : Completable{
+        return Completable.fromAction { abstractRoomDao.updateRoomAvatar(roomId, url) }
     }
 
     class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);

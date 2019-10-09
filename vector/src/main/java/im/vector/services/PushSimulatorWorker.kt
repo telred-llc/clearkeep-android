@@ -19,18 +19,24 @@ package im.vector.services
 import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
+import vmodev.clearkeep.workermanager.interfaces.IWorkerFactory
 
 /**
  * This class simulate push event when FCM is not working/disabled
  */
-class PushSimulatorWorker(val context: Context,
-                          workerParams: WorkerParameters) : Worker(context, workerParams) {
+class PushSimulatorWorker @AssistedInject constructor (@Assisted val appContext: Context,
+                                                       @Assisted params: WorkerParameters) : Worker(appContext, params) {
 
     override fun doWork(): Result {
         // Simulate a Push
-        EventStreamServiceX.onSimulatedPushReceived(context)
+        EventStreamServiceX.onSimulatedPushReceived(appContext)
 
         // Indicate whether the task finished successfully with the Result
         return Result.success()
     }
+
+    @AssistedInject.Factory
+    interface Factory : IWorkerFactory
 }

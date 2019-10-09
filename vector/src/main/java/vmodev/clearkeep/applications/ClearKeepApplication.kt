@@ -3,6 +3,8 @@ package vmodev.clearkeep.applications
 import android.app.Application
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.work.Configuration
+import androidx.work.WorkManager
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 import im.vector.Matrix
@@ -22,6 +24,7 @@ import vmodev.clearkeep.autokeybackups.interfaces.IAutoKeyBackup
 import vmodev.clearkeep.databases.AbstractRoomDao
 import vmodev.clearkeep.databases.AbstractUserDao
 import vmodev.clearkeep.databases.ClearKeepDatabase
+import vmodev.clearkeep.di.AppComponent
 import vmodev.clearkeep.di.DaggerAppComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.MatrixEventHandler
@@ -30,6 +33,7 @@ import vmodev.clearkeep.repositories.KeyBackupRepository
 import vmodev.clearkeep.repositories.SignatureRepository
 import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.workermanager.ClearKeepWorkerFactory
 import java.lang.Exception
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -55,13 +59,19 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
     @Inject
     lateinit var appExecutors: AppExecutors
     @Inject
-    lateinit var userDao : AbstractUserDao;
+    lateinit var userDao: AbstractUserDao;
 
     private var session: MXSession? = null;
 
     private var currentTheme: Int = R.style.LightTheme;
 
+    private lateinit var appComponent: AppComponent;
+
     override fun onCreate() {
+        appComponent = DaggerAppComponent.builder().application(this).build();
+        appComponent.inject(this);
+        val factory = appComponent.workerFactory();
+        WorkManager.initialize(this, Configuration.Builder().setWorkerFactory(factory).build());
         super.onCreate()
         RxJavaPlugins.setErrorHandler { throwable -> Log.d("RX Throw: ", throwable.message) }
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
@@ -69,8 +79,7 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        val appComponent = DaggerAppComponent.builder().application(this).build();
-        appComponent.inject(this);
+
         return appComponent as AndroidInjector<out DaggerApplication>;
     }
 
@@ -105,14 +114,12 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
     override fun startAutoKeyBackup(password: String?) {
         session?.let { autoKeyBackup.startAutoKeyBackup(it.myUserId, password) }
         session?.let { s ->
-            s.crypto?.let {crypto ->
-                userDao.findAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<List<User>>{
+            s.crypto?.let { crypto ->
+                userDao.findAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<List<User>> {
                     override fun onSuccess(t: List<User>) {
                         t.forEach { u ->
-//                            Log.d("User", u.id)
                             crypto.getUserDevices(u.id).forEach {
-//                                Log.d("DeviceId", it.userId + "----" + it.mVerified + "----" + it.displayName() + "---" + it.deviceId);
-                                crypto.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, it.deviceId, u.id, object : ApiCallback<Void>{
+                                crypto.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, it.deviceId, u.id, object : ApiCallback<Void> {
                                     override fun onSuccess(info: Void?) {
 
                                     }

@@ -2,6 +2,7 @@ package vmodev.clearkeep.viewmodels
 
 import androidx.lifecycle.LiveData
 import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.repositories.MessageRepository
 import vmodev.clearkeep.repositories.RoomRepository
 import vmodev.clearkeep.repositories.RoomUserJoinRepository
@@ -34,7 +35,7 @@ class SplashActivityViewModel @Inject constructor(private val roomRepository: Ro
     }
 
     override fun updateRoomLastMessage(roomId: String, messageId: String) {
-        roomRepository.updateLastMessage(roomId, messageId);
+        roomRepository.updateLastMessage(roomId, messageId).subscribeOn(Schedulers.io()).subscribe();
     }
 
     override fun updateUsersFromRoom(roomId: String): Observable<List<User>> {

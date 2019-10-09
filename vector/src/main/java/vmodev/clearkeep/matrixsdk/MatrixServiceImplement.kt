@@ -201,7 +201,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             run {
                 if (myUser != null) {
                     var avatar = "";
-                    var result = session!!.contentManager.getDownloadableUrl(myUser.avatarUrl);
+                    var result = session!!.contentManager.getDownloadableUrl(myUser.avatarUrl, false);
                     result?.let { avatar = result }
                     val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = avatar, status = if (myUser.isActive) 1 else 0);
                     emitter.onNext(user);
@@ -441,8 +441,8 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
-                , updatedDate = timeUpdateLong, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, messageId = messageId
-                , encrypted = if (room.isEncrypted) 1 else 0, status = if (room.isLeaving || room.isLeft) 0 else 1, notificationState = notificationState.toByte(), userCreated = userCreated);
+                ,  topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, messageId = messageId
+                , encrypted = if (room.isEncrypted) 1 else 0, notificationState = notificationState.toByte(), userCreated = userCreated);
         return roomObj;
     }
 
@@ -476,8 +476,8 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
-                , updatedDate = timeUpdateLong, topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, messageId = null
-                , encrypted = if (room.isEncrypted) 1 else 0, status = if (room.isLeaving || room.isLeft) 0 else 1, notificationState = 0x01, userCreated = null);
+                , topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, messageId = null
+                , encrypted = if (room.isEncrypted) 1 else 0, notificationState = 0x01, userCreated = null);
         return roomObj;
     }
 
@@ -486,7 +486,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         return Observable.create { emitter ->
             room.roomSummary?.let {
                 val event = it.latestReceivedEvent;
-                val message = Message(id = event.eventId, userId = event.sender, roomId = event.roomId, encryptedContent = event.content.toString(), messageType = event.type);
+                val message = Message(id = event.eventId, userId = event.sender, roomId = event.roomId, encryptedContent = event.content.toString(), messageType = event.type, createdAt = event.originServerTs);
                 emitter.onNext(message);
                 emitter.onComplete();
             } ?: run {
@@ -614,7 +614,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                 val result: SearchMessageByTextResult = Gson().fromJson(t?.result?.content, SearchMessageByTextResult::class.java);
                                 val room = matrixRoomToRoom(session!!.dataHandler.getRoom(t?.result.roomId));
 
-                                searchResults.add(MessageSearchText(name = room.name, avatarUrl = room.avatarUrl, content = result.body, roomId = room.id, updatedDate = room.updatedDate) as T);
+                                searchResults.add(MessageSearchText(name = room.name, avatarUrl = room.avatarUrl, content = result.body, roomId = room.id, updatedDate = 0) as T);
                             }
                         } else {
                             if (t?.result?.type?.compareTo("m.room.name") == 0) {
@@ -1808,7 +1808,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                         roomSync.timeline.events.forEach {
                             it?.let {
                                 if (it.type.compareTo("m.room.encrypted") == 0) {
-                                    val message = Message(id = it.eventId, roomId = it.roomId, userId = it.sender, messageType = it.type, encryptedContent = it.content.toString());
+                                    val message = Message(id = it.eventId, roomId = it.roomId, userId = it.sender, messageType = it.type, encryptedContent = it.content.toString(), createdAt = it.originServerTs);
                                     messages.add(message);
                                 }
                             }
@@ -1863,7 +1863,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                 if (message.getContent().getMsgType().compareTo(msgType) == 0) {
                                     var messageResult: Message? = null
                                     item.message?.let {
-                                        messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = message.getContent().getBody())
+                                        messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = message.getContent().getBody(), createdAt = event.originServerTs)
                                     }
                                     val messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
                                     messagesResult.add(messageRooUser);
