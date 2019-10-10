@@ -236,7 +236,7 @@ class NotificationAreaView @JvmOverloads constructor(
         visibility = visibilityForMessages
         if (state.unreadCount > 0) {
             imageView.setImageResource(R.drawable.ic_new_message_green)
-            messageView.setTextColor(ContextCompat.getColor(context, R.color.tab_rooms))
+            messageView.setTextColor(ContextCompat.getColor(context, R.color.text_new_message_notification))
             messageView.text = SpannableString(resources.getQuantityString(R.plurals.room_new_messages_notification, state.unreadCount, state.unreadCount))
         } else {
             imageView.setImageResource(R.drawable.scrolldown)
