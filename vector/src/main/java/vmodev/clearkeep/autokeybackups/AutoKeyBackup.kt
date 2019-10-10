@@ -208,7 +208,7 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
 
     @SuppressLint("CheckResult")
     private fun logout() {
-        AlertDialog.Builder(application).setMessage(application.resources.getString(R.string.auto_backup_key_logout_content))
+        val alert = androidx.appcompat.app.AlertDialog.Builder(VectorApp.getCurrentActivity()).setTitle(application.resources.getString(R.string.auto_key_backup_is_disable)).setMessage(application.resources.getString(R.string.auto_backup_key_logout_content))
                 .setNegativeButton(application.getString(R.string.logout)) { dialogInterface, i ->
                     Completable.fromAction {
                         roomDao.delete();
@@ -228,12 +228,12 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
                 }
                 .setPositiveButton(application.getString(R.string.close)) { dialogInterface, i ->
                     Toast.makeText(application, "Auto key backup is not enabled", Toast.LENGTH_SHORT).show();
-                }.show();
-
+                }.create();
+        alert.show();
     }
 
     private fun showAlertForRetypeOrNewKey(userId: String, decryptedData: String) {
-        AlertDialog.Builder(VectorApp.getCurrentActivity()).setMessage("Try again or using new key (Old data will be lost)")
+        androidx.appcompat.app.AlertDialog.Builder(VectorApp.getCurrentActivity()).setMessage("Try again or using new key (Old data will be lost)")
                 .setTitle("Error")
                 .setNegativeButton("Try again") { dialogInterface, i ->
                     handleRestoreDeleteAndExportNewKey(userId, decryptedData);
@@ -253,7 +253,7 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
                                 Toast.makeText(application, it.message, Toast.LENGTH_SHORT).show();
                             });
                 }
-                .show();
+                .create().show();
     }
 
     private fun showEnterPassphraseAlertDialog(): Observable<String> {

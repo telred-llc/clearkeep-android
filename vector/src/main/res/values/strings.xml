@@ -1812,6 +1812,7 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
 
     <string name="read_at">Read at</string>
     <string name="exit_app_dialog_content">Do you want exit application?</string>
-    <string name="auto_backup_key_logout_content">Logout to enable auto key backup</string>
+    <string name="auto_backup_key_logout_content">Sign out to enable auto key backup</string>
+    <string name="auto_key_backup_is_disable">Auto key backup is disable</string>
 
 </resources>
