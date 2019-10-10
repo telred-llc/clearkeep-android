@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <android.support.v7.widget.SearchView
+    <androidx.appcompat.widget.SearchView
         android:id="@+id/room_action_bar_edit_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
