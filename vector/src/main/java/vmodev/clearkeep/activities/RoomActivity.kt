@@ -537,6 +537,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         }
 
         mxSession = getSession(intent)
+        val mRoomId = intent.getStringExtra(EXTRA_ROOM_ID)
+        mRoom = mxSession?.dataHandler?.store?.getRoom(mRoomId)
 
         if ((mxSession == null) || !mxSession!!.isAlive()) {
             Log.e(LOG_TAG, "No MXSession.")
@@ -1672,7 +1674,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
             showWaitingView()
 
-            wm.createJitsiWidget(mSession, mRoom, aIsVideoCall, object : ApiCallback<Widget> {
+            wm.createJitsiWidget(mxSession, mRoom, aIsVideoCall, object : ApiCallback<Widget> {
                 override fun onSuccess(widget: Widget) {
                     hideWaitingView()
 
@@ -1816,7 +1818,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     /**
      * Send the editText text.
      */
-     fun sendTextMessage(textMsg: String?) {
+    fun sendTextMessage(textMsg: String?) {
         if (mIsMarkDowning) {
             return
         }
@@ -1826,7 +1828,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //        mSendImageView!!.isEnabled = false
         mIsMarkDowning = true
 
-        var textToSend =textMsg?.trim { it <= ' ' }
+        var textToSend = textMsg?.trim { it <= ' ' }
 
         val handleSlashCommand: Boolean
         if (textToSend!!.startsWith("\\/")) {
