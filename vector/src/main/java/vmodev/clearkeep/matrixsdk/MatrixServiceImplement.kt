@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import im.vector.Matrix
 import im.vector.R
@@ -273,10 +274,10 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         }
     }
 
-    override fun getRoomWithIdForCreate(roomId: String) : Observable<vmodev.clearkeep.viewmodelobjects.Room> {
+    override fun getRoomWithIdForCreate(roomId: String): Observable<vmodev.clearkeep.viewmodelobjects.Room> {
         setMXSession();
         return ObservableAll.create { emitter ->
-            var room : Room? = session!!.dataHandler.getRoom(roomId);
+            var room: Room? = session!!.dataHandler.getRoom(roomId);
             room?.let {
                 emitter.onNext(matrixRoomToRoomWithNonMessageAndUserCreated(room));
                 emitter.onComplete();
@@ -429,7 +430,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             messageId = event.eventId;
         }
 
-        var userCreated : String? = null;
+        var userCreated: String? = null;
         room.state?.roomCreateContent?.creator?.let { userCreated = it }
 
         val notificationState = when (session!!.dataHandler.bingRulesManager.getRoomNotificationState(room.roomId)) {
@@ -441,7 +442,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
-                ,  topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, messageId = messageId
+                , topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, messageId = messageId
                 , encrypted = if (room.isEncrypted) 1 else 0, notificationState = notificationState.toByte(), userCreated = userCreated);
         return roomObj;
     }
@@ -1750,7 +1751,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                         emitter.onNext(newState.ordinal);
                         if (newState == KeysBackupStateManager.KeysBackupState.NotTrusted || newState == KeysBackupStateManager.KeysBackupState.Disabled
                                 || newState == KeysBackupStateManager.KeysBackupState.ReadyToBackUp || newState == KeysBackupStateManager.KeysBackupState.WrongBackUpVersion) {
-                            listener?.let {l ->
+                            listener?.let { l ->
                                 Log.d("AutoBackup", "Remove");
                                 Observable.timer(1, TimeUnit.SECONDS).subscribe { mxCrypto.keysBackup.removeListener(l) }
                             }
@@ -1848,6 +1849,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         setMXSession();
         return Observable.create { emitter ->
             val messagesResult = ArrayList<MessageRoomUser>();
+            val hashMapData = HashMap<String, MessageRoomUser>()
             val parser = JsonParser();
             val gson = Gson();
             session!!.dataHandler.crypto?.let { mxCrypto ->
@@ -1866,6 +1868,14 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                         messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = message.getContent().getBody(), createdAt = event.originServerTs)
                                     }
                                     val messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
+                                    val data: JsonObject = event.contentJson.getAsJsonObject()
+                                    if (data.getAsJsonObject("m.relates_to") != null) {
+                                        val eventID = data.getAsJsonObject("m.relates_to").get("event_id").toString()
+                                        hashMapData.get(eventID)
+
+                                    }
+                                    hashMapData.put(messageResult!!.id, messageRooUser)
+
                                     messagesResult.add(messageRooUser);
                                 }
                             }
