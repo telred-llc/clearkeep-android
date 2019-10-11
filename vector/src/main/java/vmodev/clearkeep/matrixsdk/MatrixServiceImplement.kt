@@ -1,9 +1,11 @@
 package vmodev.clearkeep.matrixsdk
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
@@ -1845,6 +1847,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         }
     }
 
+
     override fun decryptListMessage(messages: List<MessageRoomUser>, msgType: String): Observable<List<MessageRoomUser>> {
         setMXSession();
         return Observable.create { emitter ->
@@ -1871,10 +1874,15 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                     val data: JsonObject = event.contentJson.getAsJsonObject()
                                     if (data.getAsJsonObject("m.relates_to") != null) {
                                         val eventID = data.getAsJsonObject("m.relates_to").get("event_id").toString()
-                                        hashMapData.get(eventID)
-
+                                        if (hashMapData.isEmpty()) {
+                                            hashMapData.put(messageResult!!.id, messageRooUser)
+                                        }
+                                        else{
+                                            hashMapData.replace(eventID, messageRooUser)
+                                        }
+                                    } else {
+                                        hashMapData.put(messageResult!!.id, messageRooUser)
                                     }
-                                    hashMapData.put(messageResult!!.id, messageRooUser)
 
                                     messagesResult.add(messageRooUser);
                                 }
