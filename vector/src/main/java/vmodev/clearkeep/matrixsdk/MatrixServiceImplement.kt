@@ -13,6 +13,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import im.vector.Matrix
 import im.vector.R
+import im.vector.extensions.formatMessageEdit
 import im.vector.util.HomeRoomsViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -1865,26 +1866,23 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                             val type = json.get("type").asString;
                             if (!type.isNullOrEmpty() && type.compareTo("m.room.message") == 0) {
                                 val message = gson.fromJson(result.mClearEvent, MessageContent::class.java);
+                                var messagesID: String
+                                var contentMessage: String
                                 if (message.getContent().getMsgType().compareTo(msgType) == 0) {
                                     var messageResult: Message? = null
                                     item.message?.let {
-                                        messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = message.getContent().getBody(), createdAt = event.originServerTs)
-                                    }
-                                    val messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
-                                    val data: JsonObject = event.contentJson.getAsJsonObject()
-                                    if (data.getAsJsonObject("m.relates_to") != null) {
-                                        val eventID = data.getAsJsonObject("m.relates_to").get("event_id").toString()
-                                        if (hashMapData.isEmpty()) {
-                                            hashMapData.put(messageResult!!.id, messageRooUser)
+                                        val data: JsonObject = event.contentJson.getAsJsonObject()
+                                        if (data.getAsJsonObject("m.relates_to") != null) {
+                                            messagesID = data.getAsJsonObject("m.relates_to").get("event_id").asString
+                                            contentMessage = String().formatMessageEdit(message.getContent().getBody())
+                                        } else {
+                                            messagesID = it.id
+                                            contentMessage = message.getContent().getBody()
                                         }
-                                        else{
-                                            hashMapData.replace(eventID, messageRooUser)
-                                        }
-                                    } else {
-                                        hashMapData.put(messageResult!!.id, messageRooUser)
+                                        messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = contentMessage, createdAt = event.originServerTs)
+                                        val messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
+                                        hashMapData.put(messagesID, messageRooUser)
                                     }
-
-                                    messagesResult.add(messageRooUser);
                                 }
                             }
                         }
@@ -1892,6 +1890,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                         Log.d("DecryptError", e.message);
                     }
                 }
+                messagesResult.addAll(hashMapData.values)
                 emitter.onNext(messagesResult);
                 emitter.onComplete();
             } ?: run {
