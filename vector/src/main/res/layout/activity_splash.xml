@@ -24,18 +24,18 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/button_login_background_color">
+        android:background="@drawable/background_purple_to_transparent_gradient">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:layout_gravity="bottom"
-            android:background="@drawable/background_purple_to_transparent_gradient" />
+<!--        <FrameLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="400dp"-->
+<!--            android:layout_gravity="bottom"-->
+<!--            android:background="@drawable/background_purple_to_transparent_gradient" />-->
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/background_blue_to_transparent_gradient" />
+<!--        <FrameLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:background="@drawable/background_blue_to_transparent_gradient" />-->
 
         <RelativeLayout
             android:id="@+id/relative_layout_background"

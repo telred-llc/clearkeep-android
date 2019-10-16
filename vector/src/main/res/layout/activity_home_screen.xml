@@ -70,21 +70,36 @@
                         app:user="@{user.data}" />
                 </androidx.cardview.widget.CardView>
 
-                <FrameLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/frame_layout_search"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/search_view_background">
+                    <TextView
+                        android:id="@+id/txtSearch"
+                        android:textColor="@color/search_color"
+                        android:layout_marginStart="7dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:textSize="@dimen/text_16_sp"
+                        android:text="@string/search"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
 
                     <ImageView
+                        android:layout_marginEnd="7dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/txtSearch"
+                        app:layout_constraintTop_toTopOf="@+id/txtSearch"
+                        app:layout_constraintEnd_toEndOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="10dp"
                         android:src="@drawable/ic_search_gray_24dp" />
-                </FrameLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <ImageView
                     android:id="@+id/button_create_convention"
@@ -93,8 +108,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="10dp"
                     android:scaleType="center"
-                    android:src="@drawable/ic_new_chat"
-                    android:tint="@color/app_green" />
+                    android:src="@drawable/ic_new_chat" />
             </LinearLayout>
 
             <fragment
