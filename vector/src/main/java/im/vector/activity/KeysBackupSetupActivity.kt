@@ -194,7 +194,7 @@ class KeysBackupSetupActivity : SimpleFragmentActivity() {
 
 //    I think this code is useful, but it violates the code quality rules
 //    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        if (item.itemId == android .R. id.  home) {
+//        if (item.itemId == android .R. i   d.  home) {
 //            onBackPressed()
 //            return true
 //        }

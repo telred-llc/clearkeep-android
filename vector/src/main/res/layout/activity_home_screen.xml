@@ -37,6 +37,7 @@
     </data>
 
     <FrameLayout
+        android:background="@color/color_white"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -129,11 +130,11 @@
                         android:layout_weight="1">
 
                         <TextView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
+                            android:layout_width="@dimen/notification_number_red_size"
+                            android:layout_height="@dimen/notification_number_red_size"
                             android:layout_gravity="end"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginEnd="20dp"
+                            android:layout_marginTop="@dimen/margin_top_screen_home_notify_number_red"
+                            android:layout_marginEnd="@dimen/margin_end_screen_home_notify_number_red"
                             android:background="@drawable/circle_background"
                             android:textAlignment="center"
                             android:textColor="@color/main_text_color"
