@@ -33,6 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:background="@color/color_white"
         android:orientation="horizontal">
 
         <FrameLayout
@@ -44,8 +45,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@color/app_green"
-                app:civ_border_color="@android:color/darker_gray"
-                app:civ_border_width="2dp"
                 app:room="@{room}" />
 
             <de.hdodenhof.circleimageview.CircleImageView

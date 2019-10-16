@@ -28,7 +28,7 @@ import com.google.gson.annotations.SerializedName
 )
 data class Room(
         @PrimaryKey @ColumnInfo(name = "id") @field:SerializedName("id") val id: String,
-        @field:SerializedName("name") val name: String?,
+        @ColumnInfo(name = "name", collate = ColumnInfo.NOCASE) @field:SerializedName("name") val name: String?,
         @field:SerializedName("topic") val topic: String?,
         @field:SerializedName("type") val type: Int,
         @field:SerializedName("avatarUrl") val avatarUrl: String?,

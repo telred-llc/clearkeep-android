@@ -1,5 +1,6 @@
 package vmodev.clearkeep.fragments
 
+import RecyclerSectionItemDecoration
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -18,12 +19,14 @@ import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.FragmentContactsBinding
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
+import vmodev.clearkeep.adapters.Interfaces.SectionCallback
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.IContactFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IContactFragment
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodelobjects.Resource
+import vmodev.clearkeep.viewmodelobjects.RoomListUser
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractContactFragmentViewModel
 import javax.inject.Inject
@@ -79,7 +82,17 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
         listRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, application.getUserId());
         binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
         viewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
-            listRoomAdapter.getAdapter().submitList(t?.data)
+
+                listRoomAdapter.getAdapter().submitList(t?.data)
+                val sectionItemDecoration = t.data?.let { getListRoomName(it) }?.let { getSectionCallback(it) }?.let {
+                    RecyclerSectionItemDecoration(resources.getDimensionPixelSize(R.dimen.header),
+                            true,
+                            it)
+                }
+            if (sectionItemDecoration != null) {
+                binding.recyclerViewListContact.addItemDecoration(sectionItemDecoration)
+            }
+
         })
         binding.lifecycleOwner = viewLifecycleOwner;
 
@@ -111,6 +124,30 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
 
     override fun getFragment(): Fragment {
         return this;
+    }
+
+
+    fun getListRoomName(data: List<RoomListUser>): List<String> {
+        val dataHeader = ArrayList<String>()
+            for (item in data) {
+                item.room?.name?.let { dataHeader.add(it.toUpperCase()) }
+        }
+        return dataHeader
+    }
+
+    private fun getSectionCallback(people: List<String>): SectionCallback {
+        return object : SectionCallback {
+            override fun isSection(position: Int): Boolean {
+
+                return position == 0 || people[position][0] != people[position - 1][0]
+            }
+
+            override fun getSectionHeader(position: Int): CharSequence {
+                return people[position]
+                        .subSequence(0,
+                                1)
+            }
+        }
     }
 
     companion object {

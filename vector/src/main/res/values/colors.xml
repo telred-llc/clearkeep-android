@@ -164,6 +164,8 @@
     <color name="blue_app">#46B6CB</color>
     <color name="text_new_message_notification">#03b381</color>
 
+    <!--    color basic-->
+    <color name="color_white">#FFFFFF</color>
 
 
 </resources>
