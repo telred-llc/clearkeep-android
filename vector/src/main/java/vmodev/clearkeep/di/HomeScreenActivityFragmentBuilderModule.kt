@@ -1,5 +1,6 @@
 package vmodev.clearkeep.di
 
+import androidx.databinding.DataBindingComponent
 import androidx.recyclerview.widget.DiffUtil
 import dagger.Binds
 import dagger.Module
@@ -8,6 +9,7 @@ import dagger.android.ContributesAndroidInjector
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomContactRecyclerViewAdapter
 import vmodev.clearkeep.applications.IApplication
+import vmodev.clearkeep.bindingadapters.interfaces.IDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.activitiesandfragments.ContactsFragmentFactory
 import vmodev.clearkeep.factories.activitiesandfragments.FavouritesFragmentFactory
@@ -92,7 +94,7 @@ abstract class HomeScreenActivityFragmentBuilderModule {
         @Provides
         @JvmStatic
         @Named(value = IListRoomRecyclerViewAdapter.ROOM_CONTACT)
-        fun provideListRoomContactAdapter(appExecutors: AppExecutors): IListRoomRecyclerViewAdapter {
+        fun provideListRoomContactAdapter(appExecutors: AppExecutors, dataBindingComponent: IDataBindingComponent): IListRoomRecyclerViewAdapter {
             return ListRoomContactRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<RoomListUser>() {
                 override fun areItemsTheSame(p0: RoomListUser, p1: RoomListUser): Boolean {
                     return p0.room?.id == p1.room?.id;
@@ -102,7 +104,7 @@ abstract class HomeScreenActivityFragmentBuilderModule {
                     return p0.room?.name == p1.room?.name && p0.room?.avatarUrl == p1.room?.avatarUrl
                             && p0.room?.notifyCount == p1.room?.notifyCount;
                 }
-            })
+            }, dataBindingComponent = dataBindingComponent)
         }
 
 

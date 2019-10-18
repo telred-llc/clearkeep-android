@@ -10,10 +10,11 @@ import androidx.recyclerview.widget.ListAdapter
 import im.vector.R
 import im.vector.databinding.ItemConversationBinding
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
+import vmodev.clearkeep.bindingadapters.interfaces.IDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
 
-class ListRoomContactRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<RoomListUser>)
+class ListRoomContactRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<RoomListUser>, val dataBindingComponent : IDataBindingComponent)
 
     : ListAdapter<RoomListUser, DataBoundViewHolder<ItemConversationBinding>>(AsyncDifferConfig.Builder<RoomListUser>(diffCallback)
         .setBackgroundThreadExecutor(appExecutors.diskIO())
@@ -26,8 +27,8 @@ class ListRoomContactRecyclerViewAdapter constructor(appExecutors: AppExecutors,
     private var currentUserId: String? = null;
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DataBoundViewHolder<ItemConversationBinding> {
-        val binding: ItemConversationBinding = DataBindingUtil.inflate(LayoutInflater.from(p0.context), R.layout.item_conversation, p0, false);
-//        binding.root.setOnClickListener { binding.room?.let { itemClick?.invoke(it, 0) } }
+        val binding: ItemConversationBinding = DataBindingUtil.inflate(LayoutInflater.from(p0.context), R.layout.item_conversation, p0, false, dataBindingComponent.getDataBindingComponent());
+        binding.root.setOnClickListener { binding.roomListUser?.let { itemClick?.invoke(it, 0) } }
 
         return DataBoundViewHolder(binding);
     }
@@ -39,10 +40,10 @@ class ListRoomContactRecyclerViewAdapter constructor(appExecutors: AppExecutors,
     }
 
     override fun onBindViewHolder(p0: DataBoundViewHolder<ItemConversationBinding>, p1: Int) {
-//        p0.binding.room = getItem(p1);
-//        p0.binding.executePendingBindings();
+        p0.binding.roomListUser = getItem(p1)
+        p0.binding.executePendingBindings();
 //        callbackToGetUsers?.let {
-//            p0.binding.memberUsers = it.getUsers(getItem(p1).id);
+//            p0.binding.memberUsers = it.getUsers(arrayOf(getItem(p1).room?.id));
 //            p0.binding.currentUserId = currentUserId;
 //        }
     }
