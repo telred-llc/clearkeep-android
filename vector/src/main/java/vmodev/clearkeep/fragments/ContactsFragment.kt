@@ -79,7 +79,20 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
         listRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, application.getUserId());
         binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
         viewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
-            listRoomAdapter.getAdapter().submitList(t?.data)
+//            t?.data?.let {
+//                val data = it.sortedWith(Comparator { t, t2 ->
+//                    run {
+//                        if (t.room?.name!!.toLowerCase() > t2.room?.name!!.toLowerCase()) {
+//                            -1
+//                        } else if (t.room?.name!!.toLowerCase() > t2.room?.name!!.toLowerCase()) {
+//                            1
+//                        } else {
+//                            0
+//                        }
+//                    }
+//                }).reversed();
+                listRoomAdapter.getAdapter().submitList(t?.data)
+//            }
         })
         binding.lifecycleOwner = viewLifecycleOwner;
 

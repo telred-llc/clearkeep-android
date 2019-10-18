@@ -78,6 +78,14 @@ class RoomUserJoinRepository @Inject constructor(private val roomUserJoinDao: Ab
         }.asLiveData();
     }
 
+    fun getRoomListUserSortWithName(filters: Array<Int>) : LiveData<Resource<List<RoomListUser>>>{
+        return object : AbstractLocalLoadSouce<List<RoomListUser>>(){
+            override fun loadFromDB(): LiveData<List<RoomListUser>> {
+                return roomUserJoinDao.getListRoomListUserWithFilterSortName(filters);
+            }
+        }.asLiveData();
+    }
+
     fun getListRoomListUserWithFilterAndUserId(userId: String, filters: Array<Int>): LiveData<Resource<List<RoomListUser>>> {
         return object : AbstractLocalBoundSource<List<RoomListUser>>() {
             override fun loadFromDb(): LiveData<List<RoomListUser>> {

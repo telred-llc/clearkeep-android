@@ -1814,5 +1814,9 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="exit_app_dialog_content">Do you want exit application?</string>
     <string name="auto_backup_key_logout_content">Sign out to enable auto key backup</string>
     <string name="auto_key_backup_is_disable">Auto key backup is disable</string>
+    <string name="microphone_off">Microphone off</string>
+    <string name="microphone_on">Microphone on</string>
+    <string name="speaker_phone_on">Speaker phone on</string>
+    <string name="speaker_phone_off">Speaker phone off</string>
 
 </resources>

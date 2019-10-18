@@ -60,7 +60,7 @@ import java.io.File
 import java.util.ArrayList
 import java.util.HashMap
 
-class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessagesAdapterActionsListener {
+class ClearKeepMessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessagesAdapterActionsListener {
 
     // Data to wait for permission
     private var mPendingMenuAction: Int = 0
@@ -774,7 +774,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
 
                     if (menuAction == ACTION_VECTOR_SAVE || menuAction == ACTION_VECTOR_OPEN) {
                         if (checkPermissions(PERMISSIONS_FOR_WRITING_FILES,
-                                        this@MessageListFragment, PERMISSION_REQUEST_CODE)) {
+                                        this@ClearKeepMessageListFragment, PERMISSION_REQUEST_CODE)) {
                             CommonActivityUtils.saveMediaIntoDownloads(activity, file, trimmedFileName, mediaMimeType, object : SimpleApiCallback<String>() {
                                 override fun onSuccess(savedMediaPath: String?) {
                                     if (null != savedMediaPath) {
@@ -1262,8 +1262,8 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
         private val ACTION_VECTOR_SAVE = R.id.ic_action_vector_save
         internal val ACTION_VECTOR_OPEN = 123456
 
-        fun newInstance(matrixId: String?, roomId: String?, eventId: String?, previewMode: String?, layoutResId: Int): MessageListFragment {
-            val f = MessageListFragment()
+        fun newInstance(matrixId: String?, roomId: String?, eventId: String?, previewMode: String?, layoutResId: Int): ClearKeepMessageListFragment {
+            val f = ClearKeepMessageListFragment()
             val args = getArguments(matrixId, roomId, layoutResId)
 
             args.putString(ARG_EVENT_ID, eventId)

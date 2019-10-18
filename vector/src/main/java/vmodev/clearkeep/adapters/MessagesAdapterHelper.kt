@@ -63,7 +63,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
      *
      * @param listener the events listener
      */
-    fun setVectorMessagesAdapterActionsListener(listener: IMessagesAdapterActionsListener) {
+    fun setVectorMessagesAdapterActionsListener(listener: IMessagesAdapterActionsListener?) {
         mEventsListener = listener
     }
 
@@ -72,7 +72,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
      *
      * @param method the links movement method
      */
-    fun setLinkMovementMethod(method: MatrixLinkMovementMethod) {
+    fun setLinkMovementMethod(method: MatrixLinkMovementMethod?) {
         mLinkMovementMethod = method
     }
 

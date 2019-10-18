@@ -33,7 +33,9 @@ import javax.inject.Singleton
     , AbstractVectorMediaPickerActivityModule::class
     , AbstractNewRoomActivityModule::class
     , AbstractSettingsActivityModule::class
-    , AbstractShareFileActivityModule::class])
+    , AbstractShareFileActivityModule::class
+    , AbstractOutgoingCallActivityModule::class
+    , AbstractRoomDetailActivityModule::class])
 interface AppComponent : AndroidInjector<ClearKeepApplication> {
     override fun inject(instance: ClearKeepApplication?)
 

@@ -72,6 +72,9 @@ abstract class AbstractRoomUserJoinDao {
     @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.*, Message.* FROM Room LEFT JOIN RoomUserJoin ON RoomUserJoin.room_id = Room.id LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE room.type =:typeOne OR room.type =:typeTwo ORDER BY room.type DESC, Message.created_at DESC")
     abstract fun getListRoomListUserWithFilterTest(typeOne: Int, typeTwo: Int): List<RoomListUser>
 
+    @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.*, Message.* FROM Room LEFT JOIN RoomUserJoin ON RoomUserJoin.room_id = Room.id LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE Room.type IN (:filters) ORDER BY Room.name ASC")
+    abstract fun getListRoomListUserWithFilterSortName(filters: Array<Int>) : LiveData<List<RoomListUser>>
+
     fun getListRoomWithUsers(typeOne: Int, typeTwo: Int): LiveData<List<RoomUserList>> {
         val list = getListRoomUserListTwo(typeOne, typeTwo);
 

@@ -49,7 +49,7 @@ internal class MessagesAdapterMediasHelper constructor(private val mContext: Con
      *
      * @param listener teh events listener
      */
-    fun setVectorMessagesAdapterActionsListener(listener: IMessagesAdapterActionsListener) {
+    fun setVectorMessagesAdapterActionsListener(listener: IMessagesAdapterActionsListener?) {
         mVectorMessagesAdapterEventsListener = listener
     }
 

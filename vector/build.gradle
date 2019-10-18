@@ -110,7 +110,7 @@ android {
             buildConfigField "String", "HOME_SERVER", "\"https://study.sinbadflyce.com\""
             buildConfigField "String", "PUSH_GATEWAY", "\"http://study.sinbadflyce.com:5000/_matrix/push/v1/notify\""
             buildConfigField "String", "IDENTIFY_SERVER", "\"https://id.clearkeep.me\""
-            buildConfigField "String", "CLEAR_KEEP_SERVER", "\"https://ck-server-demo.herokuapp.com\""
+            buildConfigField "String", "CLEAR_KEEP_SERVER", "\"http://op.clearkeep.xyz\""
         }
 
         release {
@@ -258,7 +258,7 @@ dependencies {
     /************* Matrix SDK management **************/
     // update settings.gradle
     // use the matrix SDK as external dependency
-    implementation "com.github.matrix-org:matrix-android-sdk:v0.9.27"
+//    implementation "com.github.matrix-org:matrix-android-sdk:v0.9.27"
     // use the matrix SDK as a sub project
     // you have to uncomment some lines in settings.gradle
     //implementation project(':matrix-sdk')
@@ -369,7 +369,7 @@ dependencies {
     implementation "androidx.concurrent:concurrent-futures:$futures_version"
 
     /******************************** Navigation *****************************************/
-    def nav_version = "2.2.0-alpha02"
+    def nav_version = "2.2.0-beta01"
     // Kotlin
     implementation "androidx.navigation:navigation-runtime-ktx:$nav_version"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
@@ -445,9 +445,9 @@ dependencies {
 //    implementation project(path: ':matrix-sdk-crypto')
 //    implementation project(path: ':matrix-sdk-core')
 //    implementation project(path: ':matrix-sdk')
-//    implementation project(path: ':matrix-sdk')
-//    implementation project(path: ':matrix-sdk-crypto')
-//    implementation project(path: ':matrix-sdk-core')
+    implementation project(path: ':matrix-sdk')
+    implementation project(path: ':matrix-sdk-crypto')
+    implementation project(path: ':matrix-sdk-core')
     //======================================================================//
 
     /************************** AssistedInject ****************************/

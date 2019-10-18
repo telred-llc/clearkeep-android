@@ -1729,12 +1729,15 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     override fun run() {
                         hideWaitingView()
 
-                        val intent = Intent(this@RoomActivity, CallViewActivity::class.java)
+//                        val intent = Intent(this@RoomActivity, CallViewActivity::class.java)
+//
+//                        intent.putExtra(CallViewActivity.EXTRA_MATRIX_ID, mxSession!!.getCredentials().userId)
+//                        intent.putExtra(CallViewActivity.EXTRA_CALL_ID, call.callId)
+//
+//                        startActivity(intent)
 
-                        intent.putExtra(CallViewActivity.EXTRA_MATRIX_ID, mxSession!!.getCredentials().userId)
-                        intent.putExtra(CallViewActivity.EXTRA_CALL_ID, call.callId)
-
-                        startActivity(intent)
+                        val intent = Intent(this@RoomActivity, OutgoingCallActivity::class.java);
+                        startActivity(intent);
                     }
                 })
             }
@@ -3983,7 +3986,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     internal fun onPendingCallClick() {
         val call = CallsManager.getSharedInstance().activeCall
         if (null != call) {
-            val intent = Intent(this, CallViewActivity::class.java)
+            val intent = Intent(this, OutgoingCallActivity::class.java)
             intent.putExtra(CallViewActivity.EXTRA_MATRIX_ID, call!!.session.credentials.userId)
             intent.putExtra(CallViewActivity.EXTRA_CALL_ID, call!!.callId)
             startActivity(intent)
