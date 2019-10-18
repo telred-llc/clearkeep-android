@@ -49,13 +49,13 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_profile, dataBinding.getDataBindingComponent());
         mxSession = Matrix.getInstance(this.applicationContext).defaultSession;
-        setSupportActionBar(binding.toolbar);
+//        setSupportActionBar(binding.toolbar);
         supportActionBar?.setTitle(R.string.profile);
         supportActionBar?.setDisplayHomeAsUpEnabled(true);
         supportActionBar?.setDisplayShowHomeEnabled(true);
-        binding.toolbar.setNavigationOnClickListener {
-            onBackPressed();
-        }
+//        binding.toolbar.setNavigationOnClickListener {
+//            onBackPressed();
+//        }
         binding.user = viewModelFactory.getViewModel().getCurrentUserResult();
         binding.checkNeedBackup = viewModelFactory.getViewModel().getNeedBackupWhenLogout();
         viewModelFactory.getViewModel().setIdForGetCurrentUser(mxSession.myUserId);
@@ -73,15 +73,18 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
                         .show();
             }
         }
-        binding.buttonSetting.setOnClickListener {
+        binding.rlSetting.setOnClickListener {
             val intentProfileSetting = Intent(this, SettingsActivity::class.java);
 //            intentProfileSetting.putExtra(ProfileSettingsFragment.USER_ID, mxSession.myUserId);
             startActivity(intentProfileSetting);
         }
-        binding.buttonEditProfile.setOnClickListener {
+        binding.rlEdit.setOnClickListener {
             val intentEditProfile = Intent(this, EditProfileActivity::class.java);
             intentEditProfile.putExtra(EditProfileActivity.USER_ID, mxSession.myUserId)
             startActivity(intentEditProfile)
+        }
+        binding.imgBack.setOnClickListener {
+            onBackPressed()
         }
         viewModelFactory.getViewModel().getNeedBackupWhenLogout().observe(this, Observer {
             it?.data?.let {
