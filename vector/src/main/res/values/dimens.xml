@@ -26,6 +26,7 @@
     <dimen name="text_13_sp">13sp</dimen>
     <dimen name="text_40_sp">25sp</dimen>
     <dimen name="text_18_sp">18sp</dimen>
+    <dimen name="text_19_sp">19sp</dimen>
     <dimen name="image_avatar_status_size">60dp</dimen>
 
     <!--    image profile status-->
@@ -62,6 +63,9 @@
     <dimen name="margin_top_screen_home_notify_number_red">10dp</dimen>
     <dimen name="margin_end_screen_home_notify_number_red">20dp</dimen>
 
+
+    <!--    size toolbar-->
+    <dimen name="height_tool_bar_size">56dp</dimen>
 
 
 </resources>
