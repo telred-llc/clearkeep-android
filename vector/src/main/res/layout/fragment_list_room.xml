@@ -88,7 +88,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:text="@string/bottom_action_favourites"
-                        android:textSize="@dimen/text_20_sp"
+                        android:textSize="@dimen/text_17_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toRightOf="@+id/icon_favourites"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -99,7 +99,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:text="@{`(` + String.valueOf(listFavourites.data.size) + `)`}"
-                        android:textSize="@dimen/text_20_sp"
+                        android:textSize="@dimen/text_17_sp"
                         app:layout_constraintBottom_toBottomOf="@+id/txtFavourites"
                         app:layout_constraintLeft_toRightOf="@+id/txtFavourites"
                         app:layout_constraintTop_toTopOf="@+id/txtFavourites" />
@@ -159,7 +159,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/rooms"
-                        android:textSize="@dimen/text_20_sp" />
+                        android:textSize="@dimen/text_17_sp" />
 
                     <TextView
                         android:textColor="@color/text_color"
@@ -172,7 +172,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_weight="1"
                         android:text="@{`(` + String.valueOf(listGroup.data.size) + `)`}"
-                        android:textSize="@dimen/text_20_sp" />
+                        android:textSize="@dimen/text_17_sp" />
 
 
                     <ImageView
@@ -188,6 +188,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
+                    android:id="@+id/layoutEmptyRoom"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -274,7 +275,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/direct_messages"
-                        android:textSize="@dimen/text_20_sp" />
+                        android:textSize="@dimen/text_17_sp" />
 
                     <TextView
                         android:textColor="@color/text_color"
@@ -286,7 +287,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_weight="1"
                         android:text="@{`(` + String.valueOf(listDirect.data.size) + `)`}"
-                        android:textSize="@dimen/text_20_sp" />
+                        android:textSize="@dimen/text_17_sp" />
 
 
                     <ImageView
@@ -302,6 +303,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
+                    android:id="@+id/layoutEmptyDerect"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
