@@ -57,7 +57,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="12dp"
                     android:background="@color/blue_app"
                     android:innerRadius="0dp"
                     android:shape="ring"
@@ -75,7 +75,9 @@
                     android:id="@+id/frame_layout_search"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_margin="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginStart="12dp"
                     android:layout_weight="1"
                     android:background="@drawable/search_view_background">
                     <TextView
@@ -107,7 +109,6 @@
                     android:layout_width="?attr/actionBarSize"
                     android:layout_height="?attr/actionBarSize"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="10dp"
                     android:scaleType="center"
                     android:src="@drawable/ic_new_chat" />
             </LinearLayout>

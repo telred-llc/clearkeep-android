@@ -153,6 +153,8 @@ class MatrixEventHandler @Inject constructor(
                             .subscribeOn(Schedulers.io()).subscribe {
                                 roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe();
                             };
+                    roomRepository.updateRoomNotificationCount(e.roomId).subscribeOn(Schedulers.io()).subscribe();
+
                 }
             }
         }
@@ -167,6 +169,7 @@ class MatrixEventHandler @Inject constructor(
     ) {
         super.onPresenceUpdate(event, user)
         user?.let {
+
             userRepository.updateUserStatus(it.user_id, if (it.presence.compareTo("online") == 0) 1 else 0)
         }
     }

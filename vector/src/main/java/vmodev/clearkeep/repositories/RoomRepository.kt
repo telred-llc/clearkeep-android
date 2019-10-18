@@ -425,6 +425,10 @@ class RoomRepository @Inject constructor(
         return Completable.fromAction { abstractRoomDao.updateRoomAvatar(roomId, url) }
     }
 
+    fun updateRoomNotificationCount(roomId: String) : Completable {
+        return Completable.fromAction{(abstractRoomDao.updateNotificationCount(roomId))}
+    }
+
     class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);
     class InviteUsersToRoomObject constructor(val roomId: String, val userIds: List<String>);
 }
