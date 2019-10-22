@@ -111,15 +111,15 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
     private var mIsScreenOff = false
     private val mListener = object : MXCallListener() {
         override fun onStateDidChange(state: String?) {
-//            runOnUiThread {
-//                Log.d(LOG_TAG, "## onStateDidChange(): new state=" + state!!)
-//
-//                manageSubViews()
-//
-//                if (null != mCall && mCall!!.isVideo && mCall!!.callState == IMXCall.CALL_STATE_CONNECTED) {
-////                    mCall!!.updateLocalVideoRendererPosition(mLocalVideoLayoutConfig)
-//                }
-//            }
+            runOnUiThread {
+                Log.d(LOG_TAG, "## onStateDidChange(): new state=" + state!!)
+
+                manageSubViews()
+
+                if (null != mCall && mCall!!.isVideo && mCall!!.callState == IMXCall.CALL_STATE_CONNECTED) {
+                    mCall!!.updateLocalVideoRendererPosition(mLocalVideoLayoutConfig)
+                }
+            }
         }
 
         override fun onCallViewCreated(callView: View?) {
@@ -131,7 +131,7 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
 
         override fun onReady() {
             // update UI before displaying the video
-//            computeVideoUiLayout()
+            computeVideoUiLayout()
             if (!mCall!!.isIncoming) {
                 Log.d(LOG_TAG, "## onReady(): placeCall()")
                 mCall!!.placeCall(mLocalVideoLayoutConfig)

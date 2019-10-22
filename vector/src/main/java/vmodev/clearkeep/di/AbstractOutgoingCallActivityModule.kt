@@ -11,7 +11,7 @@ import javax.inject.Named
 @Suppress("unused")
 abstract class AbstractOutgoingCallActivityModule {
 
-    @ContributesAndroidInjector(modules = [ActivityBindModule::class])
+    @ContributesAndroidInjector(modules = [ActivityBindModule::class, AbstractOutgoingCallActivityFragmentBuilderModule::class])
     abstract fun contributeOutgoingCallActivity(): OutgoingCallActivity;
 
     @Module
