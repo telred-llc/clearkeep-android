@@ -16,7 +16,7 @@ abstract class AbstractOutgoingCallActivityFragmentBuilderModule {
     @Module
     abstract class AbstractOutgoingFragmentBindModule {
         @Binds
-        @Named(IFragment.OUTGOING_CALL_FRAGMERNT)
+        @Named(IFragment.OUTGOING_CALL_FRAGMENT)
         abstract fun bindOutgoingCallFragment(fragment : OutgoingCallFragment): IFragment;
     }
 }

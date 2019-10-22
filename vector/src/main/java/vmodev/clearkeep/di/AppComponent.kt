@@ -35,7 +35,8 @@ import javax.inject.Singleton
     , AbstractSettingsActivityModule::class
     , AbstractShareFileActivityModule::class
     , AbstractOutgoingCallActivityModule::class
-    , AbstractRoomDetailActivityModule::class])
+    , AbstractRoomDetailActivityModule::class
+    , AbstractIncomingCallActivityModule::class])
 interface AppComponent : AndroidInjector<ClearKeepApplication> {
     override fun inject(instance: ClearKeepApplication?)
 
@@ -47,5 +48,5 @@ interface AppComponent : AndroidInjector<ClearKeepApplication> {
         fun build(): AppComponent
     }
 
-    fun workerFactory() : ClearKeepWorkerFactory;
+    fun workerFactory(): ClearKeepWorkerFactory;
 }

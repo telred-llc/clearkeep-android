@@ -51,6 +51,7 @@ import im.vector.activity.VectorHomeActivity;
 import im.vector.notifications.NotificationUtils;
 import im.vector.services.CallService;
 import vmodev.clearkeep.activities.CallViewActivity;
+import vmodev.clearkeep.activities.IncomingCallActivity;
 import vmodev.clearkeep.activities.OutgoingCallActivity;
 
 /**
@@ -411,10 +412,10 @@ public class CallsManager {
                             }
 //                            context.startActivity(intent);
 
-                            Intent intentStartCall = new Intent(context, OutgoingCallActivity.class);
+                            Intent intentStartCall = new Intent(context, IncomingCallActivity.class);
                             intentStartCall.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                             intentStartCall.putExtra(CallViewActivity.EXTRA_MATRIX_ID, mActiveCall.getSession().getMyUserId());
-                            intentStartCall.putExtra(CallViewActivity.EXTRA_CALL_ID,  mActiveCall.getCallId());
+                            intentStartCall.putExtra(CallViewActivity.EXTRA_CALL_ID, mActiveCall.getCallId());
                             context.startActivity(intentStartCall);
 
                         } else {

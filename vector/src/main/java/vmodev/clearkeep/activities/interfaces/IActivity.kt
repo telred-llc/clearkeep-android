@@ -37,5 +37,6 @@ interface IActivity {
         const val SHARE_FILE_ACTIVITY = "SHARE_FILE_ACTIVITY";
         const val OUTGOING_CALL_ACTIVITY = "OUTGOING_CALL_ACTIVITY";
         const val ROOM_DETAIL_ACTIVITY = "ROOM_DETAIL_ACTIVITY";
+        const val INCOMING_CALL_ACTIVITY = "INCOMING_CALL_ACTIVITY";
     }
 }

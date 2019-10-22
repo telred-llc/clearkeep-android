@@ -12,7 +12,7 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 
 import im.vector.R
-import im.vector.databinding.FragmentOutgoingCallBinding
+import im.vector.databinding.FragmentInProgressCallBinding
 import im.vector.util.CallsManager
 import org.matrix.androidsdk.call.CallSoundsManager
 import org.matrix.androidsdk.call.IMXCall
@@ -24,9 +24,9 @@ import vmodev.clearkeep.fragments.Interfaces.IFragment
 /**
  * A simple [Fragment] subclass.
  */
-class OutgoingCallFragment : DataBindingDaggerFragment(), IFragment {
+class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
 
-    private lateinit var binding: FragmentOutgoingCallBinding;
+    private lateinit var binding: FragmentInProgressCallBinding;
 
     private lateinit var mxCall: IMXCall;
     private var callView: View? = null;
@@ -39,8 +39,8 @@ class OutgoingCallFragment : DataBindingDaggerFragment(), IFragment {
             val params = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
             params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
             if (mxCall.isVideo) {
-                if (this@OutgoingCallFragment.callView == null) {
-                    this@OutgoingCallFragment.callView = callView;
+                if (this@InProgressCallFragment.callView == null) {
+                    this@InProgressCallFragment.callView = callView;
                     insertCallView();
                 }
             }
@@ -50,9 +50,6 @@ class OutgoingCallFragment : DataBindingDaggerFragment(), IFragment {
             super.onReady()
             if (mxCall.isIncoming) {
                 mxCall.launchIncomingCall(videoLayoutConfiguration);
-                mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL);
-            } else {
-                mxCall.placeCall(videoLayoutConfiguration);
                 mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL);
             }
         }
@@ -67,14 +64,55 @@ class OutgoingCallFragment : DataBindingDaggerFragment(), IFragment {
                     mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL);
                 }
                 IMXCall.CALL_STATE_ENDED -> {
-                    this@OutgoingCallFragment.activity?.finish();
+                    this@InProgressCallFragment.activity?.finish();
                 }
                 IMXCall.CALL_STATE_RINGING -> {
-//                    mxCall.answer();
+                    mxCall.answer();
                 }
                 else -> {
                 }
             }
+        }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        // Inflate the layout for this fragment
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_in_progress_call, container, false, dataBinding.getDataBindingComponent());
+        mxCall = CallsManager.getSharedInstance().activeCall;
+        mxCall.createCallView();
+        callManager = CallsManager.getSharedInstance();
+        callSoundsManager = CallSoundsManager.getSharedInstance(this.activity);
+        callView = callManager?.callView;
+        return binding.root;
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupButtonControl();
+    }
+
+    override fun getFragment(): Fragment {
+        return this;
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration);
+        callManager?.let {
+            if (it.activeCall != null) {
+                mxCall.addListener(callListener);
+                if (mxCall.callState == IMXCall.CALL_STATE_CONNECTED && mxCall.isVideo)
+                    mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration);
+                callView = it.callView;
+                CallsManager.getSharedInstance().setCallActivity(this.activity);
+                callView?.let { insertCallView(); }
+
+            }
+            mxCall.visibility = View.VISIBLE;
+            binding.constraintLayoutRoot.visibility = View.VISIBLE;
+        } ?: run {
+            this.activity?.finish();
         }
     }
 
@@ -133,47 +171,5 @@ class OutgoingCallFragment : DataBindingDaggerFragment(), IFragment {
             }
         }
         mxCall.visibility = View.GONE
-    }
-
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_outgoing_call, container, false, dataBinding.getDataBindingComponent());
-        mxCall = CallsManager.getSharedInstance().activeCall;
-        mxCall.createCallView();
-        callManager = CallsManager.getSharedInstance();
-        callSoundsManager = CallSoundsManager.getSharedInstance(this.activity);
-        callView = callManager?.callView;
-        return binding.root;
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupButtonControl();
-    }
-
-    override fun getFragment(): Fragment {
-        return this;
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration);
-        callManager?.let {
-            if (it.activeCall != null) {
-                mxCall.addListener(callListener);
-                if (mxCall.callState == IMXCall.CALL_STATE_CONNECTED && mxCall.isVideo)
-                    mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration);
-                callView = it.callView;
-                CallsManager.getSharedInstance().setCallActivity(this.activity);
-                callView?.let { insertCallView(); }
-
-            }
-            mxCall.visibility = View.VISIBLE;
-            binding.constraintLayoutRoot.visibility = View.VISIBLE;
-        } ?: run {
-            this.activity?.finish();
-        }
     }
 }
