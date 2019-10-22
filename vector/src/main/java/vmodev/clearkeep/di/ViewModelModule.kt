@@ -35,6 +35,11 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
+    @ViewModelKey(AbstractRoomActivityViewModel::class)
+    abstract fun bindRoomActivityViewModel(viewModel: RoomActivityViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
     @ViewModelKey(AbstractDirectMessageFragmentViewModel::class)
     abstract fun bindDirectMessageFragmentViewModel(viewModel: DirectMessageFragmentViewModel): ViewModel;
 

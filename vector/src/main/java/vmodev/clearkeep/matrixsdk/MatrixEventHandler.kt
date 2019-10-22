@@ -90,7 +90,8 @@ class MatrixEventHandler @Inject constructor(
                             roomRepository.insertRoomInvite(it).subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread()).subscribe {
                                         messageRepository.insertMessage(event.toMessage()).subscribeOn(Schedulers.io())
-                                                .subscribe { roomRepository.updateLastMessage(event.roomId, event.eventId).subscribe() }
+                                                .subscribe {
+                                                    roomRepository.updateLastMessage(event.roomId, event.eventId).subscribe() }
                                         roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId)
                                                 .subscribeOn(Schedulers.io())
                                                 .observeOn(AndroidSchedulers.mainThread()).subscribe()
@@ -153,7 +154,11 @@ class MatrixEventHandler @Inject constructor(
                             .subscribeOn(Schedulers.io()).subscribe {
                                 roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe();
                             };
-                    roomRepository.updateRoomNotificationCount(e.roomId).subscribeOn(Schedulers.io()).subscribe();
+                    if (!event.sender.equals(mxSession!!.myUserId)){
+                        roomRepository.updateRoomNotificationCount(e.roomId).subscribeOn(Schedulers.io()).subscribe();
+                    }else{
+                        Log.d("","")
+                    }
 
                 }
             }
