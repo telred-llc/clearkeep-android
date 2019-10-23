@@ -688,8 +688,8 @@ internal constructor(// session
         }
 
         val row = getItem(position)
-        row?.let {
-            return getItemViewType(it.event)
+        row?.event?.let {
+            return getItemViewType(it)
         }?:run {
             return  ROW_TYPE_TEXT;
         }
@@ -926,7 +926,7 @@ internal constructor(// session
      */
     private fun getItemViewType(event: Event): Int {
         val eventId = event.eventId
-        val eventType = event.getType()
+        var eventType : String? = event.getType()
         if (null != eventId && mHiddenEventIds.contains(eventId)) {
             return ROW_TYPE_HIDDEN
         }
@@ -1228,7 +1228,7 @@ internal constructor(// session
                 event = editedMessageMap[event.eventId]
                 row = MessageRow(event!!, mSession.dataHandler.getRoom(event.roomId).state)
                 message = JsonUtils.toMessage(event.content)
-                message.body = event.content.getAsJsonObject().get("m.new_content").getAsJsonObject().get("body").getAsString()
+                message.body = event.content.getAsJsonObject().get("m.new_content").getAsJsonObject().get("body").getAsString() + "<i>(edited)</i>"
             } else {
                 message = JsonUtils.toMessage(event.content)
             }
@@ -1252,13 +1252,13 @@ internal constructor(// session
                 val display = RiotEventDisplay(mContext, mHtmlToolbox)
 
                 val body = row.getText(VectorQuoteSpan(mContext), display)
-
                 var result = mHelper.highlightPattern(body,
-                        mPattern,
+                        Message.FORMAT_MATRIX_HTML,
                         mBackgroundColorSpan,
                         shouldHighlighted)
+                result = "$result ${context.resources.getString(R.string.edited_suffix)}";
                 result = result.subSequence(2, result.length)
-                bodyTextView.text = result
+                bodyTextView.text = result;
 
                 mHelper.applyLinkMovementMethod(bodyTextView)
                 bodyTextView.vectorCustomLinkify(true)

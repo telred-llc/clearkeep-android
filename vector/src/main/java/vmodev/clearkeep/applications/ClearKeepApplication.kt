@@ -112,7 +112,7 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
     }
 
     override fun startAutoKeyBackup(password: String?) {
-//        session?.let { autoKeyBackup.startAutoKeyBackup(it.myUserId, password) }
+        session?.let { autoKeyBackup.startAutoKeyBackup(it.myUserId, password) }
         session?.let { s ->
             s.crypto?.let { crypto ->
                 userDao.findAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<List<User>> {

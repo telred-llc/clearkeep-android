@@ -416,7 +416,9 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
         }
 
         if (null != avatarView) {
-            if (isMergedView) {
+            if (TextUtils.equals(mSession.myUserId, event.sender)) {
+                avatarView.visibility = View.GONE
+            } else if (isMergedView) {
                 avatarView.visibility = View.INVISIBLE
             } else {
                 avatarView.visibility = View.VISIBLE
