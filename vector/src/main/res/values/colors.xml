@@ -163,7 +163,7 @@
     <color name="background_main_gray">#F1F1F2</color>
     <color name="blue_app">#46B6CB</color>
     <color name="text_new_message_notification">#03b381</color>
-
+    <color name="message_own_background">#F4F4F4</color>
 
 
 </resources>

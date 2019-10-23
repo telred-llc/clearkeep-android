@@ -45,7 +45,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:visibility="gone">
 
                         <include layout="@layout/vector_message_sender" />
                     </LinearLayout>
@@ -58,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 app:cardCornerRadius="@dimen/margin_normal"
-                app:cardBackgroundColor="@color/lock_background">
+                app:cardBackgroundColor="@color/message_own_background">
 
                 <!-- the body is here -->
                 <RelativeLayout
@@ -116,7 +117,8 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/avatar"
             android:scaleType="centerCrop"
-            tools:src="@tools:sample/avatars" />
+            tools:src="@tools:sample/avatars"
+            android:visibility="gone"/>
     </LinearLayout>
 
     <LinearLayout

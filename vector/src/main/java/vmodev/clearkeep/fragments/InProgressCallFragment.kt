@@ -34,44 +34,9 @@ class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
     private var callSoundsManager: CallSoundsManager? = null;
     private val videoLayoutConfiguration = VideoLayoutConfiguration(5, 66, 25, 25);
     private var callListener: MXCallListener = object : MXCallListener() {
-        override fun onCallViewCreated(callView: View?) {
-            super.onCallViewCreated(callView)
-            val params = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-            params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-            if (mxCall.isVideo) {
-                if (this@InProgressCallFragment.callView == null) {
-                    this@InProgressCallFragment.callView = callView;
-                    insertCallView();
-                }
-            }
-        }
-
-        override fun onReady() {
-            super.onReady()
-            if (mxCall.isIncoming) {
-                mxCall.launchIncomingCall(videoLayoutConfiguration);
-                mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL);
-            }
-        }
-
-        override fun onStateDidChange(state: String?) {
-            super.onStateDidChange(state)
-            Log.d("CallView", state.toString());
-            when (state) {
-                IMXCall.CALL_STATE_CONNECTED -> {
-                    mxCall.visibility = View.VISIBLE;
-                    mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration);
-                    mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL);
-                }
-                IMXCall.CALL_STATE_ENDED -> {
-                    this@InProgressCallFragment.activity?.finish();
-                }
-                IMXCall.CALL_STATE_RINGING -> {
-                    mxCall.answer();
-                }
-                else -> {
-                }
-            }
+        override fun onCallEnd(aReasonId: Int) {
+            super.onCallEnd(aReasonId)
+            this@InProgressCallFragment.activity?.finish();
         }
     }
 
@@ -80,15 +45,15 @@ class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_in_progress_call, container, false, dataBinding.getDataBindingComponent());
         mxCall = CallsManager.getSharedInstance().activeCall;
-        mxCall.createCallView();
-        callManager = CallsManager.getSharedInstance();
-        callSoundsManager = CallSoundsManager.getSharedInstance(this.activity);
-        callView = callManager?.callView;
         return binding.root;
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mxCall.createCallView();
+        callManager = CallsManager.getSharedInstance();
+        callSoundsManager = CallSoundsManager.getSharedInstance(this.activity);
+        callView = callManager?.callView;
         setupButtonControl();
     }
 
@@ -98,10 +63,9 @@ class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onResume() {
         super.onResume()
-        mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration);
+        mxCall.addListener(callListener);
         callManager?.let {
             if (it.activeCall != null) {
-                mxCall.addListener(callListener);
                 if (mxCall.callState == IMXCall.CALL_STATE_CONNECTED && mxCall.isVideo)
                     mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration);
                 callView = it.callView;
@@ -110,10 +74,14 @@ class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
 
             }
             mxCall.visibility = View.VISIBLE;
-            binding.constraintLayoutRoot.visibility = View.VISIBLE;
         } ?: run {
             this.activity?.finish();
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mxCall.removeListener(callListener);
     }
 
     private fun saveCallView() {
@@ -122,7 +90,6 @@ class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
                 (it.parent as ViewGroup).removeView(it);
                 callManager?.callView = it;
                 callManager?.videoLayoutConfiguration = videoLayoutConfiguration;
-                binding.constraintLayoutRoot.visibility = View.GONE;
             }
         }
         callView = null;
@@ -150,7 +117,6 @@ class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
             }
         }
         binding.imageViewGoToRoom.setOnClickListener {
-            mxCall.removeListener(callListener);
             CallsManager.getSharedInstance().setCallActivity(null);
             saveCallView();
             this.activity?.finish();
@@ -160,13 +126,9 @@ class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
     private fun insertCallView() {
         val params = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT)
         params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
-        binding.constraintLayoutRoot.removeView(callView)
-        binding.constraintLayoutRoot.visibility = View.VISIBLE
 
         if (mxCall.isVideo) {
             callView?.let {
-                if (it.parent != null)
-                    (it.parent as ViewGroup).removeView(it);
                 binding.constraintLayoutRoot.addView(it, 0, params)
             }
         }

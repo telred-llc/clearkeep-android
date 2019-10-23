@@ -69,11 +69,6 @@ class OutgoingCallFragment : DataBindingDaggerFragment(), IFragment {
                 IMXCall.CALL_STATE_ENDED -> {
                     this@OutgoingCallFragment.activity?.finish();
                 }
-                IMXCall.CALL_STATE_RINGING -> {
-//                    mxCall.answer();
-                }
-                else -> {
-                }
             }
         }
     }
