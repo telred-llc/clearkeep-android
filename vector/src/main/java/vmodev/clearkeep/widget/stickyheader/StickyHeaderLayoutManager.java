@@ -1,4 +1,4 @@
-package org.zakariya.stickyheaders;
+package vmodev.clearkeep.widget.stickyheader;
 
 import android.content.Context;
 import android.graphics.PointF;
@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+
+import im.vector.R;
 
 /**
  * StickyHeaderLayoutManager

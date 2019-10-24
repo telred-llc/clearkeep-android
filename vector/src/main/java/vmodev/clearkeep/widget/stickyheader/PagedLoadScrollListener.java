@@ -1,4 +1,4 @@
-package org.zakariya.stickyheaders;
+package vmodev.clearkeep.widget.stickyheader;
 
 import android.view.View;
 

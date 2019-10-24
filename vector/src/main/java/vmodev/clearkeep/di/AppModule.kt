@@ -10,6 +10,7 @@ import dagger.android.ContributesAndroidInjector
 import im.vector.BuildConfig
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
+import vmodev.clearkeep.adapters.ListRoomStickyHeaderRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ShareFileRecyclerViewAdapter
 import vmodev.clearkeep.aes.AESCrypto
 import vmodev.clearkeep.aes.interfaces.ICrypto
@@ -34,6 +35,7 @@ import vmodev.clearkeep.pbkdf2.interfaces.IGenerateKey
 import vmodev.clearkeep.rests.ClearKeepApis
 import vmodev.clearkeep.rests.IRetrofit
 import vmodev.clearkeep.rests.RetrofitBuilder
+import vmodev.clearkeep.viewmodelobjects.RoomListUser
 import vmodev.clearkeep.workermanager.UpdateDatabaseFromMatrixEvent
 import vmodev.clearkeep.workermanager.UpdateDatabaseFromMatrixEventWorker
 import vmodev.clearkeep.workermanager.interfaces.IUpdateDatabaseFromMatrixEvent
@@ -90,12 +92,12 @@ abstract class AppModule {
         @JvmStatic
         @Named(value = IListRoomRecyclerViewAdapter.ROOM)
         fun provideListRoomDirectMessageAdapter(appExecutors: AppExecutors, dataBindingComponent : IDataBindingComponent): IListRoomRecyclerViewAdapter {
-            return ListRoomRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<vmodev.clearkeep.viewmodelobjects.RoomListUser>() {
-                override fun areItemsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
+            return ListRoomStickyHeaderRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<RoomListUser>() {
+                override fun areItemsTheSame(p0: RoomListUser, p1: RoomListUser): Boolean {
                     return TextUtils.equals(p0.room?.id, p1.room?.id);
                 }
 
-                override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
+                override fun areContentsTheSame(p0: RoomListUser, p1: RoomListUser): Boolean {
                     return p0.room?.name == p1.room?.name && p0.room?.avatarUrl == p1.room?.avatarUrl
                             && p0.room?.notifyCount == p1.room?.notifyCount && p0.room?.type == p1.room?.type
                             && p0.room?.messageId == p1.room?.messageId && p0.room?.notificationState == p1.room?.notificationState

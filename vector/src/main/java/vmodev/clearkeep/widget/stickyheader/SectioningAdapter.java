@@ -1,4 +1,4 @@
-package org.zakariya.stickyheaders;
+package vmodev.clearkeep.widget.stickyheader;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -6,12 +6,18 @@ import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.AsyncDifferConfig;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import im.vector.R;
 
 /**
  * SectioningAdapter
@@ -29,7 +35,7 @@ import java.util.List;
  * be ignored by SectioningAdapter subclasses - but it is made externally accessible just in case.
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class SectioningAdapter extends RecyclerView.Adapter<SectioningAdapter.ViewHolder> {
+public abstract class SectioningAdapter<T, VH extends RecyclerView.ViewHolder> extends ListAdapter<T,VH> {
 
 	private static final String TAG = "SectioningAdapter";
 
@@ -39,6 +45,14 @@ public class SectioningAdapter extends RecyclerView.Adapter<SectioningAdapter.Vi
 	public static final int TYPE_GHOST_HEADER = 1;
 	public static final int TYPE_ITEM = 2;
 	public static final int TYPE_FOOTER = 3;
+
+	protected SectioningAdapter(@NonNull DiffUtil.ItemCallback<T> diffCallback) {
+		super(diffCallback);
+	}
+
+	protected SectioningAdapter(@NonNull AsyncDifferConfig<T> config) {
+		super(config);
+	}
 
 	private static class Section {
 		int adapterPosition;    // adapterPosition of first item (the header) of this sections
@@ -1292,62 +1306,67 @@ public class SectioningAdapter extends RecyclerView.Adapter<SectioningAdapter.Vi
 	}
 
 	@Override
-	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+	public VH onCreateViewHolder(ViewGroup parent, int viewType) {
 
 		int baseViewType = unmaskBaseViewType(viewType);
 		int userViewType = unmaskUserViewType(viewType);
 
 		switch (baseViewType) {
 			case TYPE_ITEM:
-				return onCreateItemViewHolder(parent, userViewType);
+				return (VH) onCreateItemViewHolder(parent, userViewType);
 			case TYPE_HEADER:
-				return onCreateHeaderViewHolder(parent, userViewType);
+				return (VH) onCreateHeaderViewHolder(parent, userViewType);
 			case TYPE_FOOTER:
-				return onCreateFooterViewHolder(parent, userViewType);
+				return (VH) onCreateFooterViewHolder(parent, userViewType);
 			case TYPE_GHOST_HEADER:
-				return onCreateGhostHeaderViewHolder(parent);
+				return (VH) onCreateGhostHeaderViewHolder(parent);
 		}
 
 		throw new IndexOutOfBoundsException("unrecognized viewType: " + viewType + " does not correspond to TYPE_ITEM, TYPE_HEADER or TYPE_FOOTER");
 	}
 
 	@Override
-	public void onBindViewHolder(ViewHolder holder, int adapterPosition) {
-		int section = getSectionForAdapterPosition(adapterPosition);
+	public void onBindViewHolder(@NonNull VH holder, int position) {
 
-		// bind the sections to this view holder
-		holder.setSection(section);
-		holder.setNumberOfItemsInSection(getNumberOfItemsInSection(section));
-
-		// tag the viewHolder's item so as to make it possible to track in layout manager
-		tagViewHolderItemView(holder, section, adapterPosition);
-
-		int baseType = unmaskBaseViewType(holder.getItemViewType());
-		int userType = unmaskUserViewType(holder.getItemViewType());
-		switch (baseType) {
-			case TYPE_HEADER:
-				onBindHeaderViewHolder((HeaderViewHolder) holder, section, userType);
-				break;
-
-			case TYPE_ITEM:
-				ItemViewHolder ivh = (ItemViewHolder) holder;
-				int positionInSection = getPositionOfItemInSection(section, adapterPosition);
-				ivh.setPositionInSection(positionInSection);
-				onBindItemViewHolder(ivh, section, positionInSection, userType);
-				break;
-
-			case TYPE_FOOTER:
-				onBindFooterViewHolder((FooterViewHolder) holder, section, userType);
-				break;
-
-			case TYPE_GHOST_HEADER:
-				onBindGhostHeaderViewHolder((GhostHeaderViewHolder) holder, section);
-				break;
-
-			default:
-				throw new IllegalArgumentException("unrecognized viewType: " + baseType + " does not correspond to TYPE_ITEM, TYPE_HEADER, TYPE_GHOST_HEADER or TYPE_FOOTER");
-		}
 	}
+
+//	@Override
+//	public void onBindViewHolder(ViewHolder holder, int adapterPosition) {
+//		int section = getSectionForAdapterPosition(adapterPosition);
+//
+//		// bind the sections to this view holder
+//		holder.setSection(section);
+//		holder.setNumberOfItemsInSection(getNumberOfItemsInSection(section));
+//
+//		// tag the viewHolder's item so as to make it possible to track in layout manager
+//		tagViewHolderItemView(holder, section, adapterPosition);
+//
+//		int baseType = unmaskBaseViewType(holder.getItemViewType());
+//		int userType = unmaskUserViewType(holder.getItemViewType());
+//		switch (baseType) {
+//			case TYPE_HEADER:
+//				onBindHeaderViewHolder((HeaderViewHolder) holder, section, userType);
+//				break;
+//
+//			case TYPE_ITEM:
+//				ItemViewHolder ivh = (ItemViewHolder) holder;
+//				int positionInSection = getPositionOfItemInSection(section, adapterPosition);
+//				ivh.setPositionInSection(positionInSection);
+//				onBindItemViewHolder(ivh, section, positionInSection, userType);
+//				break;
+//
+//			case TYPE_FOOTER:
+//				onBindFooterViewHolder((FooterViewHolder) holder, section, userType);
+//				break;
+//
+//			case TYPE_GHOST_HEADER:
+//				onBindGhostHeaderViewHolder((GhostHeaderViewHolder) holder, section);
+//				break;
+//
+//			default:
+//				throw new IllegalArgumentException("unrecognized viewType: " + baseType + " does not correspond to TYPE_ITEM, TYPE_HEADER, TYPE_GHOST_HEADER or TYPE_FOOTER");
+//		}
+//	}
 
 	/**
 	 * Tag the itemView of the view holder with information needed for the layout to do its sticky positioning.
