@@ -88,6 +88,7 @@
     <color name="default_text_hint_color_light">#903C3C3C</color>
     <color name="default_text_hint_color_dark">#CCDDDDDD</color>
     <color name="background_search">#F0F0F0</color>
+    <color name="color_for_settings_text">#646464</color>
 
     <!-- Text Colors -->
     <!--Default/Text Primary-->
@@ -164,6 +165,7 @@
     <color name="button_login_background_color">#25B4CA</color>
     <color name="home_screen_bottom_navigation_view_background">#F3F2F3</color>
     <color name="app_green">#63CD9A</color>
+    <color name="color_clear_cache">#005311</color>
     <color name="lock_background">#BBBBBB</color>
     <color name="transparent_black_50">#80000000</color>
     <color name="background_main_gray">#F1F1F2</color>
