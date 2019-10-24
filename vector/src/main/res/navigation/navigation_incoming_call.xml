@@ -11,7 +11,7 @@
         tools:layout="@layout/fragment_incoming_call" >
         <action
             android:id="@+id/inProgressCall"
-            app:destination="@id/inProgressCallFragment"
+            app:destination="@+id/inProgressCallFragment"
             app:enterAnim="@anim/fragment_open_enter"
             app:exitAnim="@anim/fragment_open_exit"
             app:popEnterAnim="@anim/fragment_open_enter"
@@ -21,10 +21,21 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null" />
+        <action
+            android:id="@+id/inProgressVoiceCall"
+            app:destination="@id/inProgressVoiceCallFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_open_enter"
+            app:popExitAnim="@anim/fragment_open_exit" />
     </fragment>
 
     <fragment
         android:id="@+id/inProgressCallFragment"
         android:name="vmodev.clearkeep.fragments.InProgressCallFragment"
         tools:layout="@layout/fragment_in_progress_call" />
+    <fragment
+        android:id="@+id/inProgressVoiceCallFragment"
+        android:name="vmodev.clearkeep.fragments.InProgressVoiceCallFragment"
+        tools:layout="@layout/fragment_in_progress_voice_call" />
 </navigation>

@@ -47,7 +47,12 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
                 IMXCall.CALL_STATE_CONNECTED -> {
                     mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL);
                     saveCallView();
-                    findNavController().navigate(IncomingCallFragmentDirections.inProgressCall());
+                    if (mxCall.isVideo){
+                        findNavController().navigate(IncomingCallFragmentDirections.inProgressCall());
+                    }
+                    else{
+                        findNavController().navigate(IncomingCallFragmentDirections.inProgressVoiceCall());
+                    }
                 }
                 IMXCall.CALL_STATE_CONNECTING -> {
                     binding.textViewCalling.text = resources.getText(R.string.call_connecting);

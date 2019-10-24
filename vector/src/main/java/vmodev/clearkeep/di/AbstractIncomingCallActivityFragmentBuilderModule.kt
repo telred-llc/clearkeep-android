@@ -6,6 +6,7 @@ import dagger.android.ContributesAndroidInjector
 import vmodev.clearkeep.factories.IncomingCallFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.InProgressCallFragment
+import vmodev.clearkeep.fragments.InProgressVoiceCallFragment
 import vmodev.clearkeep.fragments.IncomingCallFragment
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractIncomingCallFragmentViewModel
@@ -19,6 +20,9 @@ abstract class AbstractIncomingCallActivityFragmentBuilderModule {
 
     @ContributesAndroidInjector(modules = [InProgressCallFragmentBindModule::class])
     abstract fun contributeInProgressFragment(): InProgressCallFragment;
+
+    @ContributesAndroidInjector(modules = [InProgressVoiceCallFragmentBindModule::class])
+    abstract fun contributeInProgressVoiceCCallFragment(): InProgressVoiceCallFragment;
 
     @Module
     abstract class IncomingCallFragmentBindModule {
@@ -35,5 +39,12 @@ abstract class AbstractIncomingCallActivityFragmentBuilderModule {
         @Binds
         @Named(IFragment.IN_PROGRESS_CALL_FRAGMENT)
         abstract fun bindInProgressCallFragment(fragment: InProgressCallFragment): IFragment;
+    }
+
+    @Module
+    abstract class InProgressVoiceCallFragmentBindModule {
+        @Binds
+        @Named(IFragment.IN_PROGRESS_VOICE_CALL_FRAGMENT)
+        abstract fun bindInProgressVoiceCallFragment(fragment: InProgressVoiceCallFragment): IFragment;
     }
 }
