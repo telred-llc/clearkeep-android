@@ -151,14 +151,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/ic_room_members"
+                        android:src="@drawable/ic_members"
                         android:tint="?attr/icon_color" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_margin="10dp"
+                        android:layout_margin="@dimen/margin_normal"
                         android:layout_weight="1"
                         android:text="@string/members" />
 
