@@ -319,6 +319,7 @@
         <item name="android:textColor">@color/text_color_blue</item>
         <item name="colorPrimaryDark">@color/text_color_blue</item>
         <item name="colorControlActivated">@color/text_color_blue</item>
+    </style>
 
     <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
