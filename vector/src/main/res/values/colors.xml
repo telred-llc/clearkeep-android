@@ -89,6 +89,7 @@
     <color name="default_text_hint_color_dark">#CCDDDDDD</color>
     <color name="background_search">#F0F0F0</color>
     <color name="color_for_settings_text">#646464</color>
+    <color name="color_statusbar_splash">#7878F3</color>
 
     <!-- Text Colors -->
     <!--Default/Text Primary-->
@@ -97,7 +98,7 @@
     <!--Default/Text Secondary-->
     <color name="riot_secondary_text_color_light">#FF9E9E9E</color>
     <color name="riot_tertiary_text_color_light">@color/riot_primary_text_color_light</color>
-<!--    Text Color UI profile-->
+    <!--    Text Color UI profile-->
     <color name="text_color_profile">#444444</color>
 
     <!--Dark /Text Primary-->
@@ -175,7 +176,7 @@
     <!--    color basic-->
     <color name="color_white">#FFFFFF</color>
     <color name="color_grey">#F0F0F0</color>
-<!--    text_color-->
+    <!--    text_color-->
     <color name="text_color_header">#5787E3</color>
 
 
