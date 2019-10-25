@@ -81,6 +81,7 @@ class InviteUsersToRoomFragment : DataBindingDaggerFragment(), IFragment {
                 binding.btnCreate.isEnabled = false;
             }
         }
+        args.listUser?.let { listUserAdapter.setKeySelected(it) }
 
         binding.lifecycleOwner = viewLifecycleOwner;
         binding.users = viewModelFactory.getViewModel().getUsers();
@@ -167,11 +168,14 @@ class InviteUsersToRoomFragment : DataBindingDaggerFragment(), IFragment {
             hideKeyboard()
         }
         binding.editTextQuery.setOnEditorActionListener { p0, p1, p2 ->
-            hideKeyboard()
+            if (p1 == EditorInfo.IME_ACTION_DONE) {
+                hideKeyboard()
+            }
             return@setOnEditorActionListener false;
 
         }
         binding.btnCreate.isEnabled = false;
+
     }
 
     override fun getFragment(): Fragment {
