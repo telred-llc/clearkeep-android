@@ -28,83 +28,95 @@
 
     </data>
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
 
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/rlSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_margin="@dimen/margin_normal"
+            android:background="@drawable/background_border_radius_gray">
+
+            <ImageView
+                android:id="@+id/imgSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:layout_margin="@dimen/margin_small"
+                android:src="@drawable/ic_search_gray_24dp" />
+
+            <EditText
+                android:id="@+id/edit_text_query"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="@dimen/margin_small"
+                android:layout_toStartOf="@+id/imgSearch"
+                android:background="@android:color/transparent"
+                android:hint="@string/search"
+                android:imeOptions="actionDone"
+                android:singleLine="true" />
+        </RelativeLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nested_scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_above="@+id/btnCreate"
+            android:layout_below="@+id/rlSearch"
+            android:fillViewport="true">
 
-                <LinearLayout
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tvSuggested"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/background_border_radius_gray"
-                    android:orientation="horizontal">
+                    android:layout_alignParentTop="true"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:text="@string/suggested_user"
+                    android:textSize="@dimen/text_19_sp" />
 
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/ic_search_gray_24dp" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_list_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/tvSuggested"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    tools:listitem="@layout/item_user_with_radio" />
+            </RelativeLayout>
 
-                    <EditText
-                        android:id="@+id/edit_text_query"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_margin="4dp"
-                        android:background="@android:color/transparent"
-                        android:singleLine="true" />
-                </LinearLayout>
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardView_create"
-                        android:layout_width="100dp"
-                        android:layout_height="50dp"
-                        app:cardCornerRadius="25dp"
-                        app:cardBackgroundColor="@color/app_green"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="10dp">
-                        <TextView
-                            android:id="@+id/text_view_create"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="@string/create"
-                            android:textColor="@android:color/white"
-                            android:textStyle="bold"/>
-                    </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="@string/suggested_user"
-                android:textAllCaps="true" />
+        </androidx.core.widget.NestedScrollView>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_list_user"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_weight="1"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_user_with_radio" />
-        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnCreate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginBottom="@dimen/margin_large"
+            android:background="@drawable/bg_button_gradient_grey"
+            android:enabled="false"
+            android:text="@string/create"
+            android:textColor="@color/color_white" />
+
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_centerInParent="true"
             app:visibleGone="@{users.status == Status.LOADING || room.status == Status.LOADING}" />
-    </FrameLayout>
+    </RelativeLayout>
 </layout>

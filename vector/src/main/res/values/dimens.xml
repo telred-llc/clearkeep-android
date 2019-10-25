@@ -26,7 +26,9 @@
     <dimen name="text_13_sp">13sp</dimen>
     <dimen name="text_40_sp">25sp</dimen>
     <dimen name="text_18_sp">18sp</dimen>
+    <dimen name="text_17_sp">17sp</dimen>
     <dimen name="text_19_sp">19sp</dimen>
+    <dimen name="text_21_sp">21sp</dimen>
     <dimen name="image_avatar_status_size">60dp</dimen>
 
     <!--    image profile status-->
@@ -67,5 +69,13 @@
     <!--    size toolbar-->
     <dimen name="height_tool_bar_size">56dp</dimen>
 
-
+<!--    size search-->
+   <dimen name="height_search">40dp</dimen>
+    
+<!--    screen profile-->
+  <dimen name="avatar_screen_profile_size">117dp</dimen>
+    <dimen name="border_avatar_screen_profile_size">5dp</dimen>
+    <dimen name="status_active_size">17dp</dimen>
+    <dimen name="border_status_active_size">2dp</dimen>
+    <dimen name="margin_end_status_active">25dp</dimen>
 </resources>

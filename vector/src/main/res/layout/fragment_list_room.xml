@@ -215,7 +215,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="32dp"
                         android:layout_marginEnd="32dp"
-                        android:background="@drawable/button_border_background_grey_color"
+                        android:background="@drawable/bg_button_gradient_blue"
                         android:text="@string/start_room_chat"
                         android:textStyle="bold"
                         android:textSize="@dimen/text_15_sp"
@@ -333,7 +333,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="32dp"
                         android:layout_marginEnd="32dp"
-                        android:background="@drawable/button_border_background_grey_color"
+                        android:background="@drawable/bg_button_gradient_blue"
                         android:text="@string/start_direct_chat"
                         android:textColor="@color/main_text_color" />
                 </LinearLayout>

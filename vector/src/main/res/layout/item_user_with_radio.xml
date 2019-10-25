@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -11,63 +12,60 @@
             type="vmodev.clearkeep.viewmodelobjects.User" />
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="@dimen/margin_normal"
         android:orientation="horizontal">
 
+
         <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                app:cardCornerRadius="30dp">
-            <ImageView
+            android:id="@+id/flAvatar"
+            android:layout_width="@dimen/member_list_avatar_size"
+            android:layout_height="@dimen/member_list_avatar_size"
+            android:layout_gravity="center_vertical">
+
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/circle_image_view_avatar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@color/app_green"
-                app:user="@{user}"/>
-            </com.google.android.material.card.MaterialCardView>
-            <com.google.android.material.card.MaterialCardView
+                app:user="@{user}" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/circle_image_view_status"
-                android:layout_width="14dp"
-                android:layout_height="14dp"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:layout_gravity="end|bottom"
                 android:src="@color/lock_background"
-                app:cardCornerRadius="7dp"
+                app:civ_border_color="@android:color/white"
+                app:civ_border_width="2dp"
                 app:status="@{user.status}"/>
         </FrameLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_margin="5dp">
-            android:layout_margin="5dp">
+
             <TextView
                 android:id="@+id/text_view_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="center"
                 android:text="@{user.name}"
-                android:textSize="@dimen/text_20_sp"
+                android:layout_toEndOf="@+id/flAvatar"
+                android:layout_toStartOf="@+id/checkbox"
+                android:layout_centerInParent="true"
+                android:textSize="@dimen/text_17_sp"
+                android:singleLine="true"
+                android:layout_marginStart="@dimen/margin_normal"
+                android:layout_marginEnd="@dimen/margin_normal"
+                tools:text="My Friends"
                 android:textStyle="bold" />
-            <TextView
-                android:id="@+id/text_view_user_id"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@{user.id}"
-                android:textSize="@dimen/text_15_sp" />
-    </LinearLayout>
+
         <CheckBox
             android:id="@+id/checkbox"
+            android:theme="@style/checkBoxStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="10dp"/>
-    </LinearLayout>
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="@dimen/margin_normal"/>
+    </RelativeLayout>
 </layout>
