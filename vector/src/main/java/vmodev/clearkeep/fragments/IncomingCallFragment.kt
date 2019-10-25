@@ -68,6 +68,7 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
             callView?.let {
                 if (this@IncomingCallFragment.callView == null) {
                     this@IncomingCallFragment.callView = it;
+                    insertCallView();
                 }
             }
         }
@@ -129,4 +130,16 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
         }
         callView = null;
     }
+    private fun insertCallView() {
+        val params = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT)
+        params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
+
+        if (mxCall.isVideo) {
+            callView?.let {
+                binding.constraintLayoutRoot.addView(it, 0, params)
+            }
+        }
+        mxCall.visibility = View.GONE
+    }
+
 }

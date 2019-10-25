@@ -17,7 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:name="androidx.navigation.fragment.NavHostFragment"
-            app:navGraph="@navigation/navigation_incoming_call"
-            app:defaultNavHost="true"/>
+            app:navGraph="@navigation/navigation_incoming_call" />
     </FrameLayout>
 </layout>

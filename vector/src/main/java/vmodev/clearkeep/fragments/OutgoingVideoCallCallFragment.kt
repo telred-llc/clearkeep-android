@@ -24,7 +24,7 @@ import vmodev.clearkeep.fragments.Interfaces.IFragment
 /**
  * A simple [Fragment] subclass.
  */
-class OutgoingCallFragment : DataBindingDaggerFragment(), IFragment {
+class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
 
     private lateinit var binding: FragmentOutgoingCallBinding;
 
@@ -39,8 +39,8 @@ class OutgoingCallFragment : DataBindingDaggerFragment(), IFragment {
             val params = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
             params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
             if (mxCall.isVideo) {
-                if (this@OutgoingCallFragment.callView == null) {
-                    this@OutgoingCallFragment.callView = callView;
+                if (this@OutgoingVideoCallCallFragment.callView == null) {
+                    this@OutgoingVideoCallCallFragment.callView = callView;
                     insertCallView();
                 }
             }
@@ -67,7 +67,7 @@ class OutgoingCallFragment : DataBindingDaggerFragment(), IFragment {
                     mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL);
                 }
                 IMXCall.CALL_STATE_ENDED -> {
-                    this@OutgoingCallFragment.activity?.finish();
+                    this@OutgoingVideoCallCallFragment.activity?.finish();
                 }
             }
         }

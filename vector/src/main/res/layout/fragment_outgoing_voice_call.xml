@@ -1,7 +1,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="vmodev.clearkeep.fragments.InProgressVoiceCallFragment">
+    tools:context="vmodev.clearkeep.fragments.OutgoingVoiceCallFragment">
 
     <data>
 
@@ -68,11 +68,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/alerter_alert_icn_size"
+            android:baselineAligned="false"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            android:baselineAligned="false">
+            app:layout_constraintRight_toRightOf="parent">
 
             <LinearLayout
                 android:layout_width="0dp"

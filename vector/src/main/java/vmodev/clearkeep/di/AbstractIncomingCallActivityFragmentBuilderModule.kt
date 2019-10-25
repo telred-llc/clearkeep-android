@@ -3,12 +3,14 @@ package vmodev.clearkeep.di
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import vmodev.clearkeep.factories.InProgressVoiceCallFragmentViewModelFactory
 import vmodev.clearkeep.factories.IncomingCallFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.InProgressCallFragment
 import vmodev.clearkeep.fragments.InProgressVoiceCallFragment
 import vmodev.clearkeep.fragments.IncomingCallFragment
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.viewmodels.interfaces.AbstractInProgressVoiceCallFragmentViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractIncomingCallFragmentViewModel
 import javax.inject.Named
 
@@ -46,5 +48,8 @@ abstract class AbstractIncomingCallActivityFragmentBuilderModule {
         @Binds
         @Named(IFragment.IN_PROGRESS_VOICE_CALL_FRAGMENT)
         abstract fun bindInProgressVoiceCallFragment(fragment: InProgressVoiceCallFragment): IFragment;
+
+        @Binds
+        abstract fun bindInProgressVoiceCallFragmentViewModelFactory(factory: InProgressVoiceCallFragmentViewModelFactory): IViewModelFactory<AbstractInProgressVoiceCallFragmentViewModel>;
     }
 }
