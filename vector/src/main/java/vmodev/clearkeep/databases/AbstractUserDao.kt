@@ -54,4 +54,9 @@ abstract class AbstractUserDao {
 
     @Query("SELECT * FROM user WHERE id IN (:ids)")
     abstract fun getUsersWithId(ids: Array<String>): LiveData<List<User>>
+
+    @Query("SELECT * FROM User ORDER BY RANDOM() LIMIT 10")
+    abstract fun getListUserSuggested() : LiveData<List<User>>
+
+
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/color_white"
+    >
+
+    <TextView
+        android:id="@+id/tvHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_header_contact"
+        tools:text="A"
+        android:text="@string/display_name"
+        android:textStyle="bold"
+        android:textSize="@dimen/text_20_sp"
+        android:textColor="@color/soft_resource_limit_exceeded"
+        />
+
+</LinearLayout>

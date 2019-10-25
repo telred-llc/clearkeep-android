@@ -164,7 +164,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:background="@drawable/button_border_background_grey_color"
+                        android:background="@drawable/bg_button_gradient_blue"
                         android:text="@string/send"
                         android:textColor="@android:color/black"
                         android:textStyle="bold" />

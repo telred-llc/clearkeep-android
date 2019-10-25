@@ -9,6 +9,7 @@
     </data>
 
     <FrameLayout
+        android:id="@+id/frame_layout_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -17,6 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:name="androidx.navigation.fragment.NavHostFragment"
-            app:navGraph="@navigation/navigation_incoming_call" />
+            app:navGraph="@navigation/navigation_incoming_call"
+            app:defaultNavHost="true"/>
     </FrameLayout>
 </layout>

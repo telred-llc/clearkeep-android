@@ -61,11 +61,11 @@
                     android:id="@+id/button_decline"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_marginEnd="5dp"
                     android:layout_weight="1"
-                    android:background="@drawable/button_border_background_grey_color"
+                    android:background="@drawable/bg_button_gradient_blue"
                     android:text="@string/decline"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="5dp"/>
+                    android:textStyle="bold" />
 
                 <Button
                     android:id="@+id/button_join"

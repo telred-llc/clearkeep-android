@@ -1,7 +1,7 @@
 package vmodev.clearkeep.fragments
 
-import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,19 +11,18 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.FragmentContactsBinding
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
+import vmodev.clearkeep.widget.NormalDecoration
 import vmodev.clearkeep.applications.IApplication
-import vmodev.clearkeep.factories.viewmodels.interfaces.IContactFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
-import vmodev.clearkeep.fragments.Interfaces.IContactFragment
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodelobjects.Resource
+import vmodev.clearkeep.viewmodelobjects.RoomListUser
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractContactFragmentViewModel
 import javax.inject.Inject
@@ -48,7 +47,7 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractContactFragmentViewModel>;
     @Inject
-    @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
+    @field:Named(value = IListRoomRecyclerViewAdapter.ROOM_CONTACT)
     lateinit var listRoomAdapter: IListRoomRecyclerViewAdapter;
     @Inject
     lateinit var application: IApplication;
@@ -78,21 +77,29 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
         listRoomAdapter.setOnItemLongClick { }
         listRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, application.getUserId());
         binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
+        var data: List<RoomListUser> = ArrayList();
+        val headerSection = object : NormalDecoration() {
+            override fun getHeaderName(pos: Int): String? {
+                if (pos >= 0 && pos < getListRoomName(data).size) {
+                    return getListRoomName(data)[pos]
+                }
+                return null
+
+            }
+        }
+        headerSection.setOnDecorationHeadDraw(null)
+        headerSection.setHeaderContentColor(Color.WHITE)
+        headerSection.setTextColor(resources.getColor(R.color.text_color_blue))
+        binding.recyclerViewListContact.addItemDecoration(headerSection)
         viewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
-//            t?.data?.let {
-//                val data = it.sortedWith(Comparator { t, t2 ->
-//                    run {
-//                        if (t.room?.name!!.toLowerCase() > t2.room?.name!!.toLowerCase()) {
-//                            -1
-//                        } else if (t.room?.name!!.toLowerCase() > t2.room?.name!!.toLowerCase()) {
-//                            1
-//                        } else {
-//                            0
-//                        }
-//                    }
-//                }).reversed();
-                listRoomAdapter.getAdapter().submitList(t?.data)
-//            }
+            try {
+                if (!t.data.isNullOrEmpty()!!) {
+                    listRoomAdapter.getAdapter().submitList(t.data)
+                    data = t.data!!;
+                }
+            } catch (ex: Exception) {
+                Log.e("ContactsFragment", ex.message.toString())
+            }
         })
         binding.lifecycleOwner = viewLifecycleOwner;
 
@@ -126,6 +133,18 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
         return this;
     }
 
+
+    fun getListRoomName(data: List<RoomListUser>): MutableList<String> {
+        var dataHeader: MutableList<String> = mutableListOf<String>()
+        for (item in data) {
+            item.room?.name?.let {
+                dataHeader.add(it.toUpperCase().subSequence(0,
+                        1).toString())
+            }
+        }
+        return dataHeader
+    }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -144,4 +163,5 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
                     }
                 }
     }
+
 }

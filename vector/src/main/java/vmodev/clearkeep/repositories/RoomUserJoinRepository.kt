@@ -13,11 +13,13 @@ import vmodev.clearkeep.repositories.wayloads.*
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
 import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
+import vmodev.clearkeep.viewmodelobjects.User
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class RoomUserJoinRepository @Inject constructor(private val roomUserJoinDao: AbstractRoomUserJoinDao, private val matrixService: MatrixService, private val appExecutors: AppExecutors) {
+class RoomUserJoinRepository @Inject constructor(private val roomUserJoinDao: AbstractRoomUserJoinDao
+                                                 , private val matrixService: MatrixService, private val appExecutors: AppExecutors) {
     fun updateOrCreateRoomUserJoin(roomId: String, userId: String) {
         object : AbstractNetworkBoundSourceRx<RoomUserJoin, RoomUserJoin>() {
             override fun saveCallResult(item: RoomUserJoin) {
@@ -78,14 +80,6 @@ class RoomUserJoinRepository @Inject constructor(private val roomUserJoinDao: Ab
         }.asLiveData();
     }
 
-    fun getRoomListUserSortWithName(filters: Array<Int>) : LiveData<Resource<List<RoomListUser>>>{
-        return object : AbstractLocalLoadSouce<List<RoomListUser>>(){
-            override fun loadFromDB(): LiveData<List<RoomListUser>> {
-                return roomUserJoinDao.getListRoomListUserWithFilterSortName(filters);
-            }
-        }.asLiveData();
-    }
-
     fun getListRoomListUserWithFilterAndUserId(userId: String, filters: Array<Int>): LiveData<Resource<List<RoomListUser>>> {
         return object : AbstractLocalBoundSource<List<RoomListUser>>() {
             override fun loadFromDb(): LiveData<List<RoomListUser>> {
@@ -95,9 +89,24 @@ class RoomUserJoinRepository @Inject constructor(private val roomUserJoinDao: Ab
     }
 
     fun getListRoomListUserWithListRoomId(filters: List<Int>, query: String): LiveData<Resource<List<RoomListUser>>> {
-        return object : AbstractLocalLoadSouce<List<RoomListUser>>() {
+        return object : AbstractLocalLoadSource<List<RoomListUser>>(appExecutors) {
             override fun loadFromDB(): LiveData<List<RoomListUser>> {
                 return roomUserJoinDao.findRoomByNameContain(filters, "%" + query + "%");
+            }
+        }.asLiveData();
+    }
+
+    fun getRoomListUserSortWithName(filters: Array<Int>) : LiveData<Resource<List<RoomListUser>>>{
+        return object : AbstractLocalLoadSource<List<RoomListUser>>(appExecutors){
+            override fun loadFromDB(): LiveData<List<RoomListUser>> {
+                return roomUserJoinDao.getListRoomListUserWithFilterSortName(filters);
+            }
+        }.asLiveData();
+    }
+    fun getListUserSuggested(type : Int, userId: String):LiveData<Resource<List<User>>>{
+        return object : AbstractLocalLoadSource<List<User>>(appExecutors) {
+            override fun loadFromDB(): LiveData<List<User>> {
+                return roomUserJoinDao.getListUserSuggested(type, userId);
             }
         }.asLiveData();
     }

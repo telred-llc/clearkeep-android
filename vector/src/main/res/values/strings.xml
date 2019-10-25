@@ -1443,11 +1443,11 @@ Why choose Riot.im?
     <string name="display_name">Display name</string>
     <string name="user_id">User ID</string>
     <string name="profile">Profile</string>
-    <string name="probably_you_want">probably you want</string>
+    <string name="probably_you_want">Probably you want</string>
     <string name="new_room">New Room</string>
     <string name="add_members">Add members</string>
     <string name="new_call">New Call</string>
-    <string name="suggested">Suggested (direct messages)</string>
+    <string name="suggested">Suggested</string>
     <string name="new_conversation">New Conversation</string>
     <string name="room_name_required">Room name (Required)</string>
     <string name="room_topic_optional">Room topic (Optional)</string>
@@ -1490,7 +1490,7 @@ Why choose Riot.im?
     <string name="notification">Notification</string>
     <string name="calls">Calls</string>
     <string name="report">Report</string>
-    <string name="term_and_conditions"><![CDATA[Term & Conditions]]></string>
+    <string name="term_and_conditions"><![CDATA[Terms & Conditions]]></string>
     <string name="privacy_and_policy">Privacy Policy</string>
     <string name="copyright">Copyright</string>
     <string name="mark_all_messages_as_read">Mark all messages as read</string>
@@ -1512,8 +1512,8 @@ Why choose Riot.im?
     <string name="send_an_encrypted_message">Send an encrypted message...</string>
     <string name="preview_message">Preview</string>
     <string name="you_have_no_chat_here">You have no chat here, tap to under button to start.</string>
-    <string name="you_have_no_chat_derect">You do not have any chats yet.</string>
-    <string name="you_have_no_chat_room">You do not have any room chats yet.</string>
+    <string name="you_have_no_chat_derect">You do not have any chats yet. Start one now!</string>
+    <string name="you_have_no_chat_room">You do not have any room chats yet. Start one now!</string>
     <string name="start_direct_chat">Start Direct Chat</string>
     <string name="start_room_chat">Start Room Chat</string>
     <string name="time_demo">, 04:55 PM</string>
@@ -1533,7 +1533,7 @@ Why choose Riot.im?
     <string name="room_chats">Room chats</string>
     <string name="online">Online</string>
     <string name="theme">Theme</string>
-    <string name="dark_mode">Dark-mode</string>
+    <string name="dark_mode">Dark Mode</string>
     <string name="directs">Directs</string>
     <string name="direct_messages">Direct Messages</string>
     <string name="password">Password</string>
@@ -1814,6 +1814,7 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="exit_app_dialog_content">Do you want exit application?</string>
     <string name="auto_backup_key_logout_content">Sign out to enable auto key backup</string>
     <string name="auto_key_backup_is_disable">Auto key backup is disable</string>
+    <string name="str_checkbox_public_mode">Public mode : Anyone in the Directory can join</string>
     <string name="microphone_off">Microphone off</string>
     <string name="microphone_on">Microphone on</string>
     <string name="speaker_phone_on">Speaker phone on</string>

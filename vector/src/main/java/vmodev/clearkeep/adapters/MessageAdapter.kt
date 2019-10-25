@@ -2256,8 +2256,8 @@ internal constructor(// session
                                 //                                e2eIconByEventId.put(event.eventId, R.drawable.e2e_blocked);
                             } else {
                                 //                                e2eIconByEventId.put(event.eventId, R.drawable.e2e_warning);
-                                mSession.crypto!!.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, deviceInfo.deviceId, event.sender, object : SimpleApiCallback<Void>() {
-                                    override fun onSuccess(aVoid: Void) {
+                                mSession.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, deviceInfo.deviceId, event.sender, object : SimpleApiCallback<Void>() {
+                                    override fun onSuccess(aVoid: Void?) {
                                         //                                        e2eIconByEventId.put(event.eventId, R.drawable.e2e_verified);
                                     }
                                 })

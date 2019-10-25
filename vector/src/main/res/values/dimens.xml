@@ -22,11 +22,16 @@
     <dimen name="text_main_size">25sp</dimen>
     <dimen name="text_20_sp">20sp</dimen>
     <dimen name="text_15_sp">15sp</dimen>
+    <dimen name="text_16_sp">16sp</dimen>
     <dimen name="text_13_sp">13sp</dimen>
     <dimen name="text_40_sp">25sp</dimen>
     <dimen name="text_18_sp">18sp</dimen>
+    <dimen name="text_17_sp">17sp</dimen>
+    <dimen name="text_11_sp">11sp</dimen>
+    <dimen name="text_19_sp">19sp</dimen>
+    <dimen name="text_21_sp">21sp</dimen>
     <dimen name="image_avatar_status_size">60dp</dimen>
-
+  
     <!--    image profile status-->
     <dimen name="status_online_size">14dp</dimen>
     <dimen name="margin_status_online">3dp</dimen>
@@ -44,9 +49,34 @@
     <dimen name="margin_small">6dp</dimen>
     <dimen name="margin_left">16dp</dimen>
     <dimen name="margin_right">16dp</dimen>
-    <dimen name="padding_normal">10dp</dimen>
     <!--   padding-->
-    <dimen name="padding_small">5dp</dimen>
-    <item name="dialog_width_ratio" format="float" type="dimen">0.75</item>
+    <dimen name="padding_small">6dp</dimen>
+    <dimen name="padding_normal">10dp</dimen>
+    <dimen name="padding_medium">15dp</dimen>
+    <dimen name="padding_large">20dp</dimen>
+    <dimen name="padding_left">16dp</dimen>
+    <dimen name="padding_right">16dp</dimen>
 
+    <dimen name="header">30dp</dimen>
+    <item name="dialog_width_ratio" format="float" type="dimen">0.75</item>
+    <dimen name="margin_header_contact">3dp</dimen>
+
+    <!--    size notification number background red-->
+    <dimen name="notification_number_red_size">20dp</dimen>
+    <dimen name="margin_top_screen_home_notify_number_red">10dp</dimen>
+    <dimen name="margin_end_screen_home_notify_number_red">20dp</dimen>
+
+
+    <!--    size toolbar-->
+    <dimen name="height_tool_bar_size">56dp</dimen>
+
+<!--    size search-->
+   <dimen name="height_search">40dp</dimen>
+    
+<!--    screen profile-->
+  <dimen name="avatar_screen_profile_size">117dp</dimen>
+    <dimen name="border_avatar_screen_profile_size">5dp</dimen>
+    <dimen name="status_active_size">17dp</dimen>
+    <dimen name="border_status_active_size">2dp</dimen>
+    <dimen name="margin_end_status_active">25dp</dimen>
 </resources>

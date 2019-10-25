@@ -82,7 +82,7 @@
                 <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/background_radius_gradient">
+                    android:background="@drawable/background_purple_to_transparent_gradient">
                     <!-- the body is here -->
                     <RelativeLayout
                         android:id="@+id/messagesAdapter_text_layout"

@@ -17,12 +17,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/lb_grey" />
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -34,376 +28,379 @@
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="50dp"
-                    android:background="@color/lb_grey" />
+                    android:layout_height="20dp"
+                    android:background="@color/background_search" />
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/edit_profile_group"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="70dp"
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:id="@+id/imgProfile"
+                        android:layout_marginStart="22dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_edit_profile_setting"
-                        android:tint="?attr/icon_color" />
+                        android:src="@drawable/ic_profile" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:text="@string/edit_profile"
-                        android:textSize="@dimen/text_20_sp" />
-
-                    <ImageView
-                        android:layout_gravity="center_vertical"
+                        android:textColor="?attr/color_text_setting"
+                        app:layout_constraintLeft_toRightOf="@+id/imgProfile"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgProfile"
+                        app:layout_constraintTop_toTopOf="@+id/imgProfile"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
+                        android:layout_margin="25dp"
+                        android:text="@string/edit_profile"
+                        android:textSize="@dimen/text_17_sp" />
+
+                    <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:layout_marginEnd="18dp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgProfile"
+                        app:layout_constraintTop_toTopOf="@+id/imgProfile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/lb_grey" />
+                    android:layout_height="20dp"
+                    android:background="@color/background_search" />
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="50dp"
-                    android:background="@color/lb_grey" />
-
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/notification_group"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:id="@+id/imgnotifi"
+                        android:layout_marginStart="22dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_notification_setting"
-                        android:tint="?attr/icon_color" />
+                        android:src="@drawable/ic_notification" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:text="@string/notification"
-                        android:textSize="@dimen/text_20_sp" />
-
-                    <ImageView
+                        android:textColor="?attr/color_text_setting"
+                        app:layout_constraintLeft_toRightOf="@+id/imgnotifi"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgnotifi"
+                        app:layout_constraintTop_toTopOf="@+id/imgnotifi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
+                        android:layout_margin="25dp"
+                        android:text="@string/notifications"
+                        android:textSize="@dimen/text_17_sp" />
+
+                    <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:layout_marginEnd="18dp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgnotifi"
+                        app:layout_constraintTop_toTopOf="@+id/imgnotifi"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="10dp"
-                    android:background="@color/lb_grey" />
-
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/call_group"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:id="@+id/imgCalls"
+                        android:layout_marginStart="22dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_calls_setting"
-                        android:tint="?attr/icon_color" />
+                        android:src="@drawable/ic_call" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:text="@string/calls"
-                        android:textSize="@dimen/text_20_sp" />
-
-                    <ImageView
+                        android:textColor="?attr/color_text_setting"
+                        app:layout_constraintLeft_toRightOf="@+id/imgCalls"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgCalls"
+                        app:layout_constraintTop_toTopOf="@+id/imgCalls"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
+                        android:layout_margin="25dp"
+                        android:text="@string/calls"
+                        android:textSize="@dimen/text_17_sp" />
+
+                    <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:layout_marginEnd="18dp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgCalls"
+                        app:layout_constraintTop_toTopOf="@+id/imgCalls"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="10dp"
-                    android:background="@color/lb_grey" />
-
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/report_group"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:id="@+id/imgReport"
+                        android:layout_marginStart="22dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_report_setting"
-                        android:tint="?attr/icon_color" />
+                        android:src="@drawable/ic_report" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:text="@string/report"
-                        android:textSize="@dimen/text_20_sp" />
-
-                    <ImageView
+                        android:textColor="?attr/color_text_setting"
+                        app:layout_constraintLeft_toRightOf="@+id/imgReport"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgReport"
+                        app:layout_constraintTop_toTopOf="@+id/imgReport"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
+                        android:layout_margin="25dp"
+                        android:text="@string/report"
+                        android:textSize="@dimen/text_17_sp" />
+
+                    <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:layout_marginEnd="18dp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgReport"
+                        app:layout_constraintTop_toTopOf="@+id/imgReport"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/lb_grey" />
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="50dp"
-                    android:background="@color/lb_grey" />
-
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/security_group"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:id="@+id/imgSecurity"
+                        android:layout_marginStart="22dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_security_setting"
-                        android:tint="?attr/icon_color" />
+                        android:src="@drawable/ic_security" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:text="@string/security"
-                        android:textSize="@dimen/text_20_sp" />
-
-                    <ImageView
+                        android:textColor="?attr/color_text_setting"
+                        app:layout_constraintLeft_toRightOf="@+id/imgSecurity"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgSecurity"
+                        app:layout_constraintTop_toTopOf="@+id/imgSecurity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
+                        android:layout_margin="25dp"
+                        android:text="@string/security"
+                        android:textSize="@dimen/text_17_sp" />
+
+                    <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:layout_marginEnd="18dp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgSecurity"
+                        app:layout_constraintTop_toTopOf="@+id/imgSecurity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/lb_grey" />
+                    android:layout_height="20dp"
+                    android:background="@color/background_search" />
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="50dp"
-                    android:background="@color/lb_grey" />
-
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/theme_group"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="70dp"
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:id="@+id/imgTheme"
+                        android:layout_marginStart="22dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_format_paint_black_24dp" />
+                        android:src="@drawable/ic_theme" />
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:textColor="?attr/color_text_setting"
+                        app:layout_constraintLeft_toRightOf="@+id/imgTheme"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgTheme"
+                        app:layout_constraintTop_toTopOf="@+id/imgTheme"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
+                        android:layout_margin="25dp"
                         android:text="@string/dark_mode"
-                        android:textSize="@dimen/text_20_sp" />
+                        android:textSize="@dimen/text_17_sp" />
 
                     <androidx.appcompat.widget.SwitchCompat
+                        android:layout_marginEnd="18dp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgTheme"
+                        app:layout_constraintTop_toTopOf="@+id/imgTheme"
                         android:id="@+id/switch_compat_change_theme"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="10dp"/>
-                </LinearLayout>
-
+                        android:layout_height="wrap_content" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/lb_grey" />
+                    android:layout_height="20dp"
+                    android:background="@color/background_search" />
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="50dp"
-                    android:background="@color/lb_grey" />
-
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/term_and_conditions"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:id="@+id/imgTermAndConditions"
+                        android:layout_marginStart="22dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_terms_condition_setting"
-                        android:tint="?attr/icon_color" />
+                        android:src="@drawable/ic_term_and_conditions" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:text="@string/term_and_conditions"
-                        android:textSize="@dimen/text_20_sp" />
-
-                    <ImageView
+                        android:textColor="?attr/color_text_setting"
+                        app:layout_constraintLeft_toRightOf="@+id/imgTermAndConditions"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgTermAndConditions"
+                        app:layout_constraintTop_toTopOf="@+id/imgTermAndConditions"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
+                        android:layout_margin="25dp"
+                        android:text="@string/term_and_conditions"
+                        android:textSize="@dimen/text_17_sp" />
+
+                    <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:layout_marginEnd="18dp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgTermAndConditions"
+                        app:layout_constraintTop_toTopOf="@+id/imgTermAndConditions"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="10dp"
-                    android:background="@color/lb_grey" />
-
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/privacy_policy_group"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:id="@+id/imgPrivacyPolicyGroup"
+                        android:layout_marginStart="22dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_privacy_policy_setting"
-                        android:tint="?attr/icon_color" />
+                        android:src="@drawable/ic_privacy_policy_group" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:text="@string/privacy_and_policy"
-                        android:textSize="@dimen/text_20_sp" />
-
-                    <ImageView
+                        android:textColor="?attr/color_text_setting"
+                        app:layout_constraintLeft_toRightOf="@+id/imgPrivacyPolicyGroup"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgPrivacyPolicyGroup"
+                        app:layout_constraintTop_toTopOf="@+id/imgPrivacyPolicyGroup"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
+                        android:layout_margin="25dp"
+                        android:text="@string/privacy_and_policy"
+                        android:textSize="@dimen/text_17_sp" />
+
+                    <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:layout_marginEnd="18dp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgPrivacyPolicyGroup"
+                        app:layout_constraintTop_toTopOf="@+id/imgPrivacyPolicyGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="10dp"
-                    android:background="@color/lb_grey" />
-
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/copyright_group"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:orientation="horizontal">
 
                     <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:id="@+id/imgCopyRight"
+                        android:layout_marginStart="22dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_copyright_setting"
-                        android:tint="?attr/icon_color" />
+                        android:src="@drawable/ic_img_copy_right" />
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:text="@string/copyright"
-                        android:textSize="@dimen/text_20_sp" />
-
-                    <ImageView
+                        android:textColor="?attr/color_text_setting"
+                        app:layout_constraintLeft_toRightOf="@+id/imgCopyRight"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgCopyRight"
+                        app:layout_constraintTop_toTopOf="@+id/imgCopyRight"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="5dp"
+                        android:layout_margin="25dp"
+                        android:text="@string/copyright"
+                        android:textSize="@dimen/text_17_sp" />
+
+                    <ImageView
+                        android:tint="?attr/icon_color_setting"
+                        android:layout_marginEnd="18dp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgCopyRight"
+                        app:layout_constraintTop_toTopOf="@+id/imgCopyRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/lb_grey" />
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="50dp"
-                    android:background="@color/lb_grey" />
+                    android:layout_height="20dp"
+                    android:background="@color/background_search" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -411,52 +408,35 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:gravity="center_vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
+                        android:layout_height="50dp"
                         android:text="@string/mark_all_messages_as_read"
                         android:textAlignment="center"
-                        android:textColor="@color/app_green"
-                        android:textSize="@dimen/text_20_sp" />
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginEnd="20dp"
-                        android:background="@color/lb_grey" />
+                        android:textColor="?attr/color_clear_cache"
+                        android:textSize="@dimen/text_17_sp" />
 
                     <TextView
+                        android:gravity="center_vertical"
                         android:id="@+id/text_view_clear_cache"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
+                        android:layout_height="50dp"
                         android:text="@string/clear_cache"
                         android:textAlignment="center"
-                        android:textColor="@color/app_green"
-                        android:textSize="@dimen/text_20_sp" />
+                        android:textColor="?attr/color_clear_cache"
+                        android:textSize="@dimen/text_17_sp" />
                 </LinearLayout>
 
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/lb_grey" />
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="50dp"
-                    android:background="@color/lb_grey" />
-
                 <TextView
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="40dp"
                     android:id="@+id/text_view_deactivate_account"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_height="50dp"
                     android:text="@string/deactivate_account_title"
                     android:textAlignment="center"
-                    android:textColor="@android:color/holo_red_dark"
-                    android:textSize="@dimen/text_20_sp" />
+                    android:textColor="?attr/color_clear_cache"
+                    android:textSize="@dimen/text_17_sp" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

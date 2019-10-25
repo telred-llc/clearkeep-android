@@ -27,6 +27,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.FragmentActivity
 import butterknife.BindView
 import butterknife.OnClick
 import butterknife.OnLongClick
@@ -56,6 +57,7 @@ import im.vector.view.*
 import im.vector.widgets.Widget
 import im.vector.widgets.WidgetManagerProvider
 import im.vector.widgets.WidgetsManager
+import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.call.IMXCall
 import org.matrix.androidsdk.call.MXCallListener
@@ -80,13 +82,16 @@ import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.User
 import org.matrix.androidsdk.rest.model.message.Message
+import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.applications.IApplication
+import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.MessageListFragment
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.MessageRepository
 import vmodev.clearkeep.repositories.RoomRepository
 import vmodev.clearkeep.ultis.ReadMarkerManager
 import vmodev.clearkeep.ultis.RoomMediasSender
+import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomActivityViewModel
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.HashMap
@@ -95,7 +100,12 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         MatrixMessageListFragment.IEventSendingListener,
         MatrixMessageListFragment.IOnScrollListener,
         MessageListFragment.VectorMessageListFragmentListener,
-        VectorReadReceiptsDialogFragment.VectorReadReceiptsDialogFragmentListener {
+        VectorReadReceiptsDialogFragment.VectorReadReceiptsDialogFragmentListener, IActivity {
+
+    override fun getActivity(): FragmentActivity {
+        return this
+    }
+
     companion object {
         // the session
         val EXTRA_MATRIX_ID = MXCActionBarActivity.EXTRA_MATRIX_ID
@@ -170,6 +180,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     private var mEventId: String? = null
     private var mDefaultRoomName: String? = null
     private var mDefaultTopic: String? = null
+    @Inject
+    lateinit var viewModelFactory: IViewModelFactory<AbstractRoomActivityViewModel>;
 
     private var mLatestChatMessageCache: MXLatestChatMessageCache? = null
 
@@ -604,6 +616,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //        toolbar.setBackgroundResource(android.R.color.white)
         toolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_green)
         toolbar.setNavigationOnClickListener {
+//            viewModelFactory.getViewModel().setIdForUpdateRoomNotifyCount(currentRoom!!.roomId).subscribeOn(Schedulers.io()).subscribe();
             finishResult();
             finish()
         }
@@ -645,7 +658,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         })
 
         currentRoom = mxSession!!.dataHandler.getRoom(roomId, false)
-
+        viewModelFactory.getViewModel().setIdForUpdateRoomNotifyCount(currentRoom!!.roomId).subscribeOn(Schedulers.io()).subscribe();
         mEditText!!.setAddColonOnFirstItem(true)
         mEditText!!.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: android.text.Editable) {
@@ -1257,6 +1270,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                         if (!isFinishing && (null != latestDisplayedEvent) && mVectorMessageListFragment!!.messageAdapter != null) {
 
                             mVectorMessageListFragment!!.messageAdapter.updateReadMarker(currentRoom!!.getReadMarkerEventId(), latestDisplayedEvent!!.eventId)
+                            viewModelFactory.getViewModel().setIdForUpdateRoomNotifyCount(currentRoom!!.roomId).subscribeOn(Schedulers.io()).subscribe();
+
                         }
                     } catch (e: Exception) {
                         Log.e(LOG_TAG, "## sendReadReceipt() : failed " + e.message, e)
@@ -4077,5 +4092,4 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             mSendImageView!!.performClick()
         }
     }
-
 }

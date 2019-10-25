@@ -91,6 +91,8 @@
         <!-- Widget banner background -->
         <attr name="vctr_widget_banner_background" format="color" />
 
-
+    </declare-styleable>
+    <declare-styleable name="CustomFontTextView">
+        <attr name="customFont" format="string" />
     </declare-styleable>
 </resources>

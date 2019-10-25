@@ -32,7 +32,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:layout_marginStart="@dimen/margin_left"
+        android:layout_marginEnd="@dimen/margin_right"
         android:baselineAligned="false"
         android:orientation="horizontal">
 
@@ -40,9 +43,9 @@
             android:layout_width="@dimen/image_avatar_status_size"
             android:layout_height="@dimen/image_avatar_status_size">
 
-               <vmodev.clearkeep.widget.RoundedCornerLayout
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content">
+            <vmodev.clearkeep.widget.RoundedCornerLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
                 <ImageView
                     android:id="@+id/circle_image_view_avatar"
                     android:layout_width="match_parent"
@@ -51,7 +54,7 @@
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_launcher_app"
                     app:room="@{room_list_user.room}" />
-               </vmodev.clearkeep.widget.RoundedCornerLayout>
+            </vmodev.clearkeep.widget.RoundedCornerLayout>
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="@dimen/status_online_size"
@@ -64,7 +67,7 @@
                 app:contentPadding="@dimen/padding_status_online"
                 app:cardBackgroundColor="#FFFFFF"
                 app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}"
-               >
+                >
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/circle_image_view_status"
                     app:currentUserId="@{current_user_id}"
@@ -85,11 +88,12 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginVertical="7dp"
+            android:layout_marginVertical="@dimen/margin_small"
             android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
+                android:textColor="@color/black_color"
                 android:id="@+id/text_view_name"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -97,8 +101,7 @@
                 android:layout_weight="1"
                 android:singleLine="true"
                 android:text="@{room_list_user.room.name}"
-                android:textSize="@dimen/text_18_sp"
-                android:textStyle="bold" />
+                android:textSize="@dimen/text_17_sp" />
 
             <TextView
                 android:id="@+id/text_view_last_message"
@@ -109,7 +112,7 @@
                 android:singleLine="true"
                 app:decryptMessage="@{room_list_user.lastMessage}"
                 android:textColor="@color/main_text_color_hint"
-                android:textSize="@dimen/text_15_sp" />
+                android:textSize="@dimen/text_13_sp" />
         </LinearLayout>
 
         <FrameLayout
@@ -117,8 +120,10 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:gravity="center"
+                android:textSize="@dimen/text_11_sp"
+                android:layout_width="21dp"
+                android:layout_height="21dp"
                 android:layout_gravity="center_vertical|end"
                 android:layout_marginEnd="40dp"
                 android:background="@drawable/circle_background"
@@ -134,6 +139,8 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:textColor="@color/black_color"
+                    android:textSize="@dimen/text_11_sp"
                     android:id="@+id/text_view_time"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"

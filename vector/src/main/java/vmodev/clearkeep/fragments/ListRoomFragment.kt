@@ -24,6 +24,7 @@ import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodelobjects.Resource
+import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractListRoomFragmentViewModel
 import javax.inject.Inject
@@ -58,6 +59,8 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
 
     private lateinit var binding: FragmentListRoomBinding;
     private var onGoingRoom = false;
+    private var roomList: Int? = 0
+    private var derectList: Int? = 0
     private var currentRoomId: String = ""
     private var alertDialog: AlertDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -249,13 +252,25 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
         binding.listDirect = viewModelFactory.getViewModel().getListDirectRoomResult();
         viewModelFactory.getViewModel().getListDirectRoomResult().observe(this.viewLifecycleOwner, Observer {
             listDirectRoomAdapter.getAdapter().submitList(it?.data);
+            if (it?.status == Status.SUCCESS) {
+                derectList = it?.data!!.size
+            }
+
         });
         binding.linearLayoutDirect.setOnClickListener {
             binding.expandableLayoutListDirect.isExpanded = !binding.expandableLayoutListDirect.isExpanded;
             if (binding.expandableLayoutListDirect.isExpanded) {
                 binding.imageViewDirectionDirect.rotation = 0f;
+                if (derectList == 0) {
+                    binding.layoutEmptyDerect.visibility = View.VISIBLE
+                }
+
             } else {
                 binding.imageViewDirectionDirect.rotation = 270f;
+                if (derectList == 0) {
+                    binding.layoutEmptyDerect.visibility = View.GONE
+                }
+
             }
         }
     }
@@ -323,13 +338,24 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
         binding.listGroup = viewModelFactory.getViewModel().getListGroupRoomResult();
         viewModelFactory.getViewModel().getListGroupRoomResult().observe(this.viewLifecycleOwner, Observer {
             listGroupRoomAdapter.getAdapter().submitList(it?.data)
+            if (it?.status == Status.SUCCESS) {
+                roomList = it?.data!!.size
+            }
+
         });
         binding.linearLayoutGroup.setOnClickListener {
             binding.expandableLayoutListGroup.isExpanded = !binding.expandableLayoutListGroup.isExpanded;
             if (binding.expandableLayoutListGroup.isExpanded) {
                 binding.imageViewDirectionGroup.rotation = 0f;
+                if (roomList == 0) {
+                    binding.layoutEmptyRoom.visibility = View.VISIBLE
+                }
             } else {
                 binding.imageViewDirectionGroup.rotation = 270f;
+                if (roomList == 0) {
+                    binding.layoutEmptyRoom.visibility = View.GONE
+                }
+
             }
         }
     }

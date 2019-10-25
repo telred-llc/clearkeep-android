@@ -5,11 +5,15 @@
     tools:context="vmodev.clearkeep.activities.SettingsActivity">
 
     <LinearLayout
+        android:background="@color/primary_hint_text_color_light"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
+            app:titleTextColor="?attr/color_toolbar"
+            app:contentInsetStartWithNavigation="0dp"
+            app:theme="@style/ToolbarColoredBackArrow"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

@@ -126,10 +126,14 @@ class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
     private fun insertCallView() {
         val params = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT)
         params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
+        binding.constraintLayoutRoot.removeView(callView)
+        binding.constraintLayoutRoot.visibility = View.VISIBLE
 
         if (mxCall.isVideo) {
             callView?.let {
-                binding.constraintLayoutRoot.addView(it, 0, params)
+                if (it.parent != null)
+                    (it.parent as ViewGroup).removeView(it);
+                binding.constraintLayoutRoot.addView(it, 1, params)
             }
         }
         mxCall.visibility = View.GONE

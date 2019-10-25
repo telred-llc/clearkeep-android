@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import vmodev.clearkeep.repositories.RoomRepository
+import vmodev.clearkeep.repositories.RoomUserJoinRepository
 import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
@@ -13,7 +14,8 @@ import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractFindAndCreateNewConversationActivityViewModel
 import javax.inject.Inject
 
-class FindAndCreateNewConversationActivityViewModel @Inject constructor(userRepository: UserRepository, roomRepository: RoomRepository) : AbstractFindAndCreateNewConversationActivityViewModel() {
+class FindAndCreateNewConversationActivityViewModel @Inject constructor(private val userRepository: UserRepository, private val roomRepository: RoomRepository, private val roomUserJoinRepository: RoomUserJoinRepository) : AbstractFindAndCreateNewConversationActivityViewModel() {
+
     private val _query = MutableLiveData<String>();
     private val _otherUserId = MutableLiveData<String>();
     private val _joinRoom = MutableLiveData<String>();
@@ -51,4 +53,9 @@ class FindAndCreateNewConversationActivityViewModel @Inject constructor(userRepo
         if (!TextUtils.equals(_joinRoom.value, roomId))
             _joinRoom.value = roomId;
     }
+
+    override fun getListUserSuggested(type:Int,userID:String): LiveData<Resource<List<User>>> {
+       return roomUserJoinRepository.getListUserSuggested(type,userID)
+    }
+
 }
