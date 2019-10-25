@@ -36,7 +36,6 @@
         android:layout_marginBottom="@dimen/margin_small"
         android:layout_marginStart="@dimen/margin_left"
         android:layout_marginEnd="@dimen/margin_right"
-        android:background="@color/color_white"
         android:baselineAligned="false"
         android:orientation="horizontal">
 
