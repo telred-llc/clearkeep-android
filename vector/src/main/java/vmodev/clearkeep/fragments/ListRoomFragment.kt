@@ -15,12 +15,15 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.orhanobut.dialogplus.DialogPlus
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
+import im.vector.adapters.model.Header
 import im.vector.databinding.FragmentListRoomBinding
+import org.zakariya.stickyheaders.StickyHeaderLayoutManager
 import vmodev.clearkeep.activities.*
 import vmodev.clearkeep.adapters.BottomDialogFavouriteRoomLongClick
 import vmodev.clearkeep.adapters.BottomDialogRoomLongClick
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomStickyHeaderRecyclerViewAdapter
+import vmodev.clearkeep.adapters.ListRoomWithHeaderAdapter
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
@@ -62,14 +65,13 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
     @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
     lateinit var listFavouritesRoomAdapter: IListRoomRecyclerViewAdapter;
-    private lateinit var adapter:ListRoomStickyHeaderRecyclerViewAdapter
+    private lateinit var adapter: ListRoomStickyHeaderRecyclerViewAdapter
     private lateinit var binding: FragmentListRoomBinding;
     private var onGoingRoom = false;
     private var roomList: Int? = 0
     private var derectList: Int? = 0
     private var currentRoomId: String = ""
     private var alertDialog: AlertDialog? = null
-    private var listRoom: HashMap<String, List<RoomListUser>>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -81,11 +83,28 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
         return binding.root;
     }
 
+    private lateinit var listRoomAdapter: ListRoomWithHeaderAdapter;
+    var listFavourite: ArrayList<RoomListUser> = ArrayList<RoomListUser>();
+    var listRoom: ArrayList<RoomListUser> = ArrayList<RoomListUser>();
+    var listDirect: ArrayList<RoomListUser> = ArrayList<RoomListUser>();
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        initListDirectChat();
 //        initListGroupChat();
-        listRoom = HashMap()
+
+        var listData = ArrayList<List<RoomListUser>>();
+        listData.add(listFavourite);
+        listData.add(listRoom);
+        listData.add(listDirect);
+
+//        val headers = arrayListOf<String>("Favourites", "Rooms", "Directs")
+        val headers : ArrayList<Header> = ArrayList()
+        headers.add(Header("Favourites",listFavourite.size.toString(),R.drawable.ic_favourites))
+        headers.add(Header("Rooms",listRoom.size.toString(),R.drawable.ic_rooms))
+        headers.add(Header("Directs",listDirect.size.toString(),R.drawable.ic_derect_messages))
+
+        listRoomAdapter = ListRoomWithHeaderAdapter(headers, listData);
+
         initListFavouriteChat();
         viewModelFactory.getViewModel().joinRoomWithIdResult().observe(this.viewLifecycleOwner, Observer {
             it?.data?.let {
@@ -179,21 +198,34 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
                 bottomDialog.show();
             }
         }
-        binding.recyclerViewListFavouritesChat.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
-        binding.recyclerViewListFavouritesChat.isNestedScrollingEnabled = false;
-        binding.recyclerViewListFavouritesChat.adapter = listFavouritesRoomAdapter.getAdapter();
+//        binding.recyclerViewListFavouritesChat.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+//        binding.recyclerViewListFavouritesChat.isNestedScrollingEnabled = false;
+//        binding.recyclerViewListFavouritesChat.adapter = listFavouritesRoomAdapter.getAdapter();
+        binding.recyclerViewListFavouritesChat.layoutManager = StickyHeaderLayoutManager();
+        binding.recyclerViewListFavouritesChat.adapter = listRoomAdapter;
+
         binding.listFavourites = viewModelFactory.getViewModel().getListFavouritesResult();
         viewModelFactory.getViewModel().getListFavouritesResult().observe(this.viewLifecycleOwner, Observer {
             //            listFavouritesRoomAdapter.getAdapter().submitList(it?.data);
             if (it?.status == Status.SUCCESS) {
-                it.data?.let { it1 -> listRoom?.put("Favourties", it1) }
+                it.data?.let {
+                    Log.d("DataSize", it.size.toString())
+                    listFavourite.clear();
+                    listFavourite.addAll(it)
+                    listRoomAdapter.notifyDataSetChanged();
+                    listRoomAdapter.notifyAllSectionsDataSetChanged();
+                }
             }
         });
 
         viewModelFactory.getViewModel().getListGroupRoomResult().observe(this.viewLifecycleOwner, Observer {
             //                            listGroupRoomAdapter.getAdapter().submitList(it?.data)
             if (it?.status == Status.SUCCESS) {
-                it.data?.let { it2 -> listRoom?.put("Direct Messages", it2) }
+                it.data?.let {
+                    listRoom.clear();
+                    listRoom.addAll(it);
+                    listRoomAdapter.notifyAllSectionsDataSetChanged();
+                }
             }
 
         });
@@ -201,7 +233,11 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
         viewModelFactory.getViewModel().getListDirectRoomResult().observe(this.viewLifecycleOwner, Observer {
             //            listDirectRoomAdapter.getAdapter().submitList(it?.data);
             if (it?.status == Status.SUCCESS) {
-                it.data?.let { it3 -> listRoom?.put("Rooms", it3) }
+                it.data?.let {
+                    listDirect.clear();
+                    listDirect.addAll(it);
+                    listRoomAdapter.notifyAllSectionsDataSetChanged();
+                }
             }
 
 //        binding.linearLayoutFavourites.setOnClickListener {
@@ -211,8 +247,8 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
 //            } else {
 //                binding.imageViewDirectionFavourites.rotation = 270f;
 //            }
-            })
-        }
+        })
+    }
 //    listFavouritesRoomAdapter.getAdapter().submitList(li);
 
 //    private fun initListDirectChat() {
@@ -302,7 +338,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
 //        }
 //    }
 
-//private fun initListGroupChat() {
+    //private fun initListGroupChat() {
 //        listGroupRoomAdapter.setDataBindingComponent(dataBindingComponent);
 //        listGroupRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, applcation.getUserId());
 //        listGroupRoomAdapter.setOnItemLongClick { room ->

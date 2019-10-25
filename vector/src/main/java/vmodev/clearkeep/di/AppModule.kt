@@ -92,7 +92,7 @@ abstract class AppModule {
         @JvmStatic
         @Named(value = IListRoomRecyclerViewAdapter.ROOM)
         fun provideListRoomDirectMessageAdapter(appExecutors: AppExecutors, dataBindingComponent : IDataBindingComponent): IListRoomRecyclerViewAdapter {
-            return ListRoomStickyHeaderRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<RoomListUser>() {
+            return ListRoomRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<RoomListUser>() {
                 override fun areItemsTheSame(p0: RoomListUser, p1: RoomListUser): Boolean {
                     return TextUtils.equals(p0.room?.id, p1.room?.id);
                 }
