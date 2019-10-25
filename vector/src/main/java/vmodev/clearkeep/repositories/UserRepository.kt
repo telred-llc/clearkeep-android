@@ -20,7 +20,8 @@ import javax.inject.Inject
 
 class UserRepository @Inject constructor(
         private val abstractUserDao: AbstractUserDao
-        , private val matrixService: MatrixService) : IUserRepository {
+        , private val matrixService: MatrixService
+        , private val executors: AppExecutors) : IUserRepository {
 
     override fun loadUser(userId: String): LiveData<Resource<User>> {
         return object : AbstractNetworkBoundSourceRx<User, User>() {
@@ -215,9 +216,17 @@ class UserRepository @Inject constructor(
     }
 
     override fun getUsersWithId(userIds: Array<String>): LiveData<Resource<List<User>>> {
-        return object : AbstractLocalLoadSouce<List<User>>() {
+        return object : AbstractLocalLoadSource<List<User>>(executors) {
             override fun loadFromDB(): LiveData<List<User>> {
                 return abstractUserDao.getUsersWithId(userIds);
+            }
+        }.asLiveData();
+    }
+
+    fun getListUserSuggested(): LiveData<Resource<List<User>>> {
+        return object : AbstractLocalLoadSource<List<User>>(executors) {
+            override fun loadFromDB(): LiveData<List<User>> {
+                return abstractUserDao.getListUserSuggested();
             }
         }.asLiveData();
     }

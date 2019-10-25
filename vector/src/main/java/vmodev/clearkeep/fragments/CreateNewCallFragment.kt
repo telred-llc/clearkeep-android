@@ -3,11 +3,15 @@ package vmodev.clearkeep.fragments
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.text.TextUtils
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -16,9 +20,11 @@ import com.jakewharton.rxbinding3.widget.textChanges
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.ActivityCreateNewCallBinding
+import im.vector.extensions.hideKeyboard
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import vmodev.clearkeep.activities.NewRoomActivity
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.ListUserToInviteRecyclerViewAdapter
 import vmodev.clearkeep.applications.IApplication
@@ -45,6 +51,8 @@ class CreateNewCallFragment : DataBindingDaggerFragment(), IFragment {
     private val listSelected = HashMap<String, User>();
     private lateinit var userId: String;
     private var currentRoomId: String = ""
+    private var listUserSuggested: List<User>? = null
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.activity_create_new_call, container, false, dataBinding.getDataBindingComponent());
@@ -53,6 +61,7 @@ class CreateNewCallFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as NewRoomActivity).setNameTitle(resources.getString(R.string.new_call))
         val listUserAdapter = ListUserToInviteRecyclerViewAdapter(appExecutors = appExecutors, listSelected = listSelected
                 , diffCallback = object : DiffUtil.ItemCallback<User>() {
             override fun areItemsTheSame(p0: User, p1: User): Boolean {
@@ -64,18 +73,18 @@ class CreateNewCallFragment : DataBindingDaggerFragment(), IFragment {
             }
         }, dataBindingComponent = dataBinding.getDataBindingComponent()) { user, status ->
             if (listSelected.size > 0) {
-                binding.cardViewCreate.setCardBackgroundColor(ResourcesCompat.getColor(this.resources, R.color.app_green, null));
-                binding.cardViewCreate.isClickable = true;
+                binding.btnCreate.background = ResourcesCompat.getDrawable(this.resources, R.drawable.bg_button_gradient_blue, null)
+                binding.btnCreate.isEnabled = true;
             } else {
-                binding.cardViewCreate.setCardBackgroundColor(ResourcesCompat.getColor(this.resources, R.color.button_disabled_text_color, null));
-                binding.cardViewCreate.isClickable = false;
+                binding.btnCreate.background = ResourcesCompat.getDrawable(this.resources, R.drawable.bg_button_gradient_grey, null)
+                binding.btnCreate.isEnabled = false;
             }
         }
 
         binding.users = viewModelFactory.getViewModel().getUsersByQueryResult();
         binding.room = viewModelFactory.getViewModel().getCreateNewRoomResult();
-
-        binding.textViewCreate.setOnClickListener {
+        // cal create
+        binding.btnCreate.setOnClickListener {
             var name = "Call:"
             var topic = "";
             if (listSelected.size <= 1) {
@@ -89,29 +98,37 @@ class CreateNewCallFragment : DataBindingDaggerFragment(), IFragment {
             viewModelFactory.getViewModel().setCreateNewRoom(name, topic, "private");
         }
 
-        binding.recyclerViewListUser.adapter = listUserAdapter;
 
-        viewModelFactory.getViewModel().getUsersByQueryResult().observe(this, Observer {
+        binding.recyclerViewListUser.adapter = listUserAdapter;
+        binding.recyclerViewListUser.setHasFixedSize(true)
+        binding.recyclerViewListUser.isNestedScrollingEnabled = false
+
+        viewModelFactory.getViewModel().getListUserSuggested(1, application.getUserId()).observe(this, Observer {
             listUserAdapter.submitList(it?.data);
+            listUserSuggested = it?.data
+        });
+        viewModelFactory.getViewModel().getUsersByQueryResult().observe(this, Observer {
+            if (!TextUtils.isEmpty(binding.editTextQuery.text))
+                listUserAdapter.submitList(it?.data);
         });
         viewModelFactory.getViewModel().getCreateNewRoomResult().observe(this, Observer {
             it?.let {
                 when (it.status) {
                     Status.LOADING -> {
-                        binding.textViewCreate.setText(R.string.creating);
-                        binding.textViewCreate.isClickable = false;
+                        binding.btnCreate.setText(R.string.creating);
+                        binding.btnCreate.isEnabled = false;
                     }
                     Status.SUCCESS -> {
-                        binding.textViewCreate.setText(R.string.create);
-                        binding.textViewCreate.isClickable = true;
+                        binding.btnCreate.setText(R.string.create);
+                        binding.btnCreate.isEnabled = true;
                         it.data?.let {
                             currentRoomId = it.id
                             gotoRoom(currentRoomId)
                         }
                     }
                     Status.ERROR -> {
-                        binding.textViewCreate.setText(R.string.create);
-                        binding.textViewCreate.isClickable = true;
+                        binding.btnCreate.setText(R.string.create);
+                        binding.btnCreate.isEnabled = true;
                         Toast.makeText(this.context, it.message, Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -124,9 +141,20 @@ class CreateNewCallFragment : DataBindingDaggerFragment(), IFragment {
             disposable?.let { disposable -> disposable.dispose(); }
             disposable = Observable.timer(100, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers
                     .mainThread()).subscribe { time: Long? ->
-                viewModelFactory.getViewModel().setQuery(it.toString())
+                if (it.length<1 && TextUtils.isEmpty(it.toString())) {
+                    listUserAdapter.submitList(listUserSuggested)
+                } else {
+                    viewModelFactory.getViewModel().setQuery(it.toString())
+                }
             };
         }
+        binding.nestedScrollview.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
+            hideKeyboard()
+        }
+        binding.editTextQuery.setOnEditorActionListener { p0, p1, p2 ->
+            hideKeyboard()
+            false;
+        };
     }
 
     private fun gotoRoom(roomId: String) {

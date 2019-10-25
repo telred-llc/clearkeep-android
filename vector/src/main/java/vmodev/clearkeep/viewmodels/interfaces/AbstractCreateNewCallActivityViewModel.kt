@@ -11,6 +11,6 @@ abstract class AbstractCreateNewCallActivityViewModel : ViewModel() {
     abstract fun getUsersByQueryResult(): LiveData<Resource<List<User>>>;
     abstract fun setCreateNewRoom(name: String, topic: String, visibility: String);
     abstract fun getCreateNewRoomResult(): LiveData<Resource<Room>>;
-
+    abstract fun getListUserSuggested(type: Int, userId: String):LiveData<Resource<List<User>>>
     data class CreateNewRoom(val name: String, val topic: String, val visibility: String);
 }

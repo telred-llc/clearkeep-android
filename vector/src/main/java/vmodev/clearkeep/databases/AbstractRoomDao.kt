@@ -5,6 +5,7 @@ import androidx.room.*
 import io.reactivex.Single
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
+import vmodev.clearkeep.viewmodelobjects.User
 
 @Dao
 abstract class AbstractRoomDao {
@@ -124,6 +125,7 @@ abstract class AbstractRoomDao {
 
     @Query("UPDATE Room SET avatarUrl =:url WHERE id=:roomId")
     abstract fun updateRoomAvatar(roomId: String, url : String);
+
 
     @Query("UPDATE Room SET notifyCount = notifyCount + 1 WHERE Room.id =:roomId")
     abstract fun updateNotificationCount(roomId: String);

@@ -17,7 +17,6 @@ import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.FragmentContactsBinding
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
-import vmodev.clearkeep.adapters.Interfaces.SectionCallback
 import vmodev.clearkeep.widget.NormalDecoration
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
@@ -78,21 +77,28 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
         listRoomAdapter.setOnItemLongClick { }
         listRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, application.getUserId());
         binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
+        var data: List<RoomListUser> = ArrayList();
+        val headerSection = object : NormalDecoration() {
+            override fun getHeaderName(pos: Int): String? {
+                if (pos >= 0 && pos < getListRoomName(data).size) {
+                    return getListRoomName(data)[pos]
+                }
+                return null
+
+            }
+        }
+        headerSection.setOnDecorationHeadDraw(null)
+        headerSection.setHeaderContentColor(Color.WHITE)
+        headerSection.setTextColor(resources.getColor(R.color.text_color_blue))
+        binding.recyclerViewListContact.addItemDecoration(headerSection)
         viewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
             try {
-                if (!t?.data?.isEmpty()!!) {
+                if (!t.data.isNullOrEmpty()!!) {
                     listRoomAdapter.getAdapter().submitList(t.data)
-                    val headerSection = object : NormalDecoration() {
-                        override fun getHeaderName(pos: Int): String {
-                            return t.data.let { getListRoomName(it)[pos] }.toString()
-                        }
-                    }
-                    headerSection.setHeaderContentColor(Color.WHITE)
-                    headerSection.setTextColor(resources.getColor(R.color.text_color_header))
-                    binding.recyclerViewListContact.addItemDecoration(headerSection)
+                    data = t.data!!;
                 }
             } catch (ex: Exception) {
-             Log.e("ContactsFragment",ex.message.toString())
+                Log.e("ContactsFragment", ex.message.toString())
             }
         })
         binding.lifecycleOwner = viewLifecycleOwner;
@@ -128,8 +134,8 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
     }
 
 
-    fun getListRoomName(data: List<RoomListUser>): List<String> {
-        val dataHeader = ArrayList<String>()
+    fun getListRoomName(data: List<RoomListUser>): MutableList<String> {
+        var dataHeader: MutableList<String> = mutableListOf<String>()
         for (item in data) {
             item.room?.name?.let {
                 dataHeader.add(it.toUpperCase().subSequence(0,

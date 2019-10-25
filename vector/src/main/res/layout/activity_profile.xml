@@ -38,8 +38,7 @@
             android:id="@+id/rlToolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_tool_bar_size"
-            android:paddingStart="@dimen/padding_normal"
-            android:paddingEnd="@dimen/padding_normal"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -48,6 +47,7 @@
                 android:id="@+id/imgBack"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:padding="@dimen/padding_normal"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/ic_back" />
@@ -62,38 +62,32 @@
                 android:textSize="@dimen/text_20_sp" />
 
 
-            <RelativeLayout
-                android:id="@+id/rlSetting"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_centerInParent="true"
-                android:layout_marginEnd="@dimen/margin_normal"
-                android:layout_toStartOf="@+id/rlEdit"
-                android:background="@drawable/bg_circle_image_grey">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    app:srcCompat="@drawable/ic_setting" />
-            </RelativeLayout>
-
-
-            <RelativeLayout
-                android:id="@+id/rlEdit"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgSetting"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
-                android:background="@drawable/bg_circle_image_grey">
+               android:padding="@dimen/padding_normal"
+                app:srcCompat="@drawable/ic_setting" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    app:srcCompat="@drawable/ic_edit" />
 
-            </RelativeLayout>
+
+<!--            <RelativeLayout-->
+<!--                android:id="@+id/rlEdit"-->
+<!--                android:layout_width="40dp"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:layout_alignParentEnd="true"-->
+<!--                android:layout_centerInParent="true"-->
+<!--                android:background="@drawable/bg_circle_image_grey">-->
+
+<!--                <androidx.appcompat.widget.AppCompatImageView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_centerInParent="true"-->
+<!--                    app:srcCompat="@drawable/ic_edit" />-->
+
+<!--            </RelativeLayout>-->
 
 
         </RelativeLayout>
@@ -101,8 +95,8 @@
 
         <FrameLayout
             android:id="@+id/frAvatarProfile"
-            android:layout_width="160dp"
-            android:layout_height="160dp"
+            android:layout_width="@dimen/avatar_screen_profile_size"
+            android:layout_height="@dimen/avatar_screen_profile_size"
             android:layout_marginTop="@dimen/margin_xl"
             app:layout_constraintEnd_toEndOf="@+id/rlToolbar"
             app:layout_constraintStart_toStartOf="@+id/rlToolbar"
@@ -114,35 +108,37 @@
                 android:layout_height="match_parent"
                 android:src="@color/app_green"
                 app:user="@{user.data}"
+                app:civ_border_width="@dimen/border_avatar_screen_profile_size"
+                app:civ_border_color="@color/border_color_avatar_profile"
                 />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/circle_image_view_status"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="@dimen/status_active_size"
+                android:layout_height="@dimen/status_active_size"
                 android:layout_gravity="end|bottom"
-                android:layout_marginEnd="25dp"
+                android:layout_marginEnd="@dimen/margin_end_status_active"
                 android:src="@color/app_green"
                 app:civ_border_color="@android:color/white"
-
-                app:civ_border_width="2dp" />
+                app:civ_border_width="@dimen/border_status_active_size" />
         </FrameLayout>
+
 
         <TextView
             android:id="@+id/tvName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="@dimen/margin_large"
+            android:layout_marginHorizontal="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_medium"
             android:text="@{user.data.name}"
-            android:textColor="@color/text_color_profile"
-            android:textSize="@dimen/text_main_size"
+            android:textColor="@color/text_color_default"
+            android:textSize="@dimen/text_21_sp"
             app:layout_constraintEnd_toEndOf="@+id/frAvatarProfile"
+            app:layout_constraintHorizontal_bias="0.523"
             app:layout_constraintStart_toStartOf="@+id/frAvatarProfile"
             app:layout_constraintTop_toBottomOf="@+id/frAvatarProfile"
             tools:text="Nguyễn Linh" />
-
 
         <RelativeLayout
             android:id="@+id/rlID"
@@ -164,7 +160,7 @@
                 android:id="@+id/text_view_user_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/text_color_profile"
+                android:textColor="@color/text_color_default"
                 android:layout_marginStart="@dimen/margin_large"
                 android:layout_toEndOf="@+id/imgProfile"
                 android:text="@{user.data.id}"
@@ -199,7 +195,7 @@
                 android:layout_toEndOf="@+id/imgLocation"
                 android:text="仙台市　日本国 - JP"
                 android:singleLine="true"
-                android:textColor="@color/text_color_profile"
+                android:textColor="@color/text_color_default"
                 android:textSize="@dimen/text_19_sp"
                 tools:text="仙台市　日本国 - JP" />
         </RelativeLayout>
@@ -230,10 +226,9 @@
                 android:text="+84 222 11 5550"
                 android:textSize="@dimen/text_19_sp"
                 android:singleLine="true"
-                android:textColor="@color/text_color_profile"
+                android:textColor="@color/text_color_default"
                 tools:text="+84 222 11 5550" />
         </RelativeLayout>
-
 
         <Button
             android:id="@+id/button_sign_out"
@@ -251,105 +246,6 @@
             app:layout_constraintStart_toStartOf="@+id/rlPhone"
             app:layout_constraintTop_toBottomOf="@+id/rlPhone" />
 
-
-        <!--        <FrameLayout-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="250dp">-->
-
-        <!--            <ImageView-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="match_parent"-->
-        <!--                android:src="@color/accent_color_dark"-->
-        <!--                app:user="@{user.data}" />-->
-
-        <!--            <LinearLayout-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="70dp"-->
-        <!--                android:layout_gravity="bottom"-->
-        <!--                android:background="@color/transparent_black_50"-->
-        <!--                android:orientation="horizontal">-->
-
-        <!--                <TextView-->
-        <!--                    android:layout_width="wrap_content"-->
-        <!--                    android:layout_height="wrap_content"-->
-        <!--                    android:layout_gravity="center_vertical"-->
-        <!--                    android:layout_marginHorizontal="10dp"-->
-        <!--                    android:text="@{user.data.name}"-->
-        <!--                    android:textColor="@color/main_text_color"-->
-        <!--                    android:textSize="@dimen/text_main_size" />-->
-
-        <!--                <de.hdodenhof.circleimageview.CircleImageView-->
-        <!--                    android:layout_width="15dp"-->
-        <!--                    android:layout_height="15dp"-->
-        <!--                    android:layout_gravity="center_vertical"-->
-        <!--                    android:src="@color/accent_color_light"-->
-        <!--                    app:civ_border_color="@color/main_text_color"-->
-        <!--                    app:civ_border_width="2dp" />-->
-        <!--            </LinearLayout>-->
-        <!--        </FrameLayout>-->
-
-        <!--        <LinearLayout-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:orientation="horizontal">-->
-
-        <!--            <Button-->
-        <!--                android:id="@+id/button_setting"-->
-        <!--                android:layout_width="0dp"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:layout_margin="10dp"-->
-        <!--                android:layout_weight="1"-->
-        <!--                android:background="@drawable/button_border_background_grey_color"-->
-        <!--                android:text="@string/setting"-->
-        <!--                android:textStyle="bold" />-->
-
-        <!--            <Button-->
-        <!--                android:id="@+id/button_edit_profile"-->
-        <!--                android:layout_width="0dp"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:layout_margin="10dp"-->
-        <!--                android:layout_weight="1"-->
-        <!--                android:background="@drawable/button_border_background_grey_color"-->
-        <!--                android:text="@string/edit_profile"-->
-        <!--                android:textStyle="bold" />-->
-        <!--        </LinearLayout>-->
-
-        <!--        <TextView-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_margin="10dp"-->
-        <!--            android:text="@string/display_name"-->
-        <!--            android:textColor="@android:color/darker_gray" />-->
-
-        <!--        <TextView-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_margin="10dp"-->
-        <!--            android:text="@{user.data.name}" />-->
-
-        <!--        <TextView-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_margin="10dp"-->
-        <!--            android:text="@string/user_id"-->
-        <!--            android:textColor="@android:color/darker_gray" />-->
-
-        <!--        <TextView-->
-        <!--            android:id="@+id/text_view_user_id"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_margin="10dp"-->
-        <!--            android:text="@{user.data.id}" />-->
-
-        <!--        <Button-->
-        <!--            android:id="@+id/button_sign_out"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_margin="10dp"-->
-        <!--            android:background="@drawable/button_border_background_green_app_color"-->
-        <!--            android:text="@string/action_sign_out"-->
-        <!--            android:textColor="@android:color/holo_red_dark"-->
-        <!--            android:textStyle="bold" />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

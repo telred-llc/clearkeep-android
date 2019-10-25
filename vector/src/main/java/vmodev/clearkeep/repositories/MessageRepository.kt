@@ -12,6 +12,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.rest.model.Event
 import vmodev.clearkeep.databases.AbstractMessageDao
+import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.messaghandler.interfaces.IMessageHandlerFactory
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.wayloads.*
@@ -21,7 +22,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MessageRepository @Inject constructor(private val messageDao: AbstractMessageDao, private val matrixMessageHandlerFactory: IMessageHandlerFactory, private val matrixService: MatrixService) {
+class MessageRepository @Inject constructor(private val messageDao: AbstractMessageDao, private val matrixMessageHandlerFactory: IMessageHandlerFactory, private val matrixService: MatrixService, private val executors: AppExecutors) {
     fun loadListMessageWithRoomId(roomId: String): LiveData<Resource<List<Message>>> {
         return object : AbstractNetworkBoundSourceWithCondition<List<Message>, List<Message>>() {
             override fun saveCallResult(item: List<Message>) {
@@ -50,7 +51,7 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
     }
 
     fun loadListMessageFromLocalDBWithRoomId(roomId: String): LiveData<Resource<List<Message>>> {
-        return object : AbstractLocalLoadSouce<List<Message>>() {
+        return object : AbstractLocalLoadSource<List<Message>>(executors) {
             override fun loadFromDB(): LiveData<List<Message>> {
                 return messageDao.getListMessageWithRoomId(roomId);
             }
@@ -114,7 +115,7 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
     }
 
     fun loadUsersInRoom(roomId: String): LiveData<Resource<List<User>>> {
-        return object : AbstractLocalLoadSouce<List<User>>() {
+        return object : AbstractLocalLoadSource<List<User>>(executors) {
             override fun loadFromDB(): LiveData<List<User>> {
                 return messageDao.getUsersInRoom(roomId);
             }
@@ -122,7 +123,7 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
     }
 
     fun loadUserByMessageId(messageId: String): LiveData<Resource<User>> {
-        return object : AbstractLocalLoadSouce<User>() {
+        return object : AbstractLocalLoadSource<User>(executors) {
             override fun loadFromDB(): LiveData<User> {
                 return messageDao.getUserByMessageId(messageId);
             }
@@ -130,7 +131,7 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
     }
 
     fun loadRoomByRoomId(roomId: String): LiveData<Resource<Room>> {
-        return object : AbstractLocalLoadSouce<Room>() {
+        return object : AbstractLocalLoadSource<Room>(executors) {
             override fun loadFromDB(): LiveData<Room> {
                 return messageDao.getRoomByRoomId(roomId);
             }
@@ -149,7 +150,7 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
     }
 
     fun getListMessageInTheRooms(): LiveData<Resource<List<Message>>> {
-        return object : AbstractLocalLoadSouce<List<Message>>() {
+        return object : AbstractLocalLoadSource<List<Message>>(executors) {
             override fun loadFromDB(): LiveData<List<Message>> {
                 return messageDao.getAllMessage();
             }
@@ -174,7 +175,7 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
     }
 
     fun getListMessageRoomUser(): LiveData<Resource<List<MessageRoomUser>>> {
-        return object : AbstractLocalLoadSouce<List<MessageRoomUser>>() {
+        return object : AbstractLocalLoadSource<List<MessageRoomUser>>(executors) {
             override fun loadFromDB(): LiveData<List<MessageRoomUser>> {
                 return messageDao.getAllMessageWithRoomAndUser();
             }

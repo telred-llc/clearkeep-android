@@ -73,16 +73,16 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
                         .show();
             }
         }
-        binding.rlSetting.setOnClickListener {
+        binding.imgSetting.setOnClickListener {
             val intentProfileSetting = Intent(this, SettingsActivity::class.java);
 //            intentProfileSetting.putExtra(ProfileSettingsFragment.USER_ID, mxSession.myUserId);
             startActivity(intentProfileSetting);
         }
-        binding.rlEdit.setOnClickListener {
-            val intentEditProfile = Intent(this, EditProfileActivity::class.java);
-            intentEditProfile.putExtra(EditProfileActivity.USER_ID, mxSession.myUserId)
-            startActivity(intentEditProfile)
-        }
+//        binding.rlEdit.setOnClickListener {
+//            val intentEditProfile = Intent(this, EditProfileActivity::class.java);
+//            intentEditProfile.putExtra(EditProfileActivity.USER_ID, mxSession.myUserId)
+//            startActivity(intentEditProfile)
+//        }
         binding.imgBack.setOnClickListener {
             onBackPressed()
         }

@@ -87,6 +87,11 @@
 
     <color name="default_text_hint_color_light">#903C3C3C</color>
     <color name="default_text_hint_color_dark">#CCDDDDDD</color>
+
+<!--    search view custom color-->
+    <color name="border_search_view_color">#707070</color>
+    <color name="fill_bg_search_view_color">#F0F0F0</color>
+
     <color name="background_search">#F0F0F0</color>
 
     <!-- Text Colors -->
@@ -97,8 +102,10 @@
     <color name="riot_secondary_text_color_light">#FF9E9E9E</color>
     <color name="riot_tertiary_text_color_light">@color/riot_primary_text_color_light</color>
 <!--    Text Color UI profile-->
-    <color name="text_color_profile">#444444</color>
-
+    <color name="text_color_default">#444444</color>
+    <color name="border_color_avatar_profile">#E8F3FD</color>
+<!--    Text color UI new room-->
+    <color name="text_color_new_call_and_new_room">#646464</color>
     <!--Dark /Text Primary-->
     <color name="riot_primary_text_color_dark">#FFEDF3FF</color>
     <color name="riot_primary_text_color_disabled_dark">#FFA1B2D1</color>
@@ -174,7 +181,7 @@
     <color name="color_white">#FFFFFF</color>
     <color name="color_grey">#F0F0F0</color>
 <!--    text_color-->
-    <color name="text_color_header">#5787E3</color>
+    <color name="text_color_blue">#5787E3</color>
 
 
 </resources>
