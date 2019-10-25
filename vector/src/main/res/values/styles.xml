@@ -308,6 +308,7 @@
         <item name="vctr_settings_icon_tint_color">#FF000000</item>
         <item name="background_message_send_color">@color/default_text_hint_color_dark</item>
     </style>
+
     <style name="checkBoxStyle" parent="Base.Theme.AppCompat">
         <item name="colorAccent">#077CF1</item>
         <item name="android:textColorSecondary">#7B7B7B</item>
@@ -318,5 +319,11 @@
         <item name="android:textColor">@color/text_color_blue</item>
         <item name="colorPrimaryDark">@color/text_color_blue</item>
         <item name="colorControlActivated">@color/text_color_blue</item>
+
+    <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 </resources>

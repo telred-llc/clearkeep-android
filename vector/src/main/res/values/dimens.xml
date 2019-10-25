@@ -27,10 +27,11 @@
     <dimen name="text_40_sp">25sp</dimen>
     <dimen name="text_18_sp">18sp</dimen>
     <dimen name="text_17_sp">17sp</dimen>
+    <dimen name="text_11_sp">11sp</dimen>
     <dimen name="text_19_sp">19sp</dimen>
     <dimen name="text_21_sp">21sp</dimen>
     <dimen name="image_avatar_status_size">60dp</dimen>
-
+  
     <!--    image profile status-->
     <dimen name="status_online_size">14dp</dimen>
     <dimen name="margin_status_online">3dp</dimen>

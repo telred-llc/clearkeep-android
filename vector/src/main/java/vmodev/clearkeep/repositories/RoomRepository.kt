@@ -428,6 +428,17 @@ class RoomRepository @Inject constructor(
         return Completable.fromAction { abstractRoomDao.updateRoomAvatar(roomId, url) }
     }
 
+    fun updateRoomNotificationCount(roomId: String) : Completable {
+        return Completable.fromAction{(abstractRoomDao.updateNotificationCount(roomId))}
+    }
+
+    fun updateRoomNotificationCount(roomId: String,notifiCount : Int) : Completable {
+        return Completable.fromAction{(abstractRoomDao.updateNotifyCount(roomId,notifiCount))}
+    }
+    fun clearnRoomNotificationCount(roomId: String) : Completable {
+        return Completable.fromAction{(abstractRoomDao.clearnNotificationCount(roomId))}
+    }
+
     class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);
     class InviteUsersToRoomObject constructor(val roomId: String, val userIds: List<String>);
 }

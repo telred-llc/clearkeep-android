@@ -87,10 +87,12 @@
 
     <color name="default_text_hint_color_light">#903C3C3C</color>
     <color name="default_text_hint_color_dark">#CCDDDDDD</color>
-    <color name="background_search">#F1F5FF</color>
+
 <!--    search view custom color-->
     <color name="border_search_view_color">#707070</color>
     <color name="fill_bg_search_view_color">#F0F0F0</color>
+
+    <color name="background_search">#F0F0F0</color>
 
     <!-- Text Colors -->
     <!--Default/Text Primary-->
@@ -132,6 +134,7 @@
     <color name="avatar_color_3">#ac3ba8</color>
     <color name="search_color">#FF9E9E9E</color>
     <color name="text_color">#444444</color>
+    <color name="black_color">#000000</color>
 
     <!-- Password Strength bar colors -->
     <color name="password_strength_bar_weak">#FFF56679</color>
