@@ -3,9 +3,10 @@ package vmodev.clearkeep.repositories.wayloads
 import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.viewmodelobjects.Resource
 
-abstract class AbstractLocalLoadSouce<T> @MainThread constructor() {
+abstract class AbstractLocalLoadSource<T> @MainThread constructor(private val executor: AppExecutors) {
     private val result = MediatorLiveData<Resource<T>>();
 
     init {
@@ -13,9 +14,13 @@ abstract class AbstractLocalLoadSouce<T> @MainThread constructor() {
         val dbSource = loadFromDB();
         result.addSource(dbSource) { db ->
             if (db == null) {
-                setValue(Resource.error("Cannot find data", null));
+                executor.mainThread().execute {
+                    setValue(Resource.error("Cannot find data", null));
+                }
             } else {
-                setValue(Resource.success(db));
+                executor.mainThread().execute {
+                    setValue(Resource.success(db));
+                }
             }
         }
     }

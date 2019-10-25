@@ -3,10 +3,15 @@ package vmodev.clearkeep.fragments
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -16,10 +21,12 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.jakewharton.rxbinding3.widget.textChanges
 import im.vector.R
 import im.vector.databinding.ActivityFindAndCreateNewConversationBinding
+import im.vector.extensions.hideKeyboard
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import vmodev.clearkeep.activities.NewRoomActivity
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapter
 import vmodev.clearkeep.applications.IApplication
@@ -45,6 +52,7 @@ class FindAndCreateNewConversationFragment : DataBindingDaggerFragment(), IFragm
     lateinit var application: IApplication;
 
     private lateinit var binding: ActivityFindAndCreateNewConversationBinding;
+    private var listUserSuggested: List<User>? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.activity_find_and_create_new_conversation, container, false, dataBinding.getDataBindingComponent());
@@ -55,6 +63,7 @@ class FindAndCreateNewConversationFragment : DataBindingDaggerFragment(), IFragm
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpViewModel();
+        (activity as NewRoomActivity).setNameTitle(resources.getString(R.string.new_conversation))
     }
 
     @SuppressLint("CheckResult")
@@ -83,9 +92,20 @@ class FindAndCreateNewConversationFragment : DataBindingDaggerFragment(), IFragm
         })
         binding.recyclerViewUsers.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewUsers.adapter = listUserAdapter;
-        viewModelFactory.getViewModel().getUsers().observe(this, Observer { t ->
+        binding.recyclerViewUsers.setHasFixedSize(true)
+        binding.recyclerViewUsers.isNestedScrollingEnabled = false
+        val listUser = ArrayList<User>()
+        viewModelFactory.getViewModel().getListUserSuggested(1, application.getUserId()).observe(this, Observer { t ->
             kotlin.run {
                 listUserAdapter.submitList(t?.data);
+                listUserSuggested = t?.data
+            }
+        });
+
+        viewModelFactory.getViewModel().getUsers().observe(this, Observer { t ->
+            kotlin.run {
+                if (!TextUtils.isEmpty(binding.editQuery.toString().trim()))
+                    listUserAdapter.submitList(t?.data);
             }
         });
         viewModelFactory.getViewModel().getInviteUserToDirectChat().observe(this, Observer { t ->
@@ -110,7 +130,16 @@ class FindAndCreateNewConversationFragment : DataBindingDaggerFragment(), IFragm
             disposable?.let { disposable -> disposable.dispose() }
             disposable = Observable.timer(100, TimeUnit.MILLISECONDS)
                     .subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { time: Long? -> t?.let { charSequence -> viewModelFactory.getViewModel().setQuery(charSequence.toString()) } };
+                    .subscribe { time: Long? ->
+                        t?.let { charSequence ->
+                            if (TextUtils.isEmpty(charSequence.toString())) {
+                                listUserAdapter.submitList(listUserSuggested)
+                            } else {
+                                viewModelFactory.getViewModel().setQuery(charSequence.toString())
+                            }
+
+                        }
+                    };
         }
         binding.newRoom.setOnClickListener { v ->
             findNavController().navigate(FindAndCreateNewConversationFragmentDirections.createNewRoom());
@@ -118,6 +147,15 @@ class FindAndCreateNewConversationFragment : DataBindingDaggerFragment(), IFragm
         binding.newCall.setOnClickListener {
             findNavController().navigate(FindAndCreateNewConversationFragmentDirections.createNewCall());
         }
+        binding.nestedScrollview.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
+            hideKeyboard()
+        }
+        binding.editQuery.setOnEditorActionListener { p0, p1, p2 ->
+            if (p1 == EditorInfo.IME_ACTION_DONE) {
+                hideKeyboard()
+            }
+            return@setOnEditorActionListener false;
+        };
     }
 
     override fun getFragment(): Fragment {

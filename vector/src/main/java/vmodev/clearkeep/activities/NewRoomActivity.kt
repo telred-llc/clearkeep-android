@@ -2,14 +2,19 @@ package vmodev.clearkeep.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import im.vector.R
 import im.vector.databinding.ActivityNewRoomBinding
+import kotlinx.android.synthetic.main.item_view_toolbar.view.*
+import kotlinx.android.synthetic.main.vector_preference_bing_rule.view.*
 import vmodev.clearkeep.activities.interfaces.IActivity
+import vmodev.clearkeep.enums.TypeIconToolBar
 import vmodev.clearkeep.fragments.ContactsFragment
 import vmodev.clearkeep.fragments.ListRoomFragment
 
@@ -23,11 +28,8 @@ class NewRoomActivity : DataBindingDaggerActivity(), IActivity {
         super.onCreate(savedInstanceState)
         startWith = intent.getIntExtra(START_WITH, 0);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_new_room, dataBinding.getDataBindingComponent());
-        setSupportActionBar(binding.toolbar);
-        supportActionBar?.setDisplayHomeAsUpEnabled(true);
-        supportActionBar?.setDisplayShowHomeEnabled(true);
-        binding.toolbar.setNavigationOnClickListener {
-            onBackPressed();
+        binding.toolbar.imgBack.setOnClickListener {
+            onBackPressed()
         }
         navController = Navigation.findNavController(this, R.id.container);
         when (startWith) {
@@ -40,6 +42,31 @@ class NewRoomActivity : DataBindingDaggerActivity(), IActivity {
         }
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             supportActionBar?.title = destination.label;
+        }
+    }
+
+    fun setNameTitle(title: String?) {
+        title?.let {
+            binding.toolbar.tvTitle.text = title
+        }
+    }
+
+    fun setIconToolBar(typeIconToolBar: TypeIconToolBar) {
+        if (typeIconToolBar == TypeIconToolBar.ICON_BACK) {
+            binding.toolbar.imgBack.setImageDrawable(
+                    ContextCompat.getDrawable(
+                            applicationContext, // Context
+                            R.drawable.ic_back // Drawable
+                    )
+            )
+        } else if (typeIconToolBar == TypeIconToolBar.ICON_CLOSE) {
+            binding.toolbar.imgBack.setImageDrawable(
+                    ContextCompat.getDrawable(
+                            applicationContext, // Context
+                            R.drawable.ic_close_black_24dp // Drawable
+                    ))
+        } else {
+
         }
     }
 

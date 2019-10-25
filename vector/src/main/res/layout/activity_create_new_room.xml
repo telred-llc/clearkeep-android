@@ -21,92 +21,117 @@
             type="LiveData&lt;Resource&lt;Room>>" />
     </data>
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nested_scrollview"
+            android:layout_width="match_parent"
+            android:layout_above="@+id/btnCreate"
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            android:fillViewport="true">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_text_room_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:theme="@style/editTextStyle"
+                    android:layout_alignParentTop="true"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_text_room_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/room_name_required"
+                        android:singleLine="true"
+                        android:textColor="@color/text_color_blue"
+                        android:textSize="@dimen/text_17_sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_text_room_topic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:theme="@style/editTextStyle"
+                    android:layout_below="@+id/til_text_room_name"
+                    >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_text_room_topic"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/room_topic_optional"
+                        android:singleLine="true"
+                        android:textColor="@color/text_color_blue"
+                        android:imeOptions="actionDone"
+                        android:textSize="@dimen/text_17_sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <CheckBox
+                    android:id="@+id/checkbox_room_visibility"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:singleLine="true"
+                    android:text="@string/str_checkbox_public_mode"
+                    android:textColor="@color/text_color_default"
+                    android:textSize="@dimen/text_13_sp"
+                    android:layout_below="@+id/til_text_room_topic"
+                    android:theme="@style/checkBoxStyle" />
+
+                <TextView
+                    android:id="@+id/tvSuggested"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@string/suggested"
+                    android:textSize="@dimen/text_19_sp"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:layout_below="@+id/checkbox_room_visibility"
+                   />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvListUserSuggested"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/margin_normal"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_user_with_radio"
+                    android:layout_below="@+id/tvSuggested"
+                    />
+
+
+            </RelativeLayout>
+        </androidx.core.widget.NestedScrollView>
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_centerInParent="true"
             app:visibleGone="@{room.status == Status.LOADING}" />
 
-        <LinearLayout
+        <Button
+            android:id="@+id/btnCreate"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_margin="10dp">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edit_text_room_name"
-                    android:singleLine="true"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/room_name_required"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_margin="10dp">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edit_text_room_topic"
-                    android:singleLine="true"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/room_topic_optional"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/room_public" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/room_public_content"
-                        android:textColor="?android:attr/textColorHint" />
-                </LinearLayout>
-
-                <Switch
-                    android:id="@+id/switch_room_visibility"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardView_create"
-                android:layout_width="150dp"
-                android:layout_height="50dp"
-                app:cardCornerRadius="25dp"
-                android:layout_gravity="center_horizontal"
-                app:cardBackgroundColor="@color/app_green"
-                android:layout_margin="10dp">
-                <TextView
-                    android:id="@+id/text_view_create"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/create"
-                    android:layout_gravity="center"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/white"/>
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
-    </FrameLayout>
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="@dimen/margin_xxl"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:background="@drawable/bg_button_gradient_grey"
+            android:text="@string/create"
+            android:textColor="@color/color_white" />
+    </RelativeLayout>
 </layout>

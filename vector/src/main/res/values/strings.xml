@@ -1443,11 +1443,11 @@ Why choose Riot.im?
     <string name="display_name">Display name</string>
     <string name="user_id">User ID</string>
     <string name="profile">Profile</string>
-    <string name="probably_you_want">probably you want</string>
+    <string name="probably_you_want">Probably you want</string>
     <string name="new_room">New Room</string>
     <string name="add_members">Add members</string>
     <string name="new_call">New Call</string>
-    <string name="suggested">Suggested (direct messages)</string>
+    <string name="suggested">Suggested</string>
     <string name="new_conversation">New Conversation</string>
     <string name="room_name_required">Room name (Required)</string>
     <string name="room_topic_optional">Room topic (Optional)</string>
@@ -1814,5 +1814,6 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="exit_app_dialog_content">Do you want exit application?</string>
     <string name="auto_backup_key_logout_content">Sign out to enable auto key backup</string>
     <string name="auto_key_backup_is_disable">Auto key backup is disable</string>
+    <string name="str_checkbox_public_mode">Public mode : Anyone in the Directory can join</string>
 
 </resources>

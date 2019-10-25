@@ -10,18 +10,21 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractRoomDao
+import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.wayloads.*
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
+import vmodev.clearkeep.viewmodelobjects.User
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class RoomRepository @Inject constructor(
         private val abstractRoomDao: AbstractRoomDao,
-        private val matrixService: MatrixService
+        private val matrixService: MatrixService,
+        private val executors: AppExecutors
 ) {
     fun loadListRoom(filters: Array<Int>, type: Int = 0): LiveData<Resource<List<Room>>> {
         return object : AbstractNetworkBoundSourceRx<List<Room>, List<Room>>() {
@@ -348,7 +351,7 @@ class RoomRepository @Inject constructor(
     }
 
     fun searchRoomByDisplayName(filters: Array<Int>, query: String): LiveData<Resource<List<RoomListUser>>> {
-        return object : AbstractLocalLoadSouce<List<RoomListUser>>() {
+        return object : AbstractLocalLoadSource<List<RoomListUser>>(executors) {
             override fun loadFromDB(): LiveData<List<RoomListUser>> {
                 return abstractRoomDao.searchWithDisplayNameReturnRoomListUser(filters[0], filters[1], query);
             }
@@ -386,7 +389,7 @@ class RoomRepository @Inject constructor(
     }
 
     fun getDirectChatRoomByUserId(userId: String): LiveData<Resource<List<Room>>> {
-        return object : AbstractLocalLoadSouce<List<Room>>() {
+        return object : AbstractLocalLoadSource<List<Room>>(executors) {
             override fun loadFromDB(): LiveData<List<Room>> {
                 return abstractRoomDao.getDirectChatRoomWithUserId(userId);
             }
@@ -394,7 +397,7 @@ class RoomRepository @Inject constructor(
     }
 
     fun getRoomChatRoomByUserId(userId: String): LiveData<Resource<List<Room>>> {
-        return object : AbstractLocalLoadSouce<List<Room>>() {
+        return object : AbstractLocalLoadSource<List<Room>>(executors) {
             override fun loadFromDB(): LiveData<List<Room>> {
                 return abstractRoomDao.getRoomChatRoomWithUserId(userId);
             }

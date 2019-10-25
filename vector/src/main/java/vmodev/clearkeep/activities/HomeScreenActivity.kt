@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.view.Window
+import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -18,8 +19,11 @@ import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorHomeActivity
 import im.vector.databinding.ActivityHomeScreenBinding
+import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.activities.interfaces.IActivity
+import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.viewmodels.interfaces.AbstractHomeScreenActivityViewModel
 import javax.inject.Inject

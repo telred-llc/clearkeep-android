@@ -22,7 +22,8 @@
             tools:node="remove" />
         <activity android:name="vmodev.clearkeep.activities.RoomSettingsActivity"></activity>
         <activity android:name="vmodev.clearkeep.activities.SettingsActivity" />
-        <activity android:name="vmodev.clearkeep.activities.NewRoomActivity" />
+        <activity android:name="vmodev.clearkeep.activities.NewRoomActivity"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name="vmodev.clearkeep.activities.WaitingForVerifyEmailActivity" />
         <activity android:name="vmodev.clearkeep.activities.PushBackupKeyActivity" />
         <activity android:name="vmodev.clearkeep.activities.RestoreBackupKeyActivity" />
