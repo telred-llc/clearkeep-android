@@ -151,8 +151,10 @@ class FindAndCreateNewConversationFragment : DataBindingDaggerFragment(), IFragm
             hideKeyboard()
         }
         binding.editQuery.setOnEditorActionListener { p0, p1, p2 ->
-            hideKeyboard()
-            false;
+            if (p1 == EditorInfo.IME_ACTION_DONE) {
+                hideKeyboard()
+            }
+            return@setOnEditorActionListener false;
         };
     }
 

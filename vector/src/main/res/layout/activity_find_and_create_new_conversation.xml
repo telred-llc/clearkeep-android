@@ -99,6 +99,8 @@
 
                     <RelativeLayout
                         android:id="@+id/new_call"
+                        android:paddingTop="@dimen/padding_small"
+                        android:paddingBottom="@dimen/padding_small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
 
@@ -126,7 +128,10 @@
                         android:id="@+id/new_room"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_xxl">
+                        android:paddingTop="@dimen/padding_small"
+                        android:paddingBottom="@dimen/padding_small"
+                        android:layout_marginTop="@dimen/margin_normal"
+                       >
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/imgNewRoom"

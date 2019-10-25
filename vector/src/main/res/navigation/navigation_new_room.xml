@@ -15,12 +15,12 @@
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
-
         <argument
-            android:name="listSelected"
-            android:defaultValue="@null"
+            android:name="listUser"
             app:argType="string[]"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="@null" />
+
     </fragment>
     <fragment
         android:id="@+id/createNewRooMFragment"

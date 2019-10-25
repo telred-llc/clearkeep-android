@@ -71,10 +71,9 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
                         binding.btnCreate.setText(R.string.create);
                         binding.btnCreate.isEnabled = true;
                         it.data?.let {
-                            findNavController().navigate(CreateNewRoomFragmentDirections.inviteUsersToRoom().setRoomId(it.id));
+                            val listKeySelected:List<String> = ArrayList(listSelected.keys)
+                            findNavController().navigate(CreateNewRoomFragmentDirections.inviteUsersToRoom().setListUser(listKeySelected.toTypedArray()).setRoomId(it.id));
                         }
-//                        val listKeySelected:List<String> = ArrayList(listSelected.keys)
-//                        findNavController().navigate(CreateNewRoomFragmentDirections.inviteUsersToRoom().setListSelected(listKeySelected.toTypedArray()))
                     }
                     Status.ERROR -> {
                         binding.btnCreate.setText(R.string.create);
@@ -119,9 +118,9 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
         }
         binding.editTextRoomTopic.setOnEditorActionListener { p0, p1, p2 ->
             if (p1 == EditorInfo.IME_ACTION_DONE) {
-                this.onCreate()
+               hideKeyboard()
             }
-            return@setOnEditorActionListener true;
+            return@setOnEditorActionListener false;
 
         }
     }

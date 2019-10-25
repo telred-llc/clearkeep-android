@@ -8,6 +8,7 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
@@ -152,10 +153,13 @@ class CreateNewCallFragment : DataBindingDaggerFragment(), IFragment {
             hideKeyboard()
         }
         binding.editTextQuery.setOnEditorActionListener { p0, p1, p2 ->
-            hideKeyboard()
-            false;
+            if (p1 == EditorInfo.IME_ACTION_DONE) {
+              hideKeyboard()
+            }
+            return@setOnEditorActionListener false;
         };
     }
+
 
     private fun gotoRoom(roomId: String) {
         val intentRoom = Intent(this.activity, RoomActivity::class.java);
