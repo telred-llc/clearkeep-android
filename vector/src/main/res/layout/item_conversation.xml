@@ -35,6 +35,7 @@
         android:layout_margin="10dp"
         android:orientation="horizontal">
 
+
         <FrameLayout
             android:layout_width="@dimen/image_avatar_status_size"
             android:layout_height="@dimen/image_avatar_status_size">
