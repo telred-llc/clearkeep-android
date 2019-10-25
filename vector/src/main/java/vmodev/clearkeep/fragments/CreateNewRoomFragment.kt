@@ -127,7 +127,7 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
 
     private fun onCreate() {
         if (binding.editTextRoomTopic.text.isNullOrEmpty()) binding.editTextRoomTopic.text = binding.editTextRoomName.text;
-        viewModelFactory.getViewModel().setCreateNewRoom(binding.editTextRoomName.text.toString(), binding.editTextRoomTopic.text.toString(), if (binding.checkboxRoomVisibility.isChecked) "public" else "private")
+        viewModelFactory.getViewModel().setCreateNewRoom(binding.editTextRoomName.text.toString().toUpperCase(), binding.editTextRoomTopic.text.toString(), if (binding.checkboxRoomVisibility.isChecked) "public" else "private")
     }
 
     override fun getFragment(): Fragment {
