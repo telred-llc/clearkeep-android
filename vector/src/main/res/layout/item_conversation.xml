@@ -33,8 +33,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:background="@color/color_white"
         android:orientation="horizontal">
+
 
         <FrameLayout
             android:layout_width="@dimen/image_avatar_status_size"

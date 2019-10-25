@@ -2,10 +2,14 @@ package vmodev.clearkeep.activities
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.view.View
+import android.view.Window
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.Navigation
@@ -28,13 +32,18 @@ class HomeScreenActivity : DataBindingDaggerActivity(), IActivity {
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractHomeScreenActivityViewModel>;
 
-    private var doubleBackPressed : Boolean = false;
+    private var doubleBackPressed: Boolean = false;
 
     lateinit var binding: ActivityHomeScreenBinding;
     lateinit var mxSession: MXSession;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val window: Window = this.getWindow();
+        window.statusBarColor = ContextCompat.getColor(this, R.color.primary_hint_text_color_light)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen, dataBinding.getDataBindingComponent());
         startIncomingCall();
         mxSession = Matrix.getInstance(this.applicationContext).defaultSession;

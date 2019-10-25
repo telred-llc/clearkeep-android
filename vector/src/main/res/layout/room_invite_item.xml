@@ -25,6 +25,7 @@
             <vmodev.clearkeep.widget.RoundedCornerLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
+
                 <ImageView
                     android:id="@+id/circle_image_view_avatar"
                     android:layout_width="match_parent"
@@ -49,9 +50,9 @@
                     android:id="@+id/circle_image_view_status"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:cardElevation="0dp"
                     app:cardBackgroundColor="@color/main_text_color_hint"
                     app:cardCornerRadius="@dimen/radius_online_status"
+                    app:cardElevation="0dp"
                     app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}" />
             </com.google.android.material.card.MaterialCardView>
         </FrameLayout>
@@ -62,7 +63,6 @@
             android:orientation="vertical">
 
             <TextView
-                android:textColor="@color/black_color"
                 android:id="@+id/text_view_name"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -71,6 +71,7 @@
                 android:layout_weight="1"
                 android:singleLine="true"
                 android:text="@{room_list_user.room.name}"
+                android:textColor="@color/black_color"
                 android:textSize="@dimen/text_17_sp" />
 
             <TextView
@@ -97,6 +98,7 @@
                     android:background="@drawable/bg_button_gradient_blue"
 
                     android:text="@string/decline"
+                    android:textColor="@color/main_text_color"
                     android:textStyle="bold" />
 
                 <Button
@@ -118,22 +120,22 @@
             android:orientation="vertical">
 
             <TextView
-                android:textSize="@dimen/text_11_sp"
-                android:textColor="@color/black_color"
-                android:singleLine="true"
-                android:layout_alignParentEnd="true"
                 android:id="@+id/text_view_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:singleLine="true"
                 android:textAlignment="textEnd"
+                android:textColor="@color/black_color"
+                android:textSize="@dimen/text_11_sp"
                 app:timeStamp="@{room_list_user.lastMessage.createdAt}" />
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_marginBottom="5dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="5dp"
                 android:src="@drawable/ic_lock_outline_grey_24dp" />
         </RelativeLayout>
     </LinearLayout>

@@ -93,6 +93,8 @@
     <color name="fill_bg_search_view_color">#F0F0F0</color>
 
     <color name="background_search">#F0F0F0</color>
+    <color name="color_for_settings_text">#646464</color>
+    <color name="color_statusbar_splash">#7878F3</color>
 
     <!-- Text Colors -->
     <!--Default/Text Primary-->
@@ -101,6 +103,8 @@
     <!--Default/Text Secondary-->
     <color name="riot_secondary_text_color_light">#FF9E9E9E</color>
     <color name="riot_tertiary_text_color_light">@color/riot_primary_text_color_light</color>
+    <!--    Text Color UI profile-->
+    <color name="text_color_profile">#444444</color>
 <!--    Text Color UI profile-->
     <color name="text_color_default">#444444</color>
     <color name="border_color_avatar_profile">#E8F3FD</color>
@@ -171,17 +175,17 @@
     <color name="button_login_background_color">#25B4CA</color>
     <color name="home_screen_bottom_navigation_view_background">#F3F2F3</color>
     <color name="app_green">#63CD9A</color>
+    <color name="color_clear_cache">#005311</color>
     <color name="lock_background">#BBBBBB</color>
     <color name="transparent_black_50">#80000000</color>
     <color name="background_main_gray">#F1F1F2</color>
     <color name="blue_app">#46B6CB</color>
     <color name="text_new_message_notification">#03b381</color>
-
     <!--    color basic-->
     <color name="color_white">#FFFFFF</color>
     <color name="color_grey">#F0F0F0</color>
+    <!--    text_color-->
+    <color name="text_color_header">#5787E3</color>
 <!--    text_color-->
     <color name="text_color_blue">#5787E3</color>
-
-
 </resources>

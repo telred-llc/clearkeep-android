@@ -40,7 +40,6 @@
     </data>
 
     <FrameLayout
-        android:background="@color/button_enabled_text_color"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

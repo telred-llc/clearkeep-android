@@ -272,6 +272,10 @@
 
     <declare-styleable name="ClearKeep">
         <attr name="icon_color" format="color" />
+        <attr name="icon_color_setting" format="color" />
+        <attr name="color_clear_cache" format="color" />
+        <attr name="color_toolbar" format="color" />
+        <attr name="color_text_setting" format="color" />
         <attr name="icon_gray_color" format="color" />
         <attr name="search_view_background" format="color" />
         <attr name="text_available_send" format="color" />
@@ -281,11 +285,15 @@
 
     <style name="DarkTheme" parent="Theme.MaterialComponents.NoActionBar.Bridge">
         <item name="icon_color">#FFFFFFFF</item>
+        <item name="icon_color_setting">#FFFFFFFF</item>
+        <item name="color_clear_cache">#FFFFFFFF</item>
+        <item name="color_toolbar">#FFFFFFFF</item>
+        <item name="color_text_setting">#FFFFFFFF</item>
         <item name="icon_gray_color">#C1C1C1</item>
         <item name="vctr_list_header_background_color">#FF000000</item>
         <item name="vctr_list_header_primary_text_color">#FFFFFFFF</item>
         <item name="vctr_message_text_color">#FFFFFFFF</item>
-        <item name="search_view_background">@color/tab_bar_unselected_background_color_light</item>
+        <item name="search_view_background">@color/color_white</item>
         <item name="text_available_send">#FFFFFFFF</item>
         <item name="text_not_available_send">@color/riot_tertiary_text_color_status</item>
         <item name="vctr_default_text_hint_color">@color/vector_dark_grey_color</item>
@@ -297,6 +305,10 @@
 
     <style name="LightTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <item name="icon_color">#FF000000</item>
+        <item name="icon_color_setting">#646464</item>
+        <item name="color_clear_cache">#005311</item>
+        <item name="color_toolbar">#444444</item>
+        <item name="color_text_setting">#646464</item>
         <item name="icon_gray_color">#7B7B7B</item>
         <item name="vctr_list_header_background_color">#FFFFFFFF</item>
         <item name="vctr_list_header_primary_text_color">#FF000000</item>
@@ -326,5 +338,9 @@
         <item name="android:windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="ToolbarColoredBackArrow" parent="AppTheme">
+        <item name="android:textColorSecondary">?attr/color_toolbar</item>
     </style>
 </resources>

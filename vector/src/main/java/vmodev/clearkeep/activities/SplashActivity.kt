@@ -3,11 +3,14 @@ package vmodev.clearkeep.activities
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
@@ -54,9 +57,11 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        val window: Window = this.getWindow();
+        window.statusBarColor = ContextCompat.getColor(this, R.color.color_statusbar_splash)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_splash);
         startFromLogin = intent.getStringExtra(START_FROM_LOGIN);
         if (!hasCredentials()) {

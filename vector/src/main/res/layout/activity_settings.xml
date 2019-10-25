@@ -10,6 +10,9 @@
         android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
+            app:titleTextColor="?attr/color_toolbar"
+            app:contentInsetStartWithNavigation="0dp"
+            app:theme="@style/ToolbarColoredBackArrow"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
