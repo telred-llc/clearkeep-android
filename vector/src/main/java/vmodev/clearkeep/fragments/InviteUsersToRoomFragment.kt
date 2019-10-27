@@ -81,7 +81,7 @@ class InviteUsersToRoomFragment : DataBindingDaggerFragment(), IFragment {
                 binding.btnCreate.isEnabled = false;
             }
         }
-        args.listUser?.let { listUserAdapter.setKeySelected(it) }
+//        args.listUser?.let { listUserAdapter.setKeySelected(it) }
 
         binding.lifecycleOwner = viewLifecycleOwner;
         binding.users = viewModelFactory.getViewModel().getUsers();

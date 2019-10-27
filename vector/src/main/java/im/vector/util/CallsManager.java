@@ -412,10 +412,10 @@ public class CallsManager {
                             }
 //                            context.startActivity(intent);
 
-                            Intent intentStartCall = new Intent(context, IncomingCallActivity.class);
-                            intentStartCall.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intentStartCall.putExtra(CallViewActivity.EXTRA_MATRIX_ID, mActiveCall.getSession().getMyUserId());
-                            intentStartCall.putExtra(CallViewActivity.EXTRA_CALL_ID, mActiveCall.getCallId());
+                            Intent intentStartCall = new Intent(context.getApplicationContext(), IncomingCallActivity.class);
+                            intentStartCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            intentStartCall.putExtra(CallViewActivity.EXTRA_MATRIX_ID, mActiveCall.getSession().getMyUserId());
+//                            intentStartCall.putExtra(CallViewActivity.EXTRA_CALL_ID, mActiveCall.getCallId());
                             context.startActivity(intentStartCall);
 
                         } else {

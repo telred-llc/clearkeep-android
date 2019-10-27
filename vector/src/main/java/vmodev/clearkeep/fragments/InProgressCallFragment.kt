@@ -68,6 +68,7 @@ class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
             if (it.activeCall != null) {
                 if (mxCall.callState == IMXCall.CALL_STATE_CONNECTED && mxCall.isVideo)
                     mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration);
+                Log.d("CallView", it.callView.toString() + "--");
                 callView = it.callView;
                 CallsManager.getSharedInstance().setCallActivity(this.activity);
                 callView?.let { insertCallView(); }
@@ -133,7 +134,7 @@ class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
             callView?.let {
                 if (it.parent != null)
                     (it.parent as ViewGroup).removeView(it);
-                binding.constraintLayoutRoot.addView(it, 1, params)
+                binding.constraintLayoutRoot.addView(it, 0, params)
             }
         }
         mxCall.visibility = View.GONE

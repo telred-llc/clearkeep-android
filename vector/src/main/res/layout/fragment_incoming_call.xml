@@ -78,15 +78,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/ic_hang_up" />
+                android:src="@drawable/ic_decline_call" />
 
             <ImageView
                 android:id="@+id/image_view_accept"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center_vertical"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/unit_test_ok" />
+                android:src="@drawable/ic_accept_call" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

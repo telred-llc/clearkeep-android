@@ -65,6 +65,7 @@ class OutgoingVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
                     this@OutgoingVoiceCallFragment.activity?.finish();
                 }
                 IMXCall.CALL_STATE_CONNECTED -> {
+                    disposableCallElapsedTime?.dispose();
                     disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
                             .subscribe {
                                 binding.textViewCalling.text = mxCall.callElapsedTime.longTimeToString();
@@ -103,8 +104,13 @@ class OutgoingVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
         mxCall.addListener(callListener);
         callManager?.let {
             if (it.activeCall != null) {
-                if (mxCall.callState == IMXCall.CALL_STATE_CONNECTED && mxCall.isVideo)
-                    mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration);
+                if (mxCall.callState == IMXCall.CALL_STATE_CONNECTED && !mxCall.isVideo) {
+                    disposableCallElapsedTime?.dispose();
+                    disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
+                            .subscribe {
+                                binding.textViewCalling.text = mxCall.callElapsedTime.longTimeToString();
+                            }
+                }
                 callView = it.callView;
                 CallsManager.getSharedInstance().setCallActivity(this.activity);
             }
