@@ -103,7 +103,7 @@ class MatrixEventHandler @Inject constructor(
                 IMatrixEventHandler.M_ROOM_MEMBER -> {
                     messageRepository.insertMessage(event.toMessage())
                             .subscribeOn(Schedulers.io()).subscribe {
-                                roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe();
+                                roomRepository.updateLastMessage(e.roomId, e.eventId).subscribeOn(Schedulers.io()).subscribe();
                                 val contentObject = event.contentJson.asJsonObject;
                                 if (contentObject.has("membership") && TextUtils.equals(contentObject.get("membership").asString, "invite")
                                         && contentObject.has("is_direct") && contentObject.get("is_direct").asBoolean) {
