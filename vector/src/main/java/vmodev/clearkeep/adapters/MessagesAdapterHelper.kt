@@ -63,7 +63,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
      *
      * @param listener the events listener
      */
-    fun setVectorMessagesAdapterActionsListener(listener: IMessagesAdapterActionsListener) {
+    fun setVectorMessagesAdapterActionsListener(listener: IMessagesAdapterActionsListener?) {
         mEventsListener = listener
     }
 
@@ -72,7 +72,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
      *
      * @param method the links movement method
      */
-    fun setLinkMovementMethod(method: MatrixLinkMovementMethod) {
+    fun setLinkMovementMethod(method: MatrixLinkMovementMethod?) {
         mLinkMovementMethod = method
     }
 
@@ -416,7 +416,9 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
         }
 
         if (null != avatarView) {
-            if (isMergedView) {
+            if (TextUtils.equals(mSession.myUserId, event.sender)) {
+                avatarView.visibility = View.GONE
+            } else if (isMergedView) {
                 avatarView.visibility = View.INVISIBLE
             } else {
                 avatarView.visibility = View.VISIBLE
@@ -507,7 +509,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             return
         }
 
-        val receipts = store.getEventReceipts(row.event.roomId, eventId, true, true)
+        val receipts = store!!.getEventReceipts(row.event.roomId, eventId, true, true)
 
         // if there is no receipt to display
         // hide the dedicated layout

@@ -117,12 +117,13 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
                 manageSubViews()
 
                 if (null != mCall && mCall!!.isVideo && mCall!!.callState == IMXCall.CALL_STATE_CONNECTED) {
-//                    mCall!!.updateLocalVideoRendererPosition(mLocalVideoLayoutConfig)
+                    mCall!!.updateLocalVideoRendererPosition(mLocalVideoLayoutConfig)
                 }
             }
         }
 
         override fun onCallViewCreated(callView: View?) {
+            android.util.Log.d("CallView", "Created call view")
             Log.d(LOG_TAG, "## onViewLoading():")
             mCallView = callView
             insertCallView()
@@ -141,15 +142,15 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
         }
 
         override fun onPreviewSizeChanged(width: Int, height: Int) {
-            Log.d(LOG_TAG, "## onPreviewSizeChanged : $width * $height")
-
-            mSourceVideoWidth = width
-            mSourceVideoHeight = height
-
-            if (null != mCall && mCall!!.isVideo && mCall!!.callState == IMXCall.CALL_STATE_CONNECTED) {
-                computeVideoUiLayout()
-                mCall!!.updateLocalVideoRendererPosition(mLocalVideoLayoutConfig)
-            }
+//            Log.d(LOG_TAG, "## onPreviewSizeChanged : $width * $height")
+//
+//            mSourceVideoWidth = width
+//            mSourceVideoHeight = height
+//
+//            if (null != mCall && mCall!!.isVideo && mCall!!.callState == IMXCall.CALL_STATE_CONNECTED) {
+//                computeVideoUiLayout()
+//                mCall!!.updateLocalVideoRendererPosition(mLocalVideoLayoutConfig)
+//            }
         }
     }
 
@@ -908,7 +909,8 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
         mLocalVideoLayoutConfig!!.mIsPortrait = resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE
         mLocalVideoLayoutConfig!!.mDisplayWidth = screenWidth
         mLocalVideoLayoutConfig!!.mDisplayHeight = screenHeight
-
+        android.util.Log.d("CallView", mLocalVideoLayoutConfig!!.mX.toString() + " y " + mLocalVideoLayoutConfig!!.mY + "--" + mLocalVideoLayoutConfig!!.mWidth + " mHeight " + mLocalVideoLayoutConfig!!.mHeight)
+        android.util.Log.d("CallView", mLocalVideoLayoutConfig!!.mX.toString() + " y " + mLocalVideoLayoutConfig!!.mY + "--" + mLocalVideoLayoutConfig!!.mWidth + " mHeight " + mLocalVideoLayoutConfig!!.mHeight)
         Log.d(LOG_TAG, "## computeVideoUiLayout() : x " + mLocalVideoLayoutConfig!!.mX + " y " + mLocalVideoLayoutConfig!!.mY)
         Log.d(LOG_TAG, "## computeVideoUiLayout() : mWidth " + mLocalVideoLayoutConfig!!.mWidth + " mHeight " + mLocalVideoLayoutConfig!!.mHeight)
     }
@@ -1045,7 +1047,9 @@ class CallViewActivity : VectorAppCompatActivity(), SensorEventListener {
             }
 
             if (null != mCall && visibility != mCall!!.visibility) {
-                mCall!!.visibility = visibility
+
+//                mCall!!.visibility = visibility
+                android.util.Log.d("CallView", mCall!!.callView.width.toString() + "--" + mCall!!.callView.height.toString())
             }
         }
 

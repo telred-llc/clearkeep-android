@@ -117,7 +117,7 @@ class SearchRoomsListFragment : RecentsListFragment() {
 
                 // update the unread messages count
                 if (mAdapter.resetUnreadCount(groupPosition, childPosition)) {
-                    session.dataHandler.store.flushSummary(roomSummary)
+                    session.dataHandler.store!!.flushSummary(roomSummary)
                 }
 
                 // launch corresponding room activity

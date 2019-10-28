@@ -199,7 +199,7 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
 
                 // update the unread messages count
                 if (mAdapter.resetUnreadCount(groupPosition, childPosition)) {
-                    session!!.dataHandler.store.flushSummary(roomSummary)
+                    session!!.dataHandler.store!!.flushSummary(roomSummary)
                 }
                 // update badge unread count in case device is offline
                 BadgeProxy.specificUpdateBadgeUnreadCount(mSession, context)
@@ -547,7 +547,7 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
             }
 
             override fun onEventDecrypted(roomId: String?, eventId: String?) {
-                val summary = mSession!!.dataHandler.store.getSummary(roomId)
+                val summary = mSession!!.dataHandler.store!!.getSummary(roomId)
 
                 if (null != summary) {
                     // test if the latest event is refreshed
