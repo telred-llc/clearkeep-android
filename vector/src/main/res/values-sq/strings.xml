@@ -138,7 +138,6 @@
     <string name="auth_password_placeholder">Fjalëkalim</string>
     <string name="auth_new_password_placeholder">Fjalëkalim i ri</string>
     <string name="auth_user_name_placeholder">Emër përdoruesi</string>
-    <string name="auth_add_phone_message">Shtoni te llogaria juaj një numër telefoni, që përdoruesit të mund t’ju zbulojnë.</string>
     <string name="auth_email_placeholder">Adresë email</string>
     <string name="auth_opt_email_placeholder">Adresë email (në daçi)</string>
     <string name="auth_phone_number_placeholder">Numër telefoni</string>
@@ -745,13 +744,6 @@
     <string name="logout">Dilni</string>
     <string name="option_send_voice">Dërgoni mesazh zanor</string>
 
-    <string name="auth_add_email_message">Shtoni te llogaria juaj një adresë email, për t’u dhënë mundësinë përdoruesve t’ju zbulojnë dhe që t’ju lejojë të ricaktoni fjalëkalimin.</string>
-    <string name="auth_add_email_phone_message">Shtoni te llogaria juaj një adresë email dhe/ose një numër telefoni, për t’u dhënë mundësinë përdoruesve t’ju zbulojnë.
-\n
-\nAdresa email do t’ju lejojë edhe të ricaktoni fjalëkalimin tuaj.</string>
-    <string name="auth_add_email_and_phone_message">Shtoni te llogaria juaj një adresë email dhe një numër telefoni, për t’u dhënë mundësinë përdoruesve t’ju zbulojnë.
-\n
-\nAdresa email do t’ju lejojë edhe të ricaktoni fjalëkalimin tuaj.</string>
     <string name="auth_threepid_warning_message">Regjistrimi me email dhe me numër telefoni njëherazi nuk mbulohet ende, deri sa të ketë API. Do të merret parasysh vetëm numri i telefonit.
 \n
 \nEmail-in tuaj mund ta shtoni te profili juaj, te rregullimet.</string>
@@ -1456,7 +1448,7 @@ Që të garantoni se s’ju shpëton gjë, thjesht mbajeni të aktivizuar mekani
 
     <string name="event_redacted_by_user_reason">Veprimtari e fshirë nga përdorues</string>
     <string name="event_redacted_by_admin_reason">Veprimtari e moderuar nga përgjegjës dhome</string>
-    <string name="last_edited_info_message">Përpunuar së fundi nga %s më %s</string>
+    <string name="last_edited_info_message">Përpunuar së fundi nga %1$s më %2$s</string>
 
 
     <string name="malformed_message">Veprimtari e keqformuar, s’mund të shfaqet</string>
@@ -1577,5 +1569,22 @@ Që të garantoni se s’ju shpëton gjë, thjesht mbajeni të aktivizuar mekani
     <string name="joining_room">Po hyhet në dhomë…</string>
 
     <string name="message_view_edit_history">Shihni Historik Përpunimesh</string>
+
+    <string name="review">Shqyrtojeni</string>
+    <string name="decline">Hidhe poshtw</string>
+
+    <string name="widget_integration_review_terms">Që të vazhdohet, lypset të pranoni Kushtet e këtij shërbimi.</string>
+
+    <string name="security_warning_identity_server">Versione të dikurshëm të Riot-it përmbanin një të metë sigurie, e cila mund t’i lejonte Shërbyesit tuaj të Identiteteve (%1$s) hyrje në llogarinë tuaj. Nëse i besoni %2$s, mund ta shpërfillni këtë sinjalizim; përndryshe dilni nga llogaria dhe ribëni hyrjen.
+\n
+\nLexoni më tepër hollësi këtu:
+\nhttps://medium.com/@RiotChat/36b4792ea0d6</string>
+
+    <string name="terms_of_service">Kushte Shërbimi</string>
+    <string name="review_terms">Shqyrtoni Kushtet</string>
+    <string name="terms_description_for_identity_server">Jini i zbulueshëm nga të tjerët</string>
+    <string name="terms_description_for_integration_manager">Përdorni robotë, ura, widget-e dhe paketa ngjitësish</string>
+
+    <string name="read_at">Lexoni te</string>
 
 </resources>

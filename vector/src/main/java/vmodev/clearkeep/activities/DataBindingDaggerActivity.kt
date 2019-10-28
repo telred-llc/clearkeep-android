@@ -81,10 +81,12 @@ abstract class DataBindingDaggerActivity : AppCompatActivity(), HasAndroidInject
 
     private fun showSendFile(intentExtra: Intent) {
         session?.let {
-            if (it.dataHandler.store.isReady) {
-                runOnUiThread {
-                    val receivedShareDialogFragment = ReceivedShareFileDialogFragment.newInstance(it.myUserId, intentExtra);
-                    receivedShareDialogFragment.show(supportFragmentManager, "");
+            it.dataHandler.store?.let { mxStore ->
+                if (mxStore.isReady) {
+                    runOnUiThread {
+                        val receivedShareDialogFragment = ReceivedShareFileDialogFragment.newInstance(it.myUserId, intentExtra);
+                        receivedShareDialogFragment.show(supportFragmentManager, "");
+                    }
                 }
             }
         }

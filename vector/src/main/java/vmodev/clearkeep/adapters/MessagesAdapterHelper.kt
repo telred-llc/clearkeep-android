@@ -509,7 +509,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             return
         }
 
-        val receipts = store.getEventReceipts(row.event.roomId, eventId, true, true)
+        val receipts = store!!.getEventReceipts(row.event.roomId, eventId, true, true)
 
         // if there is no receipt to display
         // hide the dedicated layout

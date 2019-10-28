@@ -194,7 +194,7 @@ class SlashCommandsParser {
                     if (roomAlias.length > 0) {
                         isIRCCmdValid = true
                         var theRoom: Room? = null
-                        val rooms = session.dataHandler.store.rooms
+                        val rooms = session.dataHandler.store!!.rooms
 
                         for (r in rooms) {
                             val state = r.state
@@ -217,7 +217,7 @@ class SlashCommandsParser {
 
                     if (messageParts.size >= 2) {
                         isIRCCmdValid = true
-                        room.invite(messageParts[1], callback)
+                        room.invite(session,messageParts[1], callback)
                     }
                 } else if (TextUtils.equals(firstPart, SlashCommand.KICK_USER.command)) {
                     isIRCCmd = true

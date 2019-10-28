@@ -49,6 +49,7 @@ allprojects {
                 // And PhotoView
                 includeGroupByRegex "com\\.github\\.chrisbanes"
                 // Use custom matrix sdk library
+                includeGroupByRegex "com\\.github\\.telred-llc"
                 includeGroupByRegex "com\\.github\\.telred-llc\\.matrix-android-sdk"
             }
         }

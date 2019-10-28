@@ -63,7 +63,7 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
     }
 
     private fun joinRoom(roomId: String) {
-        val room = session.dataHandler.store.getRoom(roomId);
+        val room = session.dataHandler.store!!.getRoom(roomId);
         session.joinRoom(room!!.roomId, object : ApiCallback<String> {
             override fun onSuccess(roomId: String) {
                 val params = HashMap<String, Any>()

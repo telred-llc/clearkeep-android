@@ -55,6 +55,7 @@ android {
         versionCode rootProject.ext.versionCodeProp
         versionName rootProject.ext.versionNameProp
 
+        // Keep abiFilter for the universalApk
         ndk {
             abiFilters "armeabi-v7a", "x86", 'arm64-v8a', 'x86_64'
         }
@@ -230,6 +231,7 @@ dependencies {
 
     // Epoxy
     implementation 'com.airbnb.android:epoxy:3.7.0'
+    implementation 'com.airbnb.android:mvrx:1.0.1'
     kapt 'com.airbnb.android:epoxy-processor:3.7.0'
 
     // Network
@@ -261,9 +263,9 @@ dependencies {
 //    implementation "com.github.matrix-org:matrix-android-sdk:v0.9.27"
     // use the matrix SDK as a sub project
     // you have to uncomment some lines in settings.gradle
-    //implementation project(':matrix-sdk')
-    //implementation project(':matrix-sdk-crypto')
-    //implementation project(':matrix-sdk-core')
+    implementation project(':matrix-sdk-core-release')
+    implementation project(':matrix-sdk-crypto-release')
+    implementation project('::matrix-sdk-release-0.9.30')
 
     /************* jitsi **************/
     implementation('org.jitsi.react:jitsi-meet-sdk:2.2.2')
@@ -275,7 +277,7 @@ dependencies {
     /************* flavors management **************/
 
     // app flavor only
-    appImplementation('com.google.firebase:firebase-messaging:17.4.0') {
+    appImplementation('com.google.firebase:firebase-messaging:20.0.0') {
         exclude group: 'com.google.firebase', module: 'firebase-core'
         exclude group: 'com.google.firebase', module: 'firebase-analytics'
         exclude group: 'com.google.firebase', module: 'firebase-measurement-connector'
@@ -445,9 +447,9 @@ dependencies {
 //    implementation project(path: ':matrix-sdk-crypto')
 //    implementation project(path: ':matrix-sdk-core')
 //    implementation project(path: ':matrix-sdk')
-    implementation project(path: ':matrix-sdk')
-    implementation project(path: ':matrix-sdk-crypto')
-    implementation project(path: ':matrix-sdk-core')
+//    implementation project(path: ':matrix-sdk')
+//    implementation project(path: ':matrix-sdk-crypto')
+//    implementation project(path: ':matrix-sdk-core')
     //======================================================================//
 
     /************************** AssistedInject ****************************/
@@ -455,6 +457,10 @@ dependencies {
     implementation "com.squareup.inject:assisted-inject-annotations-dagger2:$assisted_inject_version"
     kapt "com.squareup.inject:assisted-inject-processor-dagger2:$assisted_inject_version"
     /**********************************************************************/
+
+    /********************************* olm *******************************/
+    implementation 'org.matrix.gitlab.matrix-org:olm:3.1.2'
+    /*********************************************************************/
 }
 
 //Ensure we never move past okhttp 3.12.x

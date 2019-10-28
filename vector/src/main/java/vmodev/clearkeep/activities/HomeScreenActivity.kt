@@ -68,12 +68,14 @@ class HomeScreenActivity : DataBindingDaggerActivity(), IActivity {
 
         if (intent.hasExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS)) {
             val intentExtra: Intent = intent.getParcelableExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS);
-            if (mxSession.dataHandler.store.isReady) {
-                runOnUiThread {
-                    CommonActivityUtils.sendFilesTo(this@HomeScreenActivity, intentExtra)
-                }
-            } else {
+            mxSession.dataHandler.store?.let {
+                if (it.isReady) {
+                    runOnUiThread {
+                        CommonActivityUtils.sendFilesTo(this@HomeScreenActivity, intentExtra)
+                    }
+                } else {
 //                mSharedFilesIntent = sharedFilesIntent
+                }
             }
         }
 

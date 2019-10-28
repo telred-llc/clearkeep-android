@@ -160,6 +160,11 @@ class MatrixLoginService constructor(private val application: IApplication) : IM
                             emitter.onError(Throwable(e?.message));
                             emitter.onComplete();
                         }
+
+                        override fun onIdentityServerMissing() {
+                            emitter.onError(Throwable("Identity Server Missing"));
+                            emitter.onComplete();
+                        }
                     })
                 }
             }
@@ -209,6 +214,11 @@ class MatrixLoginService constructor(private val application: IApplication) : IM
                     emitter.onError(Throwable(e?.message));
                     emitter.onComplete();
                 }
+
+                override fun onIdentityServerMissing() {
+                    emitter.onError(Throwable("Identity Server Missing"));
+                    emitter.onComplete();
+                }
             })
         }
     }
@@ -216,7 +226,7 @@ class MatrixLoginService constructor(private val application: IApplication) : IM
     override fun forgetPassword(email: String): Observable<ThreePid> {
         return Observable.create { emitter ->
             val profileRestClient = ProfileRestClient(homeServerConnectionConfig);
-            profileRestClient.forgetPassword(email, object : ApiCallback<ThreePid> {
+            profileRestClient.forgetPassword(Uri.parse(BuildConfig.IDENTIFY_SERVER), email, object : ApiCallback<ThreePid> {
                 override fun onSuccess(p0: ThreePid?) {
                     p0?.let {
                         emitter.onNext(it);
@@ -247,12 +257,12 @@ class MatrixLoginService constructor(private val application: IApplication) : IM
 
     override fun resetPassword(password: String, threePid: ThreePid): Observable<String> {
         return Observable.create { emitter ->
-            val homeServer : HomeServerConnectionConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse(BuildConfig.HOME_SERVER)).withIdentityServerUri(Uri.parse(BuildConfig.IDENTIFY_SERVER)).build();
+            val homeServer: HomeServerConnectionConfig = HomeServerConnectionConfig.Builder().withHomeServerUri(Uri.parse(BuildConfig.HOME_SERVER)).withIdentityServerUri(Uri.parse(BuildConfig.IDENTIFY_SERVER)).build();
             val profileRestClient = ProfileRestClient(homeServer);
             val threePidCredentials = ThreePidCredentials();
             threePidCredentials.clientSecret = threePid.clientSecret;
             threePidCredentials.sid = threePid.sid;
-            threePidCredentials.idServer = homeServer.identityServerUri.host;
+            threePidCredentials.idServer = homeServer.identityServerUri!!.host;
             profileRestClient.resetPassword(password, threePidCredentials, object : ApiCallback<Void> {
                 override fun onSuccess(p0: Void?) {
                     emitter.onNext("Success");
