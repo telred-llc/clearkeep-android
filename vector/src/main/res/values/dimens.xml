@@ -31,7 +31,7 @@
     <dimen name="text_19_sp">19sp</dimen>
     <dimen name="text_21_sp">21sp</dimen>
     <dimen name="image_avatar_status_size">60dp</dimen>
-  
+
     <!--    image profile status-->
     <dimen name="status_online_size">14dp</dimen>
     <dimen name="margin_status_online">3dp</dimen>
@@ -70,13 +70,17 @@
     <!--    size toolbar-->
     <dimen name="height_tool_bar_size">56dp</dimen>
 
-<!--    size search-->
-   <dimen name="height_search">40dp</dimen>
-    
-<!--    screen profile-->
-  <dimen name="avatar_screen_profile_size">117dp</dimen>
+    <!--    size search-->
+    <dimen name="height_search">40dp</dimen>
+
+    <!--    screen profile-->
+    <dimen name="avatar_screen_profile_size">117dp</dimen>
     <dimen name="border_avatar_screen_profile_size">5dp</dimen>
     <dimen name="status_active_size">17dp</dimen>
     <dimen name="border_status_active_size">2dp</dimen>
     <dimen name="margin_end_status_active">25dp</dimen>
+
+    <!--    screen edit room-->
+    <dimen name="margin_camera_bottom_avatar">27dp</dimen>
+
 </resources>

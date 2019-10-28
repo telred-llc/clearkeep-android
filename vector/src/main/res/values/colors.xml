@@ -188,4 +188,7 @@
     <color name="text_color_header">#5787E3</color>
 <!--    text_color-->
     <color name="text_color_blue">#5787E3</color>
+    <color name="color_avatar_edit_room">#90707070</color>
+<!--    screen edit room-->
+    <color name="color_leave_room">#90707070</color>
 </resources>

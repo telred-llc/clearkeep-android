@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -14,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import im.vector.R
 import im.vector.databinding.FragmentRoomSettingsBinding
+import org.jetbrains.anko.colorAttr
 import vmodev.clearkeep.activities.RoomfilesListActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
@@ -47,6 +50,12 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
         })
         binding.lifecycleOwner = this;
         args.roomId?.let { viewModelFactory.getViewModel().setRoomId(it) }
+        if(!binding.editTextRoomName.isFocusable){
+            binding.editTextRoomName.colorAttr(ResourcesCompat.getColor(this.resources, R.color.color_grey, null))
+        }
+        if(!binding.editTextRoomTopic.isFocusable){
+            binding.editTextRoomTopic.colorAttr(ResourcesCompat.getColor(this.resources, R.color.color_grey, null))
+        }
     }
 
     private fun setupButton() {
