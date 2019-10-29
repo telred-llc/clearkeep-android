@@ -145,8 +145,8 @@ class EditProfileActivity : DataBindingDaggerActivity(), IActivity {
 
     override fun onDestroy() {
         super.onDestroy()
-        avatarImage?.close();
-        avatarImage = null;
+            avatarImage?.close();
+            avatarImage = null;
     }
 
     @AfterPermissionGranted(REQUEST_CAMERA_PERMISSION)

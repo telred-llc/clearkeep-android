@@ -60,7 +60,7 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
         binding.room = viewModelFactory.getViewModel().createNewRoomResult();
         binding.rvListUserSuggested.setHasFixedSize(true)
         binding.rvListUserSuggested.isNestedScrollingEnabled = false
-        viewModelFactory.getViewModel().createNewRoomResult().observe(this, Observer {
+        viewModelFactory.getViewModel().createNewRoomResult().observe(viewLifecycleOwner, Observer {
             it?.let {
                 when (it.status) {
                     Status.LOADING -> {
@@ -95,7 +95,7 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
             }
         }, dataBindingComponent = dataBinding.getDataBindingComponent()) { user, status ->
         }
-        viewModelFactory.getViewModel().getListUserSuggested(1, application.getUserId()).observe(this, Observer {
+        viewModelFactory.getViewModel().getListUserSuggested(1, application.getUserId()).observe(viewLifecycleOwner, Observer {
             it?.let {
                 listUserAdapter.submitList(it?.data)
             }
@@ -121,7 +121,6 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
                hideKeyboard()
             }
             return@setOnEditorActionListener false;
-
         }
     }
 

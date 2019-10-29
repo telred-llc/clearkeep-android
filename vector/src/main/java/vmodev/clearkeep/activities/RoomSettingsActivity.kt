@@ -1,5 +1,6 @@
 package vmodev.clearkeep.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
@@ -10,6 +11,7 @@ import androidx.navigation.Navigation
 import im.vector.R
 import im.vector.databinding.ActivityRoomSettingsBinding
 import vmodev.clearkeep.activities.interfaces.IActivity
+import vmodev.clearkeep.fragments.RoomSettingsFragment
 
 class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
 
@@ -41,5 +43,14 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
 
     companion object{
         const val ROOM_ID = "ROOM_ID";
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment)
+        if(currentFragment is RoomSettingsFragment){
+            currentFragment.onActivityResult(requestCode,resultCode,data)
+        }
+
     }
 }
