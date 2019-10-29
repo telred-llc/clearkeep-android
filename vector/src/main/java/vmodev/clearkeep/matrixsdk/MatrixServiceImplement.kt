@@ -1181,7 +1181,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                     session!!.myUser.updateAvatarUrl(p1, object : ApiCallback<Void> {
                         override fun onSuccess(p0: Void?) {
                             var avatar = "";
-                            var result = session!!.contentManager.getDownloadableUrl(session!!.myUser.avatarUrl);
+                            var result = session!!.contentManager.getDownloadableUrl(session!!.myUser.avatarUrl, false);
                             result?.let { avatar = result }
                             it.onNext(avatar);
                             it.onComplete();
@@ -1947,6 +1947,74 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                     .subscribe({
                         val user = User(id = userId, name = if (it.displayName.isNullOrEmpty()) "" else it.displayName, avatarUrl = if (it.avatarUrl.isNullOrEmpty()) "" else it.avatarUrl, status = 0)
                         emitter.onNext(user);
+                        emitter.onComplete();
+                    }, {
+                        emitter.onError(it);
+                        emitter.onComplete();
+                    });
+        }
+    }
+
+    override fun updateRoomName(roomId: String, roomName: String): Observable<String> {
+        setMXSession();
+        return Observable.create { emitter ->
+            session!!.roomsApiClient.updateRoomName(roomId, roomName, object : ApiCallback<Void?> {
+                override fun onSuccess(p0: Void?) {
+                    emitter.onNext(roomName);
+                    emitter.onComplete();
+                }
+
+                override fun onUnexpectedError(p0: java.lang.Exception?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+
+                override fun onMatrixError(p0: MatrixError?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+
+                override fun onNetworkError(p0: java.lang.Exception?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+            })
+        }
+    }
+
+    override fun updateRoomTopic(roomId: String, roomTopic: String): Observable<String> {
+        setMXSession();
+        return Observable.create { emitter ->
+            session!!.roomsApiClient.updateTopic(roomId, roomTopic, object : ApiCallback<Void?> {
+                override fun onSuccess(p0: Void?) {
+                    emitter.onNext(roomTopic);
+                    emitter.onComplete();
+                }
+
+                override fun onUnexpectedError(p0: java.lang.Exception?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+
+                override fun onMatrixError(p0: MatrixError?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+
+                override fun onNetworkError(p0: java.lang.Exception?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+            });
+        }
+    }
+
+    override fun updateRoomAvatar(inputStream: InputStream): Observable<String> {
+        setMXSession();
+        return Observable.create { emitter ->
+            updateUser(inputStream).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        emitter.onNext(it);
                         emitter.onComplete();
                     }, {
                         emitter.onError(it);
