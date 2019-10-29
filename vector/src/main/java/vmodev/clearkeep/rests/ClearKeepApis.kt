@@ -6,6 +6,8 @@ import retrofit2.http.*
 import vmodev.clearkeep.rests.models.requests.EditMessageRequest
 import vmodev.clearkeep.rests.models.responses.EditMessageResponse
 import vmodev.clearkeep.rests.models.responses.PassphraseResponse
+import vmodev.clearkeep.rests.models.responses.UserProfileResponse
+import vmodev.clearkeep.viewmodelobjects.User
 
 interface ClearKeepApis {
     @Headers("Content-Type: application/json")
@@ -21,5 +23,8 @@ interface ClearKeepApis {
 
     @FormUrlEncoded
     @POST("/api/user/create-passphrase")
-    fun creaatePassphrase(@Header("Authorization") token: String, @Field("passphrase") passphrase: String): Observable<PassphraseResponse>;
+    fun createPassphrase(@Header("Authorization") token: String, @Field("passphrase") passphrase: String): Observable<PassphraseResponse>;
+
+    @GET("/" + RestClient.URI_API_PREFIX_PATH_R0 + "profile/{userId}")
+    fun getUserProfile(@Path("userId") userId : String) : Observable<UserProfileResponse>
 }
