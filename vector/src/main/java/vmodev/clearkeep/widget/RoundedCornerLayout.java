@@ -15,6 +15,7 @@ public class RoundedCornerLayout extends RelativeLayout {
     private Bitmap maskBitmap;
     private Paint paint;
     private float cornerRadius;
+    private Integer color;
 
     public RoundedCornerLayout(Context context) {
         super(context);
@@ -56,7 +57,12 @@ public class RoundedCornerLayout extends RelativeLayout {
         Canvas canvas = new Canvas(mask);
 
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.WHITE); // TODO set your background color as needed
+        if(color != null){
+            paint.setColor(color); // TODO set your background color as needed
+        }
+        else {
+            paint.setColor(Color.WHITE); // TODO set your background color as needed
+        }
 
         canvas.drawRect(0, 0, width, height, paint);
 
@@ -64,5 +70,10 @@ public class RoundedCornerLayout extends RelativeLayout {
         canvas.drawRoundRect(new RectF(0, 0, width, height), cornerRadius, cornerRadius, paint);
 
         return mask;
+    }
+    public void setColor(Integer color){
+        this.color = color;
+        invalidate();
+
     }
 }

@@ -6,138 +6,172 @@
 
         <import type="java.util.List" />
 
+        <import type="androidx.lifecycle.LiveData" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.User" />
+
         <variable
             name="room_list_user"
             type="vmodev.clearkeep.viewmodelobjects.RoomListUser" />
+
+        <variable
+            name="name"
+            type="String" />
+
+        <variable
+            name="user"
+            type="LiveData&lt;Resource&lt;User>>" />
+
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="120dp"
         android:layout_margin="@dimen/margin_normal"
-        android:baselineAligned="false"
-        android:orientation="horizontal">
-
-        <FrameLayout
-            android:layout_width="@dimen/image_avatar_status_size"
-            android:layout_height="@dimen/image_avatar_status_size">
-
-            <vmodev.clearkeep.widget.RoundedCornerLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/circle_image_view_avatar"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_launcher_app"
-                    app:room="@{room_list_user.room}" />
-            </vmodev.clearkeep.widget.RoundedCornerLayout>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="@dimen/status_online_size"
-                android:layout_height="@dimen/status_online_size"
-                android:layout_gravity="end|bottom"
-                android:layout_marginEnd="@dimen/margin_status_online"
-                android:layout_marginBottom="@dimen/margin_status_online"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="@dimen/radius_border_online_status"
-                app:cardElevation="0dp"
-                app:contentPadding="@dimen/padding_status_online"
-                app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/circle_image_view_status"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:cardBackgroundColor="@color/main_text_color_hint"
-                    app:cardCornerRadius="@dimen/radius_online_status"
-                    app:cardElevation="0dp"
-                    app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}" />
-            </com.google.android.material.card.MaterialCardView>
-        </FrameLayout>
-
-        <LinearLayout
-            android:layout_width="180dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/text_view_name"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginHorizontal="10dp"
-                android:layout_weight="1"
-                android:singleLine="true"
-                android:text="@{room_list_user.room.name}"
-                android:textColor="@color/black_color"
-                android:textSize="@dimen/text_17_sp" />
-
-            <TextView
-                android:id="@+id/text_view_notify"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:text="@{room_list_user.lastUserMessage.name + ` invited you`}"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginHorizontal="10dp"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/button_decline"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_button_gradient_blue"
-
-                    android:text="@string/decline"
-                    android:textColor="@color/main_text_color"
-                    android:textStyle="bold" />
-
-                <Button
-                    android:id="@+id/button_join"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/background_join"
-                    android:text="@string/join"
-                    android:textColor="@color/main_text_color"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </LinearLayout>
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="70dp"
+            android:layout_marginEnd="6dp">
 
-            <TextView
-                android:id="@+id/text_view_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:singleLine="true"
-                android:textAlignment="textEnd"
-                android:textColor="@color/black_color"
-                android:textSize="@dimen/text_11_sp"
-                app:timeStamp="@{room_list_user.lastMessage.createdAt}" />
+            <FrameLayout
+                android:layout_width="@dimen/image_avatar_status_size"
+                android:layout_height="@dimen/image_avatar_status_size"
+                android:layout_marginStart="6dp">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="5dp"
-                android:src="@drawable/ic_lock_outline_grey_24dp" />
+                <vmodev.clearkeep.widget.RoundedCornerLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/circle_image_view_avatar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_launcher_app"
+                        app:room="@{room_list_user.room}" />
+                </vmodev.clearkeep.widget.RoundedCornerLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="@dimen/status_online_size"
+                    android:layout_height="@dimen/status_online_size"
+                    android:layout_gravity="end|bottom"
+                    android:layout_marginEnd="@dimen/margin_status_online"
+                    android:layout_marginBottom="@dimen/margin_status_online"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="@dimen/radius_border_online_status"
+                    app:cardElevation="0dp"
+                    app:contentPadding="@dimen/padding_status_online"
+                    app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/circle_image_view_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:cardBackgroundColor="@color/main_text_color_hint"
+                        app:cardCornerRadius="@dimen/radius_online_status"
+                        app:cardElevation="0dp"
+                        app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}" />
+                </com.google.android.material.card.MaterialCardView>
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="86dp"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/text_view_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:singleLine="true"
+                        android:text="@{name}"
+                        android:textColor="@color/black_color"
+                        android:textSize="@dimen/text_17_sp" />
+
+                    <TextView
+                        android:id="@+id/text_view_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:singleLine="true"
+                        android:textAlignment="textEnd"
+                        android:textColor="@color/black_color"
+                        android:textSize="@dimen/text_11_sp"
+                        app:timeStamp="@{room_list_user.lastMessage.createdAt}" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <vmodev.clearkeep.widget.CustomFontTextView
+                        android:id="@+id/text_view_notify"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="10dp"
+                        android:text="@{room_list_user.lastUserMessage.name + ` invited you`}"
+                        android:textColor="@color/color_user_invite"
+                        android:textSize="@dimen/text_15_sp"
+                        android:visibility="visible"
+                        app:customFont="light_italic.ttf" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="30dp"
+                        android:background="@drawable/ic_group_1252" />
+                </RelativeLayout>
+            </LinearLayout>
         </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="70dp"
+            android:layout_marginEnd="50dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_decline"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_decline"
+                android:text="@string/decline"
+                android:textAllCaps="false"
+                android:textColor="@color/main_text_color"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/button_join"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_join"
+                android:text="@string/join"
+                android:textAllCaps="false"
+                android:textColor="@color/main_text_color"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
+
 </layout>

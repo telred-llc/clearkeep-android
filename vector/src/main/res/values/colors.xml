@@ -140,6 +140,7 @@
     <color name="search_color">#FF9E9E9E</color>
     <color name="text_color">#444444</color>
     <color name="black_color">#000000</color>
+    <color name="color_user_invite">#6093EA</color>
 
     <!-- Password Strength bar colors -->
     <color name="password_strength_bar_weak">#FFF56679</color>
@@ -184,6 +185,7 @@
     <color name="text_new_message_notification">#03b381</color>
     <!--    color basic-->
     <color name="color_white">#FFFFFF</color>
+    <color name="color_background_notification">#CAF4FB</color>
     <color name="color_grey">#F0F0F0</color>
     <!--    text_color-->
     <color name="text_color_header">#5787E3</color>

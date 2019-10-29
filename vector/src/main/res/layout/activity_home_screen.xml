@@ -53,14 +53,14 @@
                 android:orientation="horizontal">
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="12dp"
                     android:background="@color/blue_app"
                     android:innerRadius="0dp"
                     android:shape="ring"
-                    app:cardCornerRadius="20dp">
+                    app:cardCornerRadius="25dp">
 
                     <ImageView
                         android:id="@+id/circle_image_view_avatar"
