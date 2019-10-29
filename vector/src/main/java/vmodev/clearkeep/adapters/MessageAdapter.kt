@@ -1,3 +1,20 @@
+/*
+ * Copyright 2017 Vector Creations Ltd
+ * Copyright 2018 New Vector Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package vmodev.clearkeep.adapters
 
 import android.annotation.SuppressLint
@@ -19,7 +36,11 @@ import android.text.method.LinkMovementMethod
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -27,17 +48,9 @@ import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+
 import com.binaryfork.spanny.Spanny
-import im.vector.R
-import im.vector.VectorApp
-import im.vector.adapters.AdapterUtils
-import im.vector.extensions.getSessionId
-import im.vector.listeners.IMessagesAdapterActionsListener
-import im.vector.settings.VectorLocale
-import im.vector.ui.VectorQuoteSpan
-import im.vector.ui.themes.ThemeUtils
-import im.vector.util.*
-import im.vector.widgets.WidgetsManager
+
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.adapters.AbstractMessagesAdapter
 import org.matrix.androidsdk.adapters.MessageRow
@@ -45,6 +58,7 @@ import org.matrix.androidsdk.core.JsonUtils
 import org.matrix.androidsdk.core.Log
 import org.matrix.androidsdk.core.MXPatterns
 import org.matrix.androidsdk.core.PermalinkUtils
+import org.matrix.androidsdk.core.callback.SimpleApiCallback
 import org.matrix.androidsdk.crypto.MXCryptoError
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo
 import org.matrix.androidsdk.db.MXMediaCache
@@ -53,10 +67,37 @@ import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.message.Message
 import org.matrix.androidsdk.view.HtmlTagHandler
-import java.text.SimpleDateFormat
-import java.util.*
 
-class MessagesAdapter
+import java.text.SimpleDateFormat
+import java.util.ArrayList
+import java.util.Collections
+import java.util.Date
+import java.util.Formatter
+import java.util.HashMap
+import java.util.HashSet
+import java.util.Locale
+
+import im.vector.R
+import im.vector.VectorApp
+import im.vector.adapters.AdapterUtils
+import im.vector.extensions.*
+import im.vector.listeners.IMessagesAdapterActionsListener
+import im.vector.settings.VectorLocale
+import im.vector.ui.VectorQuoteSpan
+import im.vector.ui.themes.ThemeUtils
+import im.vector.util.*
+import im.vector.util.EventGroup
+import im.vector.util.MatrixLinkMovementMethod
+import im.vector.util.MatrixURLSpan
+import im.vector.util.PreferencesManager
+import im.vector.util.RiotEventDisplay
+import im.vector.util.VectorImageGetter
+import im.vector.widgets.WidgetsManager
+
+/**
+ * An adapter which can display room information.
+ */
+open class MessagesAdapter
 /**
  * Expanded constructor.
  * each message type has its own layout.
@@ -93,6 +134,8 @@ internal constructor(// session
         stickerResLayoutId: Int,
         hiddenResLayoutId: Int,
         roomVersionedResLayoutId: Int,
+        textEditedResLayoutId: Int,
+        textResLayoutOwnerId: Int,
         // media cache
         private val mMediasCache: MXMediaCache) : AbstractMessagesAdapter(mContext, 0) {
 
@@ -167,7 +210,7 @@ internal constructor(// session
 
     private var mLinkMovementMethod: MatrixLinkMovementMethod? = null
 
-    private val mMediasHelper: MessagesAdapterMediasHelper
+    private lateinit var mMediasHelper: MessagesAdapterMediasHelper
     protected lateinit var mHelper: MessagesAdapterHelper
 
     private val mHiddenEventIds = HashSet<String>()
@@ -245,6 +288,19 @@ internal constructor(// session
     val isInSelectionMode: Boolean
         get() = null != currentSelectedEvent
 
+    /**
+     * Text message management
+     *
+     * @param viewType    the view type
+     * @param position    the message position
+     * @param convertView the text message view
+     * @param parent      the parent view
+     * @return the updated text view.
+     */
+
+
+    private val editedMessageMap = HashMap<String, Event>()
+
     /*
      * *********************************************************************************************
      * Read markers
@@ -267,11 +323,11 @@ internal constructor(// session
      * Creates a messages adapter with the default layouts.
      */
     constructor(session: MXSession, context: Context, mediasCache: MXMediaCache) : this(session, context,
-            R.layout.adapter_item_vector_message_text_emote_notice,
+            R.layout.clearkeep_adapter_item_vector_message_text_emote_notice,
             R.layout.adapter_item_vector_message_image_video,
-            R.layout.adapter_item_vector_message_text_emote_notice,
+            R.layout.clearkeep_adapter_item_vector_message_text_emote_notice,
             R.layout.adapter_item_vector_message_room_member,
-            R.layout.adapter_item_vector_message_text_emote_notice,
+            R.layout.clearkeep_adapter_item_vector_message_text_emote_notice,
             R.layout.adapter_item_vector_message_file,
             R.layout.adapter_item_vector_message_merge,
             R.layout.adapter_item_vector_message_image_video,
@@ -280,6 +336,8 @@ internal constructor(// session
             R.layout.adapter_item_vector_message_image_video,
             R.layout.adapter_item_vector_message_redact,
             R.layout.adapter_item_vector_message_room_versioned,
+            R.layout.adapter_item_vector_message_text_edited_emote_notice,
+            R.layout.adapter_item_vector_message_text_emote_notice_own,
             mediasCache) {
     }
 
@@ -297,6 +355,8 @@ internal constructor(// session
         mRowTypeToLayoutId[ROW_TYPE_STICKER] = stickerResLayoutId
         mRowTypeToLayoutId[ROW_TYPE_HIDDEN] = hiddenResLayoutId
         mRowTypeToLayoutId[ROW_TYPE_VERSIONED_ROOM] = roomVersionedResLayoutId
+        mRowTypeToLayoutId[ROW_TYPE_TEXT_EDITED] = textEditedResLayoutId
+        mRowTypeToLayoutId[ROW_TYPE_TEXT_OWNER] = textResLayoutOwnerId
         mLayoutInflater = LayoutInflater.from(mContext)
         // the refresh will be triggered only when it is required
         // for example, retrieve the historical messages triggers a refresh for each message
@@ -335,7 +395,7 @@ internal constructor(// session
         mShowReadReceipts = PreferencesManager.showReadReceipts(VectorApp.getInstance())
 
         mPadlockDrawable = ThemeUtils.tintDrawable(mContext,
-                ContextCompat.getDrawable(mContext, R.drawable.e2e_unencrypted)!!, R.attr.vctr_settings_icon_tint_color)
+                ContextCompat.getDrawable(mContext, R.drawable.ic_lock_open_black_24dp)!!, R.attr.vctr_settings_icon_tint_color)
     }
 
     /*
@@ -381,12 +441,13 @@ internal constructor(// session
      * @param row the message row to test
      * @return true if the row can be merged
      */
-    internal fun supportMessageRowMerge(row: MessageRow): Boolean {
+    internal open fun supportMessageRowMerge(row: MessageRow): Boolean {
         return EventGroup.isSupported(row)
     }
 
     override fun addToFront(row: MessageRow) {
         if (isSupportedRow(row)) {
+            android.util.Log.d("AddItem", row.event.contentJson.toString())
             // ensure that notifyDataSetChanged is not called
             // it seems that setNotifyOnChange is reinitialized to true;
             setNotifyOnChange(false)
@@ -591,9 +652,7 @@ internal constructor(// session
                     // backup live events
                     mLiveMessagesRowList = ArrayList()
                     for (pos in 0 until count) {
-                        getItem(pos)?.let {
-                            mLiveMessagesRowList!!.add(it)
-                        }
+                        mLiveMessagesRowList!!.add(getItem(pos)!!)
                     }
                 }
             } else if (null != mLiveMessagesRowList) {
@@ -629,27 +688,30 @@ internal constructor(// session
         }
 
         val row = getItem(position)
-        return getItemViewType(row!!.event)
+        row?.event?.let {
+            return getItemViewType(it)
+        }?:run {
+            return  ROW_TYPE_TEXT;
+        }
+
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var view: View? = null;
+        var convertView = convertView
         // GA Crash : it seems that some invalid indexes are required
         if (position >= count) {
             Log.e(LOG_TAG, "## getView() : invalid index $position >= $count")
 
             // create dummy one is required
             if (null == convertView) {
-                view = mLayoutInflater.inflate(mRowTypeToLayoutId[ROW_TYPE_TEXT]!!, parent, false)
-            } else {
-                view = convertView;
+                convertView = mLayoutInflater.inflate(mRowTypeToLayoutId[ROW_TYPE_TEXT]!!, parent, false)
             }
 
             if (null != mVectorMessagesAdapterEventsListener) {
                 mVectorMessagesAdapterEventsListener!!.onInvalidIndexes()
             }
 
-            return view!!
+            return convertView!!
         }
 
         val inflatedView: View?
@@ -661,7 +723,7 @@ internal constructor(// session
         if (null != convertView) {
             if (viewType != convertView.tag as Int) {
                 Log.e(LOG_TAG, "## getView() : invalid view type : got " + convertView.tag + " instead of " + viewType)
-                view = null
+                convertView = null
             }
         }
 
@@ -674,24 +736,25 @@ internal constructor(// session
             ROW_TYPE_HIDDEN -> inflatedView = getHiddenView(position, convertView, parent)
             ROW_TYPE_MERGE -> inflatedView = getMergeView(position, convertView, parent)
             ROW_TYPE_VERSIONED_ROOM -> inflatedView = getVersionedRoomView(position, convertView, parent)
+            ROW_TYPE_TEXT_EDITED -> inflatedView = getTextEditedView(viewType, position, convertView, parent)
+            ROW_TYPE_TEXT_OWNER -> inflatedView = getTextView(viewType, position, convertView, parent)
             else -> throw RuntimeException("Unknown item view type for position $position")
         }
-        inflatedView?.let {
-            if (mReadMarkerListener != null) {
-                handleReadMarker(inflatedView, position)
-            }
+
+        if (mReadMarkerListener != null) {
+            handleReadMarker(inflatedView!!, position)
         }
+
         if (null != inflatedView) {
             inflatedView.setBackgroundColor(Color.TRANSPARENT)
             inflatedView.tag = viewType
         }
-        inflatedView?.let {
-            displayE2eIcon(inflatedView, position)
-        }
-        inflatedView?.let {
-            displayE2eReRequest(inflatedView, position)
-        }
-        return inflatedView!!
+
+        displayE2eIcon(inflatedView!!, position)
+
+        displayE2eReRequest(inflatedView, position)
+
+        return inflatedView
     }
 
     override fun notifyDataSetChanged() {
@@ -822,20 +885,15 @@ internal constructor(// session
      */
     fun setVectorMessagesAdapterActionsListener(listener: IMessagesAdapterActionsListener?) {
         mVectorMessagesAdapterEventsListener = listener
-        listener?.let {
-            mMediasHelper.setVectorMessagesAdapterActionsListener(it)
-            mHelper.setVectorMessagesAdapterActionsListener(it)
-        }
-
+        mMediasHelper.setVectorMessagesAdapterActionsListener(listener)
+        mHelper.setVectorMessagesAdapterActionsListener(listener)
 
         if (null != mLinkMovementMethod) {
             mLinkMovementMethod!!.updateListener(listener)
         } else if (null != listener) {
             mLinkMovementMethod = MatrixLinkMovementMethod(listener)
         }
-        mLinkMovementMethod?.let {
-            mHelper.setLinkMovementMethod(it)
-        }
+        mHelper.setLinkMovementMethod(mLinkMovementMethod)
     }
 
     /**
@@ -868,19 +926,39 @@ internal constructor(// session
      */
     private fun getItemViewType(event: Event): Int {
         val eventId = event.eventId
-        val eventType = event.getType()
-
+        var eventType : String? = event.getType()
         if (null != eventId && mHiddenEventIds.contains(eventId)) {
             return ROW_TYPE_HIDDEN
         }
-
         // never cache the view type of the encrypted messages
         if (Event.EVENT_TYPE_MESSAGE_ENCRYPTED == eventType) {
+            //Hide message when this message is encrypted
             return ROW_TYPE_TEXT
+            //Hide message when this message is encrypted
+            //            return ROW_TYPE_HIDDEN;
         }
 
         if (event is EventGroup) {
             return ROW_TYPE_MERGE
+        }
+
+        if (event.contentJson != null) {
+            val content = event.contentJson.asJsonObject
+            val relatesTo = content.getAsJsonObject("m.relates_to")
+            if (relatesTo != null && relatesTo.has("rel_type")) {
+                val eventRelatesToId = relatesTo.get("event_id").asString
+                if (editedMessageMap.containsKey(eventRelatesToId)) {
+                    if (event.originServerTs > editedMessageMap[eventRelatesToId]!!.originServerTs)
+                        editedMessageMap[eventRelatesToId] = event
+                } else {
+                    editedMessageMap[eventRelatesToId] = event
+                }
+                return ROW_TYPE_HIDDEN
+            }
+        }
+
+        if (editedMessageMap.containsKey(eventId)) {
+            return ROW_TYPE_TEXT_EDITED
         }
 
         // never cache the view type of encrypted events
@@ -904,7 +982,12 @@ internal constructor(// session
                 } else if (!TextUtils.isEmpty(message.formatted_body) && mHelper.containsFencedCodeBlocks(message)) {
                     viewType = ROW_TYPE_CODE
                 } else {
-                    viewType = ROW_TYPE_TEXT
+                    if (TextUtils.equals(event.sender, mSession.myUserId)){
+                        viewType = ROW_TYPE_TEXT_OWNER
+                    }
+                    else{
+                        viewType = ROW_TYPE_TEXT
+                    }
                 }
             } else if (Message.MSGTYPE_IMAGE == msgType) {
                 viewType = ROW_TYPE_IMAGE
@@ -918,7 +1001,12 @@ internal constructor(// session
                 viewType = ROW_TYPE_VIDEO
             } else {
                 // Default is to display the body as text
-                viewType = ROW_TYPE_TEXT
+                if (TextUtils.equals(event.sender, mSession.myUserId)){
+                    viewType = ROW_TYPE_TEXT_OWNER
+                }
+                else{
+                    viewType = ROW_TYPE_TEXT
+                }
             }
         } else if (Event.EVENT_TYPE_STICKER == eventType) {
             viewType = ROW_TYPE_STICKER
@@ -942,7 +1030,6 @@ internal constructor(// session
         if (null != eventId) {
             mEventType[eventId] = viewType
         }
-
         return viewType
     }
 
@@ -1047,15 +1134,7 @@ internal constructor(// session
         }
     }
 
-    /**
-     * Text message management
-     *
-     * @param viewType    the view type
-     * @param position    the message position
-     * @param convertView the text message view
-     * @param parent      the parent view
-     * @return the updated text view.
-     */
+
     private fun getTextView(viewType: Int, position: Int, convertView: View?, parent: ViewGroup): View? {
         var convertView = convertView
         if (convertView == null) {
@@ -1065,6 +1144,11 @@ internal constructor(// session
         try {
             val row = getItem(position)
             val event = row!!.event
+            //            if (editedMessageMap.containsKey(event.eventId)) {
+            //                event = editedMessageMap.get(event.eventId);
+            //                row = new MessageRow(event, mSession.getDataHandler().getRoom(event.roomId).getState());
+            //            }
+
             val message = JsonUtils.toMessage(event.content)
 
             val shouldHighlighted = null != mVectorMessagesAdapterEventsListener && mVectorMessagesAdapterEventsListener!!.shouldHighlightEvent(event)
@@ -1092,6 +1176,89 @@ internal constructor(// session
                         shouldHighlighted)
 
                 bodyTextView.text = result
+
+                mHelper.applyLinkMovementMethod(bodyTextView)
+                bodyTextView.vectorCustomLinkify(true)
+                textViews = ArrayList()
+                textViews.add(bodyTextView)
+            }
+
+            val textColor: Int
+
+            if (row.event.isEncrypting) {
+                textColor = mEncryptingMessageTextColor
+            } else if (row.event.isSending || row.event.isUnsent) {
+                textColor = mSendingMessageTextColor
+            } else if (row.event.isUndelivered || row.event.isUnknownDevice) {
+                textColor = mNotSentMessageTextColor
+            } else {
+                textColor = if (shouldHighlighted) mHighlightMessageTextColor else mDefaultMessageTextColor
+            }
+
+            for (tv in textViews) {
+                tv.setTextColor(textColor)
+            }
+
+            val textLayout = convertView.findViewById<View>(R.id.messagesAdapter_text_layout)
+            manageSubView(position, convertView, textLayout, viewType)
+
+            for (tv in textViews) {
+                addContentViewListeners(convertView, tv, position, viewType)
+            }
+
+            mHelper.manageURLPreviews(message, convertView, event.eventId)
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "## getTextView() failed : " + e.message, e)
+        }
+
+        return convertView
+    }
+
+    private fun getTextEditedView(viewType: Int, position: Int, convertView: View?, parent: ViewGroup): View? {
+        var convertView = convertView
+        if (convertView == null) {
+            convertView = mLayoutInflater.inflate(mRowTypeToLayoutId[viewType]!!, parent, false)
+        }
+
+        try {
+            var row = getItem(position)
+            var event: Event? = row!!.event
+            val message: Message
+            if (editedMessageMap.containsKey(event!!.eventId)) {
+                event = editedMessageMap[event.eventId]
+                row = MessageRow(event!!, mSession.dataHandler.getRoom(event.roomId).state)
+                message = JsonUtils.toMessage(event.content)
+                message.body = event.content.getAsJsonObject().get("m.new_content").getAsJsonObject().get("body").getAsString() + "<i>(edited)</i>"
+            } else {
+                message = JsonUtils.toMessage(event.content)
+            }
+
+
+            val shouldHighlighted = null != mVectorMessagesAdapterEventsListener && mVectorMessagesAdapterEventsListener!!.shouldHighlightEvent(event)
+
+            val textViews: MutableList<TextView>
+
+            if (ROW_TYPE_CODE == viewType) {
+                textViews = populateRowTypeCode(message, convertView!!, shouldHighlighted)
+            } else {
+                val bodyTextView = convertView!!.findViewById<TextView>(R.id.messagesAdapter_body)
+
+                // cannot refresh it
+                if (null == bodyTextView) {
+                    Log.e(LOG_TAG, "getTextView : invalid layout")
+                    return convertView
+                }
+
+                val display = RiotEventDisplay(mContext, mHtmlToolbox)
+
+                val body = row.getText(VectorQuoteSpan(mContext), display)
+                var result = mHelper.highlightPattern(body,
+                        Message.FORMAT_MATRIX_HTML,
+                        mBackgroundColorSpan,
+                        shouldHighlighted)
+                result = "$result ${context.resources.getString(R.string.edited_suffix)}";
+                result = result.subSequence(2, result.length)
+                bodyTextView.text = result;
 
                 mHelper.applyLinkMovementMethod(bodyTextView)
                 bodyTextView.vectorCustomLinkify(true)
@@ -1467,7 +1634,7 @@ internal constructor(// session
      * @param parent      the parent view
      * @return the updated text view.
      */
-    private fun getHiddenView(position: Int, convertView: View?, parent: ViewGroup): View? {
+    private fun getHiddenView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convertView = convertView
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(mRowTypeToLayoutId[ROW_TYPE_HIDDEN]!!, parent, false)
@@ -1587,7 +1754,7 @@ internal constructor(// session
      * @param parent      the parent view
      * @return the updated View
      */
-    private fun getVersionedRoomView(position: Int, convertView: View?, parent: ViewGroup): View? {
+    private fun getVersionedRoomView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convertView = convertView
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(mRowTypeToLayoutId[ROW_TYPE_VERSIONED_ROOM]!!, parent, false)
@@ -1702,9 +1869,12 @@ internal constructor(// session
             res = " "
         }
 
-        mEventFormattedTsMap[event.eventId] = res!!
-
-        return res
+        res?.let {
+            mEventFormattedTsMap[event.eventId] = it;
+            return res;
+        } ?: run {
+            return "";
+        }
     }
 
     /**
@@ -1740,7 +1910,7 @@ internal constructor(// session
      * @param nbrDays the number of days between the reference days
      * @return the date text
      */
-    private fun dateDiff(date: Date?, nbrDays: Long): String? {
+    private fun dateDiff(date: Date, nbrDays: Long): String {
         if (nbrDays == 0L) {
             return mContext.getString(R.string.today)
         } else if (nbrDays == 1L) {
@@ -1754,10 +1924,7 @@ internal constructor(// session
                     DateUtils.FORMAT_SHOW_WEEKDAY
 
             val f = Formatter(StringBuilder(50), mLocale)
-            if (date != null)
-                return DateUtils.formatDateRange(mContext, f, date.time, date.time, flags).toString()
-            else
-                return null
+            return DateUtils.formatDateRange(mContext, f, date.time, date.time, flags).toString()
         }
     }
 
@@ -1781,16 +1948,15 @@ internal constructor(// session
             }
         }
 
-        // sanity check
-        if (null == messageDate) {
-            return null
+
+        messageDate?.let {
+            // same day or get the oldest message
+            return if (null != prevMessageDate && 0L == prevMessageDate!!.time - messageDate!!.time) {
+                null
+            } else dateDiff(it, (mReferenceDate.time - messageDate!!.time) / AdapterUtils.MS_IN_DAY)
+        } ?: run {
+            return null;
         }
-
-        // same day or get the oldest message
-        return if (null != prevMessageDate && 0L == prevMessageDate!!.time - messageDate!!.time) {
-            null
-        } else dateDiff(messageDate, (mReferenceDate.time - messageDate!!.time) / AdapterUtils.MS_IN_DAY)
-
     }
 
     /**
@@ -1862,7 +2028,7 @@ internal constructor(// session
      * @param shouldBeMerged true if the event should be merged
      * @return true to merge the event
      */
-    internal fun mergeView(event: Event, position: Int, shouldBeMerged: Boolean): Boolean {
+    internal open fun mergeView(event: Event, position: Int, shouldBeMerged: Boolean): Boolean {
         var shouldBeMerged = shouldBeMerged
         if (shouldBeMerged) {
             shouldBeMerged = null == headerMessage(position)
@@ -2018,7 +2184,7 @@ internal constructor(// session
                 } else {
                     // Show the link to re-request the key
                     reRequestE2EKeyTextView.setText(R.string.e2e_re_request_encryption_key)
-
+                    mSession.crypto!!.reRequestRoomKeyForEvent(event)
                     reRequestE2EKeyTextView.setOnClickListener {
                         mSessionIdsWaitingForE2eReRequest.add(sessionId)
 
@@ -2061,16 +2227,16 @@ internal constructor(// session
 
                 // oneself event
                 if (event.mSentState != Event.SentState.SENT) {
-                    e2eIconByEventId[event.eventId] = R.drawable.e2e_verified
+                    //                    e2eIconByEventId.put(event.eventId, R.drawable.e2e_verified);
                 } else if (!event.isEncrypted) {
                     e2eIconByEventId[event.eventId] = mPadlockDrawable
                 } else if (null != event.cryptoError) {
-                    e2eIconByEventId[event.eventId] = R.drawable.e2e_blocked
+                    //                    e2eIconByEventId.put(event.eventId, R.drawable.e2e_blocked);
                 } else {
-                    val encryptedEventContent = JsonUtils.toEncryptedEventContent(event.wireContent.asJsonObject)
+                    val encryptedEventContent = JsonUtils.toEncryptedEventContent(event.wireContent.getAsJsonObject())
 
                     if (TextUtils.equals(mSession.credentials.deviceId, encryptedEventContent.device_id) && TextUtils.equals(mSession.myUserId, event.getSender())) {
-                        e2eIconByEventId[event.eventId] = R.drawable.e2e_verified
+                        //                        e2eIconByEventId.put(event.eventId, R.drawable.e2e_verified);
                         val deviceInfo = mSession.crypto!!
                                 .deviceWithIdentityKey(encryptedEventContent.sender_key, encryptedEventContent.algorithm)
 
@@ -2085,16 +2251,19 @@ internal constructor(// session
                         if (null != deviceInfo) {
                             e2eDeviceInfoByEventId[event.eventId] = deviceInfo
                             if (deviceInfo.isVerified) {
-                                e2eIconByEventId[event.eventId] = R.drawable.e2e_verified
+                                //                                e2eIconByEventId.put(event.eventId, R.drawable.e2e_verified);
                             } else if (deviceInfo.isBlocked) {
-                                e2eIconByEventId[event.eventId] = R.drawable.e2e_blocked
+                                //                                e2eIconByEventId.put(event.eventId, R.drawable.e2e_blocked);
                             } else {
-                                e2eIconByEventId[event.eventId] = R.drawable.e2e_warning
-//                                mSession!!.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, deviceInfo.deviceId, deviceInfo.userId, null)
+                                //                                e2eIconByEventId.put(event.eventId, R.drawable.e2e_warning);
+                                mSession.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, deviceInfo.deviceId, event.sender, object : SimpleApiCallback<Void>() {
+                                    override fun onSuccess(aVoid: Void?) {
+                                        //                                        e2eIconByEventId.put(event.eventId, R.drawable.e2e_verified);
+                                    }
+                                })
                             }
                         } else {
-                            e2eIconByEventId[event.eventId] = R.drawable.e2e_warning
-//                            mSession!!.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, deviceInfo.deviceId, deviceInfo.userId, null)
+                            //                            e2eIconByEventId.put(event.eventId, R.drawable.e2e_warning);
                         }
                     }
                 }// in error cases, do not display
@@ -2201,12 +2370,15 @@ internal constructor(// session
      * @return true if the event is the mReadMarkerEventId one.
      */
     private fun isReadMarkedEvent(event: Event): Boolean {
-        // if the read marked event is hidden and the event is a merged one
-        return if (null != mReadMarkerEventId && mHiddenEventIds.contains(mReadMarkerEventId!!) && event is EventGroup) {
-            // check it is contains in it
-            event.contains(mReadMarkerEventId)
-        } else event.eventId == mReadMarkerEventId
-
+        mReadMarkerEventId?.let {
+            // if the read marked event is hidden and the event is a merged one
+            return if (mHiddenEventIds.contains(it) && event is EventGroup) {
+                // check it is contains in it
+                event.contains(mReadMarkerEventId)
+            } else event.eventId == mReadMarkerEventId
+        } ?: run {
+            return false;
+        }
     }
 
     /**
@@ -2312,14 +2484,14 @@ internal constructor(// session
                 if ("mPopup" == field.name) {
                     field.isAccessible = true
                     val menuPopupHelper = field.get(popup)
-                    val classPopupHelper = Class.forName(menuPopupHelper.javaClass.name)
-                    val setForceIcons = classPopupHelper.getMethod("setForceShowIcon", Boolean::class.javaPrimitiveType!!)
+                    val classPopupHelper = Class.forName(menuPopupHelper!!.javaClass.name)
+                    val setForceIcons = classPopupHelper.getMethod("setForceShowIcon", Boolean::class.javaPrimitiveType)
                     setForceIcons.invoke(menuPopupHelper, true)
                     break
                 }
             }
         } catch (e: Exception) {
-            Log.e(LOG_TAG, "onMessageClick : force to display the icons failed " + e.localizedMessage, e)
+            Log.e(LOG_TAG, "onMessageClick : force to display the icons failed " + e.localizedMessage!!, e)
         }
 
         val menu = popup.menu
@@ -2330,9 +2502,8 @@ internal constructor(// session
             menu.getItem(i).isVisible = false
         }
 
-        menu.findItem(R.id.ic_action_view_source).isVisible = true
-        menu.findItem(R.id.ic_action_view_decrypted_source).isVisible = event.isEncrypted && null != event.clearEvent
-        menu.findItem(R.id.ic_action_vector_permalink).isVisible = true
+        //        menu.findItem(R.id.ic_action_view_source).setVisible(true);
+        //        menu.findItem(R.id.ic_action_view_decrypted_source).setVisible(event.isEncrypted() && (null != event.getClearEvent()));
 
         if (!TextUtils.isEmpty(textMsg)) {
             menu.findItem(R.id.ic_action_vector_copy).isVisible = true
@@ -2366,9 +2537,9 @@ internal constructor(// session
                     // need the minimum power level to redact an event
                     val room = mSession.dataHandler.getRoom(event.roomId)
 
-                    if (null != room && null != room.state.powerLevels) {
-                        val powerLevels = room.state.powerLevels
-                        canBeRedacted = powerLevels.getUserPowerLevel(mSession.myUserId) >= powerLevels.redact
+                    if (null != room && null != room.state.getPowerLevels()) {
+                        val powerLevels = room.state.getPowerLevels()
+                        canBeRedacted = powerLevels!!.getUserPowerLevel(mSession.myUserId) >= powerLevels!!.redact
                     }
                 }
             }
@@ -2391,9 +2562,13 @@ internal constructor(// session
 
                 // offer to report a message content
                 //                menu.findItem(R.id.ic_action_vector_report).setVisible(!mIsPreviewMode && !TextUtils.equals(event.sender, mSession.getMyUserId()));
+
+                if (TextUtils.equals(event.sender, mSession.myUserId) && TextUtils.equals(message.msgtype, Message.MSGTYPE_TEXT)) {
+                    menu.findItem(R.id.ic_action_edit).isVisible = true
+                }
             }
         }
-
+        menu.findItem(R.id.ic_action_vector_share).isVisible = true
         // e2e
         menu.findItem(R.id.ic_action_device_verification).isVisible = mE2eIconByEventId.containsKey(event.eventId)
 
@@ -2513,8 +2688,8 @@ internal constructor(// session
      * Update the highlighted eventId
      */
     private fun updateHighlightedEventId() {
-        if (null != mSearchedEventId) {
-            if (!mEventGroups.isEmpty() && mHiddenEventIds.contains(mSearchedEventId!!)) {
+        mSearchedEventId?.let {
+            if (!mEventGroups.isEmpty() && mHiddenEventIds.contains(it)) {
                 for (eventGroup in mEventGroups) {
                     if (eventGroup.contains(mSearchedEventId)) {
                         mHighlightedEventId = eventGroup.eventId
@@ -2523,7 +2698,6 @@ internal constructor(// session
                 }
             }
         }
-
         mHighlightedEventId = mSearchedEventId
     }
 
@@ -2585,7 +2759,9 @@ internal constructor(// session
         internal val ROW_TYPE_CODE = 10
         internal val ROW_TYPE_STICKER = 11
         internal val ROW_TYPE_VERSIONED_ROOM = 12
-        internal val NUM_ROW_TYPES = 13
+        internal val ROW_TYPE_TEXT_EDITED = 13
+        internal val ROW_TYPE_TEXT_OWNER = 14
+        internal val NUM_ROW_TYPES = 15
 
         /**
          * Tells if the event of type 'eventType' can be merged.

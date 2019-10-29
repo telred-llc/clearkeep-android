@@ -42,10 +42,10 @@ abstract class AbstractRoomUserJoinDao {
     @Query("SELECT roomUserJoin.* FROM roomUserJoin INNER JOIN room ON room.id = roomUserJoin.room_id INNER JOIN user ON user.id = roomUserJoin.user_id WHERE room.id =:roomId AND user.id =:userId")
     abstract fun getRoomUserJoinWithRoomIdAndUserIdRx(roomId: String, userId: String): Single<RoomUserJoin>;
 
-    @Query("SELECT DISTINCT roomUserJoin.room_id, Room.*, Message.* FROM Room LEFT JOIN RoomUserJoin ON roomUserJoin.room_id = Room.id LEFT JOIN Message ON Room.last_message_id = Message.message_id WHERE room.type =:typeOne ORDER BY room.type DESC, Message.created_at DESC")
+    @Query("SELECT DISTINCT roomUserJoin.room_id, Room.*, Message.*, User.id as user__id, User.name as user__name, User.status as user__status, User.avatarUrl as user__avatarUrl FROM Room LEFT JOIN RoomUserJoin ON roomUserJoin.room_id = Room.id LEFT JOIN Message ON Room.last_message_id = Message.message_id LEFT JOIN User ON User.id = Message.user_id WHERE room.type =:typeOne ORDER BY room.type DESC, Message.created_at DESC")
     abstract fun getListRoomListUserWithFilter(typeOne: Int): LiveData<List<RoomListUser>>
 
-    @Query("SELECT DISTINCT roomUserJoin.room_id, Room.*, Message.* FROM Room LEFT JOIN RoomUserJoin ON roomUserJoin.room_id = Room.id LEFT JOIN Message ON Room.last_message_id = Message.message_id WHERE room.type =:typeOne OR room.type =:typeTwo ORDER BY room.type DESC, message.created_at DESC")
+    @Query("SELECT DISTINCT roomUserJoin.room_id, Room.*, Message.*, User.id as user__id, User.name as user__name, User.status as user__status, User.avatarUrl as user__avatarUrl FROM Room LEFT JOIN RoomUserJoin ON roomUserJoin.room_id = Room.id LEFT JOIN Message ON Room.last_message_id = Message.message_id LEFT JOIN User ON User.id = Message.user_id WHERE room.type =:typeOne OR room.type =:typeTwo ORDER BY room.type DESC, message.created_at DESC")
     abstract fun getListRoomListUserWithFilter(typeOne: Int, typeTwo: Int): LiveData<List<RoomListUser>>
 
     @Query("SELECT DISTINCT roomUserJoin.room_id, room.* FROM roomUserJoin INNER JOIN room ON roomUserJoin.room_id = room.id WHERE room.type =:typeOne OR room.type =:typeTwo")

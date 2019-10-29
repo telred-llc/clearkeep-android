@@ -297,11 +297,11 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
     }
 
     private fun getListDirectMessageInvite(): List<Room> {
-        val roomSummaries = session!!.dataHandler.store.summaries;
+        val roomSummaries = session!!.dataHandler.store!!.summaries;
         val rooms = ArrayList<Room>();
         roomSummaries.forEach { t: RoomSummary? ->
             kotlin.run {
-                val room = session!!.dataHandler.store.getRoom(t?.roomId);
+                val room = session!!.dataHandler.store!!.getRoom(t?.roomId);
                 if (room != null && !room!!.isConferenceUserRoom && room!!.isInvited && room.isDirectChatInvitation) {
                     rooms.add(room);
                 }
@@ -311,11 +311,11 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
     }
 
     private fun getListRoomMessageInvite(): List<Room> {
-        val roomSummaries = session!!.dataHandler.store.summaries;
+        val roomSummaries = session!!.dataHandler.store!!.summaries;
         val rooms = ArrayList<Room>();
         roomSummaries.forEach { t: RoomSummary? ->
             kotlin.run {
-                val room = session!!.dataHandler.store.getRoom(t?.roomId);
+                val room = session!!.dataHandler.store!!.getRoom(t?.roomId);
                 if (room != null && !room!!.isConferenceUserRoom && room!!.isInvited && !room.isDirectChatInvitation) {
                     rooms.add(room);
                 }
@@ -328,7 +328,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         setMXSession();
         return Observable.create<vmodev.clearkeep.viewmodelobjects.Room> { emitter ->
             kotlin.run {
-                val room = session!!.dataHandler.store.getRoom(id);
+                val room = session!!.dataHandler.store!!.getRoom(id);
                 if (room != null) {
                     session!!.joinRoom(room.roomId, object : ApiCallback<String> {
                         override fun onSuccess(p0: String?) {
@@ -692,7 +692,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
     private fun directChatRoomExist(userId: String): Observable<String> {
         return Observable.create<String> { emitter ->
             kotlin.run {
-                val store = session!!.dataHandler.store;
+                val store = session!!.dataHandler.store!!;
                 val directChatRoomDict: Map<String, List<String>>;
                 if (store.directChatRoomsDict != null) {
                     store.directChatRoomsDict?.let { mutableMap ->
@@ -788,7 +788,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         setMXSession();
         return Observable.create<vmodev.clearkeep.viewmodelobjects.Room> { emitter ->
             val room = session!!.dataHandler.getRoom(roomId);
-            room.invite(userIds, object : ApiCallback<Void> {
+            room.invite(session,userIds, object : ApiCallback<Void> {
                 override fun onSuccess(p0: Void?) {
                     emitter.onNext(matrixRoomToRoom(room));
                     emitter.onComplete();

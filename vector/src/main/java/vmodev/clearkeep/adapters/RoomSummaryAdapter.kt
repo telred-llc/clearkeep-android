@@ -277,7 +277,7 @@ class RoomSummaryAdapter
             // here we translate the roomIds (Strings) to their corresponding RoomSummary objects
             for (roomSummary in aRoomSummaryCollection) {
                 roomSummaryId = roomSummary.roomId
-                val room = mMxSession.dataHandler.store.getRoom(roomSummaryId)
+                val room = mMxSession!!.dataHandler.store!!!!.getRoom(roomSummaryId)
 
                 // check if the room exists
                 // the user conference rooms are not displayed.
@@ -454,7 +454,7 @@ class RoomSummaryAdapter
                 if (null == session || !session.isAlive) {
                     roomRetValue = null
                 } else {
-                    roomRetValue = session.dataHandler.store.getRoom(roomSummary.roomId)
+                    roomRetValue = session.dataHandler.store!!.getRoom(roomSummary.roomId)
                 }// get session and check if the session is active
             }
         }
@@ -479,7 +479,7 @@ class RoomSummaryAdapter
             }
 
             // update/retrieve the complete summary list
-            val roomSummariesCompleteList = ArrayList(dataHandler.store.summaries)
+            val roomSummariesCompleteList = ArrayList(dataHandler.store!!.summaries)
 
             // define comparator logic
             val summaryComparator = Comparator<RoomSummary> { aLeftObj, aRightObj ->
@@ -672,7 +672,7 @@ class RoomSummaryAdapter
         showMoreView.visibility = View.GONE
 
         val childRoomSummary = mSummaryListByGroupPosition!![groupPosition][childPosition]
-        val childRoom = mMxSession.dataHandler.store.getRoom(childRoomSummary.roomId)
+        val childRoom = mMxSession!!.dataHandler.store!!!!.getRoom(childRoomSummary.roomId)
         val unreadMsgCount = childRoomSummary.unreadEventsCount
         var highlightCount = 0
         var notificationCount = 0
@@ -802,7 +802,7 @@ class RoomSummaryAdapter
         } else if (null == session || !session.isAlive) {
             displayNameRetValue = null
         } else {
-            val user = session.dataHandler.store.getUser(aUserId)
+            val user = session.dataHandler.store!!.getUser(aUserId)
 
             if (null != user && !TextUtils.isEmpty(user.displayname)) {
                 displayNameRetValue = user.displayname

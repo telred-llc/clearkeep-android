@@ -33,7 +33,10 @@ import javax.inject.Singleton
     , AbstractVectorMediaPickerActivityModule::class
     , AbstractNewRoomActivityModule::class
     , AbstractSettingsActivityModule::class
-    , AbstractShareFileActivityModule::class])
+    , AbstractShareFileActivityModule::class
+    , AbstractOutgoingCallActivityModule::class
+    , AbstractRoomDetailActivityModule::class
+    , AbstractIncomingCallActivityModule::class])
 interface AppComponent : AndroidInjector<ClearKeepApplication> {
     override fun inject(instance: ClearKeepApplication?)
 
@@ -45,5 +48,5 @@ interface AppComponent : AndroidInjector<ClearKeepApplication> {
         fun build(): AppComponent
     }
 
-    fun workerFactory() : ClearKeepWorkerFactory;
+    fun workerFactory(): ClearKeepWorkerFactory;
 }

@@ -25,6 +25,7 @@ import org.matrix.androidsdk.data.Room
 import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.rest.model.Event
 import vmodev.clearkeep.activities.RoomActivity
+import vmodev.clearkeep.adapters.MessagesAdapter
 import vmodev.clearkeep.fragments.MessageListFragment
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
@@ -32,7 +33,7 @@ import java.util.*
 
 class ReadMarkerManager constructor(val activity: RoomActivity, val messageListFragment: MessageListFragment,
                                     val session: MXSession, val room: Room?, @UpdateMode val updateMode: Int,
-                                    val jumpToFirstUnreadView: View?) : VectorMessagesAdapter.ReadMarkerListener {
+                                    val jumpToFirstUnreadView: View?) : MessagesAdapter.ReadMarkerListener {
     private val LOG_TAG = ReadMarkerManager::class.java.simpleName
 
     // number of messages from the store that we allow to load for the "jump to first unread message"
@@ -140,7 +141,7 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
      */
     fun onResume() {
         mVectorMessageListFragment?.let { vectorMessageListFragment ->
-            (vectorMessageListFragment.messageAdapter as VectorMessagesAdapter).setReadMarkerListener(this)
+            (vectorMessageListFragment.messageAdapter as MessagesAdapter).setReadMarkerListener(this)
             updateJumpToBanner()
         }
     }
@@ -584,7 +585,7 @@ class ReadMarkerManager constructor(val activity: RoomActivity, val messageListF
      * *********************************************************************************************
      */
 
-    override fun onReadMarkerDisplayed(event: Event, view: View) {
+    override fun onReadMarkerDisplayed(event: Event, view: View?) {
         Log.d(LOG_TAG, "onReadMarkerDisplayed for " + event.eventId)
         if (!mActivity!!.isFinishing) {
             if (mLastVisibleEvent == null) {

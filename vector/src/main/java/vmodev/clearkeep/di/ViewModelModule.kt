@@ -224,6 +224,21 @@ abstract class ViewModelModule {
     abstract fun bindInviteUsersToRoomActivityViewModel(viewModel: InviteUsersToRoomActivityViewModel): ViewModel;
 
     @Binds
+    @IntoMap
+    @ViewModelKey(AbstractIncomingCallFragmentViewModel::class)
+    abstract fun bindIncomingCallFragmentViewModel(viewModel : IncomingCallFragmentViewModel) : ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractInProgressVoiceCallFragmentViewModel::class)
+    abstract fun bindInProgressVoiceCallFragmentViewModel(viewModel : InProgressVoiceCallFragmentViewModel) : ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractOutgoingVoiceCallFragmentViewModel::class)
+    abstract fun bindOutgoingVoiceCallFragmentViewModel(viewModel : OutgoingVoiceCallFragmentViewModel) : ViewModel;
+
+    @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
 
     @Binds

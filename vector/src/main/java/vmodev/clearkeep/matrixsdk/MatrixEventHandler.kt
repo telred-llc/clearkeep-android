@@ -13,6 +13,7 @@ import org.matrix.androidsdk.listeners.MXEventListener
 import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.User
 import org.matrix.androidsdk.rest.model.bingrules.BingRule
+import org.matrix.androidsdk.rest.model.sync.AccountDataElement
 import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.databases.AbstractRoomDao
 import vmodev.clearkeep.executors.AppExecutors
@@ -40,8 +41,8 @@ class MatrixEventHandler @Inject constructor(
         , private val updateDatabaseFromMatrixEvent: IUpdateDatabaseFromMatrixEvent)
     : MXEventListener(), IMatrixEventHandler, KeysBackupStateManager.KeysBackupStateListener {
     private var mxSession: MXSession? = null;
-    override fun onAccountDataUpdated() {
-        super.onAccountDataUpdated()
+    override fun onAccountDataUpdated(accountDataElement: AccountDataElement?) {
+        super.onAccountDataUpdated(accountDataElement)
         val user = mxSession!!.myUser;
         val userAvatarUrl = mxSession!!.contentManager.getDownloadableUrl(user.avatarUrl, false);
         userRepository.updateUser(user.user_id, user.displayname, if (userAvatarUrl.isNullOrEmpty()) "" else userAvatarUrl);
@@ -102,7 +103,7 @@ class MatrixEventHandler @Inject constructor(
                 IMatrixEventHandler.M_ROOM_MEMBER -> {
                     messageRepository.insertMessage(event.toMessage())
                             .subscribeOn(Schedulers.io()).subscribe {
-                                roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe();
+                                roomRepository.updateLastMessage(e.roomId, e.eventId).subscribeOn(Schedulers.io()).subscribe();
                                 val contentObject = event.contentJson.asJsonObject;
                                 if (contentObject.has("membership") && TextUtils.equals(contentObject.get("membership").asString, "invite")
                                         && contentObject.has("is_direct") && contentObject.get("is_direct").asBoolean) {

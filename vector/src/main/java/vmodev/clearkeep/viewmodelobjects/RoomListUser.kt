@@ -9,5 +9,7 @@ class RoomListUser(
         @Relation(parentColumn = "id", entityColumn = "room_id", entity = RoomUserJoin::class)
         var roomUserJoin: List<RoomUserJoin>? = null,
         @Embedded
-        var lastMessage: Message? = null
+        var lastMessage: Message? = null,
+        @Embedded(prefix = "user__")
+        var lastUserMessage: User? = null
 )

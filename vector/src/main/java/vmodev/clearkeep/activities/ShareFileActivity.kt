@@ -99,7 +99,7 @@ class ShareFileActivity : DataBindingDaggerActivity(), IActivity {
 
                     if (null != session) {
                         hasCredentials = true
-                        isLaunched = session!!.dataHandler.store.isReady
+                        isLaunched = session!!.dataHandler.store!!.isReady
                     }
                 } catch (e: Exception) {
                     Log.e(LOG_TAG, "## onCreate() : failed " + e.message, e)

@@ -163,7 +163,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
 
         for (session in sessions) {
             if (session.isAlive) {
-                hasCorruptedStore = hasCorruptedStore or session.dataHandler.store.isCorrupted
+                hasCorruptedStore = hasCorruptedStore or session.dataHandler.store!!!!.isCorrupted
             }
         }
         return hasCorruptedStore
@@ -366,7 +366,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
             }
 
             if (!fSession.dataHandler.isInitialSyncComplete) {
-                session.dataHandler.store.open()
+                session.dataHandler.store!!.open()
 
                 mListeners[fSession] = eventListener
                 fSession.dataHandler.addListener(eventListener)

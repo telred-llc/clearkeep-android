@@ -151,7 +151,8 @@
             android:background="@android:color/transparent"
             android:baselineAligned="false"
             android:gravity="center"
-            android:visibility="gone">
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <FrameLayout
                 android:layout_width="0dp"

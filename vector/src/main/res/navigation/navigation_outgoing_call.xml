@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_outgoing_call"
+    app:startDestination="@+id/outgoingVideoCallFragment">
+
+    <fragment
+        android:id="@+id/outgoingVideoCallFragment"
+        android:name="vmodev.clearkeep.fragments.OutgoingVideoCallCallFragment"
+        tools:layout="@layout/fragment_outgoing_call" />
+
+    <fragment
+        android:id="@+id/outgoingVoiceCallFragment"
+        android:name="vmodev.clearkeep.fragments.OutgoingVoiceCallFragment"
+        tools:layout="@layout/fragment_outgoing_voice_call" />
+</navigation>
