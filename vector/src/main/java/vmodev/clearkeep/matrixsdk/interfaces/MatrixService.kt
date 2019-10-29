@@ -58,4 +58,5 @@ public interface MatrixService {
     fun createPassphrase(passphrase: String): Observable<PassphraseResponse>;
     fun checkBackupKeyStateWhenStart(): Observable<Int>;
     fun getRoomWithIdForCreate(roomId: String) : Observable<vmodev.clearkeep.viewmodelobjects.Room>;
+    fun getUserProfile(userId: String) : Observable<User>;
 }
