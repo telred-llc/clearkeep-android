@@ -139,6 +139,7 @@
     <color name="search_color">#FF9E9E9E</color>
     <color name="text_color">#444444</color>
     <color name="black_color">#000000</color>
+    <color name="color_user_invite">#6093EA</color>
 
     <!-- Password Strength bar colors -->
     <color name="password_strength_bar_weak">#FFF56679</color>
