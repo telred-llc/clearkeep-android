@@ -13,6 +13,7 @@ import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.interfaces.IUserRepository
 import vmodev.clearkeep.repositories.wayloads.*
+import vmodev.clearkeep.rests.ClearKeepApis
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.User
 import java.io.InputStream
@@ -229,5 +230,24 @@ class UserRepository @Inject constructor(
                 return abstractUserDao.getListUserSuggested();
             }
         }.asLiveData();
+    }
+
+    override fun updateUser(userId: String): Observable<User> {
+        return Observable.create { emmiter ->
+            var user: User? = abstractUserDao.getUserById(userId);
+            if (user == null) {
+                matrixService.getUserProfile(userId).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe({
+                    abstractUserDao.insert(it);
+                    emmiter.onNext(it);
+                    emmiter.onComplete();
+                }, {
+                    emmiter.onError(it);
+                    emmiter.onComplete();
+                })
+            } else {
+                emmiter.onNext(user);
+                emmiter.onComplete();
+            }
+        }
     }
 }

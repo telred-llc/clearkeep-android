@@ -16,8 +16,11 @@ abstract class AbstractUserDao {
     @Query("SELECT * FROM user WHERE id = :id")
     abstract fun findById(id: String): LiveData<User>;
 
+    @Query("SELECT User.* FROM User WHERE User.id =:id")
+    abstract fun getUserById(id: String): User;
+
     @Query("SELECT * FROM User")
-    abstract fun findAll() : Single<List<User>>
+    abstract fun findAll(): Single<List<User>>
 
     @Query("UPDATE user SET name = :name, avatarUrl = :avatarUrl WHERE id =:id")
     abstract fun updateUser(id: String, name: String, avatarUrl: String): Int;
@@ -56,7 +59,7 @@ abstract class AbstractUserDao {
     abstract fun getUsersWithId(ids: Array<String>): LiveData<List<User>>
 
     @Query("SELECT * FROM User ORDER BY RANDOM() LIMIT 10")
-    abstract fun getListUserSuggested() : LiveData<List<User>>
+    abstract fun getListUserSuggested(): LiveData<List<User>>
 
 
 }
