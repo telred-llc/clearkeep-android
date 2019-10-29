@@ -3,6 +3,8 @@ package vmodev.clearkeep.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LifecycleOwner
@@ -16,7 +18,9 @@ import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.bindingadapters.DataBindingComponentImplement
 import vmodev.clearkeep.bindingadapters.interfaces.IDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.ultis.FormatString
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
+import vmodev.clearkeep.widget.RoundedCornerLayout
 
 class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<RoomListUser>, private val dataBindingComponent : IDataBindingComponent)
 
@@ -63,9 +67,18 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
     override fun onBindViewHolder(p0: DataBoundViewHolder<ViewDataBinding>, p1: Int) {
         if (getItemViewType(p1) == 0) {
             (p0.binding as RoomInviteItemBinding).roomListUser = getItem(p1);
+            (p0.binding as RoomInviteItemBinding).name = getItem(p1).room?.name?.let { FormatString.formatName(it) }
             p0.binding.executePendingBindings();
         } else {
             (p0.binding as RoomItemBinding).roomListUser = getItem(p1);
+            if (getItem(p1).room?.notifyCount==0){
+                p0.binding.backgroundRoomItem.setBackgroundColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_white, null))
+                p0.binding.layoutAvatar.setColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_white, null))
+            }else{
+                p0.binding.backgroundRoomItem.setBackgroundColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_background_notification,null))
+                p0.binding.layoutAvatar.setColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_background_notification, null))
+
+            }
             p0.binding.executePendingBindings();
             p0.binding.currentUserId = currentUserId;
             callbackToGetUsers?.let { callback ->

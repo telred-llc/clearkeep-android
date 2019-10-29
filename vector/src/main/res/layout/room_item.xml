@@ -30,12 +30,13 @@
     </data>
 
     <LinearLayout
+        android:id="@+id/background_room_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_small"
-        android:layout_marginBottom="@dimen/margin_small"
-        android:layout_marginStart="@dimen/margin_left"
-        android:layout_marginEnd="@dimen/margin_right"
+        android:paddingTop="@dimen/margin_small"
+        android:paddingBottom="@dimen/margin_small"
+        android:paddingStart="@dimen/margin_left"
+        android:paddingEnd="@dimen/margin_right"
         android:baselineAligned="false"
         android:orientation="horizontal">
 
@@ -44,6 +45,7 @@
             android:layout_height="@dimen/image_avatar_status_size">
 
             <vmodev.clearkeep.widget.RoundedCornerLayout
+                android:id="@+id/layoutAvatar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <ImageView

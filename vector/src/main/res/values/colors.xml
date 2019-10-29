@@ -185,6 +185,7 @@
     <color name="text_new_message_notification">#03b381</color>
     <!--    color basic-->
     <color name="color_white">#FFFFFF</color>
+    <color name="color_background_notification">#CAF4FB</color>
     <color name="color_grey">#F0F0F0</color>
     <!--    text_color-->
     <color name="text_color_header">#5787E3</color>
