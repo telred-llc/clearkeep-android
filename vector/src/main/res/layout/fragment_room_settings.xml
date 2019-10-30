@@ -27,6 +27,10 @@
         <variable
             name="user"
             type="LiveData&lt;Resource&lt;User>>" />
+        <variable
+            name="isLoading"
+            type="Boolean" />
+
     </data>
 
     <RelativeLayout
@@ -120,7 +124,7 @@
                         android:singleLine="true"
                         android:text="@{room.data.name}"
                         android:textColor="@color/color_edit_text_hint"
-
+                        android:textAllCaps="true"
                         android:textSize="@dimen/text_17_sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -140,13 +144,14 @@
                         android:imeOptions="actionDone"
                         android:singleLine="true"
                         android:text="@{room.data.topic}"
+                        android:textAllCaps="true"
                         android:textColor="@color/color_edit_text_hint"
                         android:textSize="@dimen/text_17_sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
                 <Button
-                    android:id="@+id/btnCreate"
+                    android:id="@+id/btnSave"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_normal"
@@ -154,8 +159,8 @@
                     android:layout_marginEnd="@dimen/margin_normal"
                     android:layout_marginBottom="@dimen/margin_xxl"
                     android:background="@drawable/bg_button_gradient_grey"
+                    android:text="@string/save"
                     android:enabled="false"
-                    android:text="@string/create"
                     android:textColor="@color/color_white" />
                 <!--            <TextView-->
                 <!--                android:layout_width="match_parent"-->
@@ -332,10 +337,11 @@
         </androidx.core.widget.NestedScrollView>
 
         <ProgressBar
+            android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            app:visibleGone="@{room.status == Status.LOADING || leaveRoom.status == Status.LOADING || user.status == Status.LOADING}" />
+            app:visibleGone="@{room.status == Status.LOADING || leaveRoom.status == Status.LOADING || user.status == Status.LOADING || isLoading }" />
 
     </RelativeLayout>
 </layout>

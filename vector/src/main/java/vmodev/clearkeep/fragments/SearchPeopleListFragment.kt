@@ -16,6 +16,7 @@ import im.vector.contacts.ContactsManager
 import im.vector.fragments.VectorBaseFragment
 import im.vector.util.VectorUtils
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.Log
 import org.matrix.androidsdk.core.MXPatterns
 import org.matrix.androidsdk.fragments.MatrixMessageListFragment
 import org.matrix.androidsdk.listeners.MXEventListener
@@ -50,6 +51,14 @@ class SearchPeopleListFragment : VectorBaseFragment() {
             if (null != activity) {
                 activity!!.runOnUiThread { mAdapter!!.onPIdsUpdate() }
             }
+        }
+
+        override fun onIdentityServerTermsNotSigned(token: String) {
+            Log.w("VectorSearchPeopleListFragment", "onIdentityServerTermsNotSigned()")
+        }
+
+        override fun onNoIdentityServerDefined() {
+
         }
     }
 

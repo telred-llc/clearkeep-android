@@ -1,16 +1,21 @@
 package vmodev.clearkeep.fragments
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextUtils
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -24,6 +29,8 @@ import androidx.navigation.fragment.navArgs
 import im.vector.R
 import im.vector.databinding.FragmentRoomSettingsBinding
 import im.vector.extensions.hideKeyboard
+import im.vector.util.tintDrawableCompat
+import io.reactivex.observers.DisposableCompletableObserver
 import org.jetbrains.anko.colorAttr
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
@@ -31,7 +38,9 @@ import vmodev.clearkeep.activities.EditProfileActivity
 import vmodev.clearkeep.activities.RoomfilesListActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.Status
+import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomSettingsFragmentViewModel
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -48,6 +57,9 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
     private lateinit var binding: FragmentRoomSettingsBinding;
     private val args: RoomSettingsFragmentArgs by navArgs();
     private var avatarImage: InputStream? = null;
+    private var room: Room? = null
+    private var user: User? = null
+    private var isUpdateSuccess = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_room_settings, container, false, dataBinding.getDataBindingComponent());
@@ -60,24 +72,21 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
         binding.room = viewModelFactory.getViewModel().getRoom();
         binding.user = viewModelFactory.getViewModel().getUserResult();
         viewModelFactory.getViewModel().getRoom().observe(viewLifecycleOwner, Observer {
+            it?.data?.avatarUrl?.let {
+                Log.d("RoomAvatar", it);
+            }
             it?.data?.userCreated?.let {
                 viewModelFactory.getViewModel().setUserId(it)
             }
+            this.room = it.data
         })
         binding.lifecycleOwner = this;
         args.roomId?.let { viewModelFactory.getViewModel().setRoomId(it) }
-        if (!binding.editTextRoomName.isFocusable) {
-            binding.editTextRoomName.colorAttr(ResourcesCompat.getColor(this.resources, R.color.color_grey, null))
-        }
-        if (!binding.editTextRoomTopic.isFocusable) {
-            binding.editTextRoomTopic.colorAttr(ResourcesCompat.getColor(this.resources, R.color.color_grey, null))
-        }
         setEventEditText()
     }
 
     private fun setupButton() {
         binding.leaveRoomGroup.setOnClickListener {
-
             if (alertDialog == null) {
                 alertDialog = AlertDialog.Builder(this.context!!).setTitle(R.string.leave_room)
                         .setMessage(R.string.do_you_want_leave_room)
@@ -128,9 +137,65 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
         binding.viewSelectPicture.setOnClickListener {
             requestReadExternalStorage();
         }
+        binding.btnSave.setOnClickListener {
+            binding.isLoading = true
+            isUpdateSuccess = false
+            var name: String = binding.editTextRoomName.text.toString().toUpperCase().trim()
+            var topic: String = binding.editTextRoomTopic.text.toString().trim()
+            room?.let {
+                if (!it.id.isNullOrBlank() && null != avatarImage) {
+                    viewModelFactory.getViewModel().updateRoomAvatar(it.id, avatarImage!!).subscribe(object : DisposableCompletableObserver() {
+                        override fun onComplete() {
+                            binding.isLoading = false
+                            isUpdateSuccess = true
+                        }
 
+                        override fun onError(e: Throwable) {
+                            binding.isLoading = false
+                            isUpdateSuccess = false
+                        }
+                    })
+                }
+                if (!it.id.isNullOrBlank() && !name.isNullOrBlank()) {
+                    viewModelFactory.getViewModel().updateRoomName(it.id, name).subscribe(object : DisposableCompletableObserver() {
+                        override fun onComplete() {
+                            binding.isLoading = false
+                            isUpdateSuccess = true
+                        }
+
+                        override fun onError(e: Throwable) {
+                            binding.isLoading = false
+                            isUpdateSuccess = false
+                        }
+                    })
+                }
+                if (!it.id.isNullOrBlank() && !topic.isNullOrBlank()) {
+                    viewModelFactory.getViewModel().updateRoomTopic(it.id, topic).subscribe(object : DisposableCompletableObserver() {
+                        override fun onComplete() {
+                            isUpdateSuccess = true
+                            binding.isLoading = false
+                        }
+
+                        override fun onError(e: Throwable) {
+                            isUpdateSuccess = false
+                            binding.isLoading = false
+                        }
+                    })
+                }
+                if (isUpdateSuccess) {
+                    Toast.makeText(activity, "Update room success", Toast.LENGTH_LONG).show()
+                    binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_grey, null);
+                    binding.btnSave.isEnabled = false;
+                    binding.editTextRoomName.isFocusable =false
+                    binding.editTextRoomTopic.isFocusable = false
+                } else {
+                    Toast.makeText(activity, "Update room error", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
     }
 
+    @SuppressLint("ResourceType")
     private fun setEventEditText() {
         binding.editTextRoomName.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
@@ -146,6 +211,42 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
                 binding.editTextRoomTopic.setTextColor(ResourcesCompat.getColor(this.resources, R.color.color_edit_text_hint, null))
             }
         }
+
+        binding.editTextRoomName.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if (!p0.isNullOrBlank() && room?.name != binding.editTextRoomName.text.toString() || room?.topic != binding.editTextRoomTopic.text.toString()) {
+                    binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_blue, null)
+                    binding.btnSave.isEnabled = true;
+                } else {
+                    binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_grey, null);
+                    binding.btnSave.isEnabled = false;
+                }
+            }
+        })
+
+        binding.editTextRoomTopic.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if (!p0.isNullOrBlank() && room?.topic != binding.editTextRoomTopic.text.toString() || room?.name != binding.editTextRoomName.text.toString()) {
+                    binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_blue, null)
+                    binding.btnSave.isEnabled = true;
+                } else {
+                    binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_grey, null);
+                    binding.btnSave.isEnabled = false;
+                }
+            }
+        })
     }
 
     @AfterPermissionGranted(RoomSettingsFragment.REQUEST_CAMERA_PERMISSION)
@@ -155,7 +256,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
             val cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(cameraIntent, RESULT_TAKE_IMAGE_FROM_CAMERA);
         } else {
-            EasyPermissions.requestPermissions(this, "Application need permission for take picture", RoomSettingsFragment.REQUEST_CAMERA_PERMISSION, *params)
+            EasyPermissions.requestPermissions(this, "Application need permission for take picture",REQUEST_CAMERA_PERMISSION, *params)
         }
     }
 
@@ -167,7 +268,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
             photoPickerIntent.type = "image/*"
             startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG)
         } else {
-            EasyPermissions.requestPermissions(this, "Application need permission for get picture from gallery", RoomSettingsFragment.REQUEST_READ_EXTERNAL_STORAGE, *params);
+            EasyPermissions.requestPermissions(this, "Application need permission for get picture from gallery", REQUEST_READ_EXTERNAL_STORAGE, *params);
         }
     }
 
@@ -179,7 +280,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode === Activity.RESULT_OK) {
-            if (requestCode == RoomSettingsFragment.RESULT_LOAD_IMG) {
+            if (requestCode == RESULT_LOAD_IMG) {
                 try {
                     val imageUri = data?.data!!;
                     val inputStream = activity!!.contentResolver.openInputStream(imageUri);
@@ -190,12 +291,14 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
                     val bitmapData = bos.toByteArray();
                     avatarImage = ByteArrayInputStream(bitmapData);
                     binding.imgAvatarRoom.setImageBitmap(selectedImage);
+                    binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_blue, null)
+                    binding.btnSave.isEnabled = true;
                 } catch (e: FileNotFoundException) {
                     e.printStackTrace()
                     Toast.makeText(activity!!, "Something went wrong", Toast.LENGTH_LONG).show()
                 }
             }
-            if (requestCode == RoomSettingsFragment.RESULT_TAKE_IMAGE_FROM_CAMERA) {
+            if (requestCode == RESULT_TAKE_IMAGE_FROM_CAMERA) {
                 try {
                     var image: Bitmap = data?.extras?.get("data") as Bitmap
                     image = getResizedBitmap(image, 512, 512);
@@ -204,6 +307,8 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
                     val bitmapData = bos.toByteArray()
                     avatarImage = ByteArrayInputStream(bitmapData)
                     image?.let { binding.imgAvatarRoom.setImageBitmap(image) }
+                    binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_blue, null)
+                    binding.btnSave.isEnabled = true;
                 } catch (e: FileNotFoundException) {
                     e.printStackTrace()
                     Toast.makeText(activity, "Something went wrong", Toast.LENGTH_LONG).show()

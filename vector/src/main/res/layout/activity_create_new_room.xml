@@ -28,10 +28,10 @@
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nested_scrollview"
             android:layout_width="match_parent"
-            android:layout_above="@+id/btnCreate"
             android:layout_height="match_parent"
-            android:scrollbars="none"
-            android:fillViewport="true">
+            android:layout_above="@+id/btnCreate"
+            android:fillViewport="true"
+            android:scrollbars="none">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -41,10 +41,9 @@
                     android:id="@+id/til_text_room_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_normal"
-                    android:theme="@style/editTextStyle"
                     android:layout_alignParentTop="true"
-                    >
+                    android:layout_margin="@dimen/margin_normal"
+                    android:theme="@style/editTextStyle">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_text_room_name"
@@ -52,6 +51,8 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/room_name_required"
                         android:singleLine="true"
+                        android:textAllCaps="true"
+                        android:inputType="textCapCharacters"
                         android:textColor="@color/text_color_blue"
                         android:textSize="@dimen/text_17_sp" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -60,19 +61,18 @@
                     android:id="@+id/til_text_room_topic"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_normal"
-                    android:theme="@style/editTextStyle"
                     android:layout_below="@+id/til_text_room_name"
-                    >
+                    android:layout_margin="@dimen/margin_normal"
+                    android:theme="@style/editTextStyle">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edit_text_room_topic"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/room_topic_optional"
+                        android:imeOptions="actionDone"
                         android:singleLine="true"
                         android:textColor="@color/text_color_blue"
-                        android:imeOptions="actionDone"
                         android:textSize="@dimen/text_17_sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -80,35 +80,33 @@
                     android:id="@+id/checkbox_room_visibility"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/til_text_room_topic"
                     android:layout_margin="@dimen/margin_normal"
                     android:singleLine="true"
                     android:text="@string/str_checkbox_public_mode"
                     android:textColor="@color/text_color_default"
                     android:textSize="@dimen/text_13_sp"
-                    android:layout_below="@+id/til_text_room_topic"
                     android:theme="@style/checkBoxStyle" />
 
                 <TextView
                     android:id="@+id/tvSuggested"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/checkbox_room_visibility"
+                    android:layout_margin="@dimen/margin_normal"
                     android:singleLine="true"
                     android:text="@string/suggested"
-                    android:textSize="@dimen/text_19_sp"
-                    android:layout_margin="@dimen/margin_normal"
-                    android:layout_below="@+id/checkbox_room_visibility"
-                   />
+                    android:textSize="@dimen/text_19_sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvListUserSuggested"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_margin="@dimen/margin_normal"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_user_with_radio"
                     android:layout_below="@+id/tvSuggested"
-                    />
+                    android:layout_margin="@dimen/margin_normal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    tools:listitem="@layout/item_user_with_radio" />
 
 
             </RelativeLayout>
@@ -126,10 +124,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/margin_xxl"
             android:layout_marginStart="@dimen/margin_normal"
-            android:layout_marginEnd="@dimen/margin_normal"
             android:layout_marginTop="@dimen/margin_normal"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginBottom="@dimen/margin_xxl"
             android:background="@drawable/bg_button_gradient_grey"
             android:text="@string/create"
             android:textColor="@color/color_white" />

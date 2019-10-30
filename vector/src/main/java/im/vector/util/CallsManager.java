@@ -51,6 +51,8 @@ import im.vector.activity.VectorHomeActivity;
 import im.vector.notifications.NotificationUtils;
 import im.vector.services.CallService;
 import vmodev.clearkeep.activities.CallViewActivity;
+import vmodev.clearkeep.activities.IncomingCallActivity;
+import vmodev.clearkeep.activities.OutgoingCallActivity;
 
 /**
  * This class contains the call toolbox.
@@ -410,10 +412,10 @@ public class CallsManager {
                             }
 //                            context.startActivity(intent);
 
-                            Intent intentStartCall = new Intent(context, CallViewActivity.class);
-                            intentStartCall.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intentStartCall.putExtra(CallViewActivity.EXTRA_MATRIX_ID, mActiveCall.getSession().getMyUserId());
-                            intentStartCall.putExtra(CallViewActivity.EXTRA_CALL_ID,  mActiveCall.getCallId());
+                            Intent intentStartCall = new Intent(context.getApplicationContext(), IncomingCallActivity.class);
+                            intentStartCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            intentStartCall.putExtra(CallViewActivity.EXTRA_MATRIX_ID, mActiveCall.getSession().getMyUserId());
+//                            intentStartCall.putExtra(CallViewActivity.EXTRA_CALL_ID, mActiveCall.getCallId());
                             context.startActivity(intentStartCall);
 
                         } else {
@@ -629,7 +631,11 @@ public class CallsManager {
                     @Override
                     public void onMediaReadyToPlay() {
                         if (null != mCallActivity) {
-                            mCallActivity.finish();
+                            if (mCallActivity instanceof VectorCallViewActivity) {
+                                ((VectorCallViewActivity) mCallActivity).endCall();
+                            } else {
+                                mCallActivity.finish();
+                            }
                             mCallActivity = null;
                         }
                     }

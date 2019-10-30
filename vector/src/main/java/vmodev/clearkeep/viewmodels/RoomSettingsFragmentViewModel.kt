@@ -3,15 +3,18 @@ package vmodev.clearkeep.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import io.reactivex.Completable
+import io.reactivex.Observable
 import vmodev.clearkeep.repositories.RoomRepository
 import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomSettingsFragmentViewModel
+import java.io.InputStream
 import javax.inject.Inject
 
-class RoomSettingsFragmentViewModel @Inject constructor(roomRepository: RoomRepository, userRepository: UserRepository) : AbstractRoomSettingsFragmentViewModel() {
+class RoomSettingsFragmentViewModel @Inject constructor(private val roomRepository: RoomRepository, userRepository: UserRepository) : AbstractRoomSettingsFragmentViewModel() {
 
     private val _setRoomId = MutableLiveData<String>();
     private val _setLeaveRoom = MutableLiveData<String>();
@@ -46,5 +49,17 @@ class RoomSettingsFragmentViewModel @Inject constructor(roomRepository: RoomRepo
 
     override fun getUserResult(): LiveData<Resource<User>> {
         return _getUserResult;
+    }
+
+    override fun updateRoomName(roomId: String, roomName: String): Completable {
+        return roomRepository.updateRoomNameToNetwork(roomId, roomName)
+    }
+
+    override fun updateRoomTopic(roomId: String, roomTopic: String): Completable {
+        return roomRepository.updateRoomTopicToNetwork(roomId, roomTopic)
+    }
+
+    override fun updateRoomAvatar(roomId: String, avatar: InputStream): Completable {
+        return roomRepository.updateRoomAvatarToNetwork(roomId, avatar)
     }
 }

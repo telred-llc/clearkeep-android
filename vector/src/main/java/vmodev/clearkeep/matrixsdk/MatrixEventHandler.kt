@@ -13,6 +13,7 @@ import org.matrix.androidsdk.listeners.MXEventListener
 import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.User
 import org.matrix.androidsdk.rest.model.bingrules.BingRule
+import org.matrix.androidsdk.rest.model.sync.AccountDataElement
 import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.databases.AbstractRoomDao
 import vmodev.clearkeep.executors.AppExecutors
@@ -40,8 +41,8 @@ class MatrixEventHandler @Inject constructor(
         , private val updateDatabaseFromMatrixEvent: IUpdateDatabaseFromMatrixEvent)
     : MXEventListener(), IMatrixEventHandler, KeysBackupStateManager.KeysBackupStateListener {
     private var mxSession: MXSession? = null;
-    override fun onAccountDataUpdated() {
-        super.onAccountDataUpdated()
+    override fun onAccountDataUpdated(accountDataElement: AccountDataElement?) {
+        super.onAccountDataUpdated(accountDataElement)
         val user = mxSession!!.myUser;
         val userAvatarUrl = mxSession!!.contentManager.getDownloadableUrl(user.avatarUrl, false);
         userRepository.updateUser(user.user_id, user.displayname, if (userAvatarUrl.isNullOrEmpty()) "" else userAvatarUrl);
@@ -91,7 +92,8 @@ class MatrixEventHandler @Inject constructor(
                                     .observeOn(AndroidSchedulers.mainThread()).subscribe {
                                         messageRepository.insertMessage(event.toMessage()).subscribeOn(Schedulers.io())
                                                 .subscribe {
-                                                    roomRepository.updateLastMessage(event.roomId, event.eventId).subscribe() }
+                                                    roomRepository.updateLastMessage(event.roomId, event.eventId).subscribe()
+                                                }
                                         roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId)
                                                 .subscribeOn(Schedulers.io())
                                                 .observeOn(AndroidSchedulers.mainThread()).subscribe()
@@ -100,38 +102,39 @@ class MatrixEventHandler @Inject constructor(
                     }
                 }
                 IMatrixEventHandler.M_ROOM_MEMBER -> {
-                    messageRepository.insertMessage(event.toMessage())
-                            .subscribeOn(Schedulers.io()).subscribe {
-                                roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe();
-                                val contentObject = event.contentJson.asJsonObject;
-                                if (contentObject.has("membership") && TextUtils.equals(contentObject.get("membership").asString, "invite")
-                                        && contentObject.has("is_direct") && contentObject.get("is_direct").asBoolean) {
-                                    roomState?.let {
-                                        val selfMember = it.getMember(mxSession!!.myUserId);
-                                        if (selfMember != null) {
-                                            roomRepository.updateRoomType(event.roomId, 1).subscribeOn(Schedulers.io()).subscribe();
-                                            roomRepository.updateRoomName(event.roomId, contentObject.get("displayname").asString).subscribeOn(Schedulers.io()).subscribe();
-                                            if (contentObject.has("avatar_url") && !contentObject.get("avatar_url").asString.isNullOrEmpty()){
-                                                contentObject.get("avatar_url").asString.matrixUrlToRealUrl(mxSession)?.let {
-                                                    roomRepository.updateRoomAvatar(event.roomId, it).subscribeOn(Schedulers.io()).subscribe();
-                                                }
-                                            }
-                                            else{
+                    userRepository.updateUser(event.sender).subscribeOn(Schedulers.io()).subscribe {
+                        messageRepository.insertMessage(event.toMessage())
+                                .subscribeOn(Schedulers.io()).subscribe {
+                                    roomRepository.updateLastMessage(e.roomId, e.eventId).subscribeOn(Schedulers.io()).subscribe();
+                                    val contentObject = event.contentJson.asJsonObject;
+                                    if (contentObject.has("membership") && TextUtils.equals(contentObject.get("membership").asString, "invite")
+                                            && contentObject.has("is_direct") && contentObject.get("is_direct").asBoolean) {
+                                        roomState?.let {
+                                            val selfMember = it.getMember(mxSession!!.myUserId);
+                                            if (selfMember != null) {
+                                                roomRepository.updateRoomType(event.roomId, 1).subscribeOn(Schedulers.io()).subscribe();
+                                                roomRepository.updateRoomName(event.roomId, contentObject.get("displayname").asString).subscribeOn(Schedulers.io()).subscribe();
+                                                if (contentObject.has("avatar_url") && !contentObject.get("avatar_url").asString.isNullOrEmpty()) {
+                                                    contentObject.get("avatar_url").asString.matrixUrlToRealUrl(mxSession)?.let {
+                                                        roomRepository.updateRoomAvatar(event.roomId, it).subscribeOn(Schedulers.io()).subscribe();
+                                                    }
+                                                } else {
 
-                                            }
-                                        } else {
-                                            val member = it.getMember(event.sender);
-                                            roomRepository.updateRoomType(event.roomId, 1 or 64).subscribeOn(Schedulers.io()).subscribe();
-                                            roomRepository.updateRoomName(event.roomId, String.format(application.resources.getString(R.string.room_displayname_invite_from), member.displayname))
-                                                    .subscribeOn(Schedulers.io()).subscribe();
-                                            member.avatarUrl.matrixUrlToRealUrl(mxSession)?.let {
-                                                roomRepository.updateRoomAvatar(event.roomId, it)
-                                                        .subscribeOn(Schedulers.io()).subscribe()
+                                                }
+                                            } else {
+                                                val member = it.getMember(event.sender);
+                                                roomRepository.updateRoomType(event.roomId, 1 or 64).subscribeOn(Schedulers.io()).subscribe();
+                                                roomRepository.updateRoomName(event.roomId, String.format(application.resources.getString(R.string.room_displayname_invite_from), member.displayname))
+                                                        .subscribeOn(Schedulers.io()).subscribe();
+                                                member.avatarUrl.matrixUrlToRealUrl(mxSession)?.let {
+                                                    roomRepository.updateRoomAvatar(event.roomId, it)
+                                                            .subscribeOn(Schedulers.io()).subscribe()
+                                                }
                                             }
                                         }
                                     }
-                                }
-                            };
+                                };
+                    }
                 }
                 IMatrixEventHandler.M_ROOM_NAME -> {
                     val name = event.contentJson.asJsonObject.get("name").asString;
@@ -154,10 +157,10 @@ class MatrixEventHandler @Inject constructor(
                             .subscribeOn(Schedulers.io()).subscribe {
                                 roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe();
                             };
-                    if (!event.sender.equals(mxSession!!.myUserId)){
+                    if (!event.sender.equals(mxSession!!.myUserId)) {
                         roomRepository.updateRoomNotificationCount(e.roomId).subscribeOn(Schedulers.io()).subscribe();
-                    }else{
-                        Log.d("","")
+                    } else {
+                        Log.d("", "")
                     }
 
                 }

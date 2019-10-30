@@ -19,7 +19,7 @@ import im.vector.BuildConfig
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.*
-import im.vector.adapters.VectorMessagesAdapter
+import vmodev.clearkeep.adapters.MessagesAdapter
 import im.vector.extensions.getFingerprintHumanReadable
 import im.vector.fragments.VectorMessagesFragment
 import im.vector.fragments.VectorReadReceiptsDialogFragment
@@ -60,7 +60,7 @@ import java.io.File
 import java.util.ArrayList
 import java.util.HashMap
 
-class MessageListFragment : MatrixMessageListFragment<VectorMessagesAdapter>(), IMessagesAdapterActionsListener {
+class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessagesAdapterActionsListener {
 
     // Data to wait for permission
     private var mPendingMenuAction: Int = 0
@@ -235,8 +235,8 @@ class MessageListFragment : MatrixMessageListFragment<VectorMessagesAdapter>(), 
         val args = arguments
 
         // when an event id is defined, display a thick green line to its left
-        if (args!!.containsKey(MatrixMessageListFragment.ARG_EVENT_ID)) {
-            mAdapter.setSearchedEventId(args!!.getString(MatrixMessageListFragment.ARG_EVENT_ID, ""))
+        if (args!!.containsKey(ARG_EVENT_ID)) {
+            mAdapter.setSearchedEventId(args!!.getString(ARG_EVENT_ID, ""))
         }
 
         if (null != mRoom) {
@@ -245,7 +245,7 @@ class MessageListFragment : MatrixMessageListFragment<VectorMessagesAdapter>(), 
 
         if (null != mSession) {
             mVectorImageGetter = VectorImageGetter(mSession)
-            mAdapter.setImageGetter(mVectorImageGetter)
+            mAdapter.setImageGetter(mVectorImageGetter!!)
         }
 
         mMessageListView.onItemClickListener = object : AdapterView.OnItemClickListener {
@@ -308,8 +308,8 @@ class MessageListFragment : MatrixMessageListFragment<VectorMessagesAdapter>(), 
         return Matrix.getInstance(activity)!!.mediaCache
     }
 
-    override fun createMessagesAdapter(): VectorMessagesAdapter {
-        return VectorMessagesAdapter(mSession, activity, mxMediaCache)
+    override fun createMessagesAdapter(): MessagesAdapter {
+        return MessagesAdapter(mSession, activity!!, mxMediaCache!!)
     }
 
     /**
@@ -1264,10 +1264,10 @@ class MessageListFragment : MatrixMessageListFragment<VectorMessagesAdapter>(), 
 
         fun newInstance(matrixId: String?, roomId: String?, eventId: String?, previewMode: String?, layoutResId: Int): MessageListFragment {
             val f = MessageListFragment()
-            val args = MatrixMessageListFragment.getArguments(matrixId, roomId, layoutResId)
+            val args = getArguments(matrixId, roomId, layoutResId)
 
-            args.putString(MatrixMessageListFragment.ARG_EVENT_ID, eventId)
-            args.putString(MatrixMessageListFragment.ARG_PREVIEW_MODE_ID, previewMode)
+            args.putString(ARG_EVENT_ID, eventId)
+            args.putString(ARG_PREVIEW_MODE_ID, previewMode)
 
             f.arguments = args
             return f

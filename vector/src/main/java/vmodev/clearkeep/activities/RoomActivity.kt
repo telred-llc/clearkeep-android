@@ -906,7 +906,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         if ((mIsUnreadPreviewMode || (currentRoom != null && currentRoom!!.getTimeline() != null && currentRoom!!.getTimeline().isLiveTimeline() && TextUtils.isEmpty(mEventId)))) {
             if (null == currentRoom) {
                 Log.e(LOG_TAG, "## onCreate() : null room")
-            } else if (null == mxSession!!.dataHandler.store.getSummary(currentRoom!!.roomId)) {
+            } else if (null == mxSession!!.dataHandler.store!!.getSummary(currentRoom!!.roomId)) {
                 Log.e(LOG_TAG, "## onCreate() : there is no summary for this room")
             } else {
                 mReadMarkerManager = ReadMarkerManager(this, mVectorMessageListFragment!!, mxSession!!, currentRoom,
@@ -1348,7 +1348,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             Log.d(LOG_TAG, "## onLatestEventDisplay : isDisplayed $isDisplayed")
 
             if (isDisplayed && (null != currentRoom)) {
-                mLatestDisplayedEvent = currentRoom!!.dataHandler.store.getLatestEvent(currentRoom!!.roomId)
+                mLatestDisplayedEvent = currentRoom!!.dataHandler.store!!.getLatestEvent(currentRoom!!.roomId)
                 // ensure that the latest message is displayed
                 currentRoom!!.sendReadReceipt()
             }
@@ -1744,12 +1744,15 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     override fun run() {
                         hideWaitingView()
 
-                        val intent = Intent(this@RoomActivity, CallViewActivity::class.java)
+//                        val intent = Intent(this@RoomActivity, CallViewActivity::class.java)
+//
+//                        intent.putExtra(CallViewActivity.EXTRA_MATRIX_ID, mxSession!!.getCredentials().userId)
+//                        intent.putExtra(CallViewActivity.EXTRA_CALL_ID, call.callId)
+//
+//                        startActivity(intent)
 
-                        intent.putExtra(CallViewActivity.EXTRA_MATRIX_ID, mxSession!!.getCredentials().userId)
-                        intent.putExtra(CallViewActivity.EXTRA_CALL_ID, call.callId)
-
-                        startActivity(intent)
+                        val intent = Intent(this@RoomActivity, OutgoingCallActivity::class.java);
+                        startActivity(intent);
                     }
                 })
             }
@@ -2613,8 +2616,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         } else if (mIsUnreadPreviewMode) {
             state = NotificationAreaView.State.UnreadPreview
         } else {
-            val undeliveredEvents = mxSession!!.dataHandler.store.getUndeliveredEvents(currentRoom!!.roomId)
-            val unknownDeviceEvents = mxSession!!.dataHandler.store.getUnknownDeviceEvents(currentRoom!!.roomId)
+            val undeliveredEvents = mxSession!!.dataHandler.store!!.getUndeliveredEvents(currentRoom!!.roomId)
+            val unknownDeviceEvents = mxSession!!.dataHandler.store!!.getUnknownDeviceEvents(currentRoom!!.roomId)
             val hasUndeliverableEvents = (undeliveredEvents != null) && (undeliveredEvents!!.size > 0)
             val hasUnknownDeviceEvents = (unknownDeviceEvents != null) && (unknownDeviceEvents!!.size > 0)
             if (hasUndeliverableEvents || hasUnknownDeviceEvents) {
@@ -2622,9 +2625,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 state = NotificationAreaView.State.UnsentEvents(hasUndeliverableEvents, hasUnknownDeviceEvents)
             } else if ((null != mIsScrolledToTheBottom) && (!mIsScrolledToTheBottom!!)) {
                 var unreadCount = 0
-                val summary = currentRoom!!.dataHandler.store.getSummary(currentRoom!!.roomId)
+                val summary = currentRoom!!.dataHandler.store!!.getSummary(currentRoom!!.roomId)
                 if (summary != null) {
-                    unreadCount = currentRoom!!.dataHandler.store.eventsCountAfter(currentRoom!!.roomId, summary!!.getReadReceiptEventId())
+                    unreadCount = currentRoom!!.dataHandler.store!!.eventsCountAfter(currentRoom!!.roomId, summary!!.getReadReceiptEventId())
                 }
                 state = NotificationAreaView.State.ScrollToBottom(unreadCount, mLatestTypingMessage)
             } else if (!TextUtils.isEmpty(mLatestTypingMessage)) {
@@ -3057,7 +3060,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //                                        if (TextUtils.equals(member.membership, RoomMember.MEMBERSHIP_JOIN)) {
 //                                            joinedMembersCount++
 //
-//                                            val user = mxSession!!.dataHandler.store.getUser(member.userId)
+//                                            val user = mxSession!!.dataHandler.store!!.getUser(member.userId)
 //
 //                                            if ((null != user) && user!!.isActive()) {
 //                                                activeMembersCount++
@@ -3561,7 +3564,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         if (currentRoom != null && (null != userIds) && (userIds!!.size > 0)) {
             showWaitingView()
 
-            currentRoom!!.invite(userIds, object : ApiCallback<Void> {
+            currentRoom!!.invite(mxSession,userIds, object : ApiCallback<Void?> {
 
                 private fun onDone(errorMessage: String?) {
                     if (!TextUtils.isEmpty(errorMessage)) {
@@ -3570,7 +3573,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     hideWaitingView()
                 }
 
-                override fun onSuccess(info: Void) {
+                override fun onSuccess(info: Void?) {
                     onDone(null)
                 }
 
@@ -3998,7 +4001,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     internal fun onPendingCallClick() {
         val call = CallsManager.getSharedInstance().activeCall
         if (null != call) {
-            val intent = Intent(this, CallViewActivity::class.java)
+            val intent = Intent(this, OutgoingCallActivity::class.java)
             intent.putExtra(CallViewActivity.EXTRA_MATRIX_ID, call!!.session.credentials.userId)
             intent.putExtra(CallViewActivity.EXTRA_CALL_ID, call!!.callId)
             startActivity(intent)

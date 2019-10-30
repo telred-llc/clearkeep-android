@@ -49,7 +49,7 @@ internal class MessagesAdapterMediasHelper constructor(private val mContext: Con
      *
      * @param listener teh events listener
      */
-    fun setVectorMessagesAdapterActionsListener(listener: IMessagesAdapterActionsListener) {
+    fun setVectorMessagesAdapterActionsListener(listener: IMessagesAdapterActionsListener?) {
         mVectorMessagesAdapterEventsListener = listener
     }
 
@@ -61,7 +61,7 @@ internal class MessagesAdapterMediasHelper constructor(private val mContext: Con
      * @param type        the media type
      * @param mediaUrl    the media url
      */
-    fun managePendingUpload(convertView: View, event: Event, type: Int, mediaUrl: String) {
+    fun managePendingUpload(convertView: View, event: Event, type: Int, mediaUrl: String?) {
         val uploadProgressLayout = convertView.findViewById<View>(R.id.content_upload_progress_layout)
         val uploadSpinner = convertView.findViewById<ProgressBar>(R.id.upload_event_spinner)
 

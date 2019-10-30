@@ -188,7 +188,7 @@ object NotificationUtils {
      * @return the polling thread listener notification
      */
     @SuppressLint("NewApi")
-    fun buildForegroundServiceNotification(context: Context, @StringRes subTitleResId: Int): Notification {
+    fun buildForegroundServiceNotification(context: Context, @StringRes subTitleResId: Int, withProgress: Boolean = true): Notification {
         // build the pending intent go to the home screen if this is clicked.
         val i = Intent(context, HomeScreenActivity::class.java)
         i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -203,11 +203,17 @@ object NotificationUtils {
                 .setProgress(0, 0, true)
                 .setColor(accentColor)
                 .setContentIntent(pi)
+                .apply {
+                    if (withProgress) {
+                        setProgress(0, 0, true)
+                    }
+                }
 
-        // hide the notification from the status bar
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            builder.priority = NotificationCompat.PRIORITY_MIN
-        }
+        // PRIORITY_MIN should not be used with Service#startForeground(int, Notification)
+        builder.priority = NotificationCompat.PRIORITY_LOW
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+//            builder.priority = NotificationCompat.PRIORITY_MIN
+//        }
 
         val notification = builder.build()
 

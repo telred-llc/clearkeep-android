@@ -380,6 +380,11 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
         intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, applcation.getUserId());
         intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
         startActivityForResult(intentRoom, GO_TO_ROOM_CODE);
+
+//        val intentRoom = Intent(this.context, RoomDetailActivity::class.java);
+//        intentRoom.putExtra(RoomDetailActivity.ROOM_ID, roomId);
+//        startActivity(intentRoom);
+
         onGoingRoom = false;
     }
 
