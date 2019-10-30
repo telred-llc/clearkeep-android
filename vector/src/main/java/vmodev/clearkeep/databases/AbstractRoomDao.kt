@@ -133,6 +133,9 @@ abstract class AbstractRoomDao {
     @Query("UPDATE Room SET notifyCount = 0 WHERE Room.id =:roomId")
     abstract fun clearnNotificationCount(roomId: String)
 
+    @Query("UPDATE Room SET topic =:roomTopic WHERE Room.id =:roomId")
+    abstract fun updateRoomTopic(roomId: String, roomTopic : String) : Int;
+
     fun loadWithType(filters: Array<Int>): LiveData<List<Room>> {
         when (filters.size) {
             1 -> return loadWithType(filters[0]);
