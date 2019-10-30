@@ -71,11 +71,10 @@
                 </androidx.cardview.widget.CardView>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_gravity="center_vertical"
                     android:id="@+id/frame_layout_search"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_height="50dp"
                     android:layout_marginStart="12dp"
                     android:layout_weight="1"
                     android:background="@drawable/search_view_background">
