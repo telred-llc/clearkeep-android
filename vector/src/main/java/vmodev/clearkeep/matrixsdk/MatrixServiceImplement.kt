@@ -201,7 +201,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             run {
                 if (myUser != null) {
                     var avatar = "";
-                    var result = session!!.contentManager.getDownloadableUrl(myUser.avatarUrl, false);
+                    var result = session!!.contentManager.getDownloadableThumbnailUrl(myUser.avatarUrl, 100, 100,"");
                     result?.let { avatar = result }
                     val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = avatar, status = if (myUser.isActive) 1 else 0);
                     emitter.onNext(user);
@@ -438,7 +438,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             BingRulesManager.RoomNotificationState.MENTIONS_ONLY -> 0x04;
             BingRulesManager.RoomNotificationState.MUTE -> 0x08;
         }
-        val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
+        val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableThumbnailUrl(room.avatarUrl,100,100,"");
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
                 , topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, messageId = messageId
@@ -473,7 +473,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
 //            BingRulesManager.RoomNotificationState.MENTIONS_ONLY -> 0x04;
 //            BingRulesManager.RoomNotificationState.MUTE -> 0x08;
 //        }
-        val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableUrl(room.avatarUrl);
+        val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableThumbnailUrl(room.avatarUrl, 100, 100, "");
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
                 , topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, messageId = null
@@ -502,7 +502,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         if (myUser.avatarUrl.isNullOrEmpty() || myUser == null) {
             avatar = "";
         } else {
-            var result = session!!.contentManager.getDownloadableUrl(myUser.avatarUrl);
+            var result = session!!.contentManager.getDownloadableThumbnailUrl(myUser.avatarUrl, 100, 100, "");
             result?.let { avatar = result }
         };
         return User(myUser.displayname, myUser.user_id, avatar, 0);
@@ -520,7 +520,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                             if (t?.avatarUrl.isNullOrEmpty() || t == null) {
                                 avatar = "";
                             } else {
-                                var result = session!!.contentManager.getDownloadableUrl(t?.avatarUrl);
+                                var result = session!!.contentManager.getDownloadableThumbnailUrl(t?.avatarUrl, 100, 100, "");
                                 result?.let { avatar = result }
                             };
                             users.add(User(name = t?.name, status = 0, avatarUrl = avatar, id = t?.userId));
@@ -567,7 +567,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                     if (t?.avatarUrl.isNullOrEmpty() || t == null) {
                                         avatar = "";
                                     } else {
-                                        var result = session!!.contentManager.getDownloadableUrl(t?.avatarUrl);
+                                        var result = session!!.contentManager.getDownloadableThumbnailUrl(t?.avatarUrl, 100, 100, "");
                                         result?.let { avatar = result }
                                     };
                                     t?.let { user ->
@@ -969,7 +969,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         if (avatarUrl.isNullOrEmpty()) {
             avatar = "";
         } else {
-            var url = session!!.contentManager.getDownloadableUrl(avatarUrl);
+            var url = session!!.contentManager.getDownloadableThumbnailUrl(avatarUrl, 100, 100, "");
             url?.let { avatar = it }
         };
         return avatar;
@@ -1181,7 +1181,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                     session!!.myUser.updateAvatarUrl(p1, object : ApiCallback<Void> {
                         override fun onSuccess(p0: Void?) {
                             var avatar = "";
-                            var result = session!!.contentManager.getDownloadableUrl(session!!.myUser.avatarUrl);
+                            var result = session!!.contentManager.getDownloadableThumbnailUrl(session!!.myUser.avatarUrl, 100, 100, "");
                             result?.let { avatar = result }
                             it.onNext(avatar);
                             it.onComplete();

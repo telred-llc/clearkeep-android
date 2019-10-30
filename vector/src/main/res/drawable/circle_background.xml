@@ -4,5 +4,5 @@
     android:shape="oval">
 
     <solid
-        android:color="@android:color/holo_red_dark"/>
+        android:color="@color/notification_color"/>
 </shape>
