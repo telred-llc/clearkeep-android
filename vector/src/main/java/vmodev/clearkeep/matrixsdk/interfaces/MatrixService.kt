@@ -59,4 +59,7 @@ public interface MatrixService {
     fun checkBackupKeyStateWhenStart(): Observable<Int>;
     fun getRoomWithIdForCreate(roomId: String) : Observable<vmodev.clearkeep.viewmodelobjects.Room>;
     fun getUserProfile(userId: String) : Observable<User>;
+    fun updateRoomName(roomId : String, roomName : String) : Observable<String>;
+    fun updateRoomTopic(roomId : String, roomTopic : String) : Observable<String>;
+    fun updateRoomAvatar(inputStream: InputStream) : Observable<String>;
 }
