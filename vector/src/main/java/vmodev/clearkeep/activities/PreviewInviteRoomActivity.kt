@@ -29,15 +29,6 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
         val binding = DataBindingUtil.setContentView<ActivityPreviewInviteRoomBinding>(this, R.layout.activity_preview_invite_room, dataBinding.getDataBindingComponent());
         val roomId: String = intent.getStringExtra(ROOM_ID) ?: ""
         mxSession = Matrix.getInstance(applicationContext).defaultSession;
-        setSupportActionBar(binding.toolbar);
-        supportActionBar!!.setTitle(R.string.profile);
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true);
-        supportActionBar!!.setDisplayShowHomeEnabled(true);
-        binding.toolbar.setNavigationOnClickListener { v ->
-            kotlin.run {
-                onBackPressed();
-            }
-        }
         var index: Int = 0;
         val roomViewModel = ViewModelProvider(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
         binding.room = roomViewModel.getRoom();

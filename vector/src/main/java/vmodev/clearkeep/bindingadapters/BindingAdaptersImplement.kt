@@ -1,6 +1,7 @@
 package vmodev.clearkeep.bindingadapters
 
 import android.graphics.drawable.Drawable
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -28,7 +29,9 @@ import vmodev.clearkeep.viewmodelobjects.User
 
 class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapters, ISwitchCompatViewBindingAdapters, CardViewBindingAdapters {
     override fun bindImage(imageView: ImageView, imageUrl: String?, listener: RequestListener<Drawable?>?) {
-        imageUrl?.let { Glide.with(imageView.context).load(it).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).into(imageView); }
+        if (!TextUtils.isEmpty(imageUrl)) {
+             Glide.with(imageView.context).load(imageUrl).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).into(imageView);
+        }
     }
 
     override fun bindTime(textView: TextView, timeStamp: Long?) {

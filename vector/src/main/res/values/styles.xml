@@ -198,6 +198,7 @@
         <item name="tabTextAppearance">@style/MyCustomTabTextAppearance</item>
         <item name="tabSelectedTextColor">?android:textColorPrimary</item>
     </style>
+
     <style name="MyCustomTabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">?android:textColorSecondary</item>
@@ -281,6 +282,14 @@
         <attr name="text_available_send" format="color" />
         <attr name="text_not_available_send" format="color" />
         <attr name="background_message_send_color" format="color" />
+        <attr name="background_button_select" format="reference" />
+
+        <!--        screen join room-->
+        <attr name="text_color_decline" format="color" />
+        <attr name="image_notification_join_room" format="reference" />
+        <attr name="color_text_title" format="color" />
+        <attr name="color_text_name_invited" format="color" />
+
     </declare-styleable>
 
     <style name="DarkTheme" parent="Theme.MaterialComponents.NoActionBar.Bridge">
@@ -301,6 +310,12 @@
         <item name="background_message_send_color">
             @color/tab_bar_unselected_background_color_light
         </item>
+        <item name="background_button_select">@drawable/bg_button_gradient_blue_theme_dark_mode</item>
+        <!--        screen join room-->
+        <item name="text_color_decline">#9AA1AD</item>
+        <item name="image_notification_join_room">@drawable/image_notification_join_room_dark_mode</item>
+        <item name="color_text_title">@color/color_white</item>
+        <item name="color_text_name_invited">#00D1E4</item>
     </style>
 
     <style name="LightTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
@@ -319,12 +334,20 @@
         <item name="vctr_default_text_hint_color">@color/riot_secondary_text_color_status</item>
         <item name="vctr_settings_icon_tint_color">#FF000000</item>
         <item name="background_message_send_color">@color/default_text_hint_color_dark</item>
+        <item name="background_button_select">@drawable/bg_button_gradient_blue</item>
+        <!--        screen join room-->
+        <item name="text_color_decline">#9AA1AD</item>
+        <item name="image_notification_join_room">@drawable/image_notification_join_room</item>
+        <item name="color_text_title">#444444</item>
+        <item name="color_text_name_invited">#444444</item>
+
     </style>
 
     <style name="checkBoxStyle" parent="Base.Theme.AppCompat">
         <item name="colorAccent">#077CF1</item>
         <item name="android:textColorSecondary">#7B7B7B</item>
     </style>
+
     <style name="editTextStyle" parent="Widget.Design.TextInputLayout">
         <item name="colorAccent">@color/text_color_blue</item>
         <item name="colorPrimary">@color/text_color_blue</item>
