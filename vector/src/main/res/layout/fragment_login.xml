@@ -18,7 +18,8 @@
             type="LiveData&lt;Resource&lt;String>>" />
     </data>
 
-   <ScrollView
+   <androidx.core.widget.NestedScrollView
+       android:id="@+id/nested_scrollview"
        android:background="?attr/login_color"
        android:layout_width="match_parent"
        android:layout_height="match_parent">
@@ -41,7 +42,7 @@
                    android:src="?attr/icon_logo" />
 
                <com.google.android.material.textfield.TextInputLayout
-                   app:hintTextAppearance="@style/CustomTextAppearance"
+                   app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
                    android:layout_marginStart="33dp"
                    android:layout_marginEnd="33dp"
                    android:layout_marginTop="70dp"
@@ -78,7 +79,7 @@
 <!--                   android:textColorHint="@color/main_text_color_hint" />-->
 
                <com.google.android.material.textfield.TextInputLayout
-                   app:hintTextAppearance="@style/CustomTextAppearance"
+                   app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
                    android:layout_marginHorizontal="33dp"
                    android:layout_marginTop="22dp"
                    android:id="@+id/layout_input_text_password"
@@ -151,5 +152,5 @@
                android:layout_gravity="center"
                app:visibleGone="@{user.status == Status.LOADING}" />
        </FrameLayout>
-   </ScrollView>
+   </androidx.core.widget.NestedScrollView>
 </layout>
