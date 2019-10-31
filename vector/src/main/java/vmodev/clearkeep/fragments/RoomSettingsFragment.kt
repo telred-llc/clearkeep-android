@@ -186,8 +186,8 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
                     Toast.makeText(activity, "Update room success", Toast.LENGTH_LONG).show()
                     binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_grey, null);
                     binding.btnSave.isEnabled = false;
-                    binding.editTextRoomName.isFocusable =false
-                    binding.editTextRoomTopic.isFocusable = false
+                    binding.editTextRoomName.clearFocus()
+                    binding.editTextRoomTopic.clearFocus()
                 } else {
                     Toast.makeText(activity, "Update room error", Toast.LENGTH_LONG).show()
                 }
@@ -220,7 +220,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (!p0.isNullOrBlank() && room?.name != binding.editTextRoomName.text.toString() || room?.topic != binding.editTextRoomTopic.text.toString()) {
+                if (!p0.isNullOrBlank() && room?.name != binding.editTextRoomName.text.toString()) {
                     binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_blue, null)
                     binding.btnSave.isEnabled = true;
                 } else {
@@ -238,7 +238,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (!p0.isNullOrBlank() && room?.topic != binding.editTextRoomTopic.text.toString() || room?.name != binding.editTextRoomName.text.toString()) {
+                if (!p0.isNullOrBlank() && !binding.editTextRoomName.text.toString().trim().isNullOrBlank() && (room?.topic != binding.editTextRoomTopic.text.toString() || room?.name != binding.editTextRoomName.text.toString())) {
                     binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_blue, null)
                     binding.btnSave.isEnabled = true;
                 } else {
@@ -256,7 +256,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
             val cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(cameraIntent, RESULT_TAKE_IMAGE_FROM_CAMERA);
         } else {
-            EasyPermissions.requestPermissions(this, "Application need permission for take picture",REQUEST_CAMERA_PERMISSION, *params)
+            EasyPermissions.requestPermissions(this, "Application need permission for take picture", REQUEST_CAMERA_PERMISSION, *params)
         }
     }
 
