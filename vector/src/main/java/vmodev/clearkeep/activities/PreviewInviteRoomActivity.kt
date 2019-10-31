@@ -11,6 +11,7 @@ import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorRoomActivity
 import im.vector.databinding.ActivityPreviewInviteRoomBinding
+import kotlinx.android.synthetic.main.activity_preview_invite_room.view.*
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.viewmodelobjects.Status
@@ -50,9 +51,6 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
                                 CommonActivityUtils.goToRoomPage(this@PreviewInviteRoomActivity, mxSession, params)
                                 finish();
                             }
-                            roomViewModel.getRoomListUserFindByID(room.id).observe(this, Observer {
-                                Log.d("XXXXXX", it?.data?.lastUserMessage?.name)
-                            })
                         }
                     }
                 }
@@ -74,9 +72,10 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
         binding.buttonDecline.setOnClickListener { v ->
             roomViewModel.setLeaveRoom(roomId)
         }
-        roomViewModel.getRoomListUserFindByID(roomId).observe(this, Observer {
-            Log.d("XXXXXX", it?.data?.lastUserMessage?.name)
-        })
+        binding.roomListUser = roomViewModel.getRoomListUserFindByID(roomId)
+        binding.toolbar.imgBack.setOnClickListener {
+            onBackPressed()
+        }
     }
 
     override fun getActivity(): FragmentActivity {

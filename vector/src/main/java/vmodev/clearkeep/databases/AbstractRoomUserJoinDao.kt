@@ -79,7 +79,7 @@ abstract class AbstractRoomUserJoinDao {
             "rJoin ON RoomUserJoin.room_id = Room.id INNER JOIN User ON User.id = RoomUserJoin.user_id WHERE Room.type =:type AND User.id !=:userId")
     abstract fun getListUserSuggested(type : Int, userId: String) :  LiveData<List<User>>;
 
-    @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.*, Message.* FROM Room LEFT JOIN RoomUserJoin ON RoomUserJoin.room_id = Room.id LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE Room.id = :roomId")
+    @Query("SELECT DISTINCT roomUserJoin.room_id, Room.*, Message.*, User.id as user__id, User.name as user__name, User.status as user__status, User.avatarUrl as user__avatarUrl FROM Room LEFT JOIN RoomUserJoin ON roomUserJoin.room_id = Room.id LEFT JOIN Message ON Room.last_message_id = Message.message_id LEFT JOIN User ON User.id = Message.user_id WHERE room.id = :roomId")
     abstract fun getRoomListUserFindByID(roomId: String) : LiveData<RoomListUser>
 
 

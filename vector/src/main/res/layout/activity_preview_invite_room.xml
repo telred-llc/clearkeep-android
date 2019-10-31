@@ -14,9 +14,16 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.Room" />
 
+        <import type="vmodev.clearkeep.viewmodelobjects.RoomListUser" />
+        <import type="android.view.View"/>
+
         <variable
             name="room"
             type="LiveData&lt;Resource&lt;Room>>" />
+
+        <variable
+            name="roomListUser"
+            type="LiveData&lt;Resource&lt;RoomListUser>>" />
     </data>
 
     <FrameLayout
@@ -27,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:visibleGone="@{room.status == Status.LOADING}" />
+            app:visibleGone="@{roomListUser.status == Status.LOADING}" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,6 +49,7 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imgBack"
                     android:layout_width="wrap_content"
+                    android:background="?android:attr/selectableItemBackground"
                     android:layout_height="match_parent"
                     android:paddingHorizontal="@dimen/padding_small"
                     app:srcCompat="@drawable/ic_back"
@@ -59,20 +67,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:singleLine="true"
-                        android:text="@{room.data.name}"
+                        android:text="@{roomListUser.data.room.name}"
                         android:textColor="?attr/color_text_title"
                         android:textSize="@dimen/text_21_sp"
                         tools:text="PINTEREST" />
 
                     <TextView
                         android:id="@+id/tvTopic"
-                        android:layout_marginTop="@dimen/margin_small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_small"
                         android:singleLine="true"
-                        android:text="@{room.data.topic}"
+                        android:text="@{roomListUser.data.room.topic}"
                         android:textColor="?attr/color_text_title"
                         android:textSize="@dimen/text_13_sp"
+                        android:visibility="@{roomListUser.data.room.topic == null ? View.GONE : View.VISIBLE}"
                         tools:text="Room topic here" />
 
                 </LinearLayout>
@@ -90,14 +99,15 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="100dp"
                 android:src="?attr/image_notification_join_room"
-                app:imageUrl="@{room.data.avatarUrl}" />
+                app:imageUrl="@{roomListUser.data.room.avatarUrl}" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_xxl"
+                android:text="@{roomListUser.data.lastUserMessage.name}"
                 android:textAlignment="center"
-                android:textColor="?attr/color_text_name_invited"
+                android:textColor="@color/text_color_blue"
                 android:textSize="@dimen/text_19_sp"
                 tools:text="Joe Hahn" />
 
