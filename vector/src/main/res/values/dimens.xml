@@ -82,5 +82,6 @@
 
     <!--    screen edit room-->
     <dimen name="margin_camera_bottom_avatar">27dp</dimen>
+    <dimen name="height_view_select_picture">63dp</dimen>
 
 </resources>

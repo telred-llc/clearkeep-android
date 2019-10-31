@@ -27,6 +27,7 @@
         <variable
             name="user"
             type="LiveData&lt;Resource&lt;User>>" />
+
         <variable
             name="isLoading"
             type="Boolean" />
@@ -47,16 +48,34 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:singleLine="true"
-                    android:text="@{@string/this_room_created_by + ' ' + user.data.name + ' ' + @string/at + ' '}"
-                    android:textColor="@color/lb_grey"
-                    tools:text="This room created 3:39 AM by nilhlinh94" />
+                    android:orientation="horizontal"
+                    android:layout_margin="@dimen/margin_normal"
+                    >
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="@{@string/this_room_created_by + ' ' }"
+                        android:textColor="@color/lb_grey"
+                        android:textSize="@dimen/text_13_sp"
+                        tools:text="This room created 3:39 AM by " />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="QuiNV"
+                        android:textSize="@dimen/text_13_sp"
+                        android:textColor="@color/text_color_blue"
+                        android:text="@{user.data.name}"
+                        />
+
+                </LinearLayout>
+
                 <!--                <TextView-->
                 <!--                    android:layout_width="match_parent"-->
                 <!--                    android:layout_height="wrap_content"-->
@@ -67,34 +86,31 @@
                 <RelativeLayout
                     android:layout_width="@dimen/avatar_screen_profile_size"
                     android:layout_height="@dimen/avatar_screen_profile_size"
-
                     android:layout_gravity="center_horizontal">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
+                    <vmodev.clearkeep.widget.CircleImage
                         android:id="@+id/imgAvatarRoom"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_centerInParent="true"
                         android:src="@drawable/ic_add_white"
-                        app:imageUrl="@{room.data.avatarUrl}"
+                        app:border_color="@color/border_color_avatar_profile"
                         app:civ_border_color="@color/border_color_avatar_profile"
-                        app:civ_border_width="@dimen/border_avatar_screen_profile_size"
-                        app:civ_circle_background_color="@color/accent_color_status" />
+                        app:room="@{room.data}"
+                        app:stroke_width="5dp" />
 
                     <vmodev.clearkeep.widget.CustomAvatarPicture
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_alignParentBottom="true"
                         android:layout_centerInParent="true"
-                        android:layout_margin="@dimen/border_avatar_screen_profile_size" />
+                        android:layout_margin="5dp" />
 
                     <View
                         android:id="@+id/viewSelectPicture"
-                        android:layout_alignParentTop="true"
                         android:layout_width="match_parent"
-                        android:layout_height="63dp"
-                        />
-
+                        android:layout_height="@dimen/height_view_select_picture"
+                        android:layout_alignParentTop="true" />
 
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -123,8 +139,8 @@
                         android:hint="@string/room_name_required"
                         android:singleLine="true"
                         android:text="@{room.data.name}"
-                        android:textColor="@color/color_edit_text_hint"
                         android:textAllCaps="true"
+                        android:textColor="@color/color_edit_text_hint"
                         android:textSize="@dimen/text_17_sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -159,15 +175,10 @@
                     android:layout_marginEnd="@dimen/margin_normal"
                     android:layout_marginBottom="@dimen/margin_xxl"
                     android:background="@drawable/bg_button_gradient_grey"
-                    android:text="@string/save"
                     android:enabled="false"
+                    android:text="@string/save"
                     android:textColor="@color/color_white" />
-                <!--            <TextView-->
-                <!--                android:layout_width="match_parent"-->
-                <!--                android:layout_height="wrap_content"-->
-                <!--                android:layout_margin="10dp"-->
-                <!--                android:text="@{room.data.topic}"-->
-                <!--                android:textSize="@dimen/text_20_sp" />-->
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -182,7 +193,10 @@
                     android:id="@+id/members_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_large"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -212,7 +226,10 @@
                     android:id="@+id/files_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -243,7 +260,10 @@
                     android:id="@+id/settings_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_normal"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -274,7 +294,10 @@
                     android:id="@+id/add_people_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_normal"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_xxl"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
                     android:orientation="horizontal"
                     app:visibleGone="@{room.data.type == 2 || room.data.type == 130}">
 
@@ -305,7 +328,10 @@
                     android:id="@+id/leave_room_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_normal"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
                     android:orientation="horizontal">
 
                     <ImageView

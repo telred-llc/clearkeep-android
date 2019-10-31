@@ -61,8 +61,6 @@ class InviteUsersToRoomFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as NewRoomActivity).setNameTitle(resources.getString(R.string.add_members))
-        (activity as NewRoomActivity).setIconToolBar(TypeIconToolBar.ICON_CLOSE)
         val listUserAdapter = ListUserToInviteRecyclerViewAdapter(appExecutors = appExecutors, listSelected = listSelected, dataBindingComponent = dataBinding.getDataBindingComponent()
                 , diffCallback = object : DiffUtil.ItemCallback<User>() {
             override fun areItemsTheSame(p0: User, p1: User): Boolean {

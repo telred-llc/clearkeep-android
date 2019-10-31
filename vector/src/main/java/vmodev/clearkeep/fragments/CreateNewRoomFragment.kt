@@ -52,11 +52,6 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-        if (activity is NewRoomActivity) {
-            (activity as NewRoomActivity).setNameTitle(resources.getString(R.string.new_room))
-        }
         binding.room = viewModelFactory.getViewModel().createNewRoomResult();
         binding.rvListUserSuggested.setHasFixedSize(true)
         binding.rvListUserSuggested.isNestedScrollingEnabled = false
