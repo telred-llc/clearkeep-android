@@ -28,7 +28,9 @@ import vmodev.clearkeep.viewmodelobjects.User
 
 class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapters, ISwitchCompatViewBindingAdapters, CardViewBindingAdapters {
     override fun bindImage(imageView: ImageView, imageUrl: String?, listener: RequestListener<Drawable?>?) {
-        imageUrl?.let { Glide.with(imageView.context).load(it).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).into(imageView); }
+        imageUrl?.let {
+            Glide.with(imageView.context).load(it).centerCrop().into(imageView);
+        }
     }
 
     override fun bindTime(textView: TextView, timeStamp: Long?) {
@@ -105,7 +107,7 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
                 val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(room.id), if (room.name.isNullOrEmpty()) room.id else room.name, true);
                 imageView.setImageBitmap(bitmap);
             } else {
-                Glide.with(imageView.context).load(room.avatarUrl).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).error(R.drawable.ic_launcher_app).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
+                Glide.with(imageView.context).load(room.avatarUrl).centerCrop().error(R.drawable.ic_launcher_app).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
             }
         }
     }
@@ -116,7 +118,7 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
                 val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(user.id), if (user.name.isEmpty()) user.id else user.name, true);
                 imageView.setImageBitmap(bitmap);
             } else {
-                Glide.with(imageView.context).load(user.avatarUrl).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).into(imageView);
+                Glide.with(imageView.context).load(user.avatarUrl).centerCrop().into(imageView);
             }
         }
     }
