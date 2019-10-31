@@ -1,6 +1,7 @@
 package vmodev.clearkeep.activities
 
 import android.os.Bundle
+import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -10,6 +11,7 @@ import im.vector.R
 import im.vector.activity.CommonActivityUtils
 import im.vector.activity.VectorRoomActivity
 import im.vector.databinding.ActivityPreviewInviteRoomBinding
+import kotlinx.android.synthetic.main.activity_preview_invite_room.view.*
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.viewmodelobjects.Status
@@ -29,15 +31,6 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
         val binding = DataBindingUtil.setContentView<ActivityPreviewInviteRoomBinding>(this, R.layout.activity_preview_invite_room, dataBinding.getDataBindingComponent());
         val roomId: String = intent.getStringExtra(ROOM_ID) ?: ""
         mxSession = Matrix.getInstance(applicationContext).defaultSession;
-        setSupportActionBar(binding.toolbar);
-        supportActionBar!!.setTitle(R.string.profile);
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true);
-        supportActionBar!!.setDisplayShowHomeEnabled(true);
-        binding.toolbar.setNavigationOnClickListener { v ->
-            kotlin.run {
-                onBackPressed();
-            }
-        }
         var index: Int = 0;
         val roomViewModel = ViewModelProvider(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
         binding.room = roomViewModel.getRoom();
@@ -78,6 +71,10 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
         }
         binding.buttonDecline.setOnClickListener { v ->
             roomViewModel.setLeaveRoom(roomId)
+        }
+        binding.roomListUser = roomViewModel.getRoomListUserFindByID(roomId)
+        binding.toolbar.imgBack.setOnClickListener {
+            onBackPressed()
         }
     }
 

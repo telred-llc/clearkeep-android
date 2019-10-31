@@ -54,6 +54,10 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
         super.onViewCreated(view, savedInstanceState)
 
 
+
+
+
+
         if (activity is NewRoomActivity) {
             (activity as NewRoomActivity).setNameTitle(resources.getString(R.string.new_room))
         }

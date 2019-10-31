@@ -14,9 +14,16 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.Room" />
 
+        <import type="vmodev.clearkeep.viewmodelobjects.RoomListUser" />
+        <import type="android.view.View"/>
+
         <variable
             name="room"
             type="LiveData&lt;Resource&lt;Room>>" />
+
+        <variable
+            name="roomListUser"
+            type="LiveData&lt;Resource&lt;RoomListUser>>" />
     </data>
 
     <FrameLayout
@@ -27,17 +34,58 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:visibleGone="@{room.status == Status.LOADING}" />
+            app:visibleGone="@{roomListUser.status == Status.LOADING}" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.Toolbar
+            <RelativeLayout
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="@dimen/height_tool_bar_size">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imgBack"
+                    android:layout_width="wrap_content"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_height="match_parent"
+                    android:paddingHorizontal="@dimen/padding_small"
+                    app:srcCompat="@drawable/ic_back"
+                    app:tint="?attr/color_text_title" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_toEndOf="@+id/imgBack"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvRoomName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="@{roomListUser.data.room.name}"
+                        android:textColor="?attr/color_text_title"
+                        android:textSize="@dimen/text_21_sp"
+                        tools:text="PINTEREST" />
+
+                    <TextView
+                        android:id="@+id/tvTopic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:singleLine="true"
+                        android:text="@{roomListUser.data.room.topic}"
+                        android:textColor="?attr/color_text_title"
+                        android:textSize="@dimen/text_13_sp"
+                        android:visibility="@{roomListUser.data.room.topic == null ? View.GONE : View.VISIBLE}"
+                        tools:text="Room topic here" />
+
+                </LinearLayout>
+            </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -50,35 +98,47 @@
                 android:layout_height="150dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="100dp"
-                app:imageUrl="@{room.data.avatarUrl}" />
+                android:src="?attr/image_notification_join_room"
+                app:imageUrl="@{roomListUser.data.room.avatarUrl}" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="50dp"
-                android:text="@string/invite_content"
+                android:layout_marginTop="@dimen/margin_xxl"
+                android:text="@{roomListUser.data.lastUserMessage.name}"
                 android:textAlignment="center"
-                android:textColor="@android:color/darker_gray" />
+                android:textColor="@color/text_color_blue"
+                android:textSize="@dimen/text_19_sp"
+                tools:text="Joe Hahn" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/msg_invited_you_to_this_room"
+                android:textAlignment="center"
+                android:textColor="?attr/color_text_title"
+                android:textSize="@dimen/text_19_sp" />
 
             <Button
                 android:id="@+id/button_join"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="50dp"
-                android:background="@drawable/button_background_gradient"
+                android:layout_marginHorizontal="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_xxl"
+                android:background="?attr/background_button_select"
                 android:text="@string/join"
                 android:textColor="@color/main_text_color"
                 android:textStyle="bold" />
 
-            <Button
+            <TextView
                 android:id="@+id/button_decline"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="50dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/button_border_background_green_app_color"
+                android:layout_height="@dimen/height_button_size"
+                android:layout_margin="@dimen/margin_normal"
                 android:text="@string/decline"
-                android:textColor="@color/app_green" />
+                android:textAlignment="center"
+                android:textColor="?attr/text_color_decline"
+                android:textSize="@dimen/text_16_sp" />
         </LinearLayout>
     </FrameLayout>
 </layout>
