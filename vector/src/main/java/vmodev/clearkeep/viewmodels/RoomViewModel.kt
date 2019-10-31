@@ -9,11 +9,12 @@ import vmodev.clearkeep.repositories.RoomUserJoinRepository
 import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.RoomListUser
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import javax.inject.Inject
 
-class RoomViewModel @Inject constructor(roomRepository: RoomRepository, roomUserJoinRepository: RoomUserJoinRepository, private val userRepository: UserRepository) : AbstractRoomViewModel() {
+class RoomViewModel @Inject constructor(roomRepository: RoomRepository, private val roomUserJoinRepository: RoomUserJoinRepository, private val userRepository: UserRepository) : AbstractRoomViewModel() {
     private val _filters = MutableLiveData<RoomFilters>();
     private val _id = MutableLiveData<String>();
     private val _joinRoom = MutableLiveData<String>();
@@ -151,6 +152,10 @@ class RoomViewModel @Inject constructor(roomRepository: RoomRepository, roomUser
 
     override fun setGetUserFromRoomId(roomId: String) {
         _roomIdForGetUser.value = roomId;
+    }
+
+    override fun getRoomListUserFindByID(roomId: String): LiveData<Resource<RoomListUser>> {
+      return roomUserJoinRepository.getRoomListUserFindByID(roomId)
     }
 
     class RoomFilters constructor(val filters: Array<Int>, val loadType: Int = 0)

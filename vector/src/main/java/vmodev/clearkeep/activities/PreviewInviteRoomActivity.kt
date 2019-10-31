@@ -1,6 +1,7 @@
 package vmodev.clearkeep.activities
 
 import android.os.Bundle
+import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -49,6 +50,9 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
                                 CommonActivityUtils.goToRoomPage(this@PreviewInviteRoomActivity, mxSession, params)
                                 finish();
                             }
+                            roomViewModel.getRoomListUserFindByID(room.id).observe(this, Observer {
+                                Log.d("XXXXXX", it?.data?.lastUserMessage?.name)
+                            })
                         }
                     }
                 }
@@ -70,6 +74,9 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
         binding.buttonDecline.setOnClickListener { v ->
             roomViewModel.setLeaveRoom(roomId)
         }
+        roomViewModel.getRoomListUserFindByID(roomId).observe(this, Observer {
+            Log.d("XXXXXX", it?.data?.lastUserMessage?.name)
+        })
     }
 
     override fun getActivity(): FragmentActivity {

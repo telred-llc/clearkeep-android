@@ -51,6 +51,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_toEndOf="@+id/imgBack"
+                    android:gravity="center_vertical"
                     android:orientation="vertical">
 
                     <TextView
@@ -65,6 +66,7 @@
 
                     <TextView
                         android:id="@+id/tvTopic"
+                        android:layout_marginTop="@dimen/margin_small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:singleLine="true"
