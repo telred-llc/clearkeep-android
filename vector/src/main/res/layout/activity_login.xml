@@ -20,7 +20,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/login_background_main_color">
+        android:background="?attr/login_color">
 
         <FrameLayout
             android:id="@+id/frame_layout_fragment_container"
