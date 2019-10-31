@@ -170,6 +170,7 @@
 
     <!-- Notification (do not depends on theme) -->
     <color name="notification_accent_color">#368BD6</color>
+    <color name="notification_color">#FF3D00</color>
     <color name="key_share_req_accent_color">#ff812d</color>
     <color name="login_background_main_color">#3C4B62</color>
     <color name="main_text_color_hint">#B8BDC7</color>
@@ -185,12 +186,13 @@
     <color name="text_new_message_notification">#03b381</color>
     <!--    color basic-->
     <color name="color_white">#FFFFFF</color>
-    <color name="color_background_notification">#CAF4FB</color>
+    <color name="color_background_notification">#50CAF4FB</color>
     <color name="color_grey">#F0F0F0</color>
     <!--    text_color-->
     <color name="text_color_header">#5787E3</color>
 <!--    text_color-->
     <color name="text_color_blue">#5787E3</color>
+    <color name="text_color_hint">#BEBEBE</color>
     <color name="message_own_background">#E1E1E1</color>
 
 

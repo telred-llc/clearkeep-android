@@ -20,7 +20,6 @@ import vmodev.clearkeep.bindingadapters.interfaces.IDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.ultis.FormatString
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
-import vmodev.clearkeep.widget.RoundedCornerLayout
 
 class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<RoomListUser>, private val dataBindingComponent : IDataBindingComponent)
 
@@ -73,10 +72,10 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
             (p0.binding as RoomItemBinding).roomListUser = getItem(p1);
             if (getItem(p1).room?.notifyCount==0){
                 p0.binding.backgroundRoomItem.setBackgroundColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_white, null))
-                p0.binding.layoutAvatar.setColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_white, null))
+//                p0.binding.layoutAvatar.setColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_white, null))
             }else{
                 p0.binding.backgroundRoomItem.setBackgroundColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_background_notification,null))
-                p0.binding.layoutAvatar.setColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_background_notification, null))
+//                p0.binding.layoutAvatar.setColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_background_notification, null))
 
             }
             p0.binding.executePendingBindings();

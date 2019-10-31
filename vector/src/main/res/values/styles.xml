@@ -273,6 +273,12 @@
 
     <declare-styleable name="ClearKeep">
         <attr name="icon_color" format="color" />
+        <attr name="text_color_hint" format="color" />
+        <attr name="text_input_edit_text" format="color" />
+        <attr name="text_login" format="color" />
+        <attr name="text_sign_up" format="color" />
+        <attr name="forgot_password" format="color" />
+        <attr name="login_color" format="color" />
         <attr name="icon_color_setting" format="color" />
         <attr name="color_clear_cache" format="color" />
         <attr name="color_toolbar" format="color" />
@@ -282,6 +288,11 @@
         <attr name="text_available_send" format="color" />
         <attr name="text_not_available_send" format="color" />
         <attr name="background_message_send_color" format="color" />
+        <attr name="bg_button" format="reference" />
+        <attr name="bg_button_sign_up" format="reference" />
+        <attr name="icon_logo" format="reference" />
+
+
         <attr name="background_button_select" format="reference" />
 
         <!--        screen join room-->
@@ -293,7 +304,13 @@
     </declare-styleable>
 
     <style name="DarkTheme" parent="Theme.MaterialComponents.NoActionBar.Bridge">
-        <item name="icon_color">#FFFFFFFF</item>
+        <item name="icon_color">#FFFFFF</item>
+        <item name="text_color_hint">#F5F5F5</item>
+        <item name="text_input_edit_text">#5787E3</item>
+        <item name="text_login">#FFFFFF</item>
+        <item name="text_sign_up">#707070</item>
+        <item name="forgot_password">#3FC5B9</item>
+        <item name="login_color">#40536F</item>
         <item name="icon_color_setting">#FFFFFFFF</item>
         <item name="color_clear_cache">#FFFFFFFF</item>
         <item name="color_toolbar">#FFFFFFFF</item>
@@ -310,6 +327,11 @@
         <item name="background_message_send_color">
             @color/tab_bar_unselected_background_color_light
         </item>
+        <item name="bg_button">@drawable/bg_button_gradient_dark_mode</item>
+        <item name="bg_button_sign_up">@drawable/bg_button_gradient_dark_mode</item>
+        <item name="icon_logo">@drawable/ic_logo_ck_dark_mode</item>
+
+
         <item name="background_button_select">@drawable/bg_button_gradient_blue_theme_dark_mode</item>
         <!--        screen join room-->
         <item name="text_color_decline">#9AA1AD</item>
@@ -320,6 +342,12 @@
 
     <style name="LightTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <item name="icon_color">#FF000000</item>
+        <item name="text_color_hint">#BEBEBE</item>
+        <item name="text_input_edit_text">#5787E3</item>
+        <item name="text_login">#FFFFFF</item>
+        <item name="text_sign_up">#707070</item>
+        <item name="forgot_password">#6093EA</item>
+        <item name="login_color">#FFFFFF</item>
         <item name="icon_color_setting">#646464</item>
         <item name="color_clear_cache">#005311</item>
         <item name="color_toolbar">#444444</item>
@@ -334,6 +362,11 @@
         <item name="vctr_default_text_hint_color">@color/riot_secondary_text_color_status</item>
         <item name="vctr_settings_icon_tint_color">#FF000000</item>
         <item name="background_message_send_color">@color/default_text_hint_color_dark</item>
+        <item name="bg_button">@drawable/bg_button_gradient_blue</item>
+        <item name="bg_button_sign_up">@drawable/bg_button_gradient_dark_mode</item>
+        <item name="icon_logo">@drawable/ic_logo_ck_light_mode</item>
+
+
         <item name="background_button_select">@drawable/bg_button_gradient_blue</item>
         <!--        screen join room-->
         <item name="text_color_decline">#9AA1AD</item>
@@ -352,8 +385,14 @@
         <item name="colorAccent">@color/text_color_blue</item>
         <item name="colorPrimary">@color/text_color_blue</item>
         <item name="android:textColor">@color/text_color_blue</item>
+        <item name="android:textSize">@dimen/text_18_sp</item>
         <item name="colorPrimaryDark">@color/text_color_blue</item>
         <item name="colorControlActivated">@color/text_color_blue</item>
+    </style>
+
+    <style name="CustomTextAppearance" parent="@android:style/TextAppearance">
+        <item name="android:textSize">@dimen/text_16_sp</item>
+        <item name="android:textColor">@color/text_color_blue</item>
     </style>
 
     <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light.NoActionBar">

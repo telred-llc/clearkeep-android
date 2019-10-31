@@ -17,6 +17,7 @@ import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
 import vmodev.clearkeep.viewmodelobjects.User
+import java.io.InputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -132,7 +133,7 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
-        fun leaveRoom(id: String): LiveData<Resource<String>> {
+    fun leaveRoom(id: String): LiveData<Resource<String>> {
         return object : AbstractNetworkBoundSource<String, String>() {
             override fun saveCallResult(item: String) {
                 abstractRoomDao.deleteRoom(item)
@@ -404,7 +405,7 @@ class RoomRepository @Inject constructor(
         }.asLiveData();
     }
 
-    fun updateLastMessage(roomId: String, messageId: String) : Completable {
+    fun updateLastMessage(roomId: String, messageId: String): Completable {
         return Completable.fromAction { abstractRoomDao.updateRoomLastMessage(roomId, messageId) };
     }
 
@@ -412,31 +413,57 @@ class RoomRepository @Inject constructor(
         Completable.fromAction { abstractRoomDao.updateRoomCreatedUser(roomId, userId) }.subscribeOn(Schedulers.io()).subscribe();
     }
 
-    fun insertRoomInvite(room : Room): Completable {
+    fun insertRoomInvite(room: Room): Completable {
         return Completable.fromAction { abstractRoomDao.insert(room) }
     }
 
-    fun updateRoomName(roomId: String, roomName : String) : Completable {
+    fun updateRoomName(roomId: String, roomName: String): Completable {
         return Completable.fromAction { abstractRoomDao.updateRoomName(roomId, roomName) }
     }
 
-    fun updateRoomType(roomId: String, type : Int) : Completable{
+    fun updateRoomType(roomId: String, type: Int): Completable {
         return Completable.fromAction { abstractRoomDao.updateRoomType(roomId, type) }
     }
 
-    fun updateRoomAvatar(roomId: String, url : String) : Completable{
+    fun updateRoomAvatar(roomId: String, url: String): Completable {
         return Completable.fromAction { abstractRoomDao.updateRoomAvatar(roomId, url) }
     }
 
-    fun updateRoomNotificationCount(roomId: String) : Completable {
-        return Completable.fromAction{(abstractRoomDao.updateNotificationCount(roomId))}
+    fun updateRoomNotificationCount(roomId: String): Completable {
+        return Completable.fromAction { (abstractRoomDao.updateNotificationCount(roomId)) }
     }
 
-    fun updateRoomNotificationCount(roomId: String,notifiCount : Int) : Completable {
-        return Completable.fromAction{(abstractRoomDao.updateNotifyCount(roomId,notifiCount))}
+    fun updateRoomNotificationCount(roomId: String, notifiCount: Int): Completable {
+        return Completable.fromAction { (abstractRoomDao.updateNotifyCount(roomId, notifiCount)) }
     }
-    fun clearnRoomNotificationCount(roomId: String) : Completable {
-        return Completable.fromAction{(abstractRoomDao.clearnNotificationCount(roomId))}
+
+    fun clearnRoomNotificationCount(roomId: String): Completable {
+        return Completable.fromAction { (abstractRoomDao.clearnNotificationCount(roomId)) }
+    }
+
+    fun updateRoomNameToNetwork(roomId: String, roomName: String): Completable {
+        return Completable.fromAction {
+            matrixService.updateRoomName(roomId, roomName).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.io())
+                    .subscribe {
+                        abstractRoomDao.updateRoomName(roomId, it);
+                    };
+        }
+    }
+
+    fun updateRoomTopicToNetwork(roomId: String, roomTopic: String): Completable {
+        return Completable.fromAction {
+            matrixService.updateRoomTopic(roomId, roomTopic).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.io())
+                    .subscribe {
+                        abstractRoomDao.updateRoomTopic(roomId, roomTopic);
+                    }
+        }
+    }
+
+    fun updateRoomAvatarToNetwork(roomId: String, avatar: InputStream): Completable {
+        return Completable.fromAction {
+            matrixService.updateRoomAvatar(avatar).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.io())
+                    .subscribe { abstractRoomDao.updateRoomAvatar(roomId, it) }
+        }
     }
 
     class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);
