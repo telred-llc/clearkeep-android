@@ -192,6 +192,7 @@
     <color name="text_color_header">#5787E3</color>
 <!--    text_color-->
     <color name="text_color_blue">#5787E3</color>
+    <color name="text_color_hint">#BEBEBE</color>
     <color name="message_own_background">#E1E1E1</color>
 
 
