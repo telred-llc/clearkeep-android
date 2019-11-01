@@ -18,6 +18,7 @@ import im.vector.databinding.ActivityProfileBinding
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_profile.*
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.applications.IApplication
@@ -58,6 +59,7 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
         }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_profile, dataBinding.getDataBindingComponent());
         mxSession = Matrix.getInstance(this.applicationContext).defaultSession;
+        handelEditName()
 //        setSupportActionBar(binding.toolbar);
         supportActionBar?.setTitle(R.string.profile);
         supportActionBar?.setDisplayHomeAsUpEnabled(true);
@@ -156,6 +158,21 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
                 }
                 .setNegativeButton(R.string.cancel, null)
                 .show()
+    }
+
+    private fun handelEditName() {
+        binding.imgEdit.setOnClickListener {
+            binding.isEditTextNameFocus = true
+            binding.edtName.requestFocus()
+            binding.edtName.setSelection(binding.edtName.text.length);
+        }
+        binding.imgDone.setOnClickListener {
+            binding.isEditTextNameFocus = false
+            binding.edtName.clearFocus()
+        }
+        binding.edtName.setOnFocusChangeListener { view, hasFocus ->
+            binding.isEditTextNameFocus = hasFocus
+        }
     }
 
     override fun getActivity(): FragmentActivity {
