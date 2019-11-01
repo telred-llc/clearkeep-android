@@ -1,5 +1,6 @@
 package vmodev.clearkeep.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import im.vector.R
 import im.vector.databinding.FragmentLoginBinding
+import im.vector.extensions.hideKeyboard
 import vmodev.clearkeep.activities.SplashActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
@@ -55,6 +57,7 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
         return binding.root;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.user = viewModelFactory.getViewModel().getLoginResult();
@@ -70,6 +73,11 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
                 }
             }
         });
+        binding.nestedScrollview.setOnTouchListener { v, event ->
+            hideKeyboard()
+            return@setOnTouchListener true
+        }
+
         binding.textForgotPassword.setOnClickListener {
             onPressForgotPassword();
         };

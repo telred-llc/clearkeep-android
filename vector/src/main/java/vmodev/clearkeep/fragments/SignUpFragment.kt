@@ -1,5 +1,6 @@
 package vmodev.clearkeep.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -9,12 +10,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import im.vector.BuildConfig
 import im.vector.R
 import im.vector.databinding.FragmentSignUpBinding
+import im.vector.extensions.hideKeyboard
 import im.vector.repositories.ServerUrlsRepository
 import vmodev.clearkeep.activities.SplashActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
@@ -60,9 +63,14 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
         return binding.root;
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
         binding.register = viewModelFactory.getViewModel().getRegisterResult();
+        binding.nestedScrollview.setOnTouchListener { v, event ->
+            hideKeyboard()
+            return@setOnTouchListener true
+        }
         binding.frameLayoutHaveAnAccount.setOnClickListener { v ->
             onPressedHaveAnAccount();
         };
@@ -142,6 +150,9 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
             }
         })
         binding.lifecycleOwner = viewLifecycleOwner;
+//        binding.nestedScrollview.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
+////            hideKeyboard()
+////        }
     }
 
     override fun getFragment(): Fragment {

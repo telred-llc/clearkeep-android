@@ -109,7 +109,7 @@
                     android:layout_height="?attr/actionBarSize"
                     android:layout_gravity="center_vertical"
                     android:scaleType="center"
-                    android:src="@drawable/ic_new_chat" />
+                    android:src="@drawable/ic_new_chat_light_mode" />
             </LinearLayout>
 
             <fragment
