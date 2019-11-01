@@ -372,9 +372,9 @@
 <!--        <item name="android:textColorHint">@color/text_color_blue</item>-->
 
         <item name="hintTextAppearance">@color/text_color_blue</item>
-        <item name="android:textColorHint">@color/text_color_blue</item>
-        <item name="colorControlNormal">@color/text_color_blue</item>
-        <item name="colorControlHighlight">@color/text_color_blue</item>
+<!--        <item name="android:textColorHint">@color/text_color_blue</item>-->
+<!--        <item name="colorControlNormal">@color/text_color_blue</item>-->
+<!--        <item name="colorControlHighlight">@color/text_color_blue</item>-->
 
 
         <item name="colorAccent">@color/text_color_blue</item>
