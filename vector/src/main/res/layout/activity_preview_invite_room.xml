@@ -24,6 +24,9 @@
         <variable
             name="roomListUser"
             type="LiveData&lt;Resource&lt;RoomListUser>>" />
+        <variable
+            name="nameTopic"
+            type="String" />
     </data>
 
     <FrameLayout

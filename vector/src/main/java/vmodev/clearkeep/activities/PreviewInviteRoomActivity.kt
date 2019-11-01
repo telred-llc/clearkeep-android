@@ -15,6 +15,7 @@ import im.vector.databinding.ActivityPreviewInviteRoomBinding
 import kotlinx.android.synthetic.main.activity_preview_invite_room.view.*
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.activities.interfaces.IActivity
+import vmodev.clearkeep.ultis.FormatString
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import java.util.*
@@ -26,6 +27,7 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var mxSession: MXSession;
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +64,10 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
                 if (resource.status == Status.SUCCESS)
                     finish()
             }
+        })
+
+        roomViewModel.getRoomListUserFindByID(roomId).observe(this, Observer {
+            binding.nameTopic= it.data?.room?.name?.let { it1 -> FormatString.formatName(it1) }
         })
         binding.lifecycleOwner = this;
 
