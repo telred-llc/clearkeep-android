@@ -263,9 +263,7 @@ dependencies {
 //    implementation "com.github.matrix-org:matrix-android-sdk:v0.9.27"
     // use the matrix SDK as a sub project
     // you have to uncomment some lines in settings.gradle
-    implementation project(':matrix-sdk-core-release')
-    implementation project(':matrix-sdk-crypto-release')
-    implementation project('::matrix-sdk-release-0.9.30')
+
 
     /************* jitsi **************/
     implementation('org.jitsi.react:jitsi-meet-sdk:2.2.2')
@@ -442,15 +440,16 @@ dependencies {
     // For developers using the Android Support Library
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
-//    implementation project(path: ':matrix-sdk')
-//    implementation project(path: ':matrix-sdk')
-//    implementation project(path: ':matrix-sdk-crypto')
-//    implementation project(path: ':matrix-sdk-core')
-//    implementation project(path: ':matrix-sdk')
-//    implementation project(path: ':matrix-sdk')
-//    implementation project(path: ':matrix-sdk-crypto')
-//    implementation project(path: ':matrix-sdk-core')
     //======================================================================//
+    /*********************** Matrix Android SDK *****************************/
+//    implementation project(path: ':matrix-sdk')
+//    implementation project(path: ':matrix-sdk-crypto')
+//    implementation project(path: ':matrix-sdk-core')
+
+    implementation project(':matrix-sdk-core-release')
+    implementation project(':matrix-sdk-crypto-release')
+    implementation project('::matrix-sdk-release-0.9.30')
+    /*************************************************************************/
 
     /************************** AssistedInject ****************************/
     def assisted_inject_version = "0.5.0"
