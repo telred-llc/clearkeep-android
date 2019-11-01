@@ -102,14 +102,14 @@
                         android:src="@drawable/ic_search_gray_24dp" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:tint="?attr/icon_color_setting"
                     android:id="@+id/button_create_convention"
                     android:layout_width="?attr/actionBarSize"
                     android:layout_height="?attr/actionBarSize"
                     android:layout_gravity="center_vertical"
                     android:scaleType="center"
-                    android:src="@drawable/ic_new_chat" />
+                    app:srcCompat="@drawable/ic_new_chat" />
             </LinearLayout>
 
             <fragment

@@ -9,16 +9,13 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.os.Bundle
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
@@ -29,15 +26,13 @@ import androidx.navigation.fragment.navArgs
 import im.vector.R
 import im.vector.databinding.FragmentRoomSettingsBinding
 import im.vector.extensions.hideKeyboard
-import im.vector.util.tintDrawableCompat
 import io.reactivex.observers.DisposableCompletableObserver
-import org.jetbrains.anko.colorAttr
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
-import vmodev.clearkeep.activities.EditProfileActivity
 import vmodev.clearkeep.activities.RoomfilesListActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.ultis.RxEventBus
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodelobjects.User
@@ -83,6 +78,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
         binding.lifecycleOwner = this;
         args.roomId?.let { viewModelFactory.getViewModel().setRoomId(it) }
         setEventEditText()
+        RxEventBus.instanceOf<String>().putData("bdsbcbsdhc")
     }
 
     private fun setupButton() {

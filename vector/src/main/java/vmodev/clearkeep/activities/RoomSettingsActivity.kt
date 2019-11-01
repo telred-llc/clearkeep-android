@@ -3,6 +3,7 @@ package vmodev.clearkeep.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavArgs
@@ -12,11 +13,13 @@ import im.vector.R
 import im.vector.databinding.ActivityRoomSettingsBinding
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.fragments.RoomSettingsFragment
+import vmodev.clearkeep.ultis.RxEventBus
 
 class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
 
     private lateinit var binding : ActivityRoomSettingsBinding;
     private var roomId : String? = null;
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +38,9 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
         graph.addArgument("roomId", navArgs);
         navController.graph = graph;
         binding.toolbar.setTitle(R.string.settings);
+        RxEventBus.instanceOf<String>().getData()?.subscribe {
+         Log.d("XXXXX",it)
+        }
     }
 
     override fun getActivity(): FragmentActivity {
