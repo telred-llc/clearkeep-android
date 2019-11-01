@@ -1,11 +1,15 @@
 package vmodev.clearkeep.activities
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.Window
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -20,11 +24,16 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_profile.*
 import org.matrix.androidsdk.MXSession
+import pub.devrel.easypermissions.AfterPermissionGranted
+import pub.devrel.easypermissions.EasyPermissions
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.databases.*
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.viewmodels.interfaces.AbstractProfileActivityViewModel
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.FileNotFoundException
 import java.util.*
 import javax.inject.Inject
 
@@ -137,6 +146,40 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
                         }.show();
             }
         }
+
+//        handel picture **********************
+        if (resultCode === Activity.RESULT_OK) {
+            if (requestCode == EditProfileActivity.RESULT_LOAD_IMG) {
+                try {
+                    val imageUri = data?.data!!;
+                    val inputStream = contentResolver.openInputStream(imageUri);
+                    var selectedImage = BitmapFactory.decodeStream(inputStream);
+                    selectedImage = getResizedBitmap(selectedImage, 512, 512);
+                    val bos = ByteArrayOutputStream();
+                    selectedImage.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
+                    val bitmapData = bos.toByteArray();
+//                    avatarImage = ByteArrayInputStream(bitmapData);
+//                    binding.imageViewTakePhoto.setImageBitmap(selectedImage);
+                } catch (e: FileNotFoundException) {
+                    e.printStackTrace()
+                    Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show()
+                }
+            }
+            if (requestCode == EditProfileActivity.RESULT_TAKE_IMAGE_FROM_CAMERA) {
+                try {
+                    var image: Bitmap = data?.extras?.get("data") as Bitmap
+                    image = getResizedBitmap(image, 512, 512);
+                    val bos = ByteArrayOutputStream()
+                    image.compress(Bitmap.CompressFormat.JPEG, 100/*ignored for PNG*/, bos)
+                    val bitmapData = bos.toByteArray()
+//                    avatarImage = ByteArrayInputStream(bitmapData)
+//                    image?.let { binding.imageViewTakePhoto.setImageBitmap(image) }
+                } catch (e: FileNotFoundException) {
+                    e.printStackTrace()
+                    Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
     }
 
     private fun signOut() {
@@ -164,7 +207,6 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
         binding.imgEdit.setOnClickListener {
             binding.isEditTextNameFocus = true
             binding.edtName.requestFocus()
-            binding.edtName.setSelection(binding.edtName.text.length);
         }
         binding.imgDone.setOnClickListener {
             binding.isEditTextNameFocus = false
@@ -174,6 +216,66 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
             binding.isEditTextNameFocus = hasFocus
         }
     }
+
+    // Handel Picture
+
+
+    private fun getResizedBitmap(bm: Bitmap, newWidth: Int, newHeight: Int): Bitmap {
+        val width = bm.getWidth();
+        val height = bm.getHeight();
+        val scaleWidth: Float = (newWidth.toFloat()) / width;
+        val scaleHeight: Float = (newHeight.toFloat()) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        val matrix: android.graphics.Matrix = android.graphics.Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        // "RECREATE" THE NEW BITMAP
+        val resizedBitmap: Bitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        bm.recycle();
+        return resizedBitmap;
+    }
+
+    @AfterPermissionGranted(EditProfileActivity.REQUEST_CAMERA_PERMISSION)
+    private fun requestCameraPermission() {
+        val params = arrayOf(Manifest.permission.CAMERA)
+        if (EasyPermissions.hasPermissions(this, *params)) {
+            val cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent, EditProfileActivity.RESULT_TAKE_IMAGE_FROM_CAMERA);
+        } else {
+            EasyPermissions.requestPermissions(this, "Application need permission for take picture", EditProfileActivity.REQUEST_CAMERA_PERMISSION, *params)
+        }
+    }
+
+    @AfterPermissionGranted(EditProfileActivity.REQUEST_READ_EXTERNAL_STORAGE)
+    private fun requestReadExternalStorage() {
+        val params = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (EasyPermissions.hasPermissions(this, *params)) {
+            val photoPickerIntent = Intent(Intent.ACTION_PICK)
+            photoPickerIntent.type = "image/*"
+            startActivityForResult(photoPickerIntent, EditProfileActivity.RESULT_LOAD_IMG)
+        } else {
+            EasyPermissions.requestPermissions(this, "Application need permission for get picture from gallery", EditProfileActivity.REQUEST_READ_EXTERNAL_STORAGE, *params);
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    private fun saveProfile() {
+        if (binding.edtName.text.toString().isNullOrEmpty()) {
+            AlertDialog.Builder(this).setTitle(R.string.display_name_cannot_empty)
+                    .setMessage(R.string.you_need_enter_you_name)
+                    .setNegativeButton(R.string.close, null)
+                    .show();
+        } else {
+//            viewModelFactory.getViewModel().setUpdateUser(      userId, binding.editTextDisplayName.text.toString().trim(), avatarImage);
+        }
+    }
+
 
     override fun getActivity(): FragmentActivity {
         return this;
