@@ -72,17 +72,17 @@
                         android:textSize="@dimen/text_21_sp"
                         tools:text="PINTEREST" />
 
-                    <TextView
-                        android:id="@+id/tvTopic"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        android:singleLine="true"
-                        android:text="@{roomListUser.data.room.topic}"
-                        android:textColor="?attr/color_text_title"
-                        android:textSize="@dimen/text_13_sp"
-                        android:visibility="@{roomListUser.data.room.topic == null ? View.GONE : View.VISIBLE}"
-                        tools:text="Room topic here" />
+<!--                    <TextView-->
+<!--                        android:id="@+id/tvTopic"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginTop="@dimen/margin_small"-->
+<!--                        android:singleLine="true"-->
+<!--                        android:text="@{roomListUser.data.room.topic}"-->
+<!--                        android:textColor="?attr/color_text_title"-->
+<!--                        android:textSize="@dimen/text_13_sp"-->
+<!--                        android:visibility="@{roomListUser.data.room.topic == null ? View.GONE : View.VISIBLE}"-->
+<!--                        tools:text="Room topic here" />-->
 
                 </LinearLayout>
             </RelativeLayout>
@@ -136,8 +136,10 @@
                 android:layout_height="@dimen/height_button_size"
                 android:layout_margin="@dimen/margin_normal"
                 android:text="@string/decline"
-                android:textAlignment="center"
+                android:gravity="center"
+                android:background="?android:attr/selectableItemBackground"
                 android:textColor="?attr/text_color_decline"
+                android:layout_marginTop="@dimen/margin_small"
                 android:textSize="@dimen/text_16_sp" />
         </LinearLayout>
     </FrameLayout>

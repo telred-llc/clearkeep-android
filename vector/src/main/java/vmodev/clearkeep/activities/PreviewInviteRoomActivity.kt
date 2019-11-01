@@ -2,6 +2,7 @@ package vmodev.clearkeep.activities
 
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -70,7 +71,13 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
             roomViewModel.joinRoom(roomId)
         }
         binding.buttonDecline.setOnClickListener { v ->
-            roomViewModel.setLeaveRoom(roomId)
+            AlertDialog.Builder(this).setTitle(R.string.leave_room)
+                    .setMessage(R.string.do_you_want_leave_room)
+                    .setNegativeButton(R.string.no, null)
+                    .setPositiveButton(R.string.yes) { dialog, v ->
+                        roomViewModel.setLeaveRoom(roomId)
+
+                    }.show();
         }
         binding.roomListUser = roomViewModel.getRoomListUserFindByID(roomId)
         binding.toolbar.imgBack.setOnClickListener {
@@ -82,7 +89,9 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
         return this;
     }
 
+
     companion object {
         const val ROOM_ID = "ROOM_ID";
     }
 }
+        
