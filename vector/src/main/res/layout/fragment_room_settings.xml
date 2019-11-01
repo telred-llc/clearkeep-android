@@ -141,7 +141,7 @@
                         android:singleLine="true"
                         android:text="@{room.data.name}"
                         android:textAllCaps="true"
-                        android:textColor="@color/color_edit_text_hint"
+                        android:textColor="@color/text_color_blue"
                         android:textSize="@dimen/text_17_sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -164,7 +164,7 @@
                         android:singleLine="true"
                         android:text="@{room.data.topic}"
                         android:textAllCaps="true"
-                        android:textColor="@color/color_edit_text_hint"
+                        android:textColor="@color/text_color_blue"
                         android:textSize="@dimen/text_17_sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 

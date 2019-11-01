@@ -235,6 +235,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
                     binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_grey, null);
                     binding.btnSave.isEnabled = false;
                 }
+
             }
         })
     }
