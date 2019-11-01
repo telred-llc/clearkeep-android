@@ -273,6 +273,7 @@
 
     <declare-styleable name="ClearKeep">
         <attr name="icon_color" format="color" />
+        <attr name="color_for_text_sign_up" format="color" />
         <attr name="text_color_hint" format="color" />
         <attr name="text_input_edit_text" format="color" />
         <attr name="text_login" format="color" />
@@ -291,6 +292,8 @@
         <attr name="bg_button" format="reference" />
         <attr name="bg_button_sign_up" format="reference" />
         <attr name="icon_logo" format="reference" />
+<!--        <attr name="icon_new_chat" format="reference" />-->
+
 
 
         <attr name="background_button_select" format="reference" />
@@ -304,6 +307,7 @@
     </declare-styleable>
 
     <style name="DarkTheme" parent="Theme.MaterialComponents.NoActionBar.Bridge">
+        <item name="color_for_text_sign_up">#799CE0</item>
         <item name="icon_color">#FFFFFF</item>
         <item name="text_color_hint">#F5F5F5</item>
         <item name="text_input_edit_text">#5787E3</item>
@@ -330,6 +334,7 @@
         <item name="bg_button">@drawable/bg_button_gradient_dark_mode</item>
         <item name="bg_button_sign_up">@drawable/bg_button_gradient_dark_mode</item>
         <item name="icon_logo">@drawable/ic_logo_ck_dark_mode</item>
+<!--        <item name="icon_new_chat">@drawable/ic_new_chat_dark_mode</item>-->
 
 
         <item name="background_button_select">@drawable/bg_button_gradient_blue_theme_dark_mode</item>
@@ -347,6 +352,7 @@
         <item name="text_login">#FFFFFF</item>
         <item name="text_sign_up">#707070</item>
         <item name="forgot_password">#6093EA</item>
+        <item name="color_for_text_sign_up">#799CE0</item>
         <item name="login_color">#FFFFFF</item>
         <item name="icon_color_setting">#646464</item>
         <item name="color_clear_cache">#005311</item>
@@ -365,6 +371,8 @@
         <item name="bg_button">@drawable/bg_button_gradient_blue</item>
         <item name="bg_button_sign_up">@drawable/bg_button_gradient_dark_mode</item>
         <item name="icon_logo">@drawable/ic_logo_ck_light_mode</item>
+<!--        <item name="icon_new_chat">@drawable/ic_new_chat_light_mode</item>-->
+
 
 
         <item name="background_button_select">@drawable/bg_button_gradient_blue</item>
@@ -382,6 +390,14 @@
     </style>
 
     <style name="editTextStyle" parent="Widget.Design.TextInputLayout">
+<!--        <item name="android:textColorHint">@color/text_color_blue</item>-->
+
+        <item name="hintTextAppearance">@color/text_color_blue</item>
+<!--        <item name="android:textColorHint">@color/text_color_blue</item>-->
+<!--        <item name="colorControlNormal">@color/text_color_blue</item>-->
+<!--        <item name="colorControlHighlight">@color/text_color_blue</item>-->
+
+
         <item name="colorAccent">@color/text_color_blue</item>
         <item name="colorPrimary">@color/text_color_blue</item>
         <item name="android:textColor">@color/text_color_blue</item>
@@ -390,7 +406,7 @@
         <item name="colorControlActivated">@color/text_color_blue</item>
     </style>
 
-    <style name="CustomTextAppearance" parent="@android:style/TextAppearance">
+    <style name="TextAppearance.App.TextInputLayout" parent="@android:style/TextAppearance">
         <item name="android:textSize">@dimen/text_16_sp</item>
         <item name="android:textColor">@color/text_color_blue</item>
     </style>

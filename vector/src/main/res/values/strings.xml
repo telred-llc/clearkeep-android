@@ -1456,7 +1456,8 @@ Why choose Riot.im?
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
     <string name="register">Register</string>
-    <string name="have_an_account">Have an account? </string>
+    <string name="submit">Submit</string>
+    <string name="have_an_account">Have an account ? </string>
     <string name="repeat_password">Repeat Password</string>
     <string name="verify_email_content">We sent you an email verification. Please verify it to complete the registration</string>
     <string name="error_empty_field_your_password_confirm">Please enter your confirm password.</string>

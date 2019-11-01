@@ -16,7 +16,9 @@
             type="LiveData&lt;Resource&lt;String>>" />
     </data>
 
-   <ScrollView
+   <androidx.core.widget.NestedScrollView
+       android:id="@+id/nested_scrollview"
+       android:background="?attr/login_color"
        android:layout_width="match_parent"
        android:layout_height="match_parent">
        <FrameLayout
@@ -27,59 +29,152 @@
                android:paddingBottom="40dp"
                android:layout_width="match_parent"
                android:layout_height="match_parent"
-               android:background="@color/login_background_main_color"
                android:orientation="vertical">
+
                <ImageView
+                   android:layout_marginTop="53dp"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:src="?attr/icon_logo"
                    android:id="@+id/image_view_logo"
-                   android:layout_width="200dp"
-                   android:layout_height="200dp"
-                   android:layout_gravity="center_horizontal"
-                   android:background="@drawable/ic_launcher_app" />
-               <com.google.android.material.textfield.TextInputEditText
-                   android:id="@+id/text_input_edit_text_username"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:layout_marginHorizontal="20dp"
-                   android:hint="@string/username_or_email"
-                   android:inputType="textEmailAddress"
-                   android:textColor="@color/main_text_color"
-                   android:textColorHint="@color/main_text_color_hint" />
+                   android:layout_gravity="center_horizontal" />
 
-               <com.google.android.material.textfield.TextInputEditText
-                   android:id="@+id/text_input_edit_text_password"
+               <com.google.android.material.textfield.TextInputLayout
+                   app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+                   android:layout_marginStart="33dp"
+                   android:layout_marginEnd="33dp"
+                   android:layout_marginTop="50dp"
+                   android:id="@+id/layout_input_text_username"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
-                   android:layout_margin="20dp"
-                   android:hint="@string/settings_password"
-                   android:inputType="textPassword"
-                   android:textColor="@color/main_text_color"
-                   android:textColorHint="@color/main_text_color_hint" />
+                   android:theme="@style/editTextStyle">
 
-               <com.google.android.material.textfield.TextInputEditText
-                   android:id="@+id/text_input_edit_text_confirm_password"
+                   <com.google.android.material.textfield.TextInputEditText
+                       android:id="@+id/text_input_edit_text_username"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:hint="@string/username_or_email"
+                       android:singleLine="true"
+                       android:inputType="textEmailAddress"
+                       android:textColor="?attr/text_input_edit_text"
+                       android:textColorHint="?attr/text_color_hint"/>
+               </com.google.android.material.textfield.TextInputLayout>
+
+
+
+<!--               <com.google.android.material.textfield.TextInputEditText-->
+<!--                   android:id="@+id/text_input_edit_text_username"-->
+<!--                   android:layout_width="match_parent"-->
+<!--                   android:layout_height="wrap_content"-->
+<!--                   android:layout_marginHorizontal="20dp"-->
+<!--                   android:hint="@string/username_or_email"-->
+<!--                   android:inputType="textEmailAddress"-->
+<!--                   android:textColor="@color/main_text_color"-->
+<!--                   android:textColorHint="@color/main_text_color_hint" />-->
+
+
+               <com.google.android.material.textfield.TextInputLayout
+                   app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+                   android:layout_marginHorizontal="33dp"
+                   android:layout_marginTop="22dp"
+                   android:id="@+id/layout_input_text_password"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
-                   android:layout_marginHorizontal="20dp"
-                   android:hint="@string/repeat_password"
-                   android:inputType="textPassword"
-                   android:textColor="@color/main_text_color"
-                   android:textColorHint="@color/main_text_color_hint" />
+                   android:theme="@style/editTextStyle">
+
+                   <com.google.android.material.textfield.TextInputEditText
+                       android:id="@+id/text_input_edit_text_password"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:hint="@string/settings_password"
+                       android:inputType="textPassword"
+                       android:singleLine="true"
+                       android:textColor="?attr/text_input_edit_text"
+                       android:textColorHint="?attr/text_color_hint" />
+               </com.google.android.material.textfield.TextInputLayout>
+
+
+<!--               <com.google.android.material.textfield.TextInputEditText-->
+<!--                   android:id="@+id/text_input_edit_text_password"-->
+<!--                   android:layout_width="match_parent"-->
+<!--                   android:layout_height="wrap_content"-->
+<!--                   android:layout_margin="20dp"-->
+<!--                   android:hint="@string/settings_password"-->
+<!--                   android:inputType="textPassword"-->
+<!--                   android:textColor="@color/main_text_color"-->
+<!--                   android:textColorHint="@color/main_text_color_hint" />-->
+
+
+               <com.google.android.material.textfield.TextInputLayout
+                   app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+                   android:layout_marginHorizontal="33dp"
+                   android:layout_marginTop="22dp"
+                   android:id="@+id/layout_input_text_confirm_password"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:theme="@style/editTextStyle">
+
+                   <com.google.android.material.textfield.TextInputEditText
+                       android:id="@+id/text_input_edit_text_confirm_password"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:hint="@string/repeat_password"
+                       android:inputType="textPassword"
+                       android:singleLine="true"
+                       android:textColor="?attr/text_input_edit_text"
+                       android:textColorHint="?attr/text_color_hint" />
+               </com.google.android.material.textfield.TextInputLayout>
+
+<!--               <com.google.android.material.textfield.TextInputEditText-->
+<!--                   android:id="@+id/text_input_edit_text_confirm_password"-->
+<!--                   android:layout_width="match_parent"-->
+<!--                   android:layout_height="wrap_content"-->
+<!--                   android:layout_marginHorizontal="20dp"-->
+<!--                   android:hint="@string/repeat_password"-->
+<!--                   android:inputType="textPassword"-->
+<!--                   android:textColor="@color/main_text_color"-->
+<!--                   android:textColorHint="@color/main_text_color_hint" />-->
 
                <Button
+                   android:textSize="@dimen/text_12_sp"
+                   android:textStyle="bold"
                    android:id="@+id/button_register"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
-                   android:layout_margin="20dp"
-                   android:background="@drawable/button_background_gradient"
-                   android:text="@string/register"
-                   android:textColor="@color/main_text_color" />
+                   android:layout_marginTop="32dp"
+                   android:layout_marginHorizontal="33dp"
+                   android:background="?attr/bg_button"
+                   android:text="@string/submit"
+                   android:textColor="?attr/text_login" />
+
+<!--               <Button-->
+<!--                   android:id="@+id/button_register"-->
+<!--                   android:layout_width="match_parent"-->
+<!--                   android:layout_height="wrap_content"-->
+<!--                   android:layout_margin="20dp"-->
+<!--                   android:background="@drawable/button_background_gradient"-->
+<!--                   android:text="@string/register"-->
+<!--                   android:textColor="@color/main_text_color" />-->
+
+
+<!--               <Button-->
+<!--                   android:textSize="@dimen/text_12_sp"-->
+<!--                   android:id="@+id/button_sign_up"-->
+<!--                   android:layout_width="match_parent"-->
+<!--                   android:layout_height="wrap_content"-->
+<!--                   android:layout_marginHorizontal="33dp"-->
+<!--                   android:layout_marginTop="20dp"-->
+<!--                   android:background="?attr/bg_button_sign_up"-->
+<!--                   android:text="@string/sign_up"-->
+<!--                   android:textColor="?attr/text_sign_up"/>-->
 
                <FrameLayout
+                   android:layout_marginTop="20dp"
                    android:id="@+id/frame_layout_have_an_account"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
-                   android:layout_marginHorizontal="20dp"
-                   android:background="@drawable/button_border_background">
+                   android:layout_marginHorizontal="33dp"
+                   android:background="?attr/bg_button_sign_up">
 
                    <LinearLayout
                        android:layout_width="wrap_content"
@@ -88,6 +183,7 @@
                        android:orientation="horizontal">
 
                        <TextView
+                           android:textSize="@dimen/text_12_sp"
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:layout_gravity="center_vertical"
@@ -95,17 +191,18 @@
                            android:text="@string/have_an_account"
                            android:textAlignment="textEnd"
                            android:textAllCaps="true"
-                           android:textColor="@color/main_text_color"
+                           android:textColor="?attr/text_sign_up"
                            tools:ignore="RtlCompat" />
 
                        <TextView
+                           android:textSize="@dimen/text_12_sp"
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:layout_gravity="center_vertical"
                            android:layout_marginStart="2dp"
                            android:text="@string/sign_in"
                            android:textAllCaps="true"
-                           android:textColor="@color/button_login_background_color"
+                           android:textColor="?attr/color_for_text_sign_up"
                            android:textStyle="bold" />
                    </LinearLayout>
                </FrameLayout>
@@ -117,6 +214,6 @@
                android:layout_gravity="center"
                app:visibleGone="@{register.status == Status.LOADING}" />
        </FrameLayout>
-   </ScrollView>
+   </androidx.core.widget.NestedScrollView>
 
 </layout>
