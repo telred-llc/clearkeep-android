@@ -35,6 +35,7 @@
     </data>
 
     <RelativeLayout
+        android:background="@color/color_white"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -51,16 +52,14 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:layout_margin="@dimen/margin_normal"
-                    >
+                    android:orientation="horizontal">
 
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:text="@{@string/this_room_created_by + ' ' }"
+                        android:layout_height="match_parent"
+                        android:text="@{@string/this_room_created_by+' '}"
                         android:textColor="@color/lb_grey"
                         android:textSize="@dimen/text_13_sp"
                         tools:text="This room created 3:39 AM by " />
@@ -68,11 +67,11 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="QuiNV"
-                        android:textSize="@dimen/text_13_sp"
+                        android:text="@{user.data.name.trim()}"
                         android:textColor="@color/text_color_blue"
-                        android:text="@{user.data.name}"
-                        />
+                        android:textSize="@dimen/text_13_sp"
+                        android:singleLine="true"
+                        tools:text="QuiNV" />
 
                 </LinearLayout>
 
@@ -136,7 +135,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:drawableEnd="@drawable/ic_pen"
-                        android:hint="@string/room_name_required"
+                        android:drawablePadding="@dimen/padding_small"
+                        android:hint="@string/create_room_name_hint"
+                        android:inputType="textCapCharacters"
                         android:singleLine="true"
                         android:text="@{room.data.name}"
                         android:textAllCaps="true"
@@ -156,8 +157,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:drawableEnd="@drawable/ic_pen"
-                        android:hint="@string/room_topic_optional"
+                        android:drawablePadding="@dimen/padding_small"
+                        android:hint="@string/room_info_room_topic"
                         android:imeOptions="actionDone"
+                        android:inputType="textCapCharacters"
                         android:singleLine="true"
                         android:text="@{room.data.topic}"
                         android:textAllCaps="true"
