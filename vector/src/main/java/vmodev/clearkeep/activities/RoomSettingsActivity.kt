@@ -38,9 +38,6 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
         graph.addArgument("roomId", navArgs);
         navController.graph = graph;
         binding.toolbar.setTitle(R.string.settings);
-        RxEventBus.instanceOf<String>().getData()?.subscribe {
-         Log.d("XXXXX",it)
-        }
     }
 
     override fun getActivity(): FragmentActivity {

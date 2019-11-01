@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.RoomListUser
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.RoomViewModel
 
@@ -30,4 +31,5 @@ abstract class AbstractRoomViewModel : ViewModel() {
     abstract fun getRemoveFromFavouriteResult(): LiveData<Resource<Room>>
     abstract fun getGetUserFromRoomIdResult() : LiveData<Resource<List<User>>>;
     abstract fun setGetUserFromRoomId(roomId: String);
+    abstract fun getRoomListUserFindByID(roomId: String):LiveData<Resource<RoomListUser>>
 }

@@ -350,7 +350,7 @@
     <string name="auth_missing_email_or_phone">Missing email address or phone number</string>
     <string name="auth_invalid_token">Invalid token</string>
     <string name="auth_password_dont_match">Passwords don’t match</string>
-    <string name="auth_forgot_password">Forgot password?</string>
+    <string name="auth_forgot_password">Forgot password ?</string>
     <string name="auth_use_server_options">Use custom server options (advanced)</string>
     <string name="auth_email_validation_message">Please check your email to continue registration</string>
 
@@ -1456,7 +1456,7 @@ Why choose Riot.im?
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
     <string name="register">Register</string>
-    <string name="have_an_account">Have an account? </string>
+    <string name="have_an_account">Have an account ? </string>
     <string name="repeat_password">Repeat Password</string>
     <string name="verify_email_content">We sent you an email verification. Please verify it to complete the registration</string>
     <string name="error_empty_field_your_password_confirm">Please enter your confirm password.</string>
@@ -1882,4 +1882,5 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
 
     <string name="settings_discovery_disconnect_with_bound_pid">You are currently sharing email addresses or phone numbers on the identity server %s. You will need to reconnect to %s to stop sharing them.</string>
     <string name="settings_agree_to_terms">Agree to the identity server (%s) Terms of Service to allow yourself to be discoverable by email address or phone number.</string>
+    <string name="msg_invited_you_to_this_room">invited you to this room</string>
 </resources>

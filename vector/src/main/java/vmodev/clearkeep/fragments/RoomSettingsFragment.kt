@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,12 +18,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.textfield.TextInputEditText
 import im.vector.R
 import im.vector.databinding.FragmentRoomSettingsBinding
 import im.vector.extensions.hideKeyboard
@@ -78,7 +81,6 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
         binding.lifecycleOwner = this;
         args.roomId?.let { viewModelFactory.getViewModel().setRoomId(it) }
         setEventEditText()
-        RxEventBus.instanceOf<String>().putData("bdsbcbsdhc")
     }
 
     private fun setupButton() {
@@ -194,18 +196,10 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
     @SuppressLint("ResourceType")
     private fun setEventEditText() {
         binding.editTextRoomName.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
-            if (hasFocus) {
-                binding.editTextRoomName.setTextColor(ResourcesCompat.getColor(this.resources, R.color.text_color_blue, null))
-            } else {
-                binding.editTextRoomName.setTextColor(ResourcesCompat.getColor(this.resources, R.color.color_edit_text_hint, null))
-            }
+            setColorFocusEditText(binding.editTextRoomName, hasFocus)
         }
         binding.editTextRoomTopic.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
-            if (hasFocus) {
-                binding.editTextRoomTopic.setTextColor(ResourcesCompat.getColor(this.resources, R.color.text_color_blue, null))
-            } else {
-                binding.editTextRoomTopic.setTextColor(ResourcesCompat.getColor(this.resources, R.color.color_edit_text_hint, null))
-            }
+            setColorFocusEditText(binding.editTextRoomTopic, hasFocus)
         }
 
         binding.editTextRoomName.addTextChangedListener(object : TextWatcher {
@@ -234,7 +228,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (!p0.isNullOrBlank() && !binding.editTextRoomName.text.toString().trim().isNullOrBlank() && (room?.topic != binding.editTextRoomTopic.text.toString() || room?.name != binding.editTextRoomName.text.toString())) {
+                if (!binding.editTextRoomName.text.toString().trim().isNullOrBlank() && (room?.topic != binding.editTextRoomTopic.text.toString() || room?.name != binding.editTextRoomName.text.toString())) {
                     binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_blue, null)
                     binding.btnSave.isEnabled = true;
                 } else {
@@ -338,6 +332,25 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
         super.onDestroy()
         avatarImage?.close();
         avatarImage = null;
+    }
+
+    private fun setColorFocusEditText(editText: TextInputEditText, isFocus: Boolean) {
+        val drawable = ResourcesCompat.getDrawable(this.resources, R.drawable.ic_pen, null)
+        val drawableFocus = ResourcesCompat.getDrawable(this.resources, R.drawable.ic_pen_blue, null)
+        val drawableCompat = drawableFocus?.let { DrawableCompat.wrap(it) }
+        drawableCompat?.let {
+            DrawableCompat.setTint(it, ResourcesCompat.getColor(this.resources, R.color.text_color_blue, null))
+            DrawableCompat.setTintMode(drawableCompat, PorterDuff.Mode.SRC_IN);
+        }
+
+        if (isFocus) {
+            editText.setTextColor(ResourcesCompat.getColor(this.resources, R.color.text_color_blue, null))
+            editText.setCompoundDrawablesWithIntrinsicBounds(null, null, drawableFocus, null);
+
+        } else {
+            editText.setTextColor(ResourcesCompat.getColor(this.resources, R.color.color_edit_text_hint, null))
+            editText.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
+        }
     }
 
     companion object {

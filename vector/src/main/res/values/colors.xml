@@ -192,6 +192,7 @@
     <color name="text_color_header">#5787E3</color>
 <!--    text_color-->
     <color name="text_color_blue">#5787E3</color>
+    <color name="text_color_hint">#BEBEBE</color>
     <color name="message_own_background">#E1E1E1</color>
 
 
@@ -199,4 +200,5 @@
 <!--    screen edit room-->
     <color name="color_leave_room">#C06363</color>
     <color name="color_edit_text_hint">#BEBEBE</color>
+    <color name="color_item_grey">#707070</color>
 </resources>

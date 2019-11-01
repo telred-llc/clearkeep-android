@@ -1,16 +1,15 @@
 package vmodev.clearkeep.bindingadapters
 
 import android.graphics.drawable.Drawable
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
-import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
@@ -28,7 +27,9 @@ import vmodev.clearkeep.viewmodelobjects.User
 
 class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapters, ISwitchCompatViewBindingAdapters, CardViewBindingAdapters {
     override fun bindImage(imageView: ImageView, imageUrl: String?, listener: RequestListener<Drawable?>?) {
-        imageUrl?.let { Glide.with(imageView.context).load(it).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).into(imageView); }
+        if (!TextUtils.isEmpty(imageUrl)) {
+             Glide.with(imageView.context).load(imageUrl).centerCrop().into(imageView);
+        }
     }
 
     override fun bindTime(textView: TextView, timeStamp: Long?) {
@@ -105,7 +106,7 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
                 val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(room.id), if (room.name.isNullOrEmpty()) room.id else room.name, true);
                 imageView.setImageBitmap(bitmap);
             } else {
-                Glide.with(imageView.context).load(room.avatarUrl).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).error(R.drawable.ic_launcher_app).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
+                Glide.with(imageView.context).load(room.avatarUrl).centerCrop().error(R.drawable.ic_launcher_app).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
             }
         }
     }
@@ -116,7 +117,7 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
                 val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(user.id), if (user.name.isEmpty()) user.id else user.name, true);
                 imageView.setImageBitmap(bitmap);
             } else {
-                Glide.with(imageView.context).load(user.avatarUrl).centerCrop().transition(DrawableTransitionOptions.withCrossFade()).into(imageView);
+                Glide.with(imageView.context).load(user.avatarUrl).centerCrop().into(imageView);
             }
         }
     }

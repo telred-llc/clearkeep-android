@@ -22,6 +22,7 @@
     <dimen name="text_main_size">25sp</dimen>
     <dimen name="text_20_sp">20sp</dimen>
     <dimen name="text_15_sp">15sp</dimen>
+    <dimen name="text_12_sp">12sp</dimen>
     <dimen name="text_16_sp">16sp</dimen>
     <dimen name="text_13_sp">13sp</dimen>
     <dimen name="text_40_sp">25sp</dimen>
@@ -31,7 +32,7 @@
     <dimen name="text_19_sp">19sp</dimen>
     <dimen name="text_21_sp">21sp</dimen>
     <dimen name="image_avatar_status_size">60dp</dimen>
-
+  
     <!--    image profile status-->
     <dimen name="status_online_size">14dp</dimen>
     <dimen name="margin_status_online">3dp</dimen>
@@ -79,6 +80,8 @@
     <dimen name="status_active_size">17dp</dimen>
     <dimen name="border_status_active_size">2dp</dimen>
     <dimen name="margin_end_status_active">25dp</dimen>
+    <!--    size control-->
+    <dimen name="height_button_size">36dp</dimen>
 
     <!--    screen edit room-->
     <dimen name="margin_camera_bottom_avatar">27dp</dimen>

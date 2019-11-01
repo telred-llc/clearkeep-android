@@ -116,6 +116,7 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
                hideKeyboard()
             }
             return@setOnEditorActionListener false;
+
         }
     }
 
