@@ -70,7 +70,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:singleLine="true"
-                        android:text="@{roomListUser.data.room.name}"
+                        android:text="@{nameTopic}"
                         android:textColor="?attr/color_text_title"
                         android:textSize="@dimen/text_21_sp"
                         tools:text="PINTEREST" />
