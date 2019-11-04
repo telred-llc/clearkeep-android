@@ -439,12 +439,15 @@ public class CommonActivityUtils {
 //                    Intent intent = new Intent(activeActivity, LoginActivity.class);
                     Intent intent = new Intent(activeActivity, vmodev.clearkeep.activities.LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
                     if (null != activeActivity) {
+                        activeActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                         activeActivity.startActivity(intent);
+//                        activeActivity.finishAffinity();
+
                     } else {
                         context.startActivity(intent);
                     }
+
                 }
             }
         });
