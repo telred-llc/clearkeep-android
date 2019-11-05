@@ -3,22 +3,18 @@ package vmodev.clearkeep.adapters.Interfaces
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ListAdapter
+import vmodev.clearkeep.adapters.ListRoomWithStickyHeaderRecyclerViewAdapter
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
 import vmodev.clearkeep.viewmodelobjects.User
 
-interface IListRoomRecyclerViewAdapter {
+interface IListRoomWithStickyHeaderRecyclerViewAdapter<T> {
     fun setOnItemClick(itemClick: (RoomListUser, Int) -> Unit?)
     fun setOnItemLongClick(itemLongClick: (RoomListUser) -> Unit?)
+    fun setOnItemStickyHeaderClick(itemStickyHeaderClick: (Int) -> Unit?)
     fun getAdapter(): ListAdapter<RoomListUser, *>
     fun setCallbackToGetUsers(callback: ICallbackToGetUsers, lifecycleOwner: LifecycleOwner, currentUserId: String?);
-
-    companion object {
-        const val ROOM = "ROOM";
-        const val ROOM_CONTACT = "ROOM_CONTACT";
-        const val SHARE_FILE ="SHARE_FILE";
-        const val ROOM_HEADER = "ROOM_HEADER";
-    }
+    fun setListHeader(listHeader: List<T>);
 
     interface ICallbackToGetUsers {
         fun getUsers(userIds: Array<String>): LiveData<Resource<List<User>>>;

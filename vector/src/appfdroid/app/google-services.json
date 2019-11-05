@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "467496386147",
+    "firebase_url": "https://clearkeep-1ba85.firebaseio.com",
+    "project_id": "clearkeep-1ba85",
+    "storage_bucket": "clearkeep-1ba85.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:467496386147:android:48147c4388b61c2a",
+        "android_client_info": {
+          "package_name": "com.telred.clearkeep"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "467496386147-rgeo6os7ilo1qh4cb7iaglcs09eh3ac2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.telred.clearkeep",
+            "certificate_hash": "4f83e5e2c6e8a7298c894121e07024f9c4a527b0"
+          }
+        },
+        {
+          "client_id": "467496386147-rmutuvdvb9sngauu045tud58f5q2oie8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlHv7-aAIZj5GCuktleDkqSG__K5FlmnA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "467496386147-rmutuvdvb9sngauu045tud58f5q2oie8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
