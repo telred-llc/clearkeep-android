@@ -69,3 +69,18 @@ fun Fragment.hideKeyboard() {
         activity.hideKeyboard()
     }
 }
+
+fun AppCompatActivity.showKeyboard() {
+    val view = this.currentFocus
+    if (view != null) {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+    }
+}
+fun Fragment.showKeyboard() {
+    val activity = this.activity
+    if (activity is AppCompatActivity) {
+        activity.showKeyboard()
+    }
+}
+

@@ -16,6 +16,8 @@
 
         <import type="android.view.View" />
 
+        <import type="im.vector.R" />
+
 
         <variable
             name="userResource"
@@ -56,6 +58,7 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/padding_normal"
                 app:srcCompat="@drawable/ic_back" />
 
@@ -75,6 +78,7 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/padding_normal"
                 app:srcCompat="@drawable/ic_setting" />
 
@@ -141,44 +145,38 @@
             app:layout_constraintStart_toStartOf="@+id/frAvatarProfile"
             app:layout_constraintTop_toBottomOf="@+id/frAvatarProfile">
 
-           <RelativeLayout
+            <LinearLayout
                 android:id="@+id/relativeLayout"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_toEndOf="@+id/imgDone">
+                android:gravity="center"
+                android:layout_toStartOf="@+id/imgDone">
 
                 <EditText
                     android:id="@+id/edtName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
                     android:background="@null"
-                    android:gravity="center"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
                     android:singleLine="true"
                     android:text="@{user.data.name}"
-                    android:textColor="@color/text_color_default"
+                    android:textColor="@{isEditTextNameFocus ? @color/text_color_blue:@color/text_color_default}"
                     android:textSize="@dimen/text_21_sp"
-                    tools:text="Nguyễn Linh" />
+                    android:minWidth="20dp"
+                    android:drawableEnd="@drawable/ic_edit_grey"
+                    android:drawablePadding="@dimen/padding_normal"
+                    tools:text="Linh Nguyen" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/imgEdit"
-                    android:layout_width="30dp"
-                    android:layout_height="match_parent"
-                    android:layout_alignBottom="@+id/edtName"
-                    android:layout_marginStart="@dimen/margin_small"
-                    android:layout_toEndOf="@+id/edtName"
-                    android:scaleType="center"
-                    android:visibility="@{isEditTextNameFocus ? View.GONE : View.VISIBLE}"
-                    app:srcCompat="@drawable/ic_edit_grey" />
-            </RelativeLayout>
+
+            </LinearLayout>
 
             <View
                 android:id="@+id/viewUnderlined"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_below="@+id/relativeLayout"
-                android:layout_marginTop="@dimen/margin_normal"
                 android:background="@color/text_color_blue"
                 android:visibility="@{isEditTextNameFocus ? View.VISIBLE : View.INVISIBLE}" />
 
@@ -189,9 +187,9 @@
                 android:layout_alignBottom="@+id/relativeLayout"
                 android:layout_alignParentEnd="true"
                 android:scaleType="center"
-                android:visibility="@{isEditTextNameFocus ? View.VISIBLE : View.INVISIBLE}"
-                app:srcCompat="@drawable/ic_done_color_blue"
-                />
+                android:layout_marginStart="@dimen/margin_small"
+                android:visibility="@{isEditTextNameFocus ? View.VISIBLE : View.GONE}"
+                app:srcCompat="@drawable/ic_done_color_blue" />
 
         </RelativeLayout>
 

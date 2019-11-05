@@ -19,7 +19,7 @@ class ProfileActivityViewModel @Inject constructor(userRepository: UserRepositor
 
     private val _setIdForGetCurrentUser = MutableLiveData<String>();
     private val _setCheckNeedBackupWhenSignOut = MutableLiveData<Long>();
-    private val _updateUser = MutableLiveData<AbstractEditProfileActivityViewModel.UpdateUser>();
+    private val _updateUser = MutableLiveData<UpdateUser>();
     private val _getGetCurrentUserResult = Transformations.switchMap(_setIdForGetCurrentUser) { input -> userRepository.loadUser(input) }
     private val _getNeedBackupWhenSignOutResult = Transformations.switchMap(_setCheckNeedBackupWhenSignOut) { input -> backupRepository.needBackupKeyWhenSignOut() }
     private val _getUpdateUserResult = Transformations.switchMap(_updateUser) { input -> userRepository.updateUser(input.userId, input.name, input.avatarImage) }
@@ -42,7 +42,7 @@ class ProfileActivityViewModel @Inject constructor(userRepository: UserRepositor
     }
 
     override fun setUpdateUser(userId: String, name: String, avatarImage: InputStream?) {
-        _updateUser.value = AbstractEditProfileActivityViewModel.UpdateUser(userId, name, avatarImage);
+        _updateUser.value = UpdateUser(userId, name, avatarImage);
     }
 
     override fun getUserUpdateResult(): LiveData<Resource<User>> {

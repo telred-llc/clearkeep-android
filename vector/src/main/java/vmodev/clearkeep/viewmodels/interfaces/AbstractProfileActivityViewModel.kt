@@ -13,4 +13,5 @@ abstract class AbstractProfileActivityViewModel : ViewModel() {
     abstract fun getNeedBackupWhenLogout(): LiveData<Resource<Int>>
     abstract fun setUpdateUser(userId: String, name: String, avatarImage: InputStream?);
     abstract fun getUserUpdateResult(): LiveData<Resource<User>>
+    data class UpdateUser(val userId: String, val name: String, val avatarImage: InputStream?)
 }
