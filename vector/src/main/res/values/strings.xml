@@ -1497,7 +1497,7 @@ Why choose Riot.im?
     <string name="info">Info</string>
     <string name="topic">Topic</string>
     <string name="created_by">Created by</string>
-    <string name="this_room_created_by">This room created by </string>
+    <string name="this_room_created_by">This room created by</string>
     <string name="members">Members</string>
     <string name="files">Files</string>
     <string name="settings">Settings</string>
@@ -1709,6 +1709,7 @@ Why choose Riot.im?
     <string name="create_room_title">"New Room"</string>
     <string name="create_room_action_create">"CREATE"</string>
     <string name="create_room_name_hint">"Room name"</string>
+    <string name="create_room_topic_hint">"Room topic"</string>
     <string name="create_room_public_title">"Public"</string>
     <string name="create_room_public_description">"Anyone will be able to join this room"</string>
     <string name="create_room_directory_title">"Room Directory"</string>

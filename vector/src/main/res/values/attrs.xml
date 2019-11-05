@@ -99,6 +99,7 @@
     <declare-styleable name="CircleImage">
         <attr name="border_color" format="color"/>
         <attr name="src" format="integer"></attr>
+        <attr name="stroke_width" format="dimension"/>
     </declare-styleable>
 
     <declare-styleable name="CircleImageView">
