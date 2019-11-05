@@ -77,6 +77,8 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
                 viewModelFactory.getViewModel().setUserId(it)
             }
             this.room = it.data
+            // Send name group ro title activity
+            RxEventBus.instanceOf<String>().putData(it.data?.name.toString())
         })
         binding.lifecycleOwner = this;
         args.roomId?.let { viewModelFactory.getViewModel().setRoomId(it) }

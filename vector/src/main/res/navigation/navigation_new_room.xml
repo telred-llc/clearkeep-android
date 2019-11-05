@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/inviteUsersToRoomFragment"
         android:name="vmodev.clearkeep.fragments.InviteUsersToRoomFragment"
-        android:label="Invite"
+        android:label="Add Members"
         tools:layout="@layout/activity_invite_users_to_room">
         <argument
             android:name="roomId"

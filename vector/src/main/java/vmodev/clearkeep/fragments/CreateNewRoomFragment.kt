@@ -1,5 +1,6 @@
 package vmodev.clearkeep.fragments
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -52,6 +54,10 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.window?.statusBarColor = ContextCompat.getColor(activity!!, R.color.primary_hint_text_color_light)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        }
         binding.room = viewModelFactory.getViewModel().createNewRoomResult();
         binding.rvListUserSuggested.setHasFixedSize(true)
         binding.rvListUserSuggested.isNestedScrollingEnabled = false
@@ -66,7 +72,7 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
                         binding.btnCreate.setText(R.string.create);
                         binding.btnCreate.isEnabled = true;
                         it.data?.let {
-                            val listKeySelected:List<String> = ArrayList(listSelected.keys)
+                            val listKeySelected: List<String> = ArrayList(listSelected.keys)
                             findNavController().navigate(CreateNewRoomFragmentDirections.inviteUsersToRoom().setListUser(listKeySelected.toTypedArray()).setRoomId(it.id));
                         }
                     }
@@ -113,7 +119,7 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
         }
         binding.editTextRoomTopic.setOnEditorActionListener { p0, p1, p2 ->
             if (p1 == EditorInfo.IME_ACTION_DONE) {
-               hideKeyboard()
+                hideKeyboard()
             }
             return@setOnEditorActionListener false;
 

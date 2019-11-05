@@ -2,6 +2,7 @@ package vmodev.clearkeep.fragments
 
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
@@ -61,6 +63,10 @@ class InviteUsersToRoomFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.window?.statusBarColor = ContextCompat.getColor(activity!!, R.color.primary_hint_text_color_light)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        }
         val listUserAdapter = ListUserToInviteRecyclerViewAdapter(appExecutors = appExecutors, listSelected = listSelected, dataBindingComponent = dataBinding.getDataBindingComponent()
                 , diffCallback = object : DiffUtil.ItemCallback<User>() {
             override fun areItemsTheSame(p0: User, p1: User): Boolean {
@@ -79,19 +85,19 @@ class InviteUsersToRoomFragment : DataBindingDaggerFragment(), IFragment {
                 binding.btnCreate.isEnabled = false;
             }
         }
-//        args.listUser?.let { listUserAdapter.setKeySelected(it) }
+        args.listUser?.let { listUserAdapter.setKeySelected(it) }
 
         binding.lifecycleOwner = viewLifecycleOwner;
         binding.users = viewModelFactory.getViewModel().getUsers();
         binding.recyclerViewListUser.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewListUser.adapter = listUserAdapter;
 
-        viewModelFactory.getViewModel().getListUserSuggested(1, application.getUserId()).observe(this, Observer {
+        viewModelFactory.getViewModel().getListUserSuggested(1, application.getUserId()).observe(viewLifecycleOwner, Observer {
             listUserAdapter.submitList(it?.data)
             listUserSuggested = it?.data
         })
 
-        viewModelFactory.getViewModel().getUsers().observe(this, Observer
+        viewModelFactory.getViewModel().getUsers().observe(viewLifecycleOwner, Observer
         { t ->
             if (!TextUtils.isEmpty(binding.editTextQuery.text.toString())) {
                 listUserAdapter.submitList(t?.data)

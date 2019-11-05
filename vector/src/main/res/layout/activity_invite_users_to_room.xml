@@ -84,7 +84,7 @@
             android:layout_marginBottom="@dimen/margin_large"
             android:background="@drawable/bg_button_gradient_grey"
             android:enabled="false"
-            android:text="@string/create"
+            android:text="@string/invite"
             android:textColor="@color/color_white" />
 
 

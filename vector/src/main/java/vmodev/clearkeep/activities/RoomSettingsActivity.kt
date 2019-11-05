@@ -14,6 +14,10 @@ import androidx.navigation.NavArgument
 import androidx.navigation.Navigation
 import im.vector.R
 import im.vector.databinding.ActivityRoomSettingsBinding
+import io.reactivex.Observable
+import io.reactivex.Observer
+import io.reactivex.disposables.Disposable
+import io.reactivex.observers.DisposableCompletableObserver
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.fragments.RoomSettingsFragment
 import vmodev.clearkeep.ultis.RxEventBus
@@ -22,7 +26,7 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
 
     private lateinit var binding: ActivityRoomSettingsBinding;
     private var roomId: String? = null;
-
+    private var disposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +43,9 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
         val navController = Navigation.findNavController(this, R.id.fragment);
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             binding.toolbar.title = destination.label;
+        }
+        disposable = RxEventBus.instanceOf<String>().getData()?.subscribe {
+            binding.toolbar.title = it
         }
         val graph = navController.navInflater.inflate(R.navigation.navigation_room_settings);
         val navArgs = NavArgument.Builder().setDefaultValue(roomId).build();
@@ -62,5 +69,12 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
             currentFragment.onActivityResult(requestCode, resultCode, data)
         }
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable?.let {
+            it.dispose()
+        }
     }
 }
