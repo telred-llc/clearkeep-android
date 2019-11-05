@@ -60,7 +60,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/circle_image_view_status"
                     app:currentUserId="@{current_user_id}"
-                    app:listUser="@{room_list_user.roomUserJoin}"
+                    app:listUser="@{room_list_user.members}"
                     app:cardBackgroundColor="@color/main_text_color_hint"
                     app:cardCornerRadius="@dimen/radius_online_status"
                     app:cardElevation="0dp"

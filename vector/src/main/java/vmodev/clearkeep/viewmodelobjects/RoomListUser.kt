@@ -10,7 +10,7 @@ class RoomListUser(
         @Relation(parentColumn = "id", entityColumn = "id", entity = User::class, associateBy = Junction(
                 value = RoomUserJoin::class, entityColumn = "user_id", parentColumn = "room_id"
         ))
-        var roomUserJoin: List<User>? = null,
+        var members: List<User>? = null,
         @Embedded
         var lastMessage: Message? = null,
         @Embedded(prefix = "user__")
