@@ -14,6 +14,10 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.User" />
 
+        <import type="android.view.View" />
+
+        <import type="im.vector.R" />
+
 
         <variable
             name="userResource"
@@ -26,12 +30,16 @@
         <variable
             name="checkNeedBackup"
             type="LiveData&lt;Resource&lt;Integer>>" />
+
+        <variable
+            name="isEditTextNameFocus"
+            type="Boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="@color/primary_hint_text_color_light"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/primary_hint_text_color_light"
         android:orientation="vertical">
 
 
@@ -48,9 +56,10 @@
                 android:id="@+id/imgBack"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:padding="@dimen/padding_normal"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="@dimen/padding_normal"
                 app:srcCompat="@drawable/ic_back" />
 
             <TextView
@@ -69,26 +78,26 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
-               android:padding="@dimen/padding_normal"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="@dimen/padding_normal"
                 app:srcCompat="@drawable/ic_setting" />
 
 
+            <!--            <RelativeLayout-->
+            <!--                android:id="@+id/rlEdit"-->
+            <!--                android:layout_width="40dp"-->
+            <!--                android:layout_height="40dp"-->
+            <!--                android:layout_alignParentEnd="true"-->
+            <!--                android:layout_centerInParent="true"-->
+            <!--                android:background="@drawable/bg_circle_image_grey">-->
 
-<!--            <RelativeLayout-->
-<!--                android:id="@+id/rlEdit"-->
-<!--                android:layout_width="40dp"-->
-<!--                android:layout_height="40dp"-->
-<!--                android:layout_alignParentEnd="true"-->
-<!--                android:layout_centerInParent="true"-->
-<!--                android:background="@drawable/bg_circle_image_grey">-->
+            <!--                <androidx.appcompat.widget.AppCompatImageView-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_centerInParent="true"-->
+            <!--                    app:srcCompat="@drawable/ic_edit" />-->
 
-<!--                <androidx.appcompat.widget.AppCompatImageView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_centerInParent="true"-->
-<!--                    app:srcCompat="@drawable/ic_edit" />-->
-
-<!--            </RelativeLayout>-->
+            <!--            </RelativeLayout>-->
 
 
         </RelativeLayout>
@@ -108,10 +117,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@color/app_green"
-                app:user="@{user.data}"
-                app:civ_border_width="@dimen/border_avatar_screen_profile_size"
                 app:civ_border_color="@color/border_color_avatar_profile"
-                />
+                app:civ_border_width="@dimen/border_avatar_screen_profile_size"
+                app:user="@{user.data}" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/circle_image_view_status"
@@ -125,29 +133,74 @@
         </FrameLayout>
 
 
-        <TextView
-            android:id="@+id/tvName"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/rlEditTextName"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginHorizontal="@dimen/margin_normal"
             android:layout_marginTop="@dimen/margin_medium"
-            android:text="@{user.data.name}"
-            android:textColor="@color/text_color_default"
-            android:textSize="@dimen/text_21_sp"
             app:layout_constraintEnd_toEndOf="@+id/frAvatarProfile"
             app:layout_constraintHorizontal_bias="0.523"
             app:layout_constraintStart_toStartOf="@+id/frAvatarProfile"
-            app:layout_constraintTop_toBottomOf="@+id/frAvatarProfile"
-            tools:text="Nguyễn Linh" />
+            app:layout_constraintTop_toBottomOf="@+id/frAvatarProfile">
+
+            <LinearLayout
+                android:id="@+id/relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:gravity="center"
+                android:layout_toStartOf="@+id/imgDone">
+
+                <EditText
+                    android:id="@+id/edtName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:singleLine="true"
+                    android:text="@{user.data.name}"
+                    android:textColor="@{isEditTextNameFocus ? @color/text_color_blue:@color/text_color_default}"
+                    android:textSize="@dimen/text_21_sp"
+                    android:minWidth="20dp"
+                    android:drawableEnd="@drawable/ic_edit_grey"
+                    android:drawablePadding="@dimen/padding_normal"
+                    tools:text="Linh Nguyen" />
+
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/viewUnderlined"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/relativeLayout"
+                android:background="@color/text_color_blue"
+                android:visibility="@{isEditTextNameFocus ? View.VISIBLE : View.INVISIBLE}" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgDone"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignBottom="@+id/relativeLayout"
+                android:layout_alignParentEnd="true"
+                android:scaleType="center"
+                android:layout_marginStart="@dimen/margin_small"
+                android:visibility="@{isEditTextNameFocus ? View.VISIBLE : View.GONE}"
+                app:srcCompat="@drawable/ic_done_color_blue" />
+
+        </RelativeLayout>
+
 
         <RelativeLayout
             android:id="@+id/rlID"
-            android:padding="@dimen/padding_large"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_xxl"
-            app:layout_constraintTop_toBottomOf="@+id/tvName">
+            android:padding="@dimen/padding_large"
+            app:layout_constraintTop_toBottomOf="@+id/rlEditTextName">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgProfile"
@@ -161,11 +214,11 @@
                 android:id="@+id/text_view_user_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/text_color_default"
                 android:layout_marginStart="@dimen/margin_large"
                 android:layout_toEndOf="@+id/imgProfile"
-                android:text="@{user.data.id}"
                 android:singleLine="true"
+                android:text="@{user.data.id}"
+                android:textColor="@color/text_color_default"
                 android:textSize="@dimen/text_19_sp"
                 tools:text="nilhlinh94:s.clearkeep.me" />
         </RelativeLayout>
@@ -173,9 +226,9 @@
 
         <RelativeLayout
             android:id="@+id/rlLocation"
-            android:padding="@dimen/padding_large"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="@dimen/padding_large"
             app:layout_constraintEnd_toEndOf="@+id/rlID"
             app:layout_constraintStart_toStartOf="@+id/rlID"
             app:layout_constraintTop_toBottomOf="@+id/rlID">
@@ -194,8 +247,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_large"
                 android:layout_toEndOf="@+id/imgLocation"
-                android:text="仙台市　日本国 - JP"
                 android:singleLine="true"
+                android:text="仙台市　日本国 - JP"
                 android:textColor="@color/text_color_default"
                 android:textSize="@dimen/text_19_sp"
                 tools:text="仙台市　日本国 - JP" />
@@ -203,9 +256,9 @@
 
         <RelativeLayout
             android:id="@+id/rlPhone"
-            android:padding="@dimen/padding_large"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="@dimen/padding_large"
             app:layout_constraintEnd_toEndOf="@+id/rlLocation"
             app:layout_constraintStart_toStartOf="@+id/rlLocation"
             app:layout_constraintTop_toBottomOf="@+id/rlLocation">
@@ -224,10 +277,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_large"
                 android:layout_toEndOf="@+id/imgPhone"
-                android:text="+84 222 11 5550"
-                android:textSize="@dimen/text_19_sp"
                 android:singleLine="true"
+                android:text="+84 222 11 5550"
                 android:textColor="@color/text_color_default"
+                android:textSize="@dimen/text_19_sp"
                 tools:text="+84 222 11 5550" />
         </RelativeLayout>
 
