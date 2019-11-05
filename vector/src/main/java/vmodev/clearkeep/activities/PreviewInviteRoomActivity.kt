@@ -3,6 +3,7 @@ package vmodev.clearkeep.activities
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -17,6 +18,7 @@ import im.vector.databinding.ActivityPreviewInviteRoomBinding
 import kotlinx.android.synthetic.main.activity_preview_invite_room.view.*
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.activities.interfaces.IActivity
+import vmodev.clearkeep.ultis.FormatString
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import java.util.*
@@ -28,6 +30,7 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var mxSession: MXSession;
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +72,10 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
                     finish()
             }
         })
+
+        roomViewModel.getRoomListUserFindByID(roomId).observe(this, Observer {
+            binding.nameTopic= it.data?.room?.name?.let { it1 -> FormatString.formatName(it1) }
+        })
         binding.lifecycleOwner = this;
 
         roomViewModel.setRoomId(roomId);
@@ -77,7 +84,13 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
             roomViewModel.joinRoom(roomId)
         }
         binding.buttonDecline.setOnClickListener { v ->
-            roomViewModel.setLeaveRoom(roomId)
+            AlertDialog.Builder(this).setTitle(R.string.leave_room)
+                    .setMessage(R.string.do_you_want_leave_room)
+                    .setNegativeButton(R.string.no, null)
+                    .setPositiveButton(R.string.yes) { dialog, v ->
+                        roomViewModel.setLeaveRoom(roomId)
+
+                    }.show();
         }
         binding.roomListUser = roomViewModel.getRoomListUserFindByID(roomId)
         binding.toolbar.imgBack.setOnClickListener {
@@ -88,6 +101,7 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
     override fun getActivity(): FragmentActivity {
         return this;
     }
+
 
     companion object {
         const val ROOM_ID = "ROOM_ID";

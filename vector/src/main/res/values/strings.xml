@@ -312,6 +312,7 @@
     <string name="option_take_photo_video">Take photo or video</string>
     <string name="option_take_photo">Take photo</string>
     <string name="option_take_video">Take video</string>
+    <string name="option_choose_from_library">Choose from library</string>
     <string name="no_sticker_application_dialog_content">You don’t currently have any stickerpacks enabled.\n\nAdd some now?</string>
     <string name="go_on_with">go on with…</string>
     <string name="error_no_external_application_found">Sorry, no external application has been found to complete this action.</string>

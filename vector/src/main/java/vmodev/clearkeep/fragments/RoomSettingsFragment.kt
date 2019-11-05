@@ -347,11 +347,9 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
         }
 
         if (isFocus) {
-            editText.setTextColor(ResourcesCompat.getColor(this.resources, R.color.text_color_blue, null))
             editText.setCompoundDrawablesWithIntrinsicBounds(null, null, drawableFocus, null);
 
         } else {
-            editText.setTextColor(ResourcesCompat.getColor(this.resources, R.color.color_edit_text_hint, null))
             editText.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
         }
     }

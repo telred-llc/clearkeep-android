@@ -1,6 +1,10 @@
 package vmodev.clearkeep.fragments
 
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.media.projection.MediaProjectionManager
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -112,6 +116,25 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
             saveCallView();
             this.activity?.finish();
         }
+        binding.imageViewScreenShare.setOnClickListener {
+            if (mxCall.isScreenCast) {
+                mxCall.cameraVideo();
+            } else {
+                val mediaProjectionManager = activity?.application?.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+                startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), SCREEN_SHARE_CODE)
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            SCREEN_SHARE_CODE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    mxCall.screenVideo(data);
+                }
+            }
+        };
     }
 
     private fun insertCallView() {
@@ -170,5 +193,9 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
         } ?: run {
             this.activity?.finish();
         }
+    }
+
+    companion object {
+        const val SCREEN_SHARE_CODE = 12321;
     }
 }
