@@ -21,10 +21,6 @@
             type="vmodev.clearkeep.viewmodelobjects.RoomListUser" />
 
         <variable
-            name="users"
-            type="LiveData&lt;Resource&lt;List&lt;User>>>" />
-
-        <variable
             name="current_user_id"
             type="String" />
     </data>
@@ -64,7 +60,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/circle_image_view_status"
                     app:currentUserId="@{current_user_id}"
-                    app:listUser="@{users.data}"
+                    app:listUser="@{room_list_user.roomUserJoin}"
                     app:cardBackgroundColor="@color/main_text_color_hint"
                     app:cardCornerRadius="@dimen/radius_online_status"
                     app:cardElevation="0dp"

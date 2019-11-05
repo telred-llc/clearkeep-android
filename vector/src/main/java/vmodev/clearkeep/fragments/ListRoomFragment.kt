@@ -2,14 +2,12 @@ package vmodev.clearkeep.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.orhanobut.dialogplus.DialogPlus
@@ -23,9 +21,7 @@ import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
-import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Status
-import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractListRoomFragmentViewModel
 import javax.inject.Inject
 import javax.inject.Named
@@ -41,7 +37,7 @@ private const val GO_TO_ROOM_CODE = 12432;
  * create an instance of this fragment.
  *
  */
-class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecyclerViewAdapter.ICallbackToGetUsers {
+class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractListRoomFragmentViewModel>;
@@ -190,7 +186,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
 
     private fun initListDirectChat() {
 //        listDirectRoomAdapter.setDataBindingComponent(dataBindingComponent);
-        listDirectRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, applcation.getUserId());
+        listDirectRoomAdapter.setLifeCycleOwner(viewLifecycleOwner, applcation.getUserId());
 
         listDirectRoomAdapter.setOnItemClick { room, i ->
             room.room?.let {
@@ -277,7 +273,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
 
     private fun initListGroupChat() {
 //        listGroupRoomAdapter.setDataBindingComponent(dataBindingComponent);
-        listGroupRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, applcation.getUserId());
+        listGroupRoomAdapter.setLifeCycleOwner(viewLifecycleOwner, applcation.getUserId());
         listGroupRoomAdapter.setOnItemLongClick { room ->
             room.room?.let {
                 val bottomDialog = DialogPlus.newDialog(this.context)
@@ -358,10 +354,6 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
 
             }
         }
-    }
-
-    override fun getUsers(userIds: Array<String>): LiveData<Resource<List<User>>> {
-        return viewModelFactory.getViewModel().getRoomUserJoinResult(userIds);
     }
 
     private fun previewRoom(roomId: String) {
