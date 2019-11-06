@@ -110,7 +110,8 @@
 
         <activity android:name="vmodev.clearkeep.activities.RoomSettingsActivity" />
         <activity android:name="vmodev.clearkeep.activities.SettingsActivity" />
-        <activity android:name="vmodev.clearkeep.activities.NewRoomActivity"
+        <activity
+            android:name="vmodev.clearkeep.activities.NewRoomActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity android:name="vmodev.clearkeep.activities.WaitingForVerifyEmailActivity" />
         <activity android:name="vmodev.clearkeep.activities.PushBackupKeyActivity" />
@@ -133,7 +134,9 @@
             android:screenOrientation="portrait" />
         <activity android:name="vmodev.clearkeep.activities.SearchActivity" />
         <activity android:name="vmodev.clearkeep.activities.PreviewInviteRoomActivity" />
-        <activity android:name="vmodev.clearkeep.activities.ProfileActivity" />
+        <activity
+            android:name="vmodev.clearkeep.activities.ProfileActivity"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name="vmodev.clearkeep.activities.HomeScreenActivity" />
         <activity android:name="vmodev.clearkeep.activities.LoginActivity" />
         <activity android:name="vmodev.clearkeep.activities.SplashActivity">
@@ -338,22 +341,22 @@
             android:theme="@style/GroupAppTheme.Light"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".activity.VectorUniversalLinkActivity">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.VIEW" />-->
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.VIEW" />-->
 
-<!--                <category android:name="android.intent.category.DEFAULT" />-->
-<!--                <category android:name="android.intent.category.BROWSABLE" />-->
+            <!--                <category android:name="android.intent.category.DEFAULT" />-->
+            <!--                <category android:name="android.intent.category.BROWSABLE" />-->
 
-<!--                <data android:scheme="http" />-->
-<!--                <data android:scheme="https" />-->
-<!--                <data android:host="vector.im" />-->
-<!--                <data android:pathPrefix="/app/" />-->
-<!--                <data android:pathPrefix="/beta/" />-->
-<!--                <data android:pathPrefix="/develop/" />-->
-<!--                <data android:pathPrefix="/staging/" />-->
-<!--                &lt;!&ndash; mail validation &ndash;&gt;-->
-<!--                <data android:pathPrefix="/_matrix/" />-->
-<!--            </intent-filter>-->
+            <!--                <data android:scheme="http" />-->
+            <!--                <data android:scheme="https" />-->
+            <!--                <data android:host="vector.im" />-->
+            <!--                <data android:pathPrefix="/app/" />-->
+            <!--                <data android:pathPrefix="/beta/" />-->
+            <!--                <data android:pathPrefix="/develop/" />-->
+            <!--                <data android:pathPrefix="/staging/" />-->
+            <!--                &lt;!&ndash; mail validation &ndash;&gt;-->
+            <!--                <data android:pathPrefix="/_matrix/" />-->
+            <!--            </intent-filter>-->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

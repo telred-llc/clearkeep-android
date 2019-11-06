@@ -2010,17 +2010,54 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         }
     }
 
-    override fun updateRoomAvatar(inputStream: InputStream): Observable<String> {
+    override fun updateRoomAvatar(roomId: String, inputStream: InputStream): Observable<String> {
         setMXSession();
-        return Observable.create { emitter ->
-            updateUser(inputStream).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                        emitter.onNext(it);
-                        emitter.onComplete();
-                    }, {
-                        emitter.onError(it);
-                        emitter.onComplete();
-                    });
+        return Observable.create<String> {
+            session!!.mediaCache.uploadContent(inputStream, null, "image/jpeg", null, object : IMXMediaUploadListener {
+                override fun onUploadProgress(p0: String?, p1: IMXMediaUploadListener.UploadStats?) {
+                    //Do something
+                }
+
+                override fun onUploadCancel(p0: String?) {
+                    // Do Something
+                }
+
+                override fun onUploadStart(p0: String?) {
+                    // Do Something
+                }
+
+                override fun onUploadComplete(p0: String?, p1: String?) {
+                    session!!.roomsApiClient.updateAvatarUrl(roomId, p1, object : ApiCallback<Void?> {
+                        override fun onSuccess(p0: Void?) {
+                            var avatar = "";
+                            var result = session!!.contentManager.getDownloadableUrl(p1, false);
+                            result?.let { avatar = result }
+                            it.onNext(avatar);
+                            it.onComplete();
+                        }
+
+                        override fun onUnexpectedError(p0: Exception?) {
+                            it.onError(Throwable(p0?.message))
+                            it.onComplete();
+                        }
+
+                        override fun onMatrixError(p0: MatrixError?) {
+                            it.onError(Throwable(p0?.message))
+                            it.onComplete();
+                        }
+
+                        override fun onNetworkError(p0: Exception?) {
+                            it.onError(Throwable(p0?.message))
+                            it.onComplete();
+                        }
+                    })
+                }
+
+                override fun onUploadError(p0: String?, p1: Int, p2: String?) {
+                    it.onError(Throwable(p2));
+                    it.onComplete();
+                }
+            })
         }
     }
 }

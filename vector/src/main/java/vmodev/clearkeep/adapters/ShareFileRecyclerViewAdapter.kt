@@ -29,7 +29,6 @@ class ShareFileRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffC
     private val layouts: Array<Int> = arrayOf(R.layout.room_invite_item, R.layout.room_item);
     private lateinit var itemClick: (RoomListUser, Int) -> Unit?
     private lateinit var itemLongClick: (RoomListUser) -> Unit?
-    private var callbackToGetUsers: IListRoomRecyclerViewAdapter.ICallbackToGetUsers? = null;
     private var lifecycleOwner: LifecycleOwner? = null;
     private var currentUserId: String? = null;
 
@@ -65,13 +64,6 @@ class ShareFileRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffC
             (p0.binding as ItemRoomDirectShareFileBinding).roomListUser = getItem(p1);
             p0.binding.executePendingBindings();
 //            p0.binding.currentUserId = currentUserId;
-            callbackToGetUsers?.let { callback ->
-                getItem(p1).roomUserJoin?.let {
-                    val userIds = Array(it.size) { i -> it[i].userId };
-//                  p0.binding.roomListUser =  callback.getUsers(userIds)
-                    //p0.binding. = callback.getUsers(userIds);
-                }
-            }
         }
     }
 
@@ -92,8 +84,7 @@ class ShareFileRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffC
         return this
     }
 
-    override fun setCallbackToGetUsers(callback: IListRoomRecyclerViewAdapter.ICallbackToGetUsers, lifecycleOwner: LifecycleOwner, currentUserId: String?) {
-        callbackToGetUsers = callback;
+    override fun setLifeCycleOwner(lifecycleOwner: LifecycleOwner, currentUserId: String?) {
         this.lifecycleOwner = lifecycleOwner;
         this.currentUserId = currentUserId;
     }

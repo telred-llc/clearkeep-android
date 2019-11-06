@@ -19,11 +19,6 @@
         <variable
             name="name"
             type="String" />
-
-        <variable
-            name="user"
-            type="LiveData&lt;Resource&lt;User>>" />
-
     </data>
 
     <LinearLayout

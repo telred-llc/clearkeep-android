@@ -1,8 +1,11 @@
 package vmodev.clearkeep.activities
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
+import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -32,6 +35,10 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = DataBindingUtil.setContentView<ActivityPreviewInviteRoomBinding>(this, R.layout.activity_preview_invite_room, dataBinding.getDataBindingComponent());
+        window?.statusBarColor = ContextCompat.getColor(this, R.color.primary_hint_text_color_light)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+           window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        }
         val roomId: String = intent.getStringExtra(ROOM_ID) ?: ""
         mxSession = Matrix.getInstance(applicationContext).defaultSession;
         var index: Int = 0;
@@ -100,4 +107,3 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
         const val ROOM_ID = "ROOM_ID";
     }
 }
-        

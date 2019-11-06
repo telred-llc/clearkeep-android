@@ -22,7 +22,6 @@ class ListRoomContactRecyclerViewAdapter constructor(appExecutors: AppExecutors,
 
     private lateinit var itemClick: (RoomListUser, Int) -> Unit?
     private lateinit var itemLongClick: (RoomListUser) -> Unit?
-    private var callbackToGetUsers: IListRoomRecyclerViewAdapter.ICallbackToGetUsers? = null;
     private var lifecycleOwner: LifecycleOwner? = null;
     private var currentUserId: String? = null;
 
@@ -33,8 +32,7 @@ class ListRoomContactRecyclerViewAdapter constructor(appExecutors: AppExecutors,
         return DataBoundViewHolder(binding);
     }
 
-    override fun setCallbackToGetUsers(callback: IListRoomRecyclerViewAdapter.ICallbackToGetUsers, lifecycleOwner: LifecycleOwner, currentUserId: String?) {
-        callbackToGetUsers = callback;
+    override fun setLifeCycleOwner(lifecycleOwner: LifecycleOwner, currentUserId: String?) {
         this.lifecycleOwner = lifecycleOwner;
         this.currentUserId = currentUserId;
     }

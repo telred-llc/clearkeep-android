@@ -15,40 +15,40 @@ abstract class AbstractRoomUserJoinDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insertRoomUserJoins(roomUserJoins: List<RoomUserJoin>): List<Long>;
 
-    @Query("SELECT user.* FROM user INNER JOIN roomUserJoin ON user.id = roomUserJoin.user_id INNER JOIN room ON room.id = roomUserJoin.room_id WHERE room.id =:roomId")
+    @Query("SELECT user.* FROM user INNER JOIN RoomUserJoin ON user.id = RoomUserJoin.user_id INNER JOIN room ON room.id = RoomUserJoin.room_id WHERE room.id =:roomId")
     abstract fun getUsersWithRoomId(roomId: String): LiveData<List<User>>
 
-    @Query("SELECT room.* FROM room INNER JOIN roomUserJoin ON room.id = roomUserJoin.room_id INNER JOIN user ON user.id = roomUserJoin.user_id WHERE user.id =:userId")
+    @Query("SELECT room.* FROM room INNER JOIN RoomUserJoin ON room.id = RoomUserJoin.room_id INNER JOIN user ON user.id = RoomUserJoin.user_id WHERE user.id =:userId")
     abstract fun getRoomsWithUserId(userId: String): LiveData<List<Room>>
 
     @Update
     abstract fun updateRoomUserJoin(items: List<RoomUserJoin>): Int;
 
-    @Query("SELECT room.* FROM room INNER JOIN roomUserJoin ON room.id = roomUserJoin.room_id INNER JOIN user ON user.id = roomUserJoin.user_id WHERE user.id =:userId AND (room.type == 1 OR room.type == 65 OR room.type == 129)")
+    @Query("SELECT room.* FROM room INNER JOIN RoomUserJoin ON room.id = RoomUserJoin.room_id INNER JOIN user ON user.id = RoomUserJoin.user_id WHERE user.id =:userId AND (room.type == 1 OR room.type == 65 OR room.type == 129)")
     abstract fun getDirectChatRoomWithUserId(userId: String): LiveData<List<Room>>;
 
-    @Query("SELECT room.* FROM room INNER JOIN roomUserJoin ON room.id = roomUserJoin.room_id INNER JOIN user ON user.id = roomUserJoin.user_id WHERE roomUserJoin.user_id =:userId AND (room.type == 2 OR room.type == 66 OR room.type == 130)")
+    @Query("SELECT room.* FROM room INNER JOIN RoomUserJoin ON room.id = RoomUserJoin.room_id INNER JOIN user ON user.id = RoomUserJoin.user_id WHERE RoomUserJoin.user_id =:userId AND (room.type == 2 OR room.type == 66 OR room.type == 130)")
     abstract fun getRoomChatRoomWithUserId(userId: String): LiveData<List<Room>>;
 
-    @Query("SELECT roomUserJoin.* FROM roomUserJoin INNER JOIN room ON room.id = roomUserJoin.room_id WHERE room.id =:roomId")
+    @Query("SELECT RoomUserJoin.* FROM RoomUserJoin INNER JOIN room ON room.id = RoomUserJoin.room_id WHERE room.id =:roomId")
     abstract fun getListRoomUserJoinWithRoomId(roomId: String): LiveData<List<RoomUserJoin>>;
 
-    @Query("DELETE FROM roomUserJoin")
+    @Query("DELETE FROM RoomUserJoin")
     abstract fun delete();
 
-    @Query("SELECT roomUserJoin.* FROM roomUserJoin INNER JOIN room ON room.id = roomUserJoin.room_id INNER JOIN user ON user.id = roomUserJoin.user_id WHERE room.id =:roomId AND user.id =:userId")
+    @Query("SELECT RoomUserJoin.* FROM RoomUserJoin INNER JOIN room ON room.id = RoomUserJoin.room_id INNER JOIN user ON user.id = RoomUserJoin.user_id WHERE room.id =:roomId AND user.id =:userId")
     abstract fun getRoomUserJoinWithRoomIdAndUserId(roomId: String, userId: String): LiveData<RoomUserJoin>;
 
-    @Query("SELECT roomUserJoin.* FROM roomUserJoin INNER JOIN room ON room.id = roomUserJoin.room_id INNER JOIN user ON user.id = roomUserJoin.user_id WHERE room.id =:roomId AND user.id =:userId")
+    @Query("SELECT RoomUserJoin.* FROM RoomUserJoin INNER JOIN room ON room.id = RoomUserJoin.room_id INNER JOIN user ON user.id = RoomUserJoin.user_id WHERE room.id =:roomId AND user.id =:userId")
     abstract fun getRoomUserJoinWithRoomIdAndUserIdRx(roomId: String, userId: String): Single<RoomUserJoin>;
 
-    @Query("SELECT DISTINCT roomUserJoin.room_id, Room.*, Message.*, User.id as user__id, User.name as user__name, User.status as user__status, User.avatarUrl as user__avatarUrl FROM Room LEFT JOIN RoomUserJoin ON roomUserJoin.room_id = Room.id LEFT JOIN Message ON Room.last_message_id = Message.message_id LEFT JOIN User ON User.id = Message.user_id WHERE room.type =:typeOne ORDER BY room.type DESC, Message.created_at DESC")
+    @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.*, Message.*, User.id as user__id, User.name as user__name, User.status as user__status, User.avatarUrl as user__avatarUrl FROM Room LEFT JOIN RoomUserJoin ON RoomUserJoin.room_id = Room.id LEFT JOIN Message ON Room.last_message_id = Message.message_id LEFT JOIN User ON User.id = Message.user_id WHERE room.type =:typeOne ORDER BY room.type DESC, Message.created_at DESC")
     abstract fun getListRoomListUserWithFilter(typeOne: Int): LiveData<List<RoomListUser>>
 
-    @Query("SELECT DISTINCT roomUserJoin.room_id, Room.*, Message.*, User.id as user__id, User.name as user__name, User.status as user__status, User.avatarUrl as user__avatarUrl FROM Room LEFT JOIN RoomUserJoin ON roomUserJoin.room_id = Room.id LEFT JOIN Message ON Room.last_message_id = Message.message_id LEFT JOIN User ON User.id = Message.user_id WHERE room.type =:typeOne OR room.type =:typeTwo ORDER BY room.type DESC, message.created_at DESC")
+    @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.*, Message.*, User.id as user__id, User.name as user__name, User.status as user__status, User.avatarUrl as user__avatarUrl FROM Room LEFT JOIN RoomUserJoin ON RoomUserJoin.room_id = Room.id LEFT JOIN Message ON Room.last_message_id = Message.message_id LEFT JOIN User ON User.id = Message.user_id WHERE room.type =:typeOne OR room.type =:typeTwo ORDER BY room.type DESC, message.created_at DESC")
     abstract fun getListRoomListUserWithFilter(typeOne: Int, typeTwo: Int): LiveData<List<RoomListUser>>
 
-    @Query("SELECT DISTINCT roomUserJoin.room_id, room.* FROM roomUserJoin INNER JOIN room ON roomUserJoin.room_id = room.id WHERE room.type =:typeOne OR room.type =:typeTwo")
+    @Query("SELECT DISTINCT RoomUserJoin.room_id, room.* FROM RoomUserJoin INNER JOIN room ON RoomUserJoin.room_id = room.id WHERE room.type =:typeOne OR room.type =:typeTwo")
     abstract fun getListRoomUserListTwo(typeOne: Int, typeTwo: Int): LiveData<List<RoomUserList>>
 
     @Query("SELECT DISTINCT User.* FROM User WHERE User.id IN (:ids)")
@@ -79,7 +79,7 @@ abstract class AbstractRoomUserJoinDao {
             "rJoin ON RoomUserJoin.room_id = Room.id INNER JOIN User ON User.id = RoomUserJoin.user_id WHERE Room.type =:type AND User.id !=:userId")
     abstract fun getListUserSuggested(type : Int, userId: String) :  LiveData<List<User>>;
 
-    @Query("SELECT DISTINCT roomUserJoin.room_id, Room.*, Message.*, User.id as user__id, User.name as user__name, User.status as user__status, User.avatarUrl as user__avatarUrl FROM Room LEFT JOIN RoomUserJoin ON roomUserJoin.room_id = Room.id LEFT JOIN Message ON Room.last_message_id = Message.message_id LEFT JOIN User ON User.id = Message.user_id WHERE room.id = :roomId")
+    @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.*, Message.*, User.id as user__id, User.name as user__name, User.status as user__status, User.avatarUrl as user__avatarUrl FROM Room LEFT JOIN RoomUserJoin ON RoomUserJoin.room_id = Room.id LEFT JOIN Message ON Room.last_message_id = Message.message_id LEFT JOIN User ON User.id = Message.user_id WHERE room.id = :roomId")
     abstract fun getRoomListUserFindByID(roomId: String) : LiveData<RoomListUser>
 
 

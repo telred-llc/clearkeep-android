@@ -63,7 +63,6 @@ class FindAndCreateNewConversationFragment : DataBindingDaggerFragment(), IFragm
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpViewModel();
-        (activity as NewRoomActivity).setNameTitle(resources.getString(R.string.new_conversation))
     }
 
     @SuppressLint("CheckResult")
