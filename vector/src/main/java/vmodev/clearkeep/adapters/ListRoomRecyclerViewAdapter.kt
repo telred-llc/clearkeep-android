@@ -30,7 +30,6 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
     private val layouts: Array<Int> = arrayOf(R.layout.room_invite_item, R.layout.room_item);
     private lateinit var itemClick: (RoomListUser, Int) -> Unit?
     private lateinit var itemLongClick: (RoomListUser) -> Unit?
-    private var callbackToGetUsers: IListRoomRecyclerViewAdapter.ICallbackToGetUsers? = null;
     private var lifecycleOwner: LifecycleOwner? = null;
     private var currentUserId: String? = null;
 
@@ -53,8 +52,7 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
         return DataBoundViewHolder(binding);
     }
 
-    override fun setCallbackToGetUsers(callback: IListRoomRecyclerViewAdapter.ICallbackToGetUsers, lifecycleOwner: LifecycleOwner, currentUserId: String?) {
-        callbackToGetUsers = callback;
+    override fun setLifeCycleOwner(lifecycleOwner: LifecycleOwner, currentUserId: String?) {
         this.lifecycleOwner = lifecycleOwner;
         this.currentUserId = currentUserId;
     }
@@ -66,26 +64,18 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
     override fun onBindViewHolder(p0: DataBoundViewHolder<ViewDataBinding>, p1: Int) {
         if (getItemViewType(p1) == 0) {
             (p0.binding as RoomInviteItemBinding).roomListUser = getItem(p1);
-            (p0.binding as RoomInviteItemBinding).name = getItem(p1).room?.name?.let { FormatString.formatName(it) }
+            p0.binding.name = getItem(p1).room?.name?.let { FormatString.formatName(it) }
             p0.binding.executePendingBindings();
         } else {
             (p0.binding as RoomItemBinding).roomListUser = getItem(p1);
             if (getItem(p1).room?.notifyCount==0){
                 p0.binding.backgroundRoomItem.setBackgroundColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_white, null))
-//                p0.binding.layoutAvatar.setColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_white, null))
             }else{
                 p0.binding.backgroundRoomItem.setBackgroundColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_background_notification,null))
-//                p0.binding.layoutAvatar.setColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_background_notification, null))
 
             }
             p0.binding.executePendingBindings();
             p0.binding.currentUserId = currentUserId;
-            callbackToGetUsers?.let { callback ->
-                getItem(p1).roomUserJoin?.let {
-                    val userIds = Array(it.size) { i -> it[i].userId };
-                    p0.binding.users = callback.getUsers(userIds);
-                }
-            }
         }
     }
 

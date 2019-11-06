@@ -49,10 +49,10 @@ abstract class AbstractUserDao {
     @Query("DELETE FROM user")
     abstract fun delete();
 
-    @Query("SELECT user.* FROM user INNER JOIN roomUserJoin ON user.id = roomUserJoin.user_id INNER JOIN room ON room.id = roomUserJoin.room_id WHERE room.id =:roomId")
+    @Query("SELECT user.* FROM user INNER JOIN RoomUserJoin ON user.id = RoomUserJoin.user_id INNER JOIN room ON room.id = RoomUserJoin.room_id WHERE room.id =:roomId")
     abstract fun getUsersWithRoomId(roomId: String): LiveData<List<User>>
 
-    @Query("SELECT user.* FROM user INNER JOIN roomUserJoin ON user.id = roomUserJoin.user_id INNER JOIN room ON room.id = roomUserJoin.room_id WHERE room.id =:roomId")
+    @Query("SELECT user.* FROM user INNER JOIN RoomUserJoin ON user.id = RoomUserJoin.user_id INNER JOIN room ON room.id = RoomUserJoin.room_id WHERE room.id =:roomId")
     abstract fun getUsersWithRoomIdRx(roomId: String): Single<List<User>>
 
     @Query("SELECT * FROM user WHERE id IN (:ids)")

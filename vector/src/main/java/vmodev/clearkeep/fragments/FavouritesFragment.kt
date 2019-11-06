@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.orhanobut.dialogplus.DialogPlus
@@ -21,12 +20,8 @@ import vmodev.clearkeep.activities.RoomSettingsActivity
 import vmodev.clearkeep.adapters.BottomDialogFavouriteRoomLongClick
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
-import vmodev.clearkeep.factories.viewmodels.interfaces.IFavouritesFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
-import vmodev.clearkeep.fragments.Interfaces.IFavouritesFragment
 import vmodev.clearkeep.fragments.Interfaces.IFragment
-import vmodev.clearkeep.viewmodelobjects.Resource
-import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractFavouritesFragmentViewModel
 import javax.inject.Inject
 import javax.inject.Named
@@ -45,7 +40,7 @@ private const val GO_TO_ROOM_CODE = 12432;
  * create an instance of this fragment.
  *
  */
-class FavouritesFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecyclerViewAdapter.ICallbackToGetUsers {
+class FavouritesFragment : DataBindingDaggerFragment(), IFragment {
     // TODO: Rename and change types of parameters
     // You can declare variable to pass from activity is here
 
@@ -83,8 +78,8 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecy
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner;
-        listDirectRecyclerViewAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, userId);
-        listGroupRecyclerViewAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, userId);
+        listDirectRecyclerViewAdapter.setLifeCycleOwner(viewLifecycleOwner, userId);
+        listGroupRecyclerViewAdapter.setLifeCycleOwner(viewLifecycleOwner, userId);
 //        listGroupRecyclerViewAdapter.setDataBindingComponent(dataBindingComponent);
 //        listDirectRecyclerViewAdapter.setDataBindingComponent(dataBindingComponent);
         listGroupRecyclerViewAdapter.setOnItemClick { room, i ->
@@ -159,10 +154,6 @@ class FavouritesFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecy
         })
         viewModelFactory.getViewModel().setListTypeFavouritesDirect(arrayOf(129))
         viewModelFactory.getViewModel().setListTypeFavouritesGroup(arrayOf(130))
-    }
-
-    override fun getUsers(userIds: Array<String>): LiveData<Resource<List<User>>> {
-        return viewModelFactory.getViewModel().getRoomUserJoinResult(userIds);
     }
 
     private fun gotoRoom(roomId: String) {
