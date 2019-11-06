@@ -14,6 +14,7 @@ interface IListRoomRecyclerViewAdapter {
     fun setCallbackToGetUsers(callback: ICallbackToGetUsers, lifecycleOwner: LifecycleOwner, currentUserId: String?);
 
     companion object {
+        const val SEARCH_ROOM = "SEARCH ROOM"
         const val ROOM = "ROOM";
         const val ROOM_CONTACT = "ROOM_CONTACT";
         const val SHARE_FILE ="SHARE_FILE"

@@ -10,6 +10,7 @@ import dagger.android.ContributesAndroidInjector
 import im.vector.BuildConfig
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
+import vmodev.clearkeep.adapters.ListRoomSearchRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ShareFileRecyclerViewAdapter
 import vmodev.clearkeep.aes.AESCrypto
 import vmodev.clearkeep.aes.interfaces.ICrypto
@@ -105,6 +106,27 @@ abstract class AppModule {
             }, dataBindingComponent = dataBindingComponent)
 
         }
+
+        @Provides
+        @JvmStatic
+        @Named(value = IListRoomRecyclerViewAdapter.SEARCH_ROOM)
+        fun provideListRoomSearchAdapter(appExecutors: AppExecutors, dataBindingComponent : IDataBindingComponent): IListRoomRecyclerViewAdapter {
+            return ListRoomSearchRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<vmodev.clearkeep.viewmodelobjects.RoomListUser>() {
+                override fun areItemsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
+                    return TextUtils.equals(p0.room?.id, p1.room?.id);
+                }
+
+                override fun areContentsTheSame(p0: vmodev.clearkeep.viewmodelobjects.RoomListUser, p1: vmodev.clearkeep.viewmodelobjects.RoomListUser): Boolean {
+                    return p0.room?.name == p1.room?.name && p0.room?.avatarUrl == p1.room?.avatarUrl
+                            && p0.room?.notifyCount == p1.room?.notifyCount && p0.room?.type == p1.room?.type
+                            && p0.room?.messageId == p1.room?.messageId && p0.room?.notificationState == p1.room?.notificationState
+                            && TextUtils.equals(p0.lastMessage?.id, p1.lastMessage?.id)
+                            && p0.lastMessage?.createdAt == p1.lastMessage?.createdAt;
+                }
+            }, dataBindingComponent = dataBindingComponent)
+
+        }
+
 
         @Provides
         @JvmStatic

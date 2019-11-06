@@ -1,5 +1,6 @@
 package vmodev.clearkeep.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,9 +11,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DividerItemDecoration
 
 import im.vector.R
 import im.vector.databinding.FragmentSearchMessagesBinding
+import im.vector.extensions.hideKeyboard
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import vmodev.clearkeep.activities.RoomActivity
@@ -55,7 +58,6 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
 
     private val listMessage = ArrayList<MessageRoomUser>();
     private lateinit var listSearchAdapter: ListSearchMessageRecyclerViewAdapter;
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -70,8 +72,10 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
         return binding.root;
     }
 
+    @SuppressLint("CheckResult", "ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.recyclerView.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
 
         listSearchAdapter = ListSearchMessageRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
             override fun areItemsTheSame(p0: MessageRoomUser, p1: MessageRoomUser): Boolean {
@@ -118,6 +122,12 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
                     false
                 }
             })
+
+//            binding.listMessage =  viewModelFactory.getViewModel().decryptListMessage(listMessage)
+        }
+        binding.recyclerView.setOnTouchListener { v, event ->
+            hideKeyboard()
+            return@setOnTouchListener true
         }
         binding.lifecycleOwner = viewLifecycleOwner;
     }

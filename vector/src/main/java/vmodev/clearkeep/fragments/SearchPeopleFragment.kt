@@ -1,5 +1,6 @@
 package vmodev.clearkeep.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,8 +11,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DividerItemDecoration
 import im.vector.R
 import im.vector.databinding.FragmentSearchPeopleBinding
+import im.vector.extensions.hideKeyboard
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -62,9 +65,10 @@ class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
         return binding.root;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding.recyclerView.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         val listUserAdapter = ListUserRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<User>() {
             override fun areItemsTheSame(p0: User, p1: User): Boolean {
                 return p0.id == p1.id;
@@ -83,6 +87,10 @@ class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
         binding.recyclerView.adapter = listUserAdapter;
         binding.users = viewModelFactory.getViewModel().getSearchResult();
         viewModelFactory.getViewModel().getSearchResult().observe(viewLifecycleOwner, Observer { t -> listUserAdapter.submitList(t?.data) });
+        binding.recyclerView.setOnTouchListener { v, event ->
+            hideKeyboard()
+            return@setOnTouchListener true
+        }
         binding.lifecycleOwner = viewLifecycleOwner;
 
     }

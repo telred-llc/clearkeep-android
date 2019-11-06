@@ -1,5 +1,6 @@
 package vmodev.clearkeep.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,8 +11,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DividerItemDecoration
 import im.vector.R
 import im.vector.databinding.FragmentSearchFilesBinding
+import im.vector.extensions.hideKeyboard
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import vmodev.clearkeep.activities.RoomActivity
@@ -72,9 +75,10 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
         return listener?.getSearchViewTextChange();
     }
 
+    @SuppressLint("CheckResult", "ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding.recyclerView.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         listSearchAdapter = ListSearchMessageRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
             override fun areItemsTheSame(p0: MessageRoomUser, p1: MessageRoomUser): Boolean {
                 return p0.message?.id == p1.message?.id
@@ -119,6 +123,10 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
                     false
                 }
             })
+        }
+        binding.recyclerView.setOnTouchListener { v, event ->
+            hideKeyboard()
+            return@setOnTouchListener true
         }
         binding.lifecycleOwner = viewLifecycleOwner;
     }

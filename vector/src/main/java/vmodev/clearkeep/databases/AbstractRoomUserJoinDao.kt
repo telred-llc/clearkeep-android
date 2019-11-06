@@ -66,7 +66,7 @@ abstract class AbstractRoomUserJoinDao {
     @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.*, Message.* FROM RoomUserJoin INNER JOIN Room ON RoomUserJoin.room_id = Room.id LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE room.id IN (:roomIds)")
     abstract fun getListRoomListUserWithListRoomId(roomIds: List<String>): LiveData<List<RoomListUser>>;
 
-    @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.*, Message.* FROM Room LEFT JOIN RoomUserJoin ON RoomUserJoin.room_id = Room.id LEFT JOIN Message ON Room.last_message_id = Message.message_id WHERE Room.name LIKE :query AND type IN(:filters)")
+    @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.*, Message.*,User.id as user__id, User.name as user__name , User.status as user__status, User.avatarUrl as user__avatarUrl FROM Room LEFT JOIN RoomUserJoin ON RoomUserJoin.room_id = Room.id LEFT JOIN Message ON Room.last_message_id = Message.message_id LEFT JOIN User ON User.id = Message.user_id WHERE Room.name LIKE :query AND type IN(:filters)")
     abstract fun findRoomByNameContain(filters: List<Int>, query: String): LiveData<List<RoomListUser>>
 
     @Query("SELECT DISTINCT RoomUserJoin.room_id, Room.*, Message.* FROM Room LEFT JOIN RoomUserJoin ON RoomUserJoin.room_id = Room.id LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE room.type =:typeOne OR room.type =:typeTwo ORDER BY room.type DESC, Message.created_at DESC")
