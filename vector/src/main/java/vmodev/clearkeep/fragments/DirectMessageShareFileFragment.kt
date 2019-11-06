@@ -8,36 +8,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DividerItemDecoration
 import im.vector.R
 import androidx.lifecycle.Observer
-import im.vector.activity.VectorHomeActivity
-import im.vector.databinding.FragmentDirectMessageBinding
 import im.vector.databinding.FragmentDirectMessageShareFileBinding
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
-import org.matrix.androidsdk.core.Log
 import org.matrix.androidsdk.data.RoomMediaMessage
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.applications.IApplication
-import vmodev.clearkeep.factories.viewmodels.interfaces.IDirectMessageFragmentViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
-import vmodev.clearkeep.fragments.Interfaces.IDirectMessageFragment
 import vmodev.clearkeep.fragments.Interfaces.IDirectMessageShareFileFragment
-import vmodev.clearkeep.ultis.OnSingleClickListener
-import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
-import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractDirectMessageShareFileFragmentViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomShareFileFragmentViewModel
 import java.util.ArrayList
 import javax.inject.Inject
 import javax.inject.Named
-import kotlin.math.log
 
-class DirectMessageShareFileFragment : DataBindingDaggerFragment(), IDirectMessageShareFileFragment, IListRoomRecyclerViewAdapter.ICallbackToGetUsers {
+class DirectMessageShareFileFragment : DataBindingDaggerFragment(), IDirectMessageShareFileFragment {
 
     companion object {
         /**
@@ -107,7 +96,7 @@ class DirectMessageShareFileFragment : DataBindingDaggerFragment(), IDirectMessa
     }
 
     private fun setEvent() {
-        listRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, applcation.getUserId());
+        listRoomAdapter.setLifeCycleOwner(viewLifecycleOwner, applcation.getUserId());
         listRoomAdapter.setOnItemClick { roomListUser, i ->
             shareFile(applcation.getUserId(), roomListUser.room!!.id)
         }
@@ -137,10 +126,6 @@ class DirectMessageShareFileFragment : DataBindingDaggerFragment(), IDirectMessa
 
     override fun onClickItemtRoom(): Observable<String> {
         return onClickItem
-    }
-
-    override fun getUsers(userIds: Array<String>): LiveData<Resource<List<User>>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun getFragment(): Fragment {

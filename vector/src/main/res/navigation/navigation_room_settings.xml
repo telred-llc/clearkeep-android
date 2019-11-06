@@ -40,16 +40,22 @@
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
+
     </fragment>
     <fragment
         android:id="@+id/inviteUsersToRoomFragment"
         android:name="vmodev.clearkeep.fragments.InviteUsersToRoomFragment"
-        android:label="Invite"
+        android:label="Add Members"
         tools:layout="@layout/activity_invite_users_to_room">
         <argument
             android:name="roomId"
             android:defaultValue="@null"
             app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="listUser"
+            android:defaultValue="@null"
+            app:argType="string[]"
             app:nullable="true" />
     </fragment>
     <fragment
@@ -66,7 +72,7 @@
     <fragment
         android:id="@+id/roomSettingsFragment"
         android:name="vmodev.clearkeep.fragments.RoomSettingsFragment"
-        android:label="Settings" >
+        android:label="Settings">
         <action
             android:id="@+id/otherSettings"
             app:destination="@id/otherRoomSettingsFragment"
@@ -83,9 +89,9 @@
             app:popExitAnim="@anim/fragment_close_exit" />
         <argument
             android:name="roomId"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
         <action
             android:id="@+id/inviteUsersToRoom"
             app:destination="@id/inviteUsersToRoomFragment"

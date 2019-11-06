@@ -2,13 +2,14 @@ package vmodev.clearkeep.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
@@ -43,7 +44,7 @@ private const val GO_TO_ROOM_CODE = 12432;
  * create an instance of this fragment.
  *
  */
-class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecyclerViewAdapter.ICallbackToGetUsers {
+class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractListRoomFragmentViewModel>;
@@ -183,23 +184,23 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
             }
         }
         listFavouritesRoomAdapter.setOnItemStickyHeaderClick {
+            Log.d("Position", it.toString());
             if (!expandable) {
-                rooms.removeAt(0);
                 rooms.removeAll(favouritesCurrentList);
+                rooms.add(0, RoomListUser(null, null, null))
                 listFavouritesRoomAdapter.getAdapter().submitList(rooms);
                 listFavouritesRoomAdapter.getAdapter().notifyDataSetChanged();
                 expandable = true;
-            }
-            else{
-                rooms.add(0, RoomListUser(null, null, null))
-                rooms.addAll(0,favouritesCurrentList);
+            } else {
+                rooms.removeAt(0);
+                rooms.addAll(0, favouritesCurrentList);
                 listFavouritesRoomAdapter.getAdapter().submitList(rooms);
                 listFavouritesRoomAdapter.getAdapter().notifyDataSetChanged();
                 expandable = false;
             }
         }
 
-        binding.recyclerViewListFavouritesChat.addItemDecoration(StickyHeaderItemDecoration(listFavouritesRoomAdapter as IStickyHeaderItemDecorationListener))
+        binding.recyclerViewListFavouritesChat.addItemDecoration(StickyHeaderItemDecoration(listFavouritesRoomAdapter as IStickyHeaderItemDecorationListener, binding.recyclerViewListFavouritesChat))
         binding.recyclerViewListFavouritesChat.addItemDecoration(DividerItemDecoration(this.activity, DividerItemDecoration.VERTICAL));
         binding.recyclerViewListFavouritesChat.isNestedScrollingEnabled = false;
         binding.recyclerViewListFavouritesChat.adapter = listFavouritesRoomAdapter.getAdapter();
@@ -215,7 +216,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
                 listFavouritesRoomAdapter.setListHeader(arrayListOf
                 (ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(0, R.drawable.ic_star_24dp, getString(R.string.favourites), favouritesCurrentList.size),
                         ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size, R.drawable.ic_star_24dp, getString(R.string.room_chats), roomsCurrentList.size)
-                        ,ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size + roomsCurrentList.size, R.drawable.ic_star_24dp, getString(R.string.direct_chats), directsCurrentList.size)));
+                        , ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size + roomsCurrentList.size, R.drawable.ic_star_24dp, getString(R.string.direct_chats), directsCurrentList.size)));
                 listFavouritesRoomAdapter.getAdapter().notifyDataSetChanged();
             }
         });
@@ -230,7 +231,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
                 listFavouritesRoomAdapter.setListHeader(arrayListOf
                 (ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(0, R.drawable.ic_star_24dp, getString(R.string.favourites), favouritesCurrentList.size),
                         ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size, R.drawable.ic_star_24dp, getString(R.string.room_chats), roomsCurrentList.size)
-                        ,ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size + roomsCurrentList.size, R.drawable.ic_star_24dp, getString(R.string.direct_chats), directsCurrentList.size)));
+                        , ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size + roomsCurrentList.size, R.drawable.ic_star_24dp, getString(R.string.direct_chats), directsCurrentList.size)));
                 listFavouritesRoomAdapter.getAdapter().notifyDataSetChanged();
             }
         });
@@ -245,7 +246,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
                 listFavouritesRoomAdapter.setListHeader(arrayListOf
                 (ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(0, R.drawable.ic_star_24dp, getString(R.string.favourites), favouritesCurrentList.size),
                         ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size, R.drawable.ic_star_24dp, getString(R.string.room_chats), roomsCurrentList.size)
-                        ,ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size + roomsCurrentList.size, R.drawable.ic_star_24dp, getString(R.string.direct_chats), directsCurrentList.size)));
+                        , ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size + roomsCurrentList.size, R.drawable.ic_star_24dp, getString(R.string.direct_chats), directsCurrentList.size)));
                 listFavouritesRoomAdapter.getAdapter().notifyDataSetChanged();
             }
         });
@@ -260,10 +261,6 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
     }
 
     private var expandable: Boolean = false;
-
-    override fun getUsers(userIds: Array<String>): LiveData<Resource<List<User>>> {
-        return viewModelFactory.getViewModel().getRoomUserJoinResult(userIds);
-    }
 
     private fun previewRoom(roomId: String) {
         val intent = Intent(this.context, PreviewInviteRoomActivity::class.java);

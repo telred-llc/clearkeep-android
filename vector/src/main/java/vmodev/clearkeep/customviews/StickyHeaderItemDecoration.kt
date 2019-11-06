@@ -1,15 +1,43 @@
 package vmodev.clearkeep.customviews
 
 import android.graphics.Canvas
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import vmodev.clearkeep.customviews.interfaces.IStickyHeaderItemDecorationListener
 
-class StickyHeaderItemDecoration constructor(private val listener: IStickyHeaderItemDecorationListener) : RecyclerView.ItemDecoration() {
-
+class StickyHeaderItemDecoration constructor(private val listener: IStickyHeaderItemDecorationListener, private val recyclerView: RecyclerView) : RecyclerView.ItemDecoration() {
     private var stickyHeaderHeight: Int = 0;
+    private var currentHeaderPos: Int = -1;
+    private var currentHeader: View? = null;
+    private val touchListener = object : RecyclerView.OnItemTouchListener {
+        override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+
+        }
+
+        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+            if (e.y <= stickyHeaderHeight && MotionEvent.ACTION_DOWN == e.action) {
+                listener.onClickStickyHeader(currentHeaderPos);
+                return true;
+            }
+            return false;
+        }
+
+        override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+
+        }
+    }
+
+    init {
+        recyclerView.addOnItemTouchListener(touchListener);
+    }
+
+    protected fun finalize() {
+        recyclerView.removeOnItemTouchListener(touchListener);
+    }
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDrawOver(c, parent, state)
@@ -18,15 +46,20 @@ class StickyHeaderItemDecoration constructor(private val listener: IStickyHeader
             if (topChildPosition == RecyclerView.NO_POSITION)
                 return;
             val headerPosition = listener.getHeaderPositionForItem(topChildPosition);
-            val currentHeader = listener.createView(headerPosition, parent);
-            fixLayoutSize(parent, currentHeader);
-            val contactPoint = currentHeader.bottom;
-            val childContact = getChildInContact(parent, contactPoint, headerPosition);
-            if (childContact != null && listener.isHeader(parent.getChildAdapterPosition(childContact))) {
-                moveHeader(c, currentHeader, childContact);
-            } else {
-                drawHeader(c, currentHeader);
+            if (currentHeaderPos != headerPosition) {
+                currentHeader = listener.createView(headerPosition, parent);
             }
+            currentHeader?.let {
+                fixLayoutSize(parent, it)
+                val contactPoint = it.bottom;
+                val childContact = getChildInContact(parent, contactPoint, headerPosition);
+                if (childContact != null && listener.isHeader(parent.getChildAdapterPosition(childContact))) {
+                    moveHeader(c, it, childContact);
+                } else {
+                    drawHeader(c, it);
+                }
+            };
+            currentHeaderPos = headerPosition;
         };
     }
 

@@ -35,7 +35,6 @@ class ListRoomWithStickyHeaderRecyclerViewAdapter constructor(appExecutors: AppE
     private lateinit var itemClick: (RoomListUser, Int) -> Unit?
     private lateinit var itemLongClick: (RoomListUser) -> Unit?
     private lateinit var itemHeaderClick: (Int) -> Unit?
-    private var callbackToGetUsers: IListRoomWithStickyHeaderRecyclerViewAdapter.ICallbackToGetUsers? = null;
     private var lifecycleOwner: LifecycleOwner? = null;
     private var currentUserId: String? = null;
     private var listHeader: List<StickyHeaderData> = ArrayList();
@@ -59,15 +58,13 @@ class ListRoomWithStickyHeaderRecyclerViewAdapter constructor(appExecutors: AppE
             }
             else -> {
                 binding = DataBindingUtil.inflate<ItemRoomHeaderBinding>(LayoutInflater.from(p0.context), layouts[p1], p0, false, dataBindingComponent.getDataBindingComponent());
-                binding.root.setOnClickListener { itemHeaderClick?.invoke(0) }
             }
         }
         lifecycleOwner?.let { binding.lifecycleOwner = lifecycleOwner }
         return DataBoundViewHolder(binding);
     }
 
-    override fun setCallbackToGetUsers(callback: IListRoomWithStickyHeaderRecyclerViewAdapter.ICallbackToGetUsers, lifecycleOwner: LifecycleOwner, currentUserId: String?) {
-        callbackToGetUsers = callback;
+    override fun setLifeCycleOwner(lifecycleOwner: LifecycleOwner, currentUserId: String?) {
         this.lifecycleOwner = lifecycleOwner;
         this.currentUserId = currentUserId;
     }
@@ -96,26 +93,15 @@ class ListRoomWithStickyHeaderRecyclerViewAdapter constructor(appExecutors: AppE
                 }
                 p0.binding.executePendingBindings();
                 p0.binding.currentUserId = currentUserId;
-                callbackToGetUsers?.let { callback ->
-                    getItem(p1).roomUserJoin?.let {
-                        val userIds = Array(it.size) { i -> it[i].userId };
-                        p0.binding.users = callback.getUsers(userIds);
-                    }
-                }
             }
             else -> {
-                when (p1) {
-                    0 -> {
-                        (p0.binding as ItemRoomHeaderBinding).header = listHeader[0];
-                    }
-                    listHeader[0].headerSize -> {
-                        (p0.binding as ItemRoomHeaderBinding).header = listHeader[1];
-                    }
-                    listHeader[0].headerSize + listHeader[1].headerSize -> {
-                        (p0.binding as ItemRoomHeaderBinding).header = listHeader[2];
+                for ((index, item) in listHeader.withIndex()){
+                    if (item.headerPosition == p1){
+                        (p0.binding as ItemRoomHeaderBinding).header = item;
+                        p0.binding.root.setOnClickListener { itemHeaderClick?.invoke(index); }
+                        break;
                     }
                 }
-
             }
         }
     }
@@ -133,17 +119,25 @@ class ListRoomWithStickyHeaderRecyclerViewAdapter constructor(appExecutors: AppE
     }
 
     override fun getHeaderPositionForItem(itemPosition: Int): Int {
-        if (itemPosition < listHeader[0].headerSize) {
-            return 0;
-        } else if (itemPosition < listHeader[1].headerSize + listHeader[0].headerSize) {
-            return 1;
-        } else {
-            return 2;
+        var position : Int = 0;
+        for ((index, item) in listHeader.withIndex()){
+            if (itemPosition < item.headerPosition + item.headerSize){
+                position = index;
+                break;
+            }
         }
+        return position;
     }
 
     override fun isHeader(itemPosition: Int): Boolean {
-        return itemPosition == 0 || itemPosition == listHeader[0] .headerSize|| itemPosition == listHeader[0].headerSize + listHeader[1].headerSize;
+        var isHeader : Boolean = false;
+        for ((index, item) in listHeader.withIndex()){
+            if (itemPosition == item.headerPosition){
+                isHeader = true;
+                break;
+            }
+        }
+        return isHeader;
     }
 
     override fun setListHeader(listHeader: List<StickyHeaderData>) {
@@ -156,10 +150,15 @@ class ListRoomWithStickyHeaderRecyclerViewAdapter constructor(appExecutors: AppE
 
     override fun createView(headerPosition: Int, parent: RecyclerView): View {
         val binding = DataBindingUtil.inflate<ItemRoomHeaderBinding>(LayoutInflater.from(parent.context), R.layout.item_room_header, parent, false, dataBindingComponent.getDataBindingComponent());
-        binding.header = listHeader[headerPosition];
-        Log.d("Position", binding.header.toString())
+        val text = listHeader[headerPosition].headerName + "(" + listHeader[headerPosition].headerSize + ")";
+        binding.txtFavourites.text = text;
         return binding.root;
     }
+
+    override fun onClickStickyHeader(headerPosition: Int) {
+        itemHeaderClick?.invoke(headerPosition);
+    }
+
     data class StickyHeaderData(
             val headerPosition : Int,
             val headerIcon : Int,

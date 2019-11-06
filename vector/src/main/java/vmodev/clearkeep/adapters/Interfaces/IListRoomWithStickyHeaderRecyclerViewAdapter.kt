@@ -13,10 +13,6 @@ interface IListRoomWithStickyHeaderRecyclerViewAdapter<T> {
     fun setOnItemLongClick(itemLongClick: (RoomListUser) -> Unit?)
     fun setOnItemStickyHeaderClick(itemStickyHeaderClick: (Int) -> Unit?)
     fun getAdapter(): ListAdapter<RoomListUser, *>
-    fun setCallbackToGetUsers(callback: ICallbackToGetUsers, lifecycleOwner: LifecycleOwner, currentUserId: String?);
+    fun setLifeCycleOwner(lifecycleOwner: LifecycleOwner, currentUserId: String?);
     fun setListHeader(listHeader: List<T>);
-
-    interface ICallbackToGetUsers {
-        fun getUsers(userIds: Array<String>): LiveData<Resource<List<User>>>;
-    }
 }

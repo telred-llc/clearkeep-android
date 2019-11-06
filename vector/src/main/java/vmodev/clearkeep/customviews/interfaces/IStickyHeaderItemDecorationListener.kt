@@ -8,4 +8,5 @@ interface IStickyHeaderItemDecorationListener {
     fun getHeaderPositionForItem(itemPosition: Int): Int;
     fun isHeader(itemPosition: Int): Boolean;
     fun createView(headerPosition: Int, parent: RecyclerView) : View;
+    fun onClickStickyHeader(headerPosition: Int);
 }

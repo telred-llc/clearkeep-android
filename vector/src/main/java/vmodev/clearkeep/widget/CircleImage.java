@@ -3,6 +3,7 @@ package vmodev.clearkeep.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -16,8 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
-import com.bumptech.glide.Glide;
-
 import im.vector.R;
 
 import static android.graphics.Color.BLACK;
@@ -27,14 +26,15 @@ import static android.graphics.Color.BLACK;
  */
 
 public class CircleImage extends AppCompatImageView {
-    private static final float STROKE_WIDTH = 5f;
+    private static final float STROKE_WIDTH = 20f;
     private RectF mRect = new RectF();
     private Path mClipPath = new Path();
-//    private int mImageSize;
+    //    private int mImageSize;
     private Drawable mDrawable;
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint mBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private int mBorderCorlor;
+    private int mBorderColor;
+    private float stroke_width;
 //    private int mImageResource;
 
     public CircleImage(Context context) {
@@ -59,9 +59,8 @@ public class CircleImage extends AppCompatImageView {
                 .getTheme()
                 .obtainStyledAttributes(attr, R.styleable.CircleImage, 0, 0);
         try {
-            mBorderCorlor = typedArray.getColor(R.styleable.CircleImage_border_color,
-                    getResources().getColor(R.color.colorAccent));
-//            mImageResource = typedArray.getInteger(R.styleable.CircleImage_src, R.drawable.admin_icon);
+            mBorderColor = typedArray.getColor(R.styleable.CircleImage_border_color, Color.WHITE);
+            stroke_width = typedArray.getDimension(R.styleable.CircleImage_stroke_width, 0);
         } finally {
             typedArray.recycle();
         }
@@ -77,8 +76,7 @@ public class CircleImage extends AppCompatImageView {
                 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             setLayerType(LAYER_TYPE_SOFTWARE, null);
         }
-//        mImageSize = getContext().getResources().getDimensionPixelSize(R.dimen.dp_60);
-        setBorderCorlor(mBorderCorlor);
+        setBorderColor(mBorderColor);
 
     }
 
@@ -95,8 +93,8 @@ public class CircleImage extends AppCompatImageView {
                 /**
                  * draw a circle shape for placeholder image
                  */
-                canvas.drawCircle(centerX, centerY, canvas.getHeight() / 2, mPaint);
-                canvas.drawCircle(centerX, centerY, canvas.getHeight() / 2, mBorderPaint);
+                canvas.drawCircle(centerX, centerY, (canvas.getHeight() / 2) - stroke_width, mBorderPaint);
+
             }
 
             @Override
@@ -135,9 +133,9 @@ public class CircleImage extends AppCompatImageView {
     @Override
     protected void onDraw(Canvas canvas) {
         float borderWidth = 2f;
-        canvas.drawCircle(mRect.centerX(), mRect.centerY(), (mRect.height() / 2) - borderWidth, mPaint);
-        canvas.drawCircle(mRect.centerX(), mRect.centerY(), (mRect.height() / 2) - borderWidth, mBorderPaint);
-        mClipPath.addCircle(mRect.centerX(), mRect.centerY(), (mRect.height() / 2), Path.Direction.CW);
+//        canvas.drawCircle(mRect.centerX(), mRect.centerY(), (mRect.height() / 2) - borderWidth, mPaint);
+        canvas.drawCircle(mRect.centerX(), mRect.centerY(), (mRect.height() / 2), mBorderPaint);
+        mClipPath.addCircle(mRect.centerX(), mRect.centerY(), (mRect.height() / 2) - stroke_width, Path.Direction.CW);
         canvas.clipPath(mClipPath);
         super.onDraw(canvas);
         showImage();
@@ -147,11 +145,10 @@ public class CircleImage extends AppCompatImageView {
         fillImages();
     }
 
-    private void setBorderCorlor(int color) {
+    private void setBorderColor(int color) {
         mBorderPaint.setColor(color);
-        mBorderPaint.setStyle(Paint.Style.STROKE);
+        mBorderPaint.setStyle(Paint.Style.FILL);
         mBorderPaint.setAntiAlias(true);
-        mBorderPaint.setStrokeWidth(STROKE_WIDTH);
         invalidate();
     }
 }

@@ -658,7 +658,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         })
 
         currentRoom = mxSession!!.dataHandler.getRoom(roomId, false)
-        viewModelFactory.getViewModel().setIdForUpdateRoomNotifyCount(currentRoom!!.roomId).subscribeOn(Schedulers.io()).subscribe();
+        if(!currentRoom?.roomId.isNullOrEmpty()){
+            viewModelFactory.getViewModel().setIdForUpdateRoomNotifyCount(currentRoom!!.roomId).subscribeOn(Schedulers.io()).subscribe();
+        }
         mEditText!!.setAddColonOnFirstItem(true)
         mEditText!!.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: android.text.Editable) {

@@ -61,5 +61,5 @@ public interface MatrixService {
     fun getUserProfile(userId: String) : Observable<User>;
     fun updateRoomName(roomId : String, roomName : String) : Observable<String>;
     fun updateRoomTopic(roomId : String, roomTopic : String) : Observable<String>;
-    fun updateRoomAvatar(inputStream: InputStream) : Observable<String>;
+    fun updateRoomAvatar(roomId: String,inputStream: InputStream) : Observable<String>;
 }

@@ -32,7 +32,7 @@
     <dimen name="text_19_sp">19sp</dimen>
     <dimen name="text_21_sp">21sp</dimen>
     <dimen name="image_avatar_status_size">60dp</dimen>
-
+  
     <!--    image profile status-->
     <dimen name="status_online_size">14dp</dimen>
     <dimen name="margin_status_online">3dp</dimen>
@@ -82,4 +82,9 @@
     <dimen name="margin_end_status_active">25dp</dimen>
     <!--    size control-->
     <dimen name="height_button_size">36dp</dimen>
+
+    <!--    screen edit room-->
+    <dimen name="margin_camera_bottom_avatar">27dp</dimen>
+    <dimen name="height_view_select_picture">63dp</dimen>
+
 </resources>
