@@ -37,7 +37,6 @@
     </data>
 
     <FrameLayout
-        android:background="@color/primary_hint_text_color_light"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout

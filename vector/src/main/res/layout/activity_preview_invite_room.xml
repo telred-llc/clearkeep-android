@@ -58,7 +58,7 @@
                     android:layout_height="match_parent"
                     android:paddingHorizontal="@dimen/padding_small"
                     app:srcCompat="@drawable/ic_back"
-                    app:tint="?attr/color_text_title" />
+                    app:tint="?attr/color_tint_img_back" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -73,7 +73,7 @@
                         android:layout_height="wrap_content"
                         android:singleLine="true"
                         android:text="@{nameTopic}"
-                        android:textColor="?attr/color_text_title"
+                        android:textColor="?attr/color_text_tool_bar"
                         android:textSize="@dimen/text_21_sp"
                         tools:text="PINTEREST" />
 
