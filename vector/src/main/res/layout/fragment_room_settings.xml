@@ -35,7 +35,7 @@
     </data>
 
     <RelativeLayout
-        android:background="@color/color_white"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -60,9 +60,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:text="@{@string/this_room_created_by+' '}"
-                        android:textColor="@color/lb_grey"
                         android:textSize="@dimen/text_13_sp"
-                        tools:text="This room created 3:39 AM by " />
+                        tools:text="This room created 3:39 AM by "
+                        android:textColor="?attr/color_text_app_default"
+                        />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -207,7 +208,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:src="@drawable/ic_members"
-                        android:tint="?attr/icon_color" />
+                        android:tint="?attr/color_icon_app_default" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -216,7 +217,8 @@
                         android:layout_margin="@dimen/margin_normal"
                         android:layout_weight="1"
                         android:text="@string/members"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textSize="@dimen/text_17_sp"
+                        android:textColor="?attr/color_text_app_default"/>
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -240,7 +242,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:src="@drawable/ic_folder"
-                        android:tint="?attr/icon_color" />
+                        android:tint="?attr/color_icon_app_default" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -249,7 +251,8 @@
                         android:layout_margin="@dimen/margin_normal"
                         android:layout_weight="1"
                         android:text="@string/files"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textSize="@dimen/text_17_sp"
+                        android:textColor="?attr/color_text_app_default"/>
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -274,7 +277,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:src="@drawable/ic_setting"
-                        android:tint="?attr/icon_color" />
+                        android:tint="?attr/color_icon_app_default" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -283,7 +286,9 @@
                         android:layout_margin="@dimen/margin_normal"
                         android:layout_weight="1"
                         android:text="@string/settings"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textSize="@dimen/text_17_sp"
+                        android:textColor="?attr/color_text_app_default"
+                        />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -309,7 +314,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:src="@drawable/ic_add_member"
-                        android:tint="?attr/icon_color" />
+                        android:tint="?attr/color_icon_app_default" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -318,7 +323,9 @@
                         android:layout_margin="@dimen/margin_normal"
                         android:layout_weight="1"
                         android:text="@string/add_people"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textSize="@dimen/text_17_sp"
+                        android:textColor="?attr/color_text_app_default"
+                        />
 
                     <ImageView
                         android:layout_width="wrap_content"

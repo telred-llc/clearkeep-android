@@ -34,12 +34,12 @@
         <variable
             name="isEditTextNameFocus"
             type="Boolean" />
+        <variable name="colorTextDefault" type="int"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/primary_hint_text_color_light"
         android:orientation="vertical">
 
 
@@ -47,7 +47,6 @@
             android:id="@+id/rlToolbar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_tool_bar_size"
-
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -60,6 +59,7 @@
                 android:layout_centerInParent="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/padding_normal"
+                app:tint="?attr/color_tint_img_back"
                 app:srcCompat="@drawable/ic_back" />
 
             <TextView
@@ -69,6 +69,7 @@
                 android:layout_marginStart="@dimen/margin_small"
                 android:layout_toEndOf="@+id/imgBack"
                 android:text="@string/profile"
+                android:textColor="?attr/color_text_tool_bar"
                 android:textSize="@dimen/text_20_sp" />
 
 
@@ -80,25 +81,9 @@
                 android:layout_centerInParent="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/padding_normal"
-                app:srcCompat="@drawable/ic_setting" />
-
-
-            <!--            <RelativeLayout-->
-            <!--                android:id="@+id/rlEdit"-->
-            <!--                android:layout_width="40dp"-->
-            <!--                android:layout_height="40dp"-->
-            <!--                android:layout_alignParentEnd="true"-->
-            <!--                android:layout_centerInParent="true"-->
-            <!--                android:background="@drawable/bg_circle_image_grey">-->
-
-            <!--                <androidx.appcompat.widget.AppCompatImageView-->
-            <!--                    android:layout_width="wrap_content"-->
-            <!--                    android:layout_height="wrap_content"-->
-            <!--                    android:layout_centerInParent="true"-->
-            <!--                    app:srcCompat="@drawable/ic_edit" />-->
-
-            <!--            </RelativeLayout>-->
-
+                app:srcCompat="@drawable/ic_setting"
+                app:tint="?attr/color_icon_app_default"
+                />
 
         </RelativeLayout>
 
@@ -162,7 +147,7 @@
                     android:focusableInTouchMode="false"
                     android:singleLine="true"
                     android:text="@{user.data.name}"
-                    android:textColor="@{isEditTextNameFocus ? @color/text_color_blue:@color/text_color_default}"
+                    android:textColor="@{isEditTextNameFocus ? @color/text_color_blue: colorTextDefault}"
                     android:textSize="@dimen/text_21_sp"
                     android:minWidth="20dp"
                     android:drawableEnd="@drawable/ic_edit_grey"
@@ -207,8 +192,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_centerInParent="true"
-                app:srcCompat="@drawable/ic_profile" />
+                android:layout_centerHorizontal="true"
+                app:srcCompat="@drawable/ic_profile"
+                app:tint="?attr/color_icon_app_default" />
 
             <TextView
                 android:id="@+id/text_view_user_id"
@@ -218,7 +204,7 @@
                 android:layout_toEndOf="@+id/imgProfile"
                 android:singleLine="true"
                 android:text="@{user.data.id}"
-                android:textColor="@color/text_color_default"
+                android:textColor="?attr/color_text_app_default"
                 android:textSize="@dimen/text_19_sp"
                 tools:text="nilhlinh94:s.clearkeep.me" />
         </RelativeLayout>
@@ -239,6 +225,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
+                app:tint="?attr/color_icon_app_default"
                 app:srcCompat="@drawable/ic_location" />
 
             <TextView
@@ -249,7 +236,7 @@
                 android:layout_toEndOf="@+id/imgLocation"
                 android:singleLine="true"
                 android:text="仙台市　日本国 - JP"
-                android:textColor="@color/text_color_default"
+                android:textColor="?attr/color_text_app_default"
                 android:textSize="@dimen/text_19_sp"
                 tools:text="仙台市　日本国 - JP" />
         </RelativeLayout>
@@ -269,6 +256,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
+                app:tint="?attr/color_icon_app_default"
                 app:srcCompat="@drawable/ic_phone" />
 
             <TextView
@@ -279,7 +267,7 @@
                 android:layout_toEndOf="@+id/imgPhone"
                 android:singleLine="true"
                 android:text="+84 222 11 5550"
-                android:textColor="@color/text_color_default"
+                android:textColor="?attr/color_text_app_default"
                 android:textSize="@dimen/text_19_sp"
                 tools:text="+84 222 11 5550" />
         </RelativeLayout>

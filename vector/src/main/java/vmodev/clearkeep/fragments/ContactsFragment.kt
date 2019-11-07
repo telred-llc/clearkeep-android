@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.FragmentContactsBinding
+import im.vector.extensions.getColorFromAttr
+import im.vector.extensions.hideKeyboard
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.widget.NormalDecoration
@@ -85,7 +87,8 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment{
             }
         }
         headerSection.setOnDecorationHeadDraw(null)
-        headerSection.setHeaderContentColor(Color.WHITE)
+        hideKeyboard()
+        headerSection.setHeaderContentColor(activity!!.getColorFromAttr(R.attr.color_background_app_default))
         headerSection.setTextColor(resources.getColor(R.color.text_color_blue))
         binding.recyclerViewListContact.addItemDecoration(headerSection)
         viewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->

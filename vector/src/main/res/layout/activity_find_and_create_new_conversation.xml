@@ -39,7 +39,7 @@
             android:layout_height="@dimen/height_search"
             android:layout_alignParentTop="true"
             android:layout_margin="@dimen/margin_normal"
-            android:background="@drawable/background_border_radius_gray"
+            android:background="?attr/bg_search_view"
             android:orientation="horizontal">
 
             <ImageView
@@ -50,7 +50,9 @@
                 android:layout_centerInParent="true"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="@dimen/margin_small"
-                android:src="@drawable/ic_search_gray_24dp" />
+                android:src="@drawable/ic_search_gray_24dp"
+                android:tint="?attr/color_icon_app_default"
+                />
 
             <EditText
                 android:id="@+id/edit_query"
@@ -83,11 +85,12 @@
 
                 <TextView
                     android:id="@+id/tv_probably_you_want"
-                    android:textSize="@dimen/text_19_sp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_normal"
-                    android:text="@string/probably_you_want" />
+                    android:text="@string/probably_you_want"
+                    android:textColor="?attr/color_text_app_default"
+                    android:textSize="@dimen/text_19_sp" />
 
                 <LinearLayout
                     android:id="@+id/lnNavigationEvent"
@@ -97,61 +100,61 @@
                     android:layout_margin="@dimen/margin_normal"
                     android:orientation="vertical">
 
-                    <RelativeLayout
+                    <LinearLayout
                         android:id="@+id/new_call"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
                         android:paddingTop="@dimen/padding_small"
                         android:paddingBottom="@dimen/padding_small"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        android:gravity="center"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        >
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/imgCall"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_centerInParent="true"
                             app:srcCompat="@drawable/ic_new_call_color_grey" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
                             android:layout_marginStart="@dimen/margin_normal"
-                            android:layout_toEndOf="@+id/imgCall"
                             android:text="@string/new_call"
                             android:textAlignment="center"
-                            android:textColor="@color/text_color_new_call_and_new_room"
+                            android:textColor="?attr/color_text_app_default"
                             android:textSize="@dimen/text_17_sp" />
-                    </RelativeLayout>
+                    </LinearLayout>
 
-                    <RelativeLayout
+                    <LinearLayout
                         android:id="@+id/new_room"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_normal"
                         android:paddingTop="@dimen/padding_small"
                         android:paddingBottom="@dimen/padding_small"
-                        android:layout_marginTop="@dimen/margin_normal"
-                       >
+                        android:gravity="center"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        >
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/imgNewRoom"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_centerInParent="true"
                             app:srcCompat="@drawable/ic_new_room" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
                             android:layout_marginStart="@dimen/margin_normal"
-                            android:layout_toEndOf="@+id/imgNewRoom"
                             android:text="@string/new_room"
                             android:textAlignment="center"
-                            android:textColor="@color/text_color_new_call_and_new_room"
+                            android:textColor="?attr/color_text_app_default"
                             android:textSize="@dimen/text_17_sp" />
-                    </RelativeLayout>
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -161,8 +164,9 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/lnNavigationEvent"
                     android:layout_margin="@dimen/margin_normal"
-                    android:textSize="@dimen/text_19_sp"
-                    android:text="@string/suggested" />
+                    android:text="@string/suggested"
+                    android:textColor="?attr/color_text_app_default"
+                    android:textSize="@dimen/text_19_sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_users"
@@ -170,8 +174,8 @@
                     android:layout_height="match_parent"
                     android:layout_below="@+id/tvSuggested"
                     android:layout_margin="@dimen/margin_normal"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
                     tools:listitem="@layout/item_user" />
             </RelativeLayout>
 

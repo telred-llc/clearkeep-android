@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_margin="@dimen/margin_normal"
-            android:background="@drawable/background_border_radius_gray">
+            android:background="?attr/bg_search_view">
 
             <ImageView
                 android:id="@+id/imgSearch"
@@ -48,7 +48,9 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
                 android:layout_margin="@dimen/margin_small"
-                android:src="@drawable/ic_search_gray_24dp" />
+                android:src="@drawable/ic_search_gray_24dp"
+                android:tint="?attr/color_icon_app_default"
+                />
 
             <EditText
                 android:id="@+id/edit_text_query"
@@ -58,7 +60,7 @@
                 android:layout_centerInParent="true"
                 android:layout_marginStart="@dimen/margin_small"
                 android:layout_toStartOf="@+id/imgSearch"
-                android:background="@android:color/transparent"
+                android:background="?attr/bg_search_view"
                 android:hint="@string/search"
                 android:imeOptions="actionDone"
                 android:singleLine="true" />
@@ -83,6 +85,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_margin="@dimen/margin_normal"
                     android:text="@string/suggested_user"
+                    android:textColor="?attr/color_text_app_default"
                     android:textSize="@dimen/text_19_sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
