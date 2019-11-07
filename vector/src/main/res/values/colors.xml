@@ -201,4 +201,7 @@
     <color name="color_leave_room">#C06363</color>
     <color name="color_edit_text_hint">#BEBEBE</color>
     <color name="color_item_grey">#707070</color>
+
+<!--    color item toolbar-->
+    <color name="color_text_tool_bar">#242424</color>
 </resources>

@@ -77,8 +77,8 @@
             android:layout_marginHorizontal="10dp"
             android:layout_weight="1"
             android:singleLine="true"
+            android:textColor="?attr/color_text_app_default"
             android:text="@{room_list_user.room.name}"
-            android:textSize="@dimen/text_18_sp"
-            android:textStyle="bold" />
+            android:textSize="@dimen/text_17_sp" />
     </LinearLayout>
 </layout>
