@@ -21,7 +21,7 @@
 
         <variable
             name="listMessage"
-            type="LiveData&lt;Resource&lt;List&lt;vmodev.clearkeep.viewmodelobjects.MessageRoomUser>>>" />
+            type="Integer" />
     </data>
 
     <FrameLayout
@@ -58,7 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
-                    android:text="@{`(` + String.valueOf(listMessage.data.size) + `)`}"
+                    android:text="@{`(` + listMessage + `)`}"
                     android:textColor="@color/text_color"
                     android:textSize="@dimen/text_17_sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -78,7 +78,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:visibleGone="@{results.status == Status.LOADING || listMessage.status == Status.LOADING}" />
+            app:visibleGone="@{results.status == Status.LOADING}" />
 
 
     </FrameLayout>

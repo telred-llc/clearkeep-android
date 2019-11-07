@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -17,7 +18,9 @@ import im.vector.R
 import im.vector.databinding.FragmentSearchMessagesBinding
 import im.vector.extensions.hideKeyboard
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.ListSearchMessageRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
@@ -26,6 +29,7 @@ import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
 import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchMessageFragmentViewModel
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
@@ -110,9 +114,10 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
                 })
             }
         })
+        binding.listMessage = 0;
         viewModelFactory.getViewModel().setTimeForRefreshLoadMessage(Calendar.getInstance().timeInMillis);
         getSearchViewTextChange()?.subscribe { s ->
-            listSearchAdapter.submitList(listMessage.filter { messageRoomUser ->
+            val listFilter = listMessage.filter { messageRoomUser ->
                 messageRoomUser.message?.let {
                     if (s.isNullOrEmpty())
                         false;
@@ -121,9 +126,9 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
                 } ?: run {
                     false
                 }
-            })
-
-//            binding.listMessage =  viewModelFactory.getViewModel().decryptListMessage(listMessage)
+            }
+            listSearchAdapter.submitList(listFilter);
+            binding.listMessage =  listFilter.size
         }
         binding.recyclerView.setOnTouchListener { v, event ->
             hideKeyboard()

@@ -112,6 +112,14 @@ class RoomUserJoinRepository @Inject constructor(private val roomUserJoinDao: Ab
         }.asLiveData();
     }
 
+    fun getListUserMatrixContact(typeOne: Int,typeTwo: Int, userId: String): LiveData<Resource<List<User>>> {
+        return object : AbstractLocalLoadSource<List<User>>(appExecutors) {
+            override fun loadFromDB(): LiveData<List<User>> {
+                return roomUserJoinDao.getListUserMatrixContact(typeOne,typeTwo, userId);
+            }
+        }.asLiveData();
+    }
+
     fun getRoomListUserFindByID(userId: String): LiveData<Resource<RoomListUser>> {
         return object : AbstractLocalLoadSource<RoomListUser>(appExecutors) {
             override fun loadFromDB(): LiveData<RoomListUser> {

@@ -21,13 +21,11 @@
             android:layout_width="@dimen/member_list_avatar_size"
             android:layout_height="@dimen/member_list_avatar_size"
             android:layout_gravity="center_vertical">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/circle_image_view_avatar"
+            <vmodev.clearkeep.widget.CircleImage
+                app:user="@{user}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@color/app_green"
-                app:user="@{user}" />
+                android:id="@+id/image_circle" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/circle_image_view_status"
@@ -49,7 +47,7 @@
             android:layout_marginEnd="30dp"
             android:layout_weight="1"
             android:singleLine="true"
-            android:text="@{user.name}"
+            android:text="@{user.name.toString().trim()}"
             android:textColor="@color/black_color"
             android:textSize="@dimen/text_17_sp" />
     </LinearLayout>
