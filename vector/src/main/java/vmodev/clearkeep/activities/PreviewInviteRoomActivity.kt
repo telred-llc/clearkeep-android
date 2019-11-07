@@ -35,10 +35,6 @@ class PreviewInviteRoomActivity : DataBindingDaggerActivity(), IActivity {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = DataBindingUtil.setContentView<ActivityPreviewInviteRoomBinding>(this, R.layout.activity_preview_invite_room, dataBinding.getDataBindingComponent());
-        window?.statusBarColor = ContextCompat.getColor(this, R.color.primary_hint_text_color_light)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-           window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-        }
         val roomId: String = intent.getStringExtra(ROOM_ID) ?: ""
         mxSession = Matrix.getInstance(applicationContext).defaultSession;
         var index: Int = 0;

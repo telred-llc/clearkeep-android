@@ -29,7 +29,7 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="20dp"
-                    android:background="@color/background_search" />
+                    android:background="?attr/color_view_blank_setting" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/edit_profile_group"
@@ -73,7 +73,7 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="20dp"
-                    android:background="@color/background_search" />
+                    android:background="?attr/color_view_blank_setting" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/notification_group"
@@ -235,7 +235,7 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="20dp"
-                    android:background="@color/background_search" />
+                    android:background="?attr/color_view_blank_setting" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/theme_group"
@@ -278,7 +278,7 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="20dp"
-                    android:background="@color/background_search" />
+                    android:background="?attr/color_view_blank_setting" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/term_and_conditions"
@@ -400,7 +400,7 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="20dp"
-                    android:background="@color/background_search" />
+                    android:background="?attr/color_view_blank_setting" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
