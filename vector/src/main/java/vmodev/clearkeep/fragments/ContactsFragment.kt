@@ -46,8 +46,6 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment{
     @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM_CONTACT)
     lateinit var listRoomAdapter: IListRoomRecyclerViewAdapter;
-    @Inject
-    lateinit var application: IApplication;
     lateinit var binding: FragmentContactsBinding;
     private var onGoingRoom = false;
 

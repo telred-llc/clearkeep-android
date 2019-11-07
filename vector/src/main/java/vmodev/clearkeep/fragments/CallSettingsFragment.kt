@@ -18,8 +18,6 @@ class CallSettingsFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractCallSettingActivityViewModel>;
-    @Inject
-    lateinit var application: IApplication;
 
     private lateinit var binding: FragmentCallSettingsBinding;
 
