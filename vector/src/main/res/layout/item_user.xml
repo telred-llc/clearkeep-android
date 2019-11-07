@@ -48,9 +48,9 @@
             android:layout_weight="1"
             android:singleLine="true"
             android:text="@{user.name}"
+            android:textColor="?attr/color_text_app_default"
             android:layout_marginStart="@dimen/margin_normal"
-            android:textSize="@dimen/text_20_sp"
-            android:textStyle="bold" />
+            android:textSize="@dimen/text_17_sp" />
 <!--        <LinearLayout-->
 <!--            android:layout_width="match_parent"-->
 <!--            android:layout_height="wrap_content"-->

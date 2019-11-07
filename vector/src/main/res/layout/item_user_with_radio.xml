@@ -53,11 +53,11 @@
                 android:layout_toStartOf="@+id/checkbox"
                 android:layout_centerInParent="true"
                 android:textSize="@dimen/text_17_sp"
+                android:textColor="?attr/color_text_app_default"
                 android:singleLine="true"
                 android:layout_marginStart="@dimen/margin_normal"
                 android:layout_marginEnd="@dimen/margin_normal"
-                tools:text="My Friends"
-                android:textStyle="bold" />
+                tools:text="My Friends" />
 
         <CheckBox
             android:id="@+id/checkbox"

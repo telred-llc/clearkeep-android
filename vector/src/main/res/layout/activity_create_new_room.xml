@@ -84,7 +84,7 @@
                     android:layout_margin="@dimen/margin_normal"
                     android:singleLine="true"
                     android:text="@string/str_checkbox_public_mode"
-                    android:textColor="@color/text_color_default"
+                    android:textColor="?attr/color_text_app_default"
                     android:textSize="@dimen/text_13_sp"
                     android:theme="@style/checkBoxStyle" />
 
@@ -95,6 +95,7 @@
                     android:layout_below="@+id/checkbox_room_visibility"
                     android:layout_margin="@dimen/margin_normal"
                     android:singleLine="true"
+                    android:textColor="?attr/color_text_app_default"
                     android:text="@string/suggested"
                     android:textSize="@dimen/text_19_sp" />
 

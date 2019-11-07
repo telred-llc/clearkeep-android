@@ -17,14 +17,18 @@
 package im.vector.extensions
 
 import android.content.Context
+import android.content.res.Resources
 import android.text.InputType
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.annotation.AttrRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import im.vector.R
 
@@ -53,6 +57,7 @@ fun EditText.showPassword(visible: Boolean, updateCursor: Boolean = true) {
     }
     if (updateCursor) setSelection(text?.length ?: 0)
 }
+
 fun AppCompatActivity.hideKeyboard() {
     val view = this.currentFocus
     if (view != null) {
@@ -63,6 +68,7 @@ fun AppCompatActivity.hideKeyboard() {
     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
     // }
 }
+
 fun Fragment.hideKeyboard() {
     val activity = this.activity
     if (activity is AppCompatActivity) {
@@ -77,10 +83,19 @@ fun AppCompatActivity.showKeyboard() {
         imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
 }
+
 fun Fragment.showKeyboard() {
     val activity = this.activity
     if (activity is AppCompatActivity) {
         activity.showKeyboard()
     }
+}
+fun Context.getColorFromAttr(
+        @AttrRes attrColor: Int,
+        typedValue: TypedValue = TypedValue(),
+        resolveRefs: Boolean = true
+): Int {
+    theme.resolveAttribute(attrColor, typedValue, resolveRefs)
+    return typedValue.data
 }
 
