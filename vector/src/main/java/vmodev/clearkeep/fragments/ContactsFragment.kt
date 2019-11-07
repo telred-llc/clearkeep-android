@@ -9,21 +9,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
 import im.vector.databinding.FragmentContactsBinding
+import im.vector.extensions.getColorFromAttr
+import im.vector.extensions.hideKeyboard
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.widget.NormalDecoration
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
-import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
-import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractContactFragmentViewModel
 import javax.inject.Inject
 import javax.inject.Named
@@ -43,7 +42,7 @@ private const val GO_TO_ROOM_CODE = 12432;
  * create an instance of this fragment.
  *
  */
-class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecyclerViewAdapter.ICallbackToGetUsers {
+class ContactsFragment : DataBindingDaggerFragment(), IFragment{
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractContactFragmentViewModel>;
     @Inject
@@ -64,7 +63,7 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val dividerItemDecoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL);
-        listRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, application.getUserId());
+        listRoomAdapter.setLifeCycleOwner(viewLifecycleOwner, application.getUserId());
         binding.recyclerViewListContact.addItemDecoration(dividerItemDecoration);
         binding.recyclerViewListContact.adapter = listRoomAdapter.getAdapter();
         listRoomAdapter.setOnItemClick { room, i ->
@@ -75,7 +74,7 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
             }
         }
         listRoomAdapter.setOnItemLongClick { }
-        listRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, application.getUserId());
+        listRoomAdapter.setLifeCycleOwner(viewLifecycleOwner, application.getUserId());
         binding.rooms = viewModelFactory.getViewModel().getListRoomByType();
         var data: List<RoomListUser> = ArrayList();
         val headerSection = object : NormalDecoration() {
@@ -88,7 +87,8 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
             }
         }
         headerSection.setOnDecorationHeadDraw(null)
-        headerSection.setHeaderContentColor(Color.WHITE)
+        hideKeyboard()
+        headerSection.setHeaderContentColor(activity!!.getColorFromAttr(R.attr.color_background_app_default))
         headerSection.setTextColor(resources.getColor(R.color.text_color_blue))
         binding.recyclerViewListContact.addItemDecoration(headerSection)
         viewModelFactory.getViewModel().getListRoomByType().observe(viewLifecycleOwner, Observer { t ->
@@ -104,10 +104,6 @@ class ContactsFragment : DataBindingDaggerFragment(), IFragment, IListRoomRecycl
         binding.lifecycleOwner = viewLifecycleOwner;
 
         viewModelFactory.getViewModel().setListType(arrayOf(1, 129))
-    }
-
-    override fun getUsers(userIds: Array<String>): LiveData<Resource<List<User>>> {
-        return viewModelFactory.getViewModel().getRoomUserJoinResult(userIds);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

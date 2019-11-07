@@ -14,11 +14,12 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
 
-        <import type="vmodev.clearkeep.viewmodelobjects.User"/>
+        <import type="vmodev.clearkeep.viewmodelobjects.User" />
 
         <variable
             name="room"
             type="LiveData&lt;Resource&lt;Room>>" />
+
         <variable
             name="leaveRoom"
             type="LiveData&lt;Resource&lt;String>>" />
@@ -26,259 +27,357 @@
         <variable
             name="user"
             type="LiveData&lt;Resource&lt;User>>" />
+
+        <variable
+            name="isLoading"
+            type="Boolean" />
+
     </data>
 
-    <FrameLayout
+    <RelativeLayout
+
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nested_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:orientation="horizontal">
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@{@string/this_room_created_by+' '}"
+                        android:textSize="@dimen/text_13_sp"
+                        tools:text="This room created 3:39 AM by "
+                        android:textColor="?attr/color_text_app_default"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{user.data.name.trim()}"
+                        android:textColor="@color/text_color_blue"
+                        android:textSize="@dimen/text_13_sp"
+                        android:singleLine="true"
+                        tools:text="QuiNV" />
+
+                </LinearLayout>
+
+                <!--                <TextView-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_margin="10dp"-->
+                <!--                    android:text="@{room.data.name}"-->
+                <!--                    android:textSize="@dimen/text_13_sp"-->
+                <!--                    tools:text="This room created 3:39 AM by nilhlinh94" />-->
+                <RelativeLayout
+                    android:layout_width="@dimen/avatar_screen_profile_size"
+                    android:layout_height="@dimen/avatar_screen_profile_size"
+                    android:layout_gravity="center_horizontal">
+
+                    <vmodev.clearkeep.widget.CircleImage
+                        android:id="@+id/imgAvatarRoom"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/ic_add_white"
+                        app:border_color="@color/border_color_avatar_profile"
+                        app:civ_border_color="@color/border_color_avatar_profile"
+                        app:room="@{room.data}"
+                        app:stroke_width="5dp" />
+
+                    <vmodev.clearkeep.widget.CustomAvatarPicture
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerInParent="true"
+                        android:layout_margin="5dp" />
+
+                    <View
+                        android:id="@+id/viewSelectPicture"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_view_select_picture"
+                        android:layout_alignParentTop="true" />
+
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imgCamera"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginBottom="@dimen/margin_camera_bottom_avatar"
+                        app:srcCompat="@drawable/ic_camera_color_white" />
+                </RelativeLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_text_room_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:theme="@style/editTextStyle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_text_room_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/ic_pen"
+                        android:drawablePadding="@dimen/padding_small"
+                        android:hint="@string/create_room_name_hint"
+                        android:inputType="textCapCharacters|textNoSuggestions"
+                        android:singleLine="true"
+                        android:text="@{room.data.name}"
+                        android:textAllCaps="true"
+                        android:textColor="@color/text_color_blue"
+                        android:textSize="@dimen/text_17_sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_text_room_topic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:theme="@style/editTextStyle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edit_text_room_topic"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/ic_pen"
+                        android:drawablePadding="@dimen/padding_small"
+                        android:hint="@string/room_info_room_topic"
+                        android:imeOptions="actionDone"
+                        android:inputType="textCapCharacters|textNoSuggestions"
+                        android:singleLine="true"
+                        android:text="@{room.data.topic}"
+                        android:textAllCaps="true"
+                        android:textColor="@color/text_color_blue"
+                        android:textSize="@dimen/text_17_sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <Button
+                    android:id="@+id/btnSave"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_large"
+                    android:layout_marginEnd="@dimen/margin_normal"
+                    android:layout_marginBottom="@dimen/margin_xxl"
+                    android:background="@drawable/bg_button_gradient_grey"
+                    android:enabled="false"
+                    android:text="@string/save"
+                    android:textColor="@color/color_white" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/members_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_large"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_members"
+                        android:tint="?attr/color_icon_app_default" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="@dimen/margin_normal"
+                        android:layout_weight="1"
+                        android:text="@string/members"
+                        android:textSize="@dimen/text_17_sp"
+                        android:textColor="?attr/color_text_app_default"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/files_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_folder"
+                        android:tint="?attr/color_icon_app_default" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="@dimen/margin_normal"
+                        android:layout_weight="1"
+                        android:text="@string/files"
+                        android:textSize="@dimen/text_17_sp"
+                        android:textColor="?attr/color_text_app_default"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/settings_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_setting"
+                        android:tint="?attr/color_icon_app_default" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="@dimen/margin_normal"
+                        android:layout_weight="1"
+                        android:text="@string/settings"
+                        android:textSize="@dimen/text_17_sp"
+                        android:textColor="?attr/color_text_app_default"
+                        />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/add_people_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_xxl"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:orientation="horizontal"
+                    app:visibleGone="@{room.data.type == 2 || room.data.type == 130}">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_add_member"
+                        android:tint="?attr/color_icon_app_default" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="@dimen/margin_normal"
+                        android:layout_weight="1"
+                        android:text="@string/add_people"
+                        android:textSize="@dimen/text_17_sp"
+                        android:textColor="?attr/color_text_app_default"
+                        />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/leave_room_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_leave_room_red"
+                        android:tint="@color/color_leave_room" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="@dimen/margin_normal"
+                        android:layout_weight="1"
+                        android:text="@string/leave_room"
+                        android:textColor="@color/color_leave_room"
+                        android:textSize="@dimen/text_17_sp" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp"
+                        android:tint="@color/color_leave_room" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
         <ProgressBar
+            android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:visibleGone="@{room.status == Status.LOADING || leaveRoom.status == Status.LOADING || user.status == Status.LOADING}" />
+            android:layout_centerInParent="true"
+            app:visibleGone="@{room.status == Status.LOADING || leaveRoom.status == Status.LOADING || user.status == Status.LOADING || isLoading }" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="@{room.data.name}"
-                android:textSize="@dimen/text_20_sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="@string/topic"
-                android:textColor="@color/lb_grey" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="@{room.data.topic}"
-                android:textSize="@dimen/text_20_sp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="@string/created_by"
-                android:textColor="@color/lb_grey" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:singleLine="true"
-                    android:text="@{@string/this_room_created_by + ' ' + user.data.name + ' ' + @string/at + ' '}"
-                    android:textColor="@color/lb_grey" />
-
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="10dp"-->
-<!--                    android:layout_marginEnd="10dp"-->
-<!--                    android:layout_marginBottom="10dp"-->
-<!--                    android:singleLine="true"-->
-<!--                    android:textColor="@color/lb_grey"-->
-<!--                    app:timeStamp="@{room.data.updatedDate}" />-->
-            </LinearLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/lb_grey" />
-
-            <LinearLayout
-                android:id="@+id/members_group"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_room_members"
-                    android:tint="?attr/icon_color"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:text="@string/members" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
-            </LinearLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/lb_grey" />
-
-            <LinearLayout
-                android:id="@+id/files_group"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_room_file"
-                    android:tint="?attr/icon_color"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:text="@string/files" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
-            </LinearLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/lb_grey" />
-
-            <LinearLayout
-                android:id="@+id/settings_group"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_room_settings"
-                    android:tint="?attr/icon_color"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:text="@string/settings" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
-            </LinearLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/lb_grey" />
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="50dp"
-                android:background="@color/lb_grey" />
-
-            <LinearLayout
-                android:id="@+id/add_people_group"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:orientation="horizontal"
-                app:visibleGone="@{room.data.type == 2 || room.data.type == 130}">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_room_add_user"
-                    android:tint="?attr/icon_color"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:text="@string/add_people" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
-            </LinearLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/lb_grey" />
-
-            <LinearLayout
-                android:id="@+id/leave_room_group"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_leave_room"
-                    android:tint="?attr/icon_color"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:text="@string/leave_room" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
-            </LinearLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/lb_grey" />
-        </LinearLayout>
-    </FrameLayout>
+    </RelativeLayout>
 </layout>

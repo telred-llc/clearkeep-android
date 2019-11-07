@@ -47,8 +47,33 @@
             android:layout_marginEnd="30dp"
             android:layout_weight="1"
             android:singleLine="true"
+<<<<<<< HEAD
             android:text="@{user.name.toString().trim()}"
             android:textColor="@color/black_color"
             android:textSize="@dimen/text_17_sp" />
+=======
+            android:text="@{user.name}"
+            android:textColor="?attr/color_text_app_default"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:textSize="@dimen/text_17_sp" />
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="@dimen/margin_normal"-->
+<!--            android:orientation="vertical">-->
+
+<!--           -->
+
+<!--&lt;!&ndash;            <TextView&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_width="match_parent"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_height="0dp"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_gravity="center_vertical"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_marginTop="5dp"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_weight="1"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:singleLine="true"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:text="@{user.id}"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:textSize="@dimen/text_15_sp" />&ndash;&gt;-->
+<!--        </LinearLayout>-->
+>>>>>>> develop
     </LinearLayout>
 </layout>

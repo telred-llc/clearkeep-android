@@ -43,13 +43,12 @@ class NewRoomActivity : DataBindingDaggerActivity(), IActivity {
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             supportActionBar?.title = destination.label;
         }
-    }
-
-    fun setNameTitle(title: String?) {
-        title?.let {
-            binding.toolbar.tvTitle.text = title
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            binding.toolbar.tvTitle.text = destination.label;
         }
     }
+
+
 
     fun setIconToolBar(typeIconToolBar: TypeIconToolBar) {
         if (typeIconToolBar == TypeIconToolBar.ICON_BACK) {

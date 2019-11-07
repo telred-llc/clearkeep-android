@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- ************************ Common items ************************ -->
 
@@ -307,9 +307,23 @@
         <attr name="color_text_title" format="color" />
         <attr name="color_text_name_invited" format="color" />
 
+        <!--        implement ui dark_mode 11/05/2019      -->
+        <attr name="color_tint_img_back" format="color"/>
+        <attr name="color_text_tool_bar" format="color"/>
+        <attr name="color_background_app_default" format="color"/>
+        <attr name="color_text_app_default" format="color"/>
+        <attr name="color_icon_app_default" format="color"/>
+        <attr name="bg_search_view" format="reference"/>
+        <attr name="color_view_blank_setting" format="color"></attr>
+
+
     </declare-styleable>
 
     <style name="DarkTheme" parent="Theme.MaterialComponents.NoActionBar.Bridge">
+        <item name="android:statusBarColor">#121212</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
+       <item name="android:windowBackground">@drawable/bg_app_dark_mode</item>
+<!--        <item name="android:">#121212</item>-->
         <item name="color_for_text_sign_up">#799CE0</item>
         <item name="color_underline_tablayout">#5B8DEC</item>
         <item name="icon_color">#FFFFFF</item>
@@ -349,9 +363,24 @@
         </item>
         <item name="color_text_title">@color/color_white</item>
         <item name="color_text_name_invited">#00D1E4</item>
+
+
+
+        <!--        implement ui dark_mode 11/05/2019    -->
+        <item name="color_tint_img_back">#F5F5F5</item>
+        <item name="color_text_tool_bar">#F5F5F5</item>
+        <item name="color_background_app_default">#121212</item>
+        <item name="color_text_app_default">#F5F5F5</item>
+        <item name="color_icon_app_default">#F5F5F5</item>
+        <item name="bg_search_view">@drawable/bg_search_dark_mode</item>
+        <item name="color_view_blank_setting">#000000</item>
+
     </style>
 
     <style name="LightTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
+        <item name="android:statusBarColor">#FFFFFF</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
+        <item name="android:windowBackground">@drawable/bg_app_light_mode</item>
         <item name="icon_color">#FF000000</item>
         <item name="color_underline_tablayout">#5B8DEC</item>
         <item name="text_color_hint">#BEBEBE</item>
@@ -386,8 +415,19 @@
         <!--        screen join room-->
         <item name="text_color_decline">#9AA1AD</item>
         <item name="image_notification_join_room">@drawable/image_notification_join_room</item>
-        <item name="color_text_title">#444444</item>
+        <item name="color_text_title">#242424</item>
         <item name="color_text_name_invited">#444444</item>
+
+
+
+<!--        implement ui light_mode 11/05/2019-->
+        <item name="color_tint_img_back">#444444</item>
+        <item name="color_text_tool_bar">#242424</item>
+        <item name="color_background_app_default">#FFFFFF</item>
+        <item name="color_text_app_default">#242424</item>
+        <item name="color_icon_app_default">#242424</item>
+        <item name="bg_search_view">@drawable/bg_search_light_mode</item>
+        <item name="color_view_blank_setting">#707070</item>
 
     </style>
 

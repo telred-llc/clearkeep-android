@@ -39,9 +39,10 @@ class ProfileSettingsFragment : DataBindingDaggerFragment(), IFragment {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this;
         binding.editProfileGroup.setOnClickListener {
-            val intentEditProfile = Intent(this.activity, EditProfileActivity::class.java);
-            intentEditProfile.putExtra(EditProfileActivity.USER_ID, application.getUserId());
-            startActivity(intentEditProfile);
+            //            val intentEditProfile = Intent(this.activity, EditProfileActivity::class.java);
+//            intentEditProfile.putExtra(EditProfileActivity.USER_ID, application.getUserId());
+//            startActivity(intentEditProfile);
+            activity!!.onBackPressed()
         }
         binding.callGroup.setOnClickListener {
             findNavController().navigate(ProfileSettingsFragmentDirections.calls())
@@ -87,6 +88,7 @@ class ProfileSettingsFragment : DataBindingDaggerFragment(), IFragment {
         binding.lifecycleOwner = this;
         viewModelFactory.getViewModel().setTimeToGetTheme(Calendar.getInstance().timeInMillis);
     }
+
 
     override fun getFragment(): Fragment {
         return this;

@@ -196,4 +196,12 @@
     <color name="message_own_background">#E1E1E1</color>
 
 
+    <color name="color_avatar_edit_room">#707070</color>
+<!--    screen edit room-->
+    <color name="color_leave_room">#C06363</color>
+    <color name="color_edit_text_hint">#BEBEBE</color>
+    <color name="color_item_grey">#707070</color>
+
+<!--    color item toolbar-->
+    <color name="color_text_tool_bar">#242424</color>
 </resources>

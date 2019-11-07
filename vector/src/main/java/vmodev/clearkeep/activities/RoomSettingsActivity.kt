@@ -1,7 +1,12 @@
 package vmodev.clearkeep.activities
 
+import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavArgs
@@ -9,12 +14,19 @@ import androidx.navigation.NavArgument
 import androidx.navigation.Navigation
 import im.vector.R
 import im.vector.databinding.ActivityRoomSettingsBinding
+import io.reactivex.Observable
+import io.reactivex.Observer
+import io.reactivex.disposables.Disposable
+import io.reactivex.observers.DisposableCompletableObserver
 import vmodev.clearkeep.activities.interfaces.IActivity
+import vmodev.clearkeep.fragments.RoomSettingsFragment
+import vmodev.clearkeep.ultis.RxEventBus
 
 class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
 
-    private lateinit var binding : ActivityRoomSettingsBinding;
-    private var roomId : String? = null;
+    private lateinit var binding: ActivityRoomSettingsBinding;
+    private var roomId: String? = null;
+    private var disposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +40,9 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             binding.toolbar.title = destination.label;
         }
+        disposable = RxEventBus.instanceOf<String>().getData()?.subscribe {
+            binding.toolbar.title = it
+        }
         val graph = navController.navInflater.inflate(R.navigation.navigation_room_settings);
         val navArgs = NavArgument.Builder().setDefaultValue(roomId).build();
         graph.addArgument("roomId", navArgs);
@@ -39,7 +54,23 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
         return this;
     }
 
-    companion object{
+    companion object {
         const val ROOM_ID = "ROOM_ID";
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment)
+        if (currentFragment is RoomSettingsFragment) {
+            currentFragment.onActivityResult(requestCode, resultCode, data)
+        }
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable?.let {
+            it.dispose()
+        }
     }
 }

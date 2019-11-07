@@ -8,30 +8,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DividerItemDecoration
 import im.vector.R
 import androidx.lifecycle.Observer
 import im.vector.databinding.FragmentRoomShareFileBinding
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.custom_view_edittext.view.*
 import org.matrix.androidsdk.data.RoomMediaMessage
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IRoomShareFileFragment
-import vmodev.clearkeep.ultis.OnSingleClickListener
-import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
-import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomShareFileFragmentViewModel
 import java.util.ArrayList
 import javax.inject.Inject
 import javax.inject.Named
 
-class RoomShareFileFragment : DataBindingDaggerFragment(), IRoomShareFileFragment, IListRoomRecyclerViewAdapter.ICallbackToGetUsers {
+class RoomShareFileFragment : DataBindingDaggerFragment(), IRoomShareFileFragment {
 
     companion object {
         @JvmStatic
@@ -103,7 +98,7 @@ class RoomShareFileFragment : DataBindingDaggerFragment(), IRoomShareFileFragmen
     }
 
     private fun setEvent() {
-        listRoomAdapter.setCallbackToGetUsers(this, viewLifecycleOwner, applcation.getUserId());
+        listRoomAdapter.setLifeCycleOwner(viewLifecycleOwner, applcation.getUserId());
         listRoomAdapter.setOnItemClick { roomListUser, i ->
             shareFile(applcation.getUserId(), roomListUser.room!!.id)
             activity!!.finish()
@@ -167,10 +162,4 @@ class RoomShareFileFragment : DataBindingDaggerFragment(), IRoomShareFileFragmen
         listRoomAdapter.getAdapter().submitList(newListData);
 
     }
-
-
-    override fun getUsers(userIds: Array<String>): LiveData<Resource<List<User>>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
 }

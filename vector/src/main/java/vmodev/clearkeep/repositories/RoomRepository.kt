@@ -461,7 +461,7 @@ class RoomRepository @Inject constructor(
 
     fun updateRoomAvatarToNetwork(roomId: String, avatar: InputStream): Completable {
         return Completable.fromAction {
-            matrixService.updateRoomAvatar(avatar).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.io())
+            matrixService.updateRoomAvatar(roomId, avatar).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.io())
                     .subscribe { abstractRoomDao.updateRoomAvatar(roomId, it) }
         }
     }
