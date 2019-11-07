@@ -72,6 +72,9 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
     private val favouritesCurrentList = ArrayList<RoomListUser>();
     private val directsCurrentList = ArrayList<RoomListUser>();
     private val roomsCurrentList = ArrayList<RoomListUser>();
+    private val headerList = arrayListOf(ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(0, 0, "", 0)
+            , ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(0, 0, "", 0)
+            , ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(0, 0, "", 0));
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -184,7 +187,6 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
             }
         }
         listFavouritesRoomAdapter.setOnItemStickyHeaderClick {
-            Log.d("Position", it.toString());
             if (!expandable) {
                 rooms.removeAll(favouritesCurrentList);
                 rooms.add(0, RoomListUser(null, null, null))
@@ -213,10 +215,8 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
                 favouritesCurrentList.addAll(it);
                 rooms.addAll(0, favouritesCurrentList);
                 listFavouritesRoomAdapter.getAdapter().submitList(rooms);
-                listFavouritesRoomAdapter.setListHeader(arrayListOf
-                (ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(0, R.drawable.ic_star_24dp, getString(R.string.favourites), favouritesCurrentList.size),
-                        ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size, R.drawable.ic_star_24dp, getString(R.string.room_chats), roomsCurrentList.size)
-                        , ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size + roomsCurrentList.size, R.drawable.ic_star_24dp, getString(R.string.direct_chats), directsCurrentList.size)));
+                headerList[0] = ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(0, R.drawable.ic_star_24dp, getString(R.string.favourites), favouritesCurrentList.size);
+                listFavouritesRoomAdapter.setListHeader(headerList);
                 listFavouritesRoomAdapter.getAdapter().notifyDataSetChanged();
             }
         });
@@ -228,10 +228,8 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
                 directsCurrentList.addAll(it);
                 rooms.addAll(favouritesCurrentList.size + roomsCurrentList.size, directsCurrentList)
                 listFavouritesRoomAdapter.getAdapter().submitList(rooms);
-                listFavouritesRoomAdapter.setListHeader(arrayListOf
-                (ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(0, R.drawable.ic_star_24dp, getString(R.string.favourites), favouritesCurrentList.size),
-                        ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size, R.drawable.ic_star_24dp, getString(R.string.room_chats), roomsCurrentList.size)
-                        , ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size + roomsCurrentList.size, R.drawable.ic_star_24dp, getString(R.string.direct_chats), directsCurrentList.size)));
+                headerList[2] = ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size + roomsCurrentList.size, R.drawable.ic_person_white_24dp, getString(R.string.direct_chats), directsCurrentList.size);
+                listFavouritesRoomAdapter.setListHeader(headerList);
                 listFavouritesRoomAdapter.getAdapter().notifyDataSetChanged();
             }
         });
@@ -243,10 +241,8 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
                 roomsCurrentList.addAll(it);
                 rooms.addAll(favouritesCurrentList.size, roomsCurrentList)
                 listFavouritesRoomAdapter.getAdapter().submitList(rooms);
-                listFavouritesRoomAdapter.setListHeader(arrayListOf
-                (ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(0, R.drawable.ic_star_24dp, getString(R.string.favourites), favouritesCurrentList.size),
-                        ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size, R.drawable.ic_star_24dp, getString(R.string.room_chats), roomsCurrentList.size)
-                        , ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size + roomsCurrentList.size, R.drawable.ic_star_24dp, getString(R.string.direct_chats), directsCurrentList.size)));
+                headerList[1] = ListRoomWithStickyHeaderRecyclerViewAdapter.StickyHeaderData(favouritesCurrentList.size, R.drawable.ic_rooms, getString(R.string.room_chats), roomsCurrentList.size);
+                listFavouritesRoomAdapter.setListHeader(headerList);
                 listFavouritesRoomAdapter.getAdapter().notifyDataSetChanged();
             }
         });
