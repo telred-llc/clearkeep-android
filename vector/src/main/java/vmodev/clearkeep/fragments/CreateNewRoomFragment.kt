@@ -42,9 +42,6 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
     lateinit var appExecutors: AppExecutors;
     private lateinit var binding: ActivityCreateNewRoomBinding;
     private val listSelected = HashMap<String, User>();
-    @Inject
-    lateinit var application: IApplication;
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.activity_create_new_room, container, false, dataBinding.getDataBindingComponent());

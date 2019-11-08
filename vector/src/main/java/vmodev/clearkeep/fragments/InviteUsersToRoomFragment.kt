@@ -49,8 +49,6 @@ class InviteUsersToRoomFragment : DataBindingDaggerFragment(), IFragment {
     lateinit var viewModelFactory: IViewModelFactory<AbstractInviteUsersToRoomActivityViewModel>;
     @Inject
     lateinit var appExecutors: AppExecutors;
-    @Inject
-    lateinit var application: IApplication;
     private var listUserSuggested: List<User>? = null
     private val listSelected = HashMap<String, User>();
     private lateinit var binding: ActivityInviteUsersToRoomBinding;

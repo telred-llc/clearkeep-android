@@ -1,6 +1,7 @@
 package vmodev.clearkeep.activities
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
@@ -16,6 +17,7 @@ import org.matrix.androidsdk.core.model.MatrixError
 import vmodev.clearkeep.activities.interfaces.IViewUserProfileActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewUserProfileActivityViewModelFactory
+import vmodev.clearkeep.ultis.OnSingleClickListener
 import vmodev.clearkeep.viewmodels.interfaces.AbstractViewUserProfileActivityViewModel
 import javax.inject.Inject
 
@@ -30,23 +32,20 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_view_user_profile, dataBinding.getDataBindingComponent());
-        setSupportActionBar(binding.toolbar);
-        supportActionBar?.setTitle(R.string.profile);
-        supportActionBar?.setDisplayHomeAsUpEnabled(true);
-        supportActionBar?.setDisplayShowHomeEnabled(true);
-        binding.toolbar.setNavigationOnClickListener { v ->
-            kotlin.run {
-                onBackPressed();
-            }
-        }
         val userId = intent.getStringExtra(USER_ID);
         session = Matrix.getInstance(applicationContext).defaultSession;
-        binding.buttonMessage.setOnClickListener {
-            viewModelFactory.getViewModel().setUserIdForCreateNewChat(userId);
-        }
-        binding.buttonCall.setOnClickListener {
-            viewModelFactory.getViewModel().setUserIdForCreateNewChat(userId);
-        }
+        binding.imgChat.setOnClickListener (object : OnSingleClickListener(){
+            override fun onSingleClick(v: View) {
+                viewModelFactory.getViewModel().setUserIdForCreateNewChat(userId);
+            }
+
+        })
+        binding.imgCall.setOnClickListener (object : OnSingleClickListener(){
+            override fun onSingleClick(v: View) {
+                viewModelFactory.getViewModel().setUserIdForCreateNewChat(userId);
+            }
+
+        })
         binding.user = viewModelFactory.getViewModel().getUserResult();
         binding.room = viewModelFactory.getViewModel().createNewDirectChatResult();
         viewModelFactory.getViewModel().createNewDirectChatResult().observe(this, Observer {
@@ -54,6 +53,9 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
                 joinRoom(it.id);
             }
         })
+        binding.imgBack.setOnClickListener {
+            onBackPressed()
+        }
         binding.lifecycleOwner = this;
         viewModelFactory.getViewModel().setGetUser(userId);
     }

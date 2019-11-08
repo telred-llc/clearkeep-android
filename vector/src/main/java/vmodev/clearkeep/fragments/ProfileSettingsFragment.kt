@@ -25,8 +25,6 @@ class ProfileSettingsFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractProfileSettingsActivityViewModel>
-    @Inject
-    lateinit var application: IApplication;
 
     private lateinit var binding: FragmentProfileSettingsBinding;
 
