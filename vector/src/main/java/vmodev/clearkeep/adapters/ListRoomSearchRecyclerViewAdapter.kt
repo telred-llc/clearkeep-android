@@ -30,7 +30,6 @@ class ListRoomSearchRecyclerViewAdapter constructor(appExecutors: AppExecutors, 
 
     private lateinit var itemClick: (RoomListUser, Int) -> Unit?
     private lateinit var itemLongClick: (RoomListUser) -> Unit?
-    private var callbackToGetUsers: IListRoomRecyclerViewAdapter.ICallbackToGetUsers? = null;
     private var lifecycleOwner: LifecycleOwner? = null;
     private var currentUserId: String? = null;
 
@@ -41,8 +40,7 @@ class ListRoomSearchRecyclerViewAdapter constructor(appExecutors: AppExecutors, 
         return DataBoundViewHolder(binding);
     }
 
-    override fun setCallbackToGetUsers(callback: IListRoomRecyclerViewAdapter.ICallbackToGetUsers, lifecycleOwner: LifecycleOwner, currentUserId: String?) {
-        callbackToGetUsers = callback;
+    override fun setLifeCycleOwner(lifecycleOwner: LifecycleOwner, currentUserId: String?) {
         this.lifecycleOwner = lifecycleOwner;
         this.currentUserId = currentUserId;
     }
@@ -60,13 +58,7 @@ class ListRoomSearchRecyclerViewAdapter constructor(appExecutors: AppExecutors, 
             }
             p0.binding.executePendingBindings();
             p0.binding.currentUserId = currentUserId;
-            p0.binding.members = getItem(p1).roomUserJoin?.size.toString();
-            callbackToGetUsers?.let { callback ->
-                getItem(p1).roomUserJoin?.let {
-                    val userIds = Array(it.size) { i -> it[i].userId };
-                    p0.binding.users = callback.getUsers(userIds);
-                }
-            }
+            p0.binding.members = getItem(p1).members?.size.toString();
     }
 
     override fun setOnItemClick(itemClick: (RoomListUser, Int) -> Unit?) {

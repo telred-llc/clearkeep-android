@@ -3,6 +3,7 @@ package vmodev.clearkeep.activities
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
@@ -83,11 +84,11 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
         }
 
         binding.layoutSearch.setOnTouchListener { v, event ->
-            hideKeyboard()
-            return@setOnTouchListener true
-        }
-        binding.tabLayout.setOnTouchListener { v, event ->
-            hideKeyboard()
+//            if (checkShowKeyBoard(binding.layoutSearch,this)){
+                hideKeyboard()
+//            }else{
+//                Log.d("","")
+//            }
             return@setOnTouchListener true
         }
         binding.lifecycleOwner = this;

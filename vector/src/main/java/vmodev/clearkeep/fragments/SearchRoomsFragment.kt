@@ -177,6 +177,10 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
         binding.invites = viewModelFactory.getViewModel().getRoomInviteSearchResult()
         binding.derects = viewModelFactory.getViewModel().getDirectRoomNormalSearchResult()
         binding.listRoomDirectory = viewModelFactory.getViewModel().getRoomInviteSearchResult()
+        binding.layoutSearch.setOnTouchListener { v, event ->
+            hideKeyboard()
+            return@setOnTouchListener true
+        }
         binding.recyclerDirects.setOnTouchListener { v, event ->
             hideKeyboard()
             return@setOnTouchListener true
