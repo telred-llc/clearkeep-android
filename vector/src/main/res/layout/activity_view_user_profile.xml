@@ -33,7 +33,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/primary_hint_text_color_light"
         android:orientation="vertical">
 
 
@@ -54,7 +53,9 @@
                 android:layout_centerInParent="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/padding_normal"
-                app:srcCompat="@drawable/ic_back" />
+                app:srcCompat="@drawable/ic_back"
+                android:tint="?attr/color_icon_app_default"
+                />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -63,9 +64,12 @@
                 android:layout_marginStart="@dimen/margin_small"
                 android:layout_toEndOf="@+id/imgBack"
                 android:text="@string/profile"
-                android:textSize="@dimen/text_20_sp" />
+                android:textSize="@dimen/text_20_sp"
+                android:textColor="?attr/color_text_app_default"
+                />
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgChat"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
@@ -74,6 +78,7 @@
                 app:srcCompat="@drawable/ic_message"
                 android:layout_toStartOf="@+id/imgCall"
                 android:layout_marginEnd="@dimen/margin_normal"
+                android:tint="?attr/color_icon_app_default"
                 />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -86,7 +91,7 @@
                 android:padding="@dimen/padding_normal"
                 app:srcCompat="@drawable/ic_call_phone"
                 android:layout_marginEnd="@dimen/margin_normal"
-
+                android:tint="?attr/color_icon_app_default"
                 />
 
 
@@ -142,19 +147,17 @@
 
         <TextView
             android:id="@+id/tvName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginHorizontal="@dimen/margin_normal"
+            android:layout_marginHorizontal="@dimen/margin_xxl"
             android:layout_marginTop="@dimen/margin_medium"
-            app:layout_constraintEnd_toEndOf="@+id/frAvatarProfile"
-            app:layout_constraintHorizontal_bias="0.523"
-            app:layout_constraintStart_toStartOf="@+id/frAvatarProfile"
             app:layout_constraintTop_toBottomOf="@+id/frAvatarProfile"
             android:text="@{user.data.name}"
             android:singleLine="true"
+            android:gravity="center"
             tools:text="Nguyen van Qui"
             android:textSize="@dimen/text_21_sp"
+            android:textColor="?attr/color_text_app_default"
             />
 
 
@@ -172,7 +175,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
-                app:srcCompat="@drawable/ic_profile" />
+                app:srcCompat="@drawable/ic_profile"
+                android:tint="?attr/color_icon_app_default"
+                />
 
             <TextView
                 android:id="@+id/text_view_user_id"
@@ -182,7 +187,7 @@
                 android:layout_toEndOf="@+id/imgProfile"
                 android:singleLine="true"
                 android:text="@{user.data.id}"
-                android:textColor="@color/text_color_default"
+                android:textColor="?attr/color_text_app_default"
                 android:textSize="@dimen/text_19_sp"
                 tools:text="nilhlinh94:s.clearkeep.me" />
         </RelativeLayout>
@@ -203,7 +208,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
-                app:srcCompat="@drawable/ic_location" />
+                app:srcCompat="@drawable/ic_location"
+                android:tint="?attr/color_icon_app_default"
+                />
 
             <TextView
                 android:id="@+id/tvLocation"
@@ -213,7 +220,7 @@
                 android:layout_toEndOf="@+id/imgLocation"
                 android:singleLine="true"
                 android:text="仙台市　日本国 - JP"
-                android:textColor="@color/text_color_default"
+                android:textColor="?attr/color_text_app_default"
                 android:textSize="@dimen/text_19_sp"
                 tools:text="仙台市　日本国 - JP" />
         </RelativeLayout>
@@ -233,7 +240,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
-                app:srcCompat="@drawable/ic_phone" />
+                app:srcCompat="@drawable/ic_phone"
+                android:tint="?attr/color_icon_app_default"
+                />
 
             <TextView
                 android:id="@+id/tvPhone"
@@ -243,9 +252,10 @@
                 android:layout_toEndOf="@+id/imgPhone"
                 android:singleLine="true"
                 android:text="+84 222 11 5550"
-                android:textColor="@color/text_color_default"
+                android:textColor="?attr/color_text_app_default"
                 android:textSize="@dimen/text_19_sp"
-                tools:text="+84 222 11 5550" />
+                tools:text="+84 222 11 5550"
+                />
         </RelativeLayout>
 
         <Button
@@ -255,7 +265,7 @@
             android:layout_marginStart="@dimen/margin_normal"
             android:layout_marginTop="@dimen/margin_xl"
             android:layout_marginEnd="@dimen/margin_normal"
-            android:background="@drawable/bg_sign_out"
+            android:background="@drawable/bg_button_gradient_blue"
             android:text="@string/room_participants_action_set_admin"
             android:textColor="@color/color_white"
             android:textStyle="bold"
