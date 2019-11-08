@@ -37,8 +37,6 @@ class DeactivateAccountFragment : DataBindingDaggerFragment(), IFragment {
     lateinit var clearKeepDatabase: ClearKeepDatabase;
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractDeactivateAccountActivityViewModel>
-    @Inject
-    lateinit var application: IApplication;
 
     private lateinit var binding: FragmentDeactivateUserAccountBinding;
     private lateinit var session: MXSession;

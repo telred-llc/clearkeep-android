@@ -18,8 +18,6 @@ import javax.inject.Inject
 class NotificationSettingsFragment : DataBindingDaggerFragment(), IFragment {
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractNotificationSettingsActivityViewModel>;
-    @Inject
-    lateinit var application : IApplication;
     private lateinit var binding: FragmentNotificationSettingsBinding;
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

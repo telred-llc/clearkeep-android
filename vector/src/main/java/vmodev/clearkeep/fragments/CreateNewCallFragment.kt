@@ -45,9 +45,6 @@ class CreateNewCallFragment : DataBindingDaggerFragment(), IFragment {
     lateinit var viewModelFactory: IViewModelFactory<AbstractCreateNewCallActivityViewModel>;
     @Inject
     lateinit var appExecutors: AppExecutors;
-    @Inject
-    lateinit var application: IApplication;
-
     private lateinit var binding: ActivityCreateNewCallBinding;
     private val listSelected = HashMap<String, User>();
     private lateinit var userId: String;
@@ -107,11 +104,11 @@ class CreateNewCallFragment : DataBindingDaggerFragment(), IFragment {
             listUserAdapter.submitList(it?.data);
             listUserSuggested = it?.data
         });
-        viewModelFactory.getViewModel().getUsersByQueryResult().observe(this, Observer {
+        viewModelFactory.getViewModel().getUsersByQueryResult().observe(viewLifecycleOwner, Observer {
             if (!TextUtils.isEmpty(binding.editTextQuery.text))
                 listUserAdapter.submitList(it?.data);
         });
-        viewModelFactory.getViewModel().getCreateNewRoomResult().observe(this, Observer {
+        viewModelFactory.getViewModel().getCreateNewRoomResult().observe(viewLifecycleOwner, Observer {
             it?.let {
                 when (it.status) {
                     Status.LOADING -> {

@@ -23,8 +23,6 @@ class ReportFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractReportActivityViewModel>;
-    @Inject
-    lateinit var application : IApplication;
 
     private lateinit var binding: FragmentReportBinding;
 
@@ -37,7 +35,7 @@ class ReportFragment : DataBindingDaggerFragment(), IFragment {
         super.onViewCreated(view, savedInstanceState)
         binding.deviceSettings = viewModelFactory.getViewModel().getMergeGetDeiveSettingsResult();
 
-        viewModelFactory.getViewModel().getMergeGetDeiveSettingsResult().observe(this, Observer {
+        viewModelFactory.getViewModel().getMergeGetDeiveSettingsResult().observe(viewLifecycleOwner, Observer {
             it?.data?.let {
                 binding.switchCompatSendCrash.isChecked = it.sendAnonCrashAndUsageData.compareTo(0) != 0
                 binding.switchCompatRageShakeToReportBug.isChecked = it.rageShakeToReportBug.compareTo(0) != 0

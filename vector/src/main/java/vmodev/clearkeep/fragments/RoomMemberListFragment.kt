@@ -36,7 +36,6 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment {
     private lateinit var roomViewModel: AbstractRoomViewModel;
     private lateinit var listUserAdapter: ListUserRecyclerViewAdapter;
 
-    private lateinit var session: MXSession;
     private val args: RoomMemberListFragmentArgs by navArgs();
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -56,7 +55,7 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment {
                 return p0.avatarUrl == p1.avatarUrl && p0.name == p1.name;
             }
         }, dataBinding) { user ->
-            if (session.myUserId.compareTo(user.id) == 0) {
+            if (application.getUserId().compareTo(user.id) == 0) {
                 val userIntent = Intent(this@RoomMemberListFragment.activity, ProfileActivity::class.java);
                 startActivity(userIntent);
             } else {
@@ -68,7 +67,7 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment {
         roomViewModel = ViewModelProvider(this, viewModelFactory).get(AbstractRoomViewModel::class.java);
         binding.users = roomViewModel.getGetUserFromRoomIdResult();
         binding.recyclerView.adapter = listUserAdapter;
-        roomViewModel.getGetUserFromRoomIdResult().observe(this, Observer { t ->
+        roomViewModel.getGetUserFromRoomIdResult().observe(viewLifecycleOwner, Observer { t ->
             listUserAdapter.submitList(t?.data);
         });
         binding.lifecycleOwner = viewLifecycleOwner;
