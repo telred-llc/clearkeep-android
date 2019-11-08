@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -181,23 +182,26 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
             hideKeyboard()
             return@setOnTouchListener true
         }
-        binding.recyclerDirects.setOnTouchListener { v, event ->
+        binding.nestScroll.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
             hideKeyboard()
-            return@setOnTouchListener true
         }
-        binding.recyclerRoomDerectory.setOnTouchListener { v, event ->
-            hideKeyboard()
-            return@setOnTouchListener true
-        }
-        binding.recyclerViewInvites.setOnTouchListener { v, event ->
-            hideKeyboard()
-            return@setOnTouchListener true
-        }
-        binding.recyclerViewRooms.setOnTouchListener { v, event ->
-            hideKeyboard()
-            return@setOnTouchListener true
-        }
-        binding.lifecycleOwner = viewLifecycleOwner;
+//        binding.recyclerDirects.setOnTouchListener { v, event ->
+//            hideKeyboard()
+//            return@setOnTouchListener true
+//        }
+//        binding.recyclerRoomDerectory.setOnTouchListener { v, event ->
+//            hideKeyboard()
+//            return@setOnTouchListener true
+//        }
+//        binding.recyclerViewInvites.setOnTouchListener { v, event ->
+//            hideKeyboard()
+//            return@setOnTouchListener true
+//        }
+//        binding.recyclerViewRooms.setOnTouchListener { v, event ->
+//            hideKeyboard()
+//            return@setOnTouchListener true
+//        }
+//        binding.lifecycleOwner = viewLifecycleOwner;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -151,15 +152,15 @@ class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
                 binding.userDirectory = t?.data!!.size
             }
         });
+        binding.layoutSearch.setOnTouchListener { v, event ->
+            hideKeyboard()
+            return@setOnTouchListener true
+        }
 
-        binding.recyclerView.setOnTouchListener { v, event ->
+        binding.nestScroll.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
             hideKeyboard()
-            return@setOnTouchListener true
         }
-        binding.recyclerViewMatrixContact.setOnTouchListener { v, event ->
-            hideKeyboard()
-            return@setOnTouchListener true
-        }
+
         binding.lifecycleOwner = viewLifecycleOwner;
 
     }

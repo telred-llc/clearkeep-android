@@ -22,6 +22,7 @@
         <variable
             name="room"
             type="LiveData&lt;Resource&lt;Room>>" />
+
         <variable
             name="list_room_directory"
             type="LiveData&lt;Resource&lt;List&lt;vmodev.clearkeep.viewmodelobjects.RoomListUser>>>" />
@@ -40,11 +41,12 @@
     </data>
 
     <FrameLayout
+        android:id="@+id/layout_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.core.widget.NestedScrollView
-            android:id="@+id/layout_search"
+            android:id="@+id/nestScroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -74,10 +76,10 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:text="@{`(` + String.valueOf(list_room_directory.data.size) + `)`}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
+                        android:text="@{`(` + String.valueOf(list_room_directory.data.size) + `)`}"
                         android:textColor="@color/text_color"
                         android:textSize="@dimen/text_17_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -89,8 +91,7 @@
                     android:id="@+id/recycler_room_derectory"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/room_item" />
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/linear_layout_invites"
@@ -113,10 +114,10 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:text="@{`(` + String.valueOf(invites.data.size) + `)`}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
+                        android:text="@{`(` + String.valueOf(invites.data.size) + `)`}"
                         android:textColor="@color/text_color"
                         android:textSize="@dimen/text_17_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -152,10 +153,10 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:text="@{`(` + String.valueOf(derects.data.size) + `)`}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
+                        android:text="@{`(` + String.valueOf(derects.data.size) + `)`}"
                         android:textColor="@color/text_color"
                         android:textSize="@dimen/text_17_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -168,8 +169,7 @@
                     android:id="@+id/recycler_directs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_user" />
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/linear_layout_rooms"
@@ -192,10 +192,10 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:text="@{`(` + String.valueOf(rooms.data.size) + `)`}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
+                        android:text="@{`(` + String.valueOf(rooms.data.size) + `)`}"
                         android:textColor="@color/text_color"
                         android:textSize="@dimen/text_17_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
