@@ -30,114 +30,361 @@
             type="LiveData&lt;Resource&lt;Room>>" />
     </data>
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:visibleGone="@{userResource.status == Status.LOADING || room.status == Status.LOADING}" />
 
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/rlToolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="@dimen/height_tool_bar_size"
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="250dp">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@color/accent_color_dark"
-                    app:imageUrl="@{user.data.avatarUrl}" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:layout_gravity="bottom"
-                    android:background="@color/transparent_black_50"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginHorizontal="10dp"
-                        android:text="@{user.data.name}"
-                        android:textColor="@color/main_text_color"
-                        android:textSize="@dimen/text_main_size" />
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:layout_gravity="center_vertical"
-                        android:src="@color/accent_color_light"
-                        app:civ_border_color="@color/main_text_color"
-                        app:civ_border_width="2dp" />
-                </LinearLayout>
-            </FrameLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/button_message"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_button_gradient_blue"
-                    android:text="@string/message"
-                    android:textStyle="bold" />
-
-                <Button
-                    android:id="@+id/button_call"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_button_gradient_blue"
-                    android:text="@string/call"
-                    android:textStyle="bold" />
-            </LinearLayout>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgBack"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="@dimen/padding_normal"
+                app:srcCompat="@drawable/ic_back"
+                android:tint="?attr/color_icon_app_default"
+                />
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="@string/display_name"
-                android:textColor="@android:color/darker_gray" />
+                android:layout_centerInParent="true"
+                android:layout_marginStart="@dimen/margin_small"
+                android:layout_toEndOf="@+id/imgBack"
+                android:text="@string/profile"
+                android:textSize="@dimen/text_20_sp"
+                android:textColor="?attr/color_text_app_default"
+                />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="@{user.data.name}" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgChat"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="@dimen/padding_normal"
+                app:srcCompat="@drawable/ic_message"
+                android:layout_toStartOf="@+id/imgCall"
+                android:layout_marginEnd="@dimen/margin_normal"
+                android:tint="?attr/color_icon_app_default"
+                />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgCall"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="@dimen/padding_normal"
+                app:srcCompat="@drawable/ic_call_phone"
+                android:layout_marginEnd="@dimen/margin_normal"
+                android:tint="?attr/color_icon_app_default"
+                />
+
+
+            <!--            <RelativeLayout-->
+            <!--                android:id="@+id/rlEdit"-->
+            <!--                android:layout_width="40dp"-->
+            <!--                android:layout_height="40dp"-->
+            <!--                android:layout_alignParentEnd="true"-->
+            <!--                android:layout_centerInParent="true"-->
+            <!--                android:background="@drawable/bg_circle_image_grey">-->
+
+            <!--                <androidx.appcompat.widget.AppCompatImageView-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_centerInParent="true"-->
+            <!--                    app:srcCompat="@drawable/ic_edit" />-->
+
+            <!--            </RelativeLayout>-->
+
+
+        </RelativeLayout>
+
+
+        <FrameLayout
+            android:id="@+id/frAvatarProfile"
+            android:layout_width="@dimen/avatar_screen_profile_size"
+            android:layout_height="@dimen/avatar_screen_profile_size"
+            android:layout_marginTop="@dimen/margin_xl"
+            app:layout_constraintEnd_toEndOf="@+id/rlToolbar"
+            app:layout_constraintStart_toStartOf="@+id/rlToolbar"
+            app:layout_constraintTop_toBottomOf="@+id/rlToolbar">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/circle_image_view_avatar"
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@color/app_green"
+                app:civ_border_color="@color/border_color_avatar_profile"
+                app:civ_border_width="@dimen/border_avatar_screen_profile_size"
+                app:user="@{user.data}" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/circle_image_view_status"
+                android:layout_width="@dimen/status_active_size"
+                android:layout_height="@dimen/status_active_size"
+                android:layout_gravity="end|bottom"
+                android:layout_marginEnd="@dimen/margin_end_status_active"
+                android:src="@color/app_green"
+                app:civ_border_color="@android:color/white"
+                app:civ_border_width="@dimen/border_status_active_size" />
+        </FrameLayout>
+
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/margin_xxl"
+            android:layout_marginTop="@dimen/margin_medium"
+            app:layout_constraintTop_toBottomOf="@+id/frAvatarProfile"
+            android:text="@{user.data.name}"
+            android:singleLine="true"
+            android:gravity="center"
+            tools:text="Nguyen van Qui"
+            android:textSize="@dimen/text_21_sp"
+            android:textColor="?attr/color_text_app_default"
+            />
+
+
+        <RelativeLayout
+            android:id="@+id/rlID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_xxl"
+            android:padding="@dimen/padding_large"
+            app:layout_constraintTop_toBottomOf="@+id/tvName">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgProfile"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="@string/user_id"
-                android:textColor="@android:color/darker_gray" />
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                app:srcCompat="@drawable/ic_profile"
+                android:tint="?attr/color_icon_app_default"
+                />
 
             <TextView
                 android:id="@+id/text_view_user_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="@{user.data.id}" />
-        </LinearLayout>
-    </FrameLayout>
+                android:layout_marginStart="@dimen/margin_large"
+                android:layout_toEndOf="@+id/imgProfile"
+                android:singleLine="true"
+                android:text="@{user.data.id}"
+                android:textColor="?attr/color_text_app_default"
+                android:textSize="@dimen/text_19_sp"
+                tools:text="nilhlinh94:s.clearkeep.me" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/rlLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_large"
+            app:layout_constraintEnd_toEndOf="@+id/rlID"
+            app:layout_constraintStart_toStartOf="@+id/rlID"
+            app:layout_constraintTop_toBottomOf="@+id/rlID">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                app:srcCompat="@drawable/ic_location"
+                android:tint="?attr/color_icon_app_default"
+                />
+
+            <TextView
+                android:id="@+id/tvLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_large"
+                android:layout_toEndOf="@+id/imgLocation"
+                android:singleLine="true"
+                android:text="仙台市　日本国 - JP"
+                android:textColor="?attr/color_text_app_default"
+                android:textSize="@dimen/text_19_sp"
+                tools:text="仙台市　日本国 - JP" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlPhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_large"
+            app:layout_constraintEnd_toEndOf="@+id/rlLocation"
+            app:layout_constraintStart_toStartOf="@+id/rlLocation"
+            app:layout_constraintTop_toBottomOf="@+id/rlLocation">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imgPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                app:srcCompat="@drawable/ic_phone"
+                android:tint="?attr/color_icon_app_default"
+                />
+
+            <TextView
+                android:id="@+id/tvPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_large"
+                android:layout_toEndOf="@+id/imgPhone"
+                android:singleLine="true"
+                android:text="+84 222 11 5550"
+                android:textColor="?attr/color_text_app_default"
+                android:textSize="@dimen/text_19_sp"
+                tools:text="+84 222 11 5550"
+                />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/button_sign_out"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_xl"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:background="@drawable/bg_button_gradient_blue"
+            android:text="@string/room_participants_action_set_admin"
+            android:textColor="@color/color_white"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/rlPhone"
+            app:layout_constraintStart_toStartOf="@+id/rlPhone"
+            app:layout_constraintTop_toBottomOf="@+id/rlPhone" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+<!--    <FrameLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent">-->
+
+<!--        <ProgressBar-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center"-->
+<!--            app:visibleGone="@{userResource.status == Status.LOADING || room.status == Status.LOADING}" />-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:orientation="vertical">-->
+
+<!--            <androidx.appcompat.widget.Toolbar-->
+<!--                android:id="@+id/toolbar"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content" />-->
+
+<!--            <FrameLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="250dp">-->
+
+<!--                <ImageView-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:src="@color/accent_color_dark"-->
+<!--                    app:imageUrl="@{user.data.avatarUrl}" />-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="70dp"-->
+<!--                    android:layout_gravity="bottom"-->
+<!--                    android:background="@color/transparent_black_50"-->
+<!--                    android:orientation="horizontal">-->
+
+<!--                    <TextView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center_vertical"-->
+<!--                        android:layout_marginHorizontal="10dp"-->
+<!--                        android:text="@{user.data.name}"-->
+<!--                        android:textColor="@color/main_text_color"-->
+<!--                        android:textSize="@dimen/text_main_size" />-->
+
+<!--                    <de.hdodenhof.circleimageview.CircleImageView-->
+<!--                        android:layout_width="15dp"-->
+<!--                        android:layout_height="15dp"-->
+<!--                        android:layout_gravity="center_vertical"-->
+<!--                        android:src="@color/accent_color_light"-->
+<!--                        app:civ_border_color="@color/main_text_color"-->
+<!--                        app:civ_border_width="2dp" />-->
+<!--                </LinearLayout>-->
+<!--            </FrameLayout>-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <Button-->
+<!--                    android:id="@+id/button_message"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_margin="10dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:background="@drawable/bg_button_gradient_blue"-->
+<!--                    android:text="@string/message"-->
+<!--                    android:textStyle="bold" />-->
+
+<!--                <Button-->
+<!--                    android:id="@+id/button_call"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_margin="10dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:background="@drawable/bg_button_gradient_blue"-->
+<!--                    android:text="@string/call"-->
+<!--                    android:textStyle="bold" />-->
+<!--            </LinearLayout>-->
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="10dp"-->
+<!--                android:text="@string/display_name"-->
+<!--                android:textColor="@android:color/darker_gray" />-->
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="10dp"-->
+<!--                android:text="@{user.data.name}" />-->
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="10dp"-->
+<!--                android:text="@string/user_id"-->
+<!--                android:textColor="@android:color/darker_gray" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/text_view_user_id"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="10dp"-->
+<!--                android:text="@{user.data.id}" />-->
+<!--        </LinearLayout>-->
+<!--    </FrameLayout>-->
 </layout>

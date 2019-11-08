@@ -48,8 +48,6 @@ class FindAndCreateNewConversationFragment : DataBindingDaggerFragment(), IFragm
     lateinit var appExecutors: AppExecutors;
     @Inject
     lateinit var roomUserJoinDao: AbstractRoomUserJoinDao;
-    @Inject
-    lateinit var application: IApplication;
 
     private lateinit var binding: ActivityFindAndCreateNewConversationBinding;
     private var listUserSuggested: List<User>? = null
