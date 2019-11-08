@@ -19,11 +19,6 @@ class SettingsActivity : DataBindingDaggerActivity(), IActivity {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val window: Window = this.getWindow();
-        window.statusBarColor = ContextCompat.getColor(this, R.color.primary_hint_text_color_light)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_settings, dataBinding.getDataBindingComponent());
         setSupportActionBar(binding.toolbar);
         supportActionBar?.setDisplayHomeAsUpEnabled(true);

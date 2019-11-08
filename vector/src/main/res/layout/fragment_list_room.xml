@@ -54,7 +54,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_marginTop="10dp"
-                    android:background="@color/background_search"
+                    android:background="?attr/color_header_category_screen_room_list"
                     android:id="@+id/linear_layout_favourites"
                     android:layout_width="match_parent"
                     android:layout_height="46dp"
@@ -81,7 +81,7 @@
                         app:layout_constraintTop_toTopOf="@+id/txtFavourites" />
 
                     <TextView
-                        android:textColor="@color/text_color"
+                        android:textColor="?attr/color_text_app_default"
                         android:id="@+id/txtFavourites"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:textColor="@color/text_color"
+                        android:textColor="?attr/color_text_app_default"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
@@ -121,7 +121,7 @@
 
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:background="@color/background_search"
+                    android:background="?attr/color_header_category_screen_room_list"
                     android:id="@+id/linear_layout_group"
                     android:layout_width="match_parent"
                     android:layout_height="46dp"
@@ -149,7 +149,7 @@
                         android:src="@drawable/ic_rooms" />
 
                     <TextView
-                        android:textColor="@color/text_color"
+                        android:textColor="?attr/color_text_app_default"
                         android:id="@+id/txtRooms"
                         android:layout_marginStart="10dp"
                         app:layout_constraintLeft_toRightOf="@+id/icon_rooms"
@@ -161,7 +161,7 @@
                         android:textSize="@dimen/text_17_sp" />
 
                     <TextView
-                        android:textColor="@color/text_color"
+                        android:textColor="?attr/color_text_app_default"
                         app:layout_constraintLeft_toRightOf="@+id/txtRooms"
                         app:layout_constraintBottom_toBottomOf="@+id/txtRooms"
                         app:layout_constraintTop_toTopOf="@+id/txtRooms"
@@ -238,7 +238,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_marginTop="10dp"
-                    android:background="@color/background_search"
+                    android:background="?attr/color_header_category_screen_room_list"
                     android:id="@+id/linear_layout_direct"
                     android:layout_width="match_parent"
                     android:layout_height="46dp"
@@ -265,7 +265,7 @@
                         app:layout_constraintTop_toTopOf="@+id/txtDirectMessages" />
 
                     <TextView
-                        android:textColor="@color/text_color"
+                        android:textColor="?attr/color_text_app_default"
                         android:id="@+id/txtDirectMessages"
                         android:layout_marginStart="10dp"
                         app:layout_constraintLeft_toRightOf="@+id/icon_direction_direct"
@@ -277,7 +277,7 @@
                         android:textSize="@dimen/text_17_sp" />
 
                     <TextView
-                        android:textColor="@color/text_color"
+                        android:textColor="?attr/color_text_app_default"
                         app:layout_constraintLeft_toRightOf="@+id/txtDirectMessages"
                         app:layout_constraintBottom_toBottomOf="@+id/txtDirectMessages"
                         app:layout_constraintTop_toTopOf="@+id/txtDirectMessages"

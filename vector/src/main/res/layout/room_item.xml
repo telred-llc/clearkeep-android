@@ -39,7 +39,7 @@
         <FrameLayout
             android:layout_width="@dimen/image_avatar_status_size"
             android:layout_height="@dimen/image_avatar_status_size">
-            <vmodev.clearkeep.widget.CircleImage
+            <de.hdodenhof.circleimageview.CircleImageView
                 app:room="@{room_list_user.room}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -82,7 +82,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:textColor="@color/black_color"
+                android:textColor="?attr/color_text_app_default"
                 android:id="@+id/text_view_name"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -128,7 +128,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:textColor="@color/black_color"
+                    android:textColor="?attr/color_text_app_default"
                     android:textSize="@dimen/text_11_sp"
                     android:id="@+id/text_view_time"
                     android:layout_width="wrap_content"

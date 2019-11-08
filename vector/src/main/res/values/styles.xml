@@ -311,7 +311,8 @@
         <attr name="color_text_app_default" format="color"/>
         <attr name="color_icon_app_default" format="color"/>
         <attr name="bg_search_view" format="reference"/>
-        <attr name="color_view_blank_setting" format="color"></attr>
+        <attr name="color_view_blank_setting" format="color"/>
+        <attr name="color_header_category_screen_room_list" format="color"/>
 
 
     </declare-styleable>
@@ -368,6 +369,7 @@
         <item name="color_icon_app_default">#F5F5F5</item>
         <item name="bg_search_view">@drawable/bg_search_dark_mode</item>
         <item name="color_view_blank_setting">#000000</item>
+        <item name="color_header_category_screen_room_list">#333333</item>
 
     </style>
 
@@ -420,7 +422,8 @@
         <item name="color_text_app_default">#242424</item>
         <item name="color_icon_app_default">#242424</item>
         <item name="bg_search_view">@drawable/bg_search_light_mode</item>
-        <item name="color_view_blank_setting">#707070</item>
+        <item name="color_view_blank_setting">#F0F0F0</item>
+        <item name="color_header_category_screen_room_list">#F0F0F0</item>
 
     </style>
 

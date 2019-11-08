@@ -78,7 +78,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/ic_decline_call" />
+                android:src="@drawable/ic_decline_call"
+
+                />
 
             <ImageView
                 android:id="@+id/image_view_accept"

@@ -39,6 +39,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -51,64 +52,72 @@
                 android:layout_height="?attr/actionBarSize"
                 android:orientation="horizontal">
 
-                <androidx.cardview.widget.CardView
+                <!--                <androidx.cardview.widget.CardView-->
+                <!--                    android:layout_width="50dp"-->
+                <!--                    android:layout_height="50dp"-->
+                <!--                    android:layout_gravity="center_vertical"-->
+                <!--                    android:layout_marginStart="12dp"-->
+                <!--                    android:background="@color/blue_app"-->
+                <!--                    android:innerRadius="0dp"-->
+                <!--                    android:shape="ring"-->
+                <!--                    app:cardCornerRadius="25dp">-->
+
+                <!--                    <ImageView-->
+                <!--                        android:id="@+id/circle_image_view_avatar"-->
+                <!--                        android:layout_width="match_parent"-->
+                <!--                        android:layout_height="match_parent"-->
+                <!--                        android:background="@color/app_green"-->
+                <!--                        app:user="@{user.data}" />-->
+                <!--                </androidx.cardview.widget.CardView>-->
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/circle_image_view_avatar"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginStart="12dp"
-                    android:background="@color/blue_app"
-                    android:innerRadius="0dp"
-                    android:shape="ring"
-                    app:cardCornerRadius="25dp">
+                    android:layout_marginStart="@dimen/margin_normal"
+                    app:civ_circle_background_color="@color/app_green"
+                    app:user="@{user.data}" />
 
-                    <ImageView
-                        android:id="@+id/circle_image_view_avatar"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@color/app_green"
-                        app:user="@{user.data}" />
-                </androidx.cardview.widget.CardView>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_gravity="center_vertical"
+                <RelativeLayout
                     android:id="@+id/frame_layout_search"
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="12dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/margin_small"
                     android:layout_weight="1"
-                    android:background="@drawable/search_view_background">
+                    android:background="?attr/bg_search_view"
+                    android:paddingHorizontal="@dimen/padding_small">
+
                     <TextView
                         android:id="@+id/txtSearch"
-                        android:textColor="@color/search_color"
-                        android:layout_marginStart="7dp"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:textSize="@dimen/text_16_sp"
-                        android:text="@string/search"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-                    <ImageView
-                        android:layout_marginEnd="7dp"
-                        app:layout_constraintBottom_toBottomOf="@+id/txtSearch"
-                        app:layout_constraintTop_toTopOf="@+id/txtSearch"
-                        app:layout_constraintEnd_toEndOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="10dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerInParent="true"
+                        android:layout_marginVertical="@dimen/margin_normal"
+                        android:layout_toStartOf="@+id/imgSearch"
+                        android:text="@string/search"
+                        android:textColor="@color/search_color"
+                        android:textSize="@dimen/text_16_sp" />
+
+                    <ImageView
+                        android:id="@+id/imgSearch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerInParent="true"
                         android:src="@drawable/ic_search_gray_24dp" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </RelativeLayout>
 
                 <ImageView
-                    android:tint="?attr/icon_color_setting"
                     android:id="@+id/button_create_convention"
                     android:layout_width="?attr/actionBarSize"
                     android:layout_height="?attr/actionBarSize"
                     android:layout_gravity="center_vertical"
                     android:scaleType="center"
-                    android:src="@drawable/ic_new_chat_light_mode" />
+                    android:src="@drawable/ic_new_chat_light_mode"
+                    android:tint="?attr/icon_color_setting" />
             </LinearLayout>
 
             <fragment
@@ -128,8 +137,8 @@
                 android:layout_height="wrap_content"
                 app:itemIconTint="@color/home_bottom_nav_view_tint"
                 app:itemTextColor="@color/home_bottom_nav_view_tint"
-                app:menu="@menu/home_screen_bottom_navigation_view_menu"
-                app:labelVisibilityMode="labeled">
+                app:labelVisibilityMode="labeled"
+                app:menu="@menu/home_screen_bottom_navigation_view_menu">
 
                 <LinearLayout
                     android:layout_width="match_parent"

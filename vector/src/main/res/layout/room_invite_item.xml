@@ -37,7 +37,7 @@
                 android:layout_height="@dimen/image_avatar_status_size"
                 android:layout_marginStart="6dp">
 
-                <vmodev.clearkeep.widget.CircleImage
+                <de.hdodenhof.circleimageview.CircleImageView
                     app:room="@{room_list_user.room}"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -100,7 +100,7 @@
                         android:layout_gravity="center_vertical"
                         android:singleLine="true"
                         android:text="@{name}"
-                        android:textColor="@color/black_color"
+                        android:textColor="?attr/color_text_app_default"
                         android:textSize="@dimen/text_17_sp" />
 
                     <TextView
@@ -110,7 +110,7 @@
                         android:layout_alignParentEnd="true"
                         android:singleLine="true"
                         android:textAlignment="textEnd"
-                        android:textColor="@color/black_color"
+                        android:textColor="?attr/color_text_app_default"
                         android:textSize="@dimen/text_11_sp"
                         app:timeStamp="@{room_list_user.lastMessage.createdAt}" />
                 </RelativeLayout>

@@ -40,7 +40,7 @@
             android:layout_width="@dimen/image_avatar_status_size"
             android:layout_height="@dimen/image_avatar_status_size">
 
-            <vmodev.clearkeep.widget.CircleImage
+            <de.hdodenhof.circleimageview.CircleImageView
                 app:room="@{room_list_user.room}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
