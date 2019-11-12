@@ -91,8 +91,10 @@ class OutgoingVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
         callSoundsManager = CallSoundsManager.getSharedInstance(this.activity);
         callView = callManager?.callView;
         setupButtonControl();
+        initComponent()
         binding.room = viewModelFactory.getViewModel().getRoomResult();
         viewModelFactory.getViewModel().setRoomId(mxCall.room.roomId);
+        binding.rippleBackground.startRippleAnimation()
     }
 
     override fun getFragment(): Fragment {
@@ -128,12 +130,14 @@ class OutgoingVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
     private fun setupButtonControl() {
         binding.imageViewHangUp.setOnClickListener {
             callManager?.onHangUp(null)
+            binding.rippleBackground.stopRippleAnimation()
         }
         binding.imageViewMicrophone.setOnClickListener {
             callSoundsManager?.let {
                 it.isMicrophoneMute = !it.isMicrophoneMute;
                 Toast.makeText(this.context, if (it.isMicrophoneMute) resources.getString(R.string.microphone_off) else resources.getString(R.string.microphone_on)
                         , Toast.LENGTH_SHORT).show();
+                binding.callSoundsManager = it
             }
         }
         binding.imageViewSpeaker.setOnClickListener {
@@ -141,11 +145,21 @@ class OutgoingVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
                 callManager?.toggleSpeaker();
                 Toast.makeText(this.context, if (it.isSpeakerphoneOn) resources.getString(R.string.speaker_phone_on) else resources.getString(R.string.speaker_phone_off)
                         , Toast.LENGTH_SHORT).show();
+                binding.callManager = it
             }
         }
         binding.imageViewGoToRoom.setOnClickListener {
             CallsManager.getSharedInstance().setCallActivity(null);
             this.activity?.finish();
+        }
+    }
+
+    private fun initComponent() {
+        callSoundsManager?.let {
+            binding.callSoundsManager = it
+        }
+        callManager?.let {
+            binding.callManager = it
         }
     }
 }

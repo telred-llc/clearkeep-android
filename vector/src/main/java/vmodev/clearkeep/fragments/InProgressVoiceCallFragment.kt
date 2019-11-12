@@ -23,6 +23,7 @@ import org.matrix.androidsdk.call.MXCallListener
 import org.matrix.androidsdk.call.VideoLayoutConfiguration
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.ultis.FormatString
 import vmodev.clearkeep.ultis.longTimeToString
 import vmodev.clearkeep.viewmodels.interfaces.AbstractInProgressVoiceCallFragmentViewModel
 import java.util.concurrent.TimeUnit
@@ -64,7 +65,10 @@ class InProgressVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
         callView = callManager?.callView;
         setupButtonControl();
         binding.room = viewModelFactory.getViewModel().getRoomResult();
+        FormatString
         viewModelFactory.getViewModel().setRoomId(mxCall.room.roomId);
+        binding.rippleBackground.startRippleAnimation()
+        initComponent()
     }
 
     override fun onDestroy() {
@@ -101,12 +105,14 @@ class InProgressVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
     private fun setupButtonControl() {
         binding.imageViewHangUp.setOnClickListener {
             callManager?.onHangUp(null)
+            binding.rippleBackground.stopRippleAnimation()
         }
         binding.imageViewMicrophone.setOnClickListener {
             callSoundsManager?.let {
                 it.isMicrophoneMute = !it.isMicrophoneMute;
                 Toast.makeText(this.context, if (it.isMicrophoneMute) resources.getString(R.string.microphone_off) else resources.getString(R.string.microphone_on)
                         , Toast.LENGTH_SHORT).show();
+                binding.callSoundsManager = it
             }
         }
         binding.imageViewSpeaker.setOnClickListener {
@@ -114,6 +120,7 @@ class InProgressVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
                 callManager?.toggleSpeaker();
                 Toast.makeText(this.context, if (it.isSpeakerphoneOn) resources.getString(R.string.speaker_phone_on) else resources.getString(R.string.speaker_phone_off)
                         , Toast.LENGTH_SHORT).show();
+                binding.callManager = it
             }
         }
         binding.imageViewGoToRoom.setOnClickListener {
@@ -122,6 +129,19 @@ class InProgressVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
         }
         disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
             binding.textViewCalling.text = mxCall.callElapsedTime.longTimeToString();
+        }
+    }
+
+    private fun initComponent() {
+        callManager?.let {
+            if (it.isSpeakerphoneOn) {
+                it.toggleSpeaker();
+            }
+            binding.callManager = it
+
+        }
+        callSoundsManager?.let {
+            binding.callSoundsManager = it
         }
     }
 }
