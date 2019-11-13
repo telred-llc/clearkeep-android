@@ -22,10 +22,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import org.matrix.androidsdk.call.CallSoundsManager
-import org.matrix.androidsdk.call.IMXCall
-import org.matrix.androidsdk.call.MXCallListener
-import org.matrix.androidsdk.call.VideoLayoutConfiguration
+import org.matrix.androidsdk.call.*
 import org.webrtc.RendererCommon
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.ultis.longTimeToString
@@ -44,6 +41,7 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
     private var callSoundsManager: CallSoundsManager? = null;
     private val videoLayoutConfiguration = VideoLayoutConfiguration(5, 66, 25, 25);
     private var disposableCallElapsedTime: Disposable? = null;
+    private var isConnecting: Boolean = false
     private var callListener: MXCallListener = object : MXCallListener() {
         override fun onCallViewCreated(callView: View?) {
             super.onCallViewCreated(callView)
@@ -72,6 +70,9 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
             super.onStateDidChange(state)
             Log.d("CallView", state.toString());
             when (state) {
+                IMXCall.CALL_STATE_INVITE_SENT -> {
+                    initComponent()
+                }
                 IMXCall.CALL_STATE_CONNECTED -> {
                     mxCall.visibility = View.VISIBLE;
                     mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration);
@@ -81,18 +82,20 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
                 IMXCall.CALL_STATE_ENDED -> {
                     this@OutgoingVideoCallCallFragment.activity?.finish();
                 }
-                IMXCall.CALL_STATE_READY ->{
-                    disposableCallElapsedTime?.dispose();
-                    disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
-                            .subscribe {
-                                binding.tvTimeCall.text = mxCall.callElapsedTime.longTimeToString();
-                            }
-
-
-
+                IMXCall.CALL_STATE_CONNECTING -> {
+                    upDateTimeCall()
+                }
+                IMXCall.CALL_STATE_READY -> {
+                    if (mxCall.callElapsedTime > -1)
+                        upDateTimeCall()
                 }
             }
         }
+
+        override fun onCallAnsweredElsewhere() {
+            super.onCallAnsweredElsewhere()
+        }
+
     }
 
     private fun saveCallView() {
@@ -147,11 +150,8 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
 
         binding.imageViewMakeCamera.setOnClickListener {
             mxCall?.let {
-                if (mxCall.isVideo) {
-                    val isMuted = mxCall.isVideoRecordingMuted
-                    mxCall.muteVideoRecording(!isMuted)
-                    binding.mxCall = mxCall
-                }
+                toggleVideo()
+                binding.mxCall = mxCall
             }
         }
     }
@@ -199,7 +199,7 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupButtonControl();
-        initComponent()
+        updateStatusControlCall()
     }
 
     override fun getFragment(): Fragment {
@@ -229,6 +229,27 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
 
     private fun initComponent() {
         callManager?.let {
+            if (!it.isSpeakerphoneOn) {
+                it.toggleSpeaker()
+            }
+            binding.callManager = it
+        }
+        callSoundsManager?.let {
+            if (it.isMicrophoneMute) {
+                it.isMicrophoneMute = !it.isMicrophoneMute
+            }
+            binding.callSoundsManager = it
+        }
+        mxCall?.let {
+            if (it.isVideoRecordingMuted) {
+                toggleVideo()
+            }
+            binding.mxCall = mxCall
+        }
+    }
+
+    private fun updateStatusControlCall() {
+        callManager?.let {
             binding.callManager = it
         }
         callSoundsManager?.let {
@@ -237,6 +258,23 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
         mxCall?.let {
             binding.mxCall = mxCall
         }
+    }
+
+    private fun toggleVideo() {
+        mxCall?.let {
+            if (mxCall.isVideo) {
+                val isMuted = mxCall.isVideoRecordingMuted
+                mxCall.muteVideoRecording(!isMuted)
+            }
+        }
+    }
+
+    private fun upDateTimeCall() {
+        disposableCallElapsedTime?.dispose();
+        disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    binding.tvTimeCall.text = mxCall.callElapsedTime.longTimeToString();
+                }
     }
 
 

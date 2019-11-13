@@ -46,6 +46,19 @@ class InProgressVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
             super.onCallEnd(aReasonId)
             this@InProgressVoiceCallFragment.activity?.finish();
         }
+
+        override fun onStateDidChange(state: String?) {
+            super.onStateDidChange(state)
+            when (state) {
+                IMXCall.CALL_STATE_READY -> {
+                    if (mxCall.callElapsedTime > -1)
+                        upDateTimeCall()
+                }
+                IMXCall.CALL_STATE_CONNECTED -> {
+                    upDateTimeCall()
+                }
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -133,15 +146,26 @@ class InProgressVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun initComponent() {
-        callManager?.let {
-            if (it.isSpeakerphoneOn) {
-                it.toggleSpeaker();
-            }
-            binding.callManager = it
-
-        }
         callSoundsManager?.let {
+            if (it.isMicrophoneMute) {
+                it.isMicrophoneMute = !it.isMicrophoneMute
+            }
             binding.callSoundsManager = it
         }
+        callManager?.let {
+            if (it.isSpeakerphoneOn) {
+                it.toggleSpeaker()
+            }
+            binding.callManager = it
+        }
+    }
+
+
+    private fun upDateTimeCall() {
+        disposableCallElapsedTime?.dispose();
+        disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    binding.textViewCalling.text = mxCall.callElapsedTime.longTimeToString();
+                }
     }
 }
