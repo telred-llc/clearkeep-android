@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 
 import im.vector.R
@@ -76,8 +77,7 @@ class OutgoingVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
                 }
                 IMXCall.CALL_STATE_READY -> {
                     updateStatusControlCall()
-                    if (mxCall.callElapsedTime > -1)
-                        upDateTimeCall()
+                    upDateTimeCall()
                 }
             }
         }
@@ -174,11 +174,14 @@ class OutgoingVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun upDateTimeCall() {
-        disposableCallElapsedTime?.dispose();
-        disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    binding.textViewCalling.text = mxCall.callElapsedTime.longTimeToString();
-                }
+        if (mxCall.callElapsedTime > -1) {
+            binding.textViewCalling.setTextColor(ResourcesCompat.getColor(activity!!.resources, R.color.text_color_blue, null))
+            disposableCallElapsedTime?.dispose();
+            disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        binding.textViewCalling.text = mxCall.callElapsedTime.longTimeToString();
+                    }
+        }
     }
 
     private fun updateStatusControlCall() {
