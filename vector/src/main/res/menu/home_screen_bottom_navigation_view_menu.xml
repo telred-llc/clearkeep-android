@@ -14,7 +14,7 @@
     <item
         android:id="@+id/action_call_history"
         android:icon="@drawable/ic_call_history"
-        android:title="@string/bottom_action_home" />
+        android:title="@string/bottom_action_call_history" />
     <item
         android:id="@+id/action_contacts"
         android:icon="@drawable/ic_contacts"

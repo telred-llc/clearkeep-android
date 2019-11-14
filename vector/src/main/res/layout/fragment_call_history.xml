@@ -1,0 +1,45 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="vmodev.clearkeep.fragments.CallHistoryFragment">
+
+    <data>
+
+        <import type="java.util.List" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Status" />
+
+        <import type="androidx.lifecycle.LiveData" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Room" />
+        <import type="vmodev.clearkeep.viewmodelobjects.RoomListUser" />
+
+        <variable
+            name="rooms"
+            type="LiveData&lt;Resource&lt;List&lt;RoomListUser>>>" />
+
+        <variable
+            name="room"
+            type="LiveData&lt;Resource&lt;Room>>" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_list_contact"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_conversation"/>
+    </FrameLayout>
+</layout>
