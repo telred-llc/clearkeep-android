@@ -145,9 +145,9 @@ class CreateNewCallFragment : DataBindingDaggerFragment(), IFragment {
                 }
             };
         }
-        binding.nestedScrollview.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
-            hideKeyboard()
-        }
+
+
+
         binding.editTextQuery.setOnEditorActionListener { p0, p1, p2 ->
             if (p1 == EditorInfo.IME_ACTION_DONE) {
               hideKeyboard()

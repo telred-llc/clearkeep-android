@@ -16,33 +16,44 @@
             type="LiveData&lt;Resource&lt;Room>>" />
     </data>
 
+
+
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint_layout_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_view_avatar"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            app:cardCornerRadius="75dp"
+        <vmodev.clearkeep.widget.RippleBackground
+            android:id="@+id/ripple_background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="@+id/text_view_name"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:rb_color="#0395C6"
+            app:rb_duration="3500"
+            app:rb_radius="@dimen/size_radius_ripple_background"
+            app:rb_rippleAmount="3"
+            app:rb_scale="1.5"
+            app:rb_strokeWidth="@dimen/size_stroke_width_ripple_background">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/image_view_avatar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/size_avatar_call"
+                android:layout_height="@dimen/size_avatar_call"
+                android:layout_centerInParent="true"
+                android:layout_margin="@dimen/margin_avatar_call"
                 app:room="@{room.data}" />
-        </com.google.android.material.card.MaterialCardView>
+        </vmodev.clearkeep.widget.RippleBackground>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_view_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{room.data.name}"
+            app:formatName="@{room.data}"
             android:textAlignment="center"
             android:textSize="@dimen/text_40_sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -74,18 +85,18 @@
             app:layout_constraintTop_toBottomOf="@+id/text_view_calling">
 
             <ImageView
-                android:id="@+id/image_view_decline"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/ic_decline_call" />
-
-            <ImageView
                 android:id="@+id/image_view_accept"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:src="@drawable/ic_accept_call" />
+
+            <ImageView
+                android:id="@+id/image_view_decline"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/ic_decline_call" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

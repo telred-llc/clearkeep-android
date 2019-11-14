@@ -20,15 +20,17 @@ import im.vector.util.VectorUtils
 import org.matrix.androidsdk.crypto.MXDecryptionException
 import org.matrix.androidsdk.rest.model.Event
 import vmodev.clearkeep.jsonmodels.MessageContent
+import vmodev.clearkeep.ultis.FormatString
 import vmodev.clearkeep.ultis.toDateTime
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
 
 class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapters, ISwitchCompatViewBindingAdapters, CardViewBindingAdapters {
+
     override fun bindImage(imageView: ImageView, imageUrl: String?, listener: RequestListener<Drawable?>?) {
         if (!TextUtils.isEmpty(imageUrl)) {
-             Glide.with(imageView.context).load(imageUrl).centerCrop().into(imageView);
+            Glide.with(imageView.context).load(imageUrl).centerCrop().into(imageView);
         }
     }
 
@@ -160,4 +162,17 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
                 ResourcesCompat.getColor(cardView.context.resources, R.color.app_green, null))
         }
     }
+
+    override fun bindFormatName(textView: TextView, room: Room?) {
+        room?.name?.let {
+            if (it.contains("Invite from")) {
+                textView.text = it.replace("Invite from", "").trim()
+            } else if (it.contains("Call:")) {
+                textView.text = it.replace("Call:", "").trim()
+            } else {
+                textView.text = it
+            }
+        }
+    }
+
 }
