@@ -82,6 +82,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
         })
         binding.lifecycleOwner = this;
         args.roomId?.let { viewModelFactory.getViewModel().setRoomId(it) }
+
         setEventEditText()
     }
 
