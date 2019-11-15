@@ -31,6 +31,9 @@
         <variable
             name="isLoading"
             type="Boolean" />
+        <variable
+            name="powerLevel"
+            type="Integer" />
 
     </data>
 
@@ -81,7 +84,7 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerInParent="true"
                         android:layout_margin="5dp"
-                        app:visibleGone="@{room.data.type == 2 || room.data.type == 130}"
+                        app:visibleGone="@{powerLevel == 100}"
                         />
 
                     <View
@@ -89,7 +92,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/height_view_select_picture"
                         android:layout_alignParentTop="true"
-                        app:visibleGone="@{room.data.type == 2 || room.data.type == 130}"
+                        app:visibleGone="@{powerLevel == 100}"
                         />
 
 
@@ -100,7 +103,7 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerInParent="true"
                         android:layout_marginBottom="@dimen/margin_camera_bottom_avatar"
-                        app:visibleGone="@{room.data.type == 2 || room.data.type == 130}"
+                        app:visibleGone="@{powerLevel == 100}"
                         app:srcCompat="@drawable/ic_camera_color_white" />
                 </RelativeLayout>
 
@@ -142,7 +145,7 @@
                         android:id="@+id/edit_text_room_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:drawableEnd="@{room.data.type == 2 || room.data.type == 130 ? @drawable/ic_pen : null}"
+                        android:drawableEnd="@{powerLevel == 100 ? @drawable/ic_pen : null}"
                         android:drawablePadding="@dimen/padding_small"
                         android:hint="@string/create_room_name_hint"
                         android:inputType="textCapCharacters|textNoSuggestions"
@@ -151,7 +154,7 @@
                         android:textAllCaps="true"
                         android:textColor="@color/text_color_blue"
                         android:textSize="@dimen/text_17_sp"
-                        android:enabled="@{room.data.type == 2 || room.data.type == 130}"
+                        android:enabled="@{powerLevel == 100}"
                         />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -166,7 +169,7 @@
                         android:id="@+id/edit_text_room_topic"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:drawableEnd="@{room.data.type == 2 || room.data.type == 130 ? @drawable/ic_pen : null}"
+                        android:drawableEnd="@{powerLevel == 100 ? @drawable/ic_pen : null}"
                         android:drawablePadding="@dimen/padding_small"
                         android:hint="@string/room_info_room_topic"
                         android:imeOptions="actionDone"
@@ -175,7 +178,7 @@
                         android:text="@{room.data.topic}"
                         android:textAllCaps="true"
                         android:textColor="@color/text_color_blue"
-                        android:enabled="@{room.data.type == 2 || room.data.type == 130}"
+                        android:enabled="@{powerLevel == 100}"
                         android:textSize="@dimen/text_17_sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -192,7 +195,7 @@
                     android:enabled="false"
                     android:text="@string/save"
                     android:textColor="@color/color_white"
-                    app:visibleGone="@{room.data.type == 2 || room.data.type == 130}" />
+                    app:visibleGone="@{powerLevel == 100}" />
 
 
                 <LinearLayout
