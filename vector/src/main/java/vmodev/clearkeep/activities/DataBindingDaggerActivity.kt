@@ -1,17 +1,19 @@
 package vmodev.clearkeep.activities
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.view.MotionEvent
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
-import dagger.android.support.DaggerAppCompatActivity
 import im.vector.Matrix
 import im.vector.activity.VectorHomeActivity
 import org.matrix.androidsdk.MXSession
@@ -21,10 +23,6 @@ import vmodev.clearkeep.dialogfragments.ReceivedShareFileDialogFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractDataBindingDaggerActivityViewModel
 import java.util.*
 import javax.inject.Inject
-import com.dropbox.core.v2.teamlog.ActorLogInfo.app
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import dagger.android.AndroidInjection
 
 
 @Suppress("LeakingThis")
@@ -32,23 +30,30 @@ abstract class DataBindingDaggerActivity : AppCompatActivity(), HasAndroidInject
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
     @Inject
-    lateinit var _viewModelFactory: ViewModelProvider.Factory;
+    lateinit var _viewModelFactory: ViewModelProvider.Factory
     @Inject
-    lateinit var application: IApplication;
+    lateinit var application: IApplication
     @Inject
-    lateinit var dataBinding: IDataBindingComponent;
-    lateinit var dataBindingDaggerActivityViewModel: AbstractDataBindingDaggerActivityViewModel;
+    lateinit var dataBinding: IDataBindingComponent
+    lateinit var dataBindingDaggerActivityViewModel: AbstractDataBindingDaggerActivityViewModel
 
-    private var session: MXSession? = null;
+    private var session: MXSession? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this);
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        setTheme(application.getCurrentTheme());
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        session = Matrix.getInstance(applicationContext).defaultSession;
-        dataBindingDaggerActivityViewModel = ViewModelProvider(this, _viewModelFactory).get(AbstractDataBindingDaggerActivityViewModel::class.java);
+        setTheme(application.getCurrentTheme())
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        session = Matrix.getInstance(applicationContext).defaultSession
+        dataBindingDaggerActivityViewModel = ViewModelProvider(this, _viewModelFactory).get(AbstractDataBindingDaggerActivityViewModel::class.java)
+    }
 
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        if (currentFocus != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     override fun onResume() {
@@ -56,14 +61,14 @@ abstract class DataBindingDaggerActivity : AppCompatActivity(), HasAndroidInject
         dataBindingDaggerActivityViewModel.getLocalSettingsResult().observe(this, Observer {
             it?.data?.let {
                 if (application.getCurrentTheme() != it.theme) {
-                    application.setCurrentTheme(it.theme);
-                    setTheme(it.theme);
-                    recreate();
+                    application.setCurrentTheme(it.theme)
+                    setTheme(it.theme)
+                    recreate()
                 }
             }
         })
         session?.let {
-            dataBindingDaggerActivityViewModel.setTimeForGetTheme(Calendar.getInstance().timeInMillis);
+            dataBindingDaggerActivityViewModel.setTimeForGetTheme(Calendar.getInstance().timeInMillis)
         }
 
     }
@@ -73,7 +78,7 @@ abstract class DataBindingDaggerActivity : AppCompatActivity(), HasAndroidInject
         if (requestCode == RECEIVED_SEND_FILE && resultCode == Activity.RESULT_OK) {
             data?.let {
                 if (it.hasExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS)) {
-                    showSendFile(it.getParcelableExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS));
+                    showSendFile(it.getParcelableExtra(VectorHomeActivity.EXTRA_SHARED_INTENT_PARAMS))
                 }
             }
         }
@@ -84,8 +89,8 @@ abstract class DataBindingDaggerActivity : AppCompatActivity(), HasAndroidInject
             it.dataHandler.store?.let { mxStore ->
                 if (mxStore.isReady) {
                     runOnUiThread {
-                        val receivedShareDialogFragment = ReceivedShareFileDialogFragment.newInstance(it.myUserId, intentExtra);
-                        receivedShareDialogFragment.show(supportFragmentManager, "");
+                        val receivedShareDialogFragment = ReceivedShareFileDialogFragment.newInstance(it.myUserId, intentExtra)
+                        receivedShareDialogFragment.show(supportFragmentManager, "")
                     }
                 }
             }
@@ -93,10 +98,10 @@ abstract class DataBindingDaggerActivity : AppCompatActivity(), HasAndroidInject
     }
 
     companion object {
-        const val RECEIVED_SEND_FILE = 11046;
+        const val RECEIVED_SEND_FILE = 11046
     }
 
     override fun androidInjector(): AndroidInjector<Any> {
-        return androidInjector;
+        return androidInjector
     }
 }

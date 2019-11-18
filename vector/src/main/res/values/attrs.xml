@@ -97,15 +97,16 @@
     </declare-styleable>
 
     <declare-styleable name="CircleImage">
-        <attr name="border_color" format="color"/>
+        <attr name="border_color" format="color" />
         <attr name="src" format="integer"></attr>
-        <attr name="stroke_width" format="dimension"/>
+        <attr name="stroke_width" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="CircleImageView">
-        <attr name="strokeColor" format="color"/>
-        <attr name="strokeWidth" format="dimension"/>
-        <attr name="highlightEnable" format="boolean"/>
-        <attr name="highlightColor" format="color"/>
+        <attr name="strokeColor" format="color" />
+        <attr name="strokeWidth" format="dimension" />
+        <attr name="highlightEnable" format="boolean" />
+        <attr name="highlightColor" format="color" />
     </declare-styleable>
+    <attr name="headerGroups" format="color" />
 </resources>

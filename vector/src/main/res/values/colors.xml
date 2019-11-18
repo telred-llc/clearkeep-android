@@ -204,4 +204,6 @@
 
 <!--    color item toolbar-->
     <color name="color_text_tool_bar">#242424</color>
+
+    <color name="yellow">#FFFFC666</color>
 </resources>
