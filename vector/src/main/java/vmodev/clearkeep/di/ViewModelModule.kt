@@ -250,4 +250,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AbstractDirectMessageShareFileFragmentViewModel::class)
     abstract fun bindDirectMessageShareFileFragmentViewModel(viewModel: DirectMessageShareFileFragmentViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractCallHistoryViewModel::class)
+    abstract fun bindAbstractCallHistoryViewModel(viewModel: CallHistoryFragmentViewModel): ViewModel;
 }

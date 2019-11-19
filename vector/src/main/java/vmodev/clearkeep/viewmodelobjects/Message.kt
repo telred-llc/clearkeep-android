@@ -23,7 +23,7 @@ import com.google.gson.annotations.SerializedName
 )
 data class Message(
         @ColumnInfo(name = "message_id") @field:SerializedName("id") val id: String,
-        @field:SerializedName("encrypted_content") val encryptedContent: String,
+        @field:SerializedName("encrypted_content") var encryptedContent: String,
         @field:SerializedName("message_type") val messageType: String,
         @ColumnInfo(name = "room_id") val roomId: String,
         @ColumnInfo(name = "user_id") val userId: String,

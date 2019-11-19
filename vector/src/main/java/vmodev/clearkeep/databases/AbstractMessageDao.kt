@@ -51,4 +51,9 @@ abstract class AbstractMessageDao {
 
     @Query("SELECT Message.* FROM Message WHERE message_id =:id")
     abstract fun findByIdRx(id: String): Single<Message>;
+
+    @Query("SELECT message.*FROM message")
+    abstract fun getListCallHistory(): LiveData<List<MessageRoomUser>>
+
+
 }
