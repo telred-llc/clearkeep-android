@@ -1881,7 +1881,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                 // Filter Call History
                                 else if (!type.isNullOrEmpty() && (type == Event.EVENT_TYPE_CALL_INVITE || type == Event.EVENT_TYPE_CALL_ANSWER || type == Event.EVENT_TYPE_CALL_HANGUP || type == Event.EVENT_TYPE_CALL_CANDIDATES) && msgType == Event.EVENT_TYPE_CALL_INVITE) {
                                     val callContent = gson.fromJson(result.mClearEvent, CallContent::class.java);
-                                    Log.d("CallJson",result.mClearEvent.toString())
+                                    Log.d("CallJson", result.mClearEvent.toString())
                                     Log.d("DataEvent", event.sender + " - " + callContent.getType() + " - " + callContent.getContent()?.getCallId() + "- " + application.getUserId())
                                     callResult.add(callContent)
                                     var typeCall: String = ""
@@ -1899,8 +1899,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                     }
                                     messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
                                     callContent.getContent()?.getCallId()?.let { it1 -> callHistoryFilter.put(it1, messageRooUser) }
-                                }
-                                else{
+                                } else {
                                     //not working
                                 }
                                 messageRooUser?.let { it1 -> messagesResult.add(it1) };
@@ -1911,9 +1910,10 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                         Log.d("DecryptError", e.message);
                     }
                 }
-               if(msgType == Event.EVENT_TYPE_CALL_INVITE){
-                   messagesResult= ArrayList(callHistoryFilter.values)
-               }
+
+                if (msgType == Event.EVENT_TYPE_CALL_INVITE) {
+                    messagesResult = ArrayList<MessageRoomUser>(callHistoryFilter.values)
+                }
                 emitter.onNext(messagesResult);
                 emitter.onComplete();
             } ?: run {

@@ -14,6 +14,10 @@ interface TextViewBindingAdapters {
 
     @BindingAdapter(value = ["decryptMessage"], requireAll = false)
     fun bindDecryptMessage(textView: TextView, message: Message?)
+
     @BindingAdapter(value =["formatName"], requireAll = false )
     fun bindFormatName(textView: TextView, room: Room?)
+
+    @BindingAdapter(value = ["checkMissCall"], requireAll = false)
+    fun bindCheckMissCall(textView: TextView, message: Message?)
 }

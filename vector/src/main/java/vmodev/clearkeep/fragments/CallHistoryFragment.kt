@@ -51,21 +51,15 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
                 return oldItem.room?.get(0)?.avatarUrl == newItem.room?.get(0)?.avatarUrl && oldItem.message?.encryptedContent == newItem.message?.encryptedContent
                         && oldItem.user?.get(0)?.name == newItem.user?.get(0)?.name;
             }
-        },dataBindingComponent = dataBinding){
+        }, dataBindingComponent = dataBinding) {
 
         }
         binding.rvCallHistory.adapter = listSearchAdapter;
         viewModelFactory.getViewModel().getListMessageRoomUser().observe(viewLifecycleOwner, Observer {
             it?.data?.let { it1 ->
                 viewModelFactory.getViewModel().getListCallHistory(it1).observe(viewLifecycleOwner, Observer { dataResult ->
-                    dataResult.data?.let {datas  ->
-                        datas.forEach { itemdata ->
-                            Log.d("Datamessage", itemdata.message?.encryptedContent)
-
-
-                        }
-                    }
-                    listSearchAdapter.submitList(dataResult.data)
+                    val sortCallHistory = dataResult.data?.sortedWith(compareBy { it.message?.createdAt })?.reversed()
+                    listSearchAdapter.submitList(sortCallHistory)
                 })
             }
         })
