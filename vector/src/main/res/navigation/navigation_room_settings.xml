@@ -61,7 +61,7 @@
     <fragment
         android:id="@+id/roomMemberListFragment"
         android:name="vmodev.clearkeep.fragments.RoomMemberListFragment"
-        android:label="Members"
+        android:label="@string/title_group_member_participants"
         tools:layout="@layout/fragment_room_member_list">
         <argument
             android:name="roomId"

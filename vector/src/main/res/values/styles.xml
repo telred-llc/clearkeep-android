@@ -312,11 +312,12 @@
         <attr name="color_icon_app_default" format="color"/>
         <attr name="bg_search_view" format="reference"/>
         <attr name="color_view_blank_setting" format="color"></attr>
-
+        <attr name="header_group" format="color" />
 
     </declare-styleable>
 
     <style name="DarkTheme" parent="Theme.MaterialComponents.NoActionBar.Bridge">
+        <item name="header_group">#333333</item>
         <item name="android:statusBarColor">#121212</item>
         <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
        <item name="android:windowBackground">@drawable/bg_app_dark_mode</item>
@@ -372,6 +373,7 @@
     </style>
 
     <style name="LightTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
+        <item name="header_group">#F0F0F0</item>
         <item name="android:statusBarColor">#FFFFFF</item>
         <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
         <item name="android:windowBackground">@drawable/bg_app_light_mode</item>

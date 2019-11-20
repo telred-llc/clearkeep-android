@@ -13,22 +13,23 @@ import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.viewmodelobjects.User
 
 class ListUserRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<User>,
-                                              private val dataBinding : IDataBindingComponent
+                                              private val dataBinding: IDataBindingComponent
                                               , private val itemClick: (User) -> Unit?)
     : ListAdapter<User, DataBoundViewHolder<ItemUserBinding>>(AsyncDifferConfig.Builder<User>(diffCallback)
         .setBackgroundThreadExecutor(appExecutors.diskIO())
         .build()) {
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DataBoundViewHolder<ItemUserBinding> {
-        val binding = DataBindingUtil.inflate<ItemUserBinding>(LayoutInflater.from(p0.context), R.layout.item_user, p0, false, dataBinding.getDataBindingComponent());
+        val binding = DataBindingUtil.inflate<ItemUserBinding>(LayoutInflater.from(p0.context), R.layout.item_user, p0, false, dataBinding.getDataBindingComponent())
         binding.root.setOnClickListener { v ->
             binding.user?.let {
-                itemClick?.invoke(it)
+                itemClick.invoke(it)
             }
         }
-        return DataBoundViewHolder(binding);
+        return DataBoundViewHolder(binding)
     }
 
     override fun onBindViewHolder(p0: DataBoundViewHolder<ItemUserBinding>, p1: Int) {
-        p0.binding.user = getItem(p1);
+        p0.binding.user = getItem(p1)
+
     }
 }
