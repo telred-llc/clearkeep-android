@@ -36,11 +36,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -48,9 +44,18 @@ import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-
 import com.binaryfork.spanny.Spanny
-
+import im.vector.R
+import im.vector.VectorApp
+import im.vector.adapters.AdapterUtils
+import im.vector.extensions.getSessionId
+import im.vector.listeners.IMessagesAdapterActionsListener
+import im.vector.settings.VectorLocale
+import im.vector.ui.VectorQuoteSpan
+import im.vector.ui.themes.ThemeUtils
+import im.vector.util.*
+import im.vector.util.MatrixURLSpan
+import im.vector.widgets.WidgetsManager
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.adapters.AbstractMessagesAdapter
 import org.matrix.androidsdk.adapters.MessageRow
@@ -67,32 +72,8 @@ import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.message.Message
 import org.matrix.androidsdk.view.HtmlTagHandler
-
 import java.text.SimpleDateFormat
-import java.util.ArrayList
-import java.util.Collections
-import java.util.Date
-import java.util.Formatter
-import java.util.HashMap
-import java.util.HashSet
-import java.util.Locale
-
-import im.vector.R
-import im.vector.VectorApp
-import im.vector.adapters.AdapterUtils
-import im.vector.extensions.*
-import im.vector.listeners.IMessagesAdapterActionsListener
-import im.vector.settings.VectorLocale
-import im.vector.ui.VectorQuoteSpan
-import im.vector.ui.themes.ThemeUtils
-import im.vector.util.*
-import im.vector.util.EventGroup
-import im.vector.util.MatrixLinkMovementMethod
-import im.vector.util.MatrixURLSpan
-import im.vector.util.PreferencesManager
-import im.vector.util.RiotEventDisplay
-import im.vector.util.VectorImageGetter
-import im.vector.widgets.WidgetsManager
+import java.util.*
 
 /**
  * An adapter which can display room information.
@@ -230,7 +211,7 @@ internal constructor(// session
     private var mImageGetter: VectorImageGetter? = null
 
     private val mHtmlToolbox = object : HtmlToolbox {
-        internal var mHtmlTagHandler: HtmlTagHandler? = null
+        var mHtmlTagHandler: HtmlTagHandler? = null
 
         override fun convert(html: String): String? {
             val sanitised = mHelper.getSanitisedHtml(html)
@@ -338,8 +319,7 @@ internal constructor(// session
             R.layout.adapter_item_vector_message_room_versioned,
             R.layout.adapter_item_vector_message_text_edited_emote_notice,
             R.layout.adapter_item_vector_message_text_emote_notice_own,
-            mediasCache) {
-    }
+            mediasCache)
 
     init {
         mRowTypeToLayoutId[ROW_TYPE_TEXT] = textResLayoutId
@@ -690,8 +670,8 @@ internal constructor(// session
         val row = getItem(position)
         row?.event?.let {
             return getItemViewType(it)
-        }?:run {
-            return  ROW_TYPE_TEXT;
+        } ?: run {
+            return ROW_TYPE_TEXT
         }
 
     }
@@ -926,7 +906,7 @@ internal constructor(// session
      */
     private fun getItemViewType(event: Event): Int {
         val eventId = event.eventId
-        var eventType : String? = event.getType()
+        val eventType: String? = event.getType()
         if (null != eventId && mHiddenEventIds.contains(eventId)) {
             return ROW_TYPE_HIDDEN
         }
@@ -982,10 +962,9 @@ internal constructor(// session
                 } else if (!TextUtils.isEmpty(message.formatted_body) && mHelper.containsFencedCodeBlocks(message)) {
                     viewType = ROW_TYPE_CODE
                 } else {
-                    if (TextUtils.equals(event.sender, mSession.myUserId)){
+                    if (TextUtils.equals(event.sender, mSession.myUserId)) {
                         viewType = ROW_TYPE_TEXT_OWNER
-                    }
-                    else{
+                    } else {
                         viewType = ROW_TYPE_TEXT
                     }
                 }
@@ -1001,10 +980,9 @@ internal constructor(// session
                 viewType = ROW_TYPE_VIDEO
             } else {
                 // Default is to display the body as text
-                if (TextUtils.equals(event.sender, mSession.myUserId)){
+                if (TextUtils.equals(event.sender, mSession.myUserId)) {
                     viewType = ROW_TYPE_TEXT_OWNER
-                }
-                else{
+                } else {
                     viewType = ROW_TYPE_TEXT
                 }
             }
@@ -1228,7 +1206,7 @@ internal constructor(// session
                 event = editedMessageMap[event.eventId]
                 row = MessageRow(event!!, mSession.dataHandler.getRoom(event.roomId).state)
                 message = JsonUtils.toMessage(event.content)
-                message.body = event.content.getAsJsonObject().get("m.new_content").getAsJsonObject().get("body").getAsString() + "<i>(edited)</i>"
+                message.body = event.content.asJsonObject.get("m.new_content").asJsonObject.get("body").asString + "<i>(edited)</i>"
             } else {
                 message = JsonUtils.toMessage(event.content)
             }
@@ -1256,9 +1234,9 @@ internal constructor(// session
                         Message.FORMAT_MATRIX_HTML,
                         mBackgroundColorSpan,
                         shouldHighlighted)
-                result = "$result ${context.resources.getString(R.string.edited_suffix)}";
+                result = "$result ${context.resources.getString(R.string.edited_suffix)}"
                 result = result.subSequence(2, result.length)
-                bodyTextView.text = result;
+                bodyTextView.text = result
 
                 mHelper.applyLinkMovementMethod(bodyTextView)
                 bodyTextView.vectorCustomLinkify(true)
@@ -1870,10 +1848,10 @@ internal constructor(// session
         }
 
         res?.let {
-            mEventFormattedTsMap[event.eventId] = it;
-            return res;
+            mEventFormattedTsMap[event.eventId] = it
+            return res
         } ?: run {
-            return "";
+            return ""
         }
     }
 
@@ -1955,7 +1933,7 @@ internal constructor(// session
                 null
             } else dateDiff(it, (mReferenceDate.time - messageDate!!.time) / AdapterUtils.MS_IN_DAY)
         } ?: run {
-            return null;
+            return null
         }
     }
 
@@ -2140,8 +2118,7 @@ internal constructor(// session
                     val bodyLayout = bodyLayoutView.layoutParams as ViewGroup.MarginLayoutParams
                     val e2eIconViewLayout = e2eIconView.layoutParams as ViewGroup.MarginLayoutParams
 
-                    e2eIconViewLayout.setMargins(bodyLayout.leftMargin, e2eIconViewLayout.topMargin,
-                            e2eIconViewLayout.rightMargin, e2eIconViewLayout.bottomMargin)
+                    e2eIconViewLayout.setMargins(bodyLayout.leftMargin, e2eIconViewLayout.topMargin, e2eIconViewLayout.rightMargin, e2eIconViewLayout.bottomMargin)
                     bodyLayout.setMargins(4, bodyLayout.topMargin, bodyLayout.rightMargin, bodyLayout.bottomMargin)
                     e2eIconView.layoutParams = e2eIconViewLayout
                     bodyLayoutView.layoutParams = bodyLayout
@@ -2170,9 +2147,7 @@ internal constructor(// session
 
             val sessionId = event.getSessionId()
 
-            if (sessionId != null
-                    && event.cryptoError != null
-                    && MXCryptoError.UNKNOWN_INBOUND_SESSION_ID_ERROR_CODE == event.cryptoError.errcode) {
+            if (sessionId != null && event.cryptoError != null && MXCryptoError.UNKNOWN_INBOUND_SESSION_ID_ERROR_CODE == event.cryptoError.errcode) {
 
                 reRequestE2EKeyTextView.visibility = View.VISIBLE
 
@@ -2233,20 +2208,18 @@ internal constructor(// session
                 } else if (null != event.cryptoError) {
                     //                    e2eIconByEventId.put(event.eventId, R.drawable.e2e_blocked);
                 } else {
-                    val encryptedEventContent = JsonUtils.toEncryptedEventContent(event.wireContent.getAsJsonObject())
+                    val encryptedEventContent = JsonUtils.toEncryptedEventContent(event.wireContent.asJsonObject)
 
                     if (TextUtils.equals(mSession.credentials.deviceId, encryptedEventContent.device_id) && TextUtils.equals(mSession.myUserId, event.getSender())) {
                         //                        e2eIconByEventId.put(event.eventId, R.drawable.e2e_verified);
-                        val deviceInfo = mSession.crypto!!
-                                .deviceWithIdentityKey(encryptedEventContent.sender_key, encryptedEventContent.algorithm)
+                        val deviceInfo = mSession.crypto?.deviceWithIdentityKey(encryptedEventContent.sender_key, encryptedEventContent.algorithm)
 
                         if (null != deviceInfo) {
                             e2eDeviceInfoByEventId[event.eventId] = deviceInfo
                         }
 
                     } else {
-                        val deviceInfo = mSession.crypto!!
-                                .deviceWithIdentityKey(encryptedEventContent.sender_key, encryptedEventContent.algorithm)
+                        val deviceInfo = mSession.crypto!!.deviceWithIdentityKey(encryptedEventContent.sender_key, encryptedEventContent.algorithm)
 
                         if (null != deviceInfo) {
                             e2eDeviceInfoByEventId[event.eventId] = deviceInfo
@@ -2377,7 +2350,7 @@ internal constructor(// session
                 event.contains(mReadMarkerEventId)
             } else event.eventId == mReadMarkerEventId
         } ?: run {
-            return false;
+            return false
         }
     }
 
@@ -2392,9 +2365,7 @@ internal constructor(// session
         val event = row?.event
         val readMarkerView = inflatedView.findViewById<View>(R.id.message_read_marker)
         if (readMarkerView != null) {
-            if (event != null && !event.isDummyEvent && mReadMarkerEventId != null && mCanShowReadMarker
-                    && isReadMarkedEvent(event) && !mIsPreviewMode && !mIsSearchMode
-                    && (mReadMarkerEventId != mReadReceiptEventId || position < count - 1)) {
+            if (event != null && !event.isDummyEvent && mReadMarkerEventId != null && mCanShowReadMarker && isReadMarkedEvent(event) && !mIsPreviewMode && !mIsSearchMode && (mReadMarkerEventId != mReadReceiptEventId || position < count - 1)) {
                 Log.d(LOG_TAG, " Display read marker " + event.eventId + " mReadMarkerEventId" + mReadMarkerEventId)
                 // Show the read marker
                 animateReadMarkerView(event, readMarkerView)
@@ -2474,8 +2445,9 @@ internal constructor(// session
             PopupMenu(mContext, anchorView, Gravity.END)
         else
             PopupMenu(mContext, anchorView)
-
-        //        popup.getMenuInflater().inflate(R.menu.vector_room_message_settings, popup.getMenu());
+        popup.setOnDismissListener {
+            cancelSelectionMode()
+        }
         popup.menuInflater.inflate(R.menu.room_message_setting_popup, popup.menu)
         // force to display the icons
         try {
@@ -2484,7 +2456,7 @@ internal constructor(// session
                 if ("mPopup" == field.name) {
                     field.isAccessible = true
                     val menuPopupHelper = field.get(popup)
-                    val classPopupHelper = Class.forName(menuPopupHelper!!.javaClass.name)
+                    val classPopupHelper = Class.forName(menuPopupHelper::javaClass.name)
                     val setForceIcons = classPopupHelper.getMethod("setForceShowIcon", Boolean::class.javaPrimitiveType)
                     setForceIcons.invoke(menuPopupHelper, true)
                     break
@@ -2537,9 +2509,9 @@ internal constructor(// session
                     // need the minimum power level to redact an event
                     val room = mSession.dataHandler.getRoom(event.roomId)
 
-                    if (null != room && null != room.state.getPowerLevels()) {
-                        val powerLevels = room.state.getPowerLevels()
-                        canBeRedacted = powerLevels!!.getUserPowerLevel(mSession.myUserId) >= powerLevels!!.redact
+                    if (null != room && null != room.state.powerLevels) {
+                        val powerLevels = room.state.powerLevels
+                        canBeRedacted = powerLevels!!.getUserPowerLevel(mSession.myUserId) >= powerLevels.redact
                     }
                 }
             }
@@ -2554,9 +2526,7 @@ internal constructor(// session
                 //                menu.findItem(R.id.ic_action_vector_forward).setVisible(true);
 
                 // save the media in the downloads directory
-                if (Message.MSGTYPE_IMAGE == message.msgtype
-                        || Message.MSGTYPE_VIDEO == message.msgtype
-                        || Message.MSGTYPE_FILE == message.msgtype) {
+                if (Message.MSGTYPE_IMAGE == message.msgtype || Message.MSGTYPE_VIDEO == message.msgtype || Message.MSGTYPE_FILE == message.msgtype) {
                     menu.findItem(R.id.ic_action_vector_save).isVisible = true
                 }
 
