@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import im.vector.R
 import im.vector.databinding.FragmentInProgressVoiceCallBinding
@@ -23,6 +24,7 @@ import org.matrix.androidsdk.call.MXCallListener
 import org.matrix.androidsdk.call.VideoLayoutConfiguration
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.ultis.FormatString
 import vmodev.clearkeep.ultis.longTimeToString
 import vmodev.clearkeep.viewmodels.interfaces.AbstractInProgressVoiceCallFragmentViewModel
 import java.util.concurrent.TimeUnit
@@ -45,6 +47,18 @@ class InProgressVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
             super.onCallEnd(aReasonId)
             this@InProgressVoiceCallFragment.activity?.finish();
         }
+
+        override fun onStateDidChange(state: String?) {
+            super.onStateDidChange(state)
+            when (state) {
+                IMXCall.CALL_STATE_READY -> {
+                    upDateTimeCall()
+                }
+                IMXCall.CALL_STATE_CONNECTED -> {
+                    upDateTimeCall()
+                }
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -64,7 +78,10 @@ class InProgressVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
         callView = callManager?.callView;
         setupButtonControl();
         binding.room = viewModelFactory.getViewModel().getRoomResult();
+        FormatString
         viewModelFactory.getViewModel().setRoomId(mxCall.room.roomId);
+        binding.rippleBackground.startRippleAnimation()
+        initComponent()
     }
 
     override fun onDestroy() {
@@ -101,12 +118,14 @@ class InProgressVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
     private fun setupButtonControl() {
         binding.imageViewHangUp.setOnClickListener {
             callManager?.onHangUp(null)
+            binding.rippleBackground.stopRippleAnimation()
         }
         binding.imageViewMicrophone.setOnClickListener {
             callSoundsManager?.let {
                 it.isMicrophoneMute = !it.isMicrophoneMute;
                 Toast.makeText(this.context, if (it.isMicrophoneMute) resources.getString(R.string.microphone_off) else resources.getString(R.string.microphone_on)
                         , Toast.LENGTH_SHORT).show();
+                binding.callSoundsManager = it
             }
         }
         binding.imageViewSpeaker.setOnClickListener {
@@ -114,14 +133,40 @@ class InProgressVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
                 callManager?.toggleSpeaker();
                 Toast.makeText(this.context, if (it.isSpeakerphoneOn) resources.getString(R.string.speaker_phone_on) else resources.getString(R.string.speaker_phone_off)
                         , Toast.LENGTH_SHORT).show();
+                binding.callManager = it
             }
         }
         binding.imageViewGoToRoom.setOnClickListener {
             CallsManager.getSharedInstance().setCallActivity(null);
             this.activity?.finish();
         }
-        disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
-            binding.textViewCalling.text = mxCall.callElapsedTime.longTimeToString();
+        upDateTimeCall()
+    }
+
+    private fun initComponent() {
+        callSoundsManager?.let {
+            if (it.isMicrophoneMute) {
+                it.isMicrophoneMute = !it.isMicrophoneMute
+            }
+            binding.callSoundsManager = it
         }
+        callManager?.let {
+            if (it.isSpeakerphoneOn) {
+                it.toggleSpeaker()
+            }
+            binding.callManager = it
+        }
+    }
+
+
+    private fun upDateTimeCall() {
+        if (mxCall.callElapsedTime > -1) {
+            binding.textViewCalling.setTextColor(ResourcesCompat.getColor(activity!!.resources, R.color.text_color_blue, null))
+        }
+        disposableCallElapsedTime?.dispose();
+        disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    binding.textViewCalling.text = mxCall.callElapsedTime.longTimeToString();
+                }
     }
 }

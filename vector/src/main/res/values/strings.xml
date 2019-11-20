@@ -1861,6 +1861,7 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="speaker_phone_on">Speaker phone on</string>
     <string name="speaker_phone_off">Speaker phone off</string>
     <string name="calling">Incoming Call …</string>
+    <string name="str_calling">Calling …</string>
 
 
     <string name="identity_server">Identity server</string>

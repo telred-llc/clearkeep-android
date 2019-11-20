@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-
 import im.vector.R
 import im.vector.databinding.FragmentForgotPasswordBinding
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
@@ -35,11 +34,11 @@ private const val ARG_PARAM2 = "param2"
 class ForgotPasswordFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
-    lateinit var viewModelFactory: IViewModelFactory<AbstractForgotPasswordFragmentViewModel>;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractForgotPasswordFragmentViewModel>
 
     // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
-    private lateinit var binding: FragmentForgotPasswordBinding;
+    private lateinit var binding: FragmentForgotPasswordBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,62 +46,60 @@ class ForgotPasswordFragment : DataBindingDaggerFragment(), IFragment {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_forgot_password, container, false, dataBinding.getDataBindingComponent());
-        return binding.root;
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_forgot_password, container, false, dataBinding.getDataBindingComponent())
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.buttonSendResetEmail.setOnClickListener {
-            var email = binding.textInputEditTextUsername.text.toString().trim();
-
-            val password = binding.textInputEditTextPassword.text.toString().trim();
-            val confirmPassword = binding.textInputEditTextConfirmPassword.text.toString().trim();
+            val email = binding.editTextUsernameOrEmail.text.toString().trim()
+            val password = binding.editTextPassword.text.toString().trim()
+            val confirmPassword = binding.editTextRepeatPassword.text.toString().trim()
             if (!email.isEmailValid()) {
-                binding.textInputEditTextUsername.error = getString(R.string.error_empty_field_enter_email);
-                return@setOnClickListener;
+                binding.editTextUsernameOrEmail.error = getString(R.string.error_empty_field_enter_user_name_or_email)
+                return@setOnClickListener
             }
             if (TextUtils.isEmpty(password)) {
-                binding.textInputEditTextPassword.error = getString(R.string.error_empty_field_your_password);
-                return@setOnClickListener;
+                binding.editTextPassword.error = getString(R.string.error_empty_field_your_password)
+                return@setOnClickListener
             }
             if (password.length < 6) {
-                showAlertDialog("Password error", getString(R.string.password_too_short));
-                return@setOnClickListener;
+                showAlertDialog("Password error", getString(R.string.password_too_short))
+                return@setOnClickListener
             }
             if (password.length > 15) {
-                showAlertDialog("Password error", getString(R.string.password_too_long));
-                return@setOnClickListener;
+                showAlertDialog("Password error", getString(R.string.password_too_long))
+                return@setOnClickListener
             }
             if (password.contains(" ")) {
-                showAlertDialog("Password error", getString(R.string.password_contain_space));
-                return@setOnClickListener;
+                showAlertDialog("Password error", getString(R.string.password_contain_space))
+                return@setOnClickListener
             }
             if (TextUtils.isEmpty(confirmPassword)) {
-                binding.textInputEditTextConfirmPassword.error = getString(R.string.error_empty_field_your_password_confirm);
-                return@setOnClickListener;
+                binding.editTextRepeatPassword.error = getString(R.string.error_empty_field_your_password_confirm)
+                return@setOnClickListener
             }
             if (password.compareTo(confirmPassword) != 0) {
-                showAlertDialog("Password error", "Password don't match");
-                return@setOnClickListener;
+                showAlertDialog("Password error", "Password don't match")
+                return@setOnClickListener
             }
-            onPressSendToEmail(email, password);
+            onPressSendToEmail(email, password)
         }
-        binding.buttonSignIn.setOnClickListener {
-            onPressSignIn();
+        binding.frameLayoutHaveAnAccount.setOnClickListener {
+            onPressSignIn()
         }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     private fun onPressSendToEmail(email: String, password: String) {
-        listener?.onPressSendToEmail(email, password);
+        listener?.onPressSendToEmail(email, password)
     }
 
     private fun onPressSignIn() {
-        listener?.onPressSignIn();
+        listener?.onPressSignIn()
     }
 
     override fun onAttach(context: Context) {
@@ -120,11 +117,11 @@ class ForgotPasswordFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     override fun getFragment(): Fragment {
-        return this;
+        return this
     }
 
     private fun showAlertDialog(title: String, message: String) {
-        AlertDialog.Builder(this.context).setTitle(title).setMessage(message).setNegativeButton("Close", null).show();
+        AlertDialog.Builder(this.context).setTitle(title).setMessage(message).setNegativeButton("Close", null).show()
     }
 
     /**
@@ -142,7 +139,7 @@ class ForgotPasswordFragment : DataBindingDaggerFragment(), IFragment {
         // TODO: Update argument type and name
         fun onPressSendToEmail(email: String, password: String)
 
-        fun onPressSignIn();
+        fun onPressSignIn()
     }
 
     companion object {
@@ -156,10 +153,9 @@ class ForgotPasswordFragment : DataBindingDaggerFragment(), IFragment {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance() =
-                ForgotPasswordFragment().apply {
-                    arguments = Bundle().apply {
-                    }
-                }
+        fun newInstance() = ForgotPasswordFragment().apply {
+            arguments = Bundle().apply {
+            }
+        }
     }
 }
