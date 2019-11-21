@@ -312,8 +312,8 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun getResizedBitmap(bm: Bitmap, newWidth: Int, newHeight: Int): Bitmap {
-        val width = bm.getWidth();
-        val height = bm.getHeight();
+        val width = bm.width;
+        val height = bm.height;
         val scaleWidth: Float = (newWidth.toFloat()) / width;
         val scaleHeight: Float = (newHeight.toFloat()) / height;
         // CREATE A MATRIX FOR THE MANIPULATION

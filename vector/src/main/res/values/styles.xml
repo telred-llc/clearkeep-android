@@ -420,7 +420,7 @@
         <item name="color_text_app_default">#242424</item>
         <item name="color_icon_app_default">#242424</item>
         <item name="bg_search_view">@drawable/bg_search_light_mode</item>
-        <item name="color_view_blank_setting">#707070</item>
+        <item name="color_view_blank_setting">#F0F0F0</item>
 
     </style>
 

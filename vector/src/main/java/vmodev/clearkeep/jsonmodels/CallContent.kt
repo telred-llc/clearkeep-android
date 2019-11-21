@@ -18,6 +18,7 @@ class CallContent {
     fun getRoomId(): String? {
         return roomId
     }
+
     fun getType(): String? {
         return type
     }
@@ -27,19 +28,27 @@ class CallContent {
     }
 
 
-     class Content {
+    class Content {
         @SerializedName("call_id")
         @Expose
         private var callId: String? = null
-
         @SerializedName("offer")
         @Expose
         private var offer: Offer? = null
+        @SerializedName("reason")
+        @Expose
+        private var reason: String? = null
+
         fun getOffer(): Offer? {
             return offer
         }
+
         fun getCallId(): String? {
             return callId
+        }
+
+        fun getReason(): String? {
+            return reason
         }
 
 

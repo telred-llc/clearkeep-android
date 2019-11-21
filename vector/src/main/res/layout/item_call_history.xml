@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -9,7 +10,7 @@
             type="vmodev.clearkeep.viewmodelobjects.MessageRoomUser" />
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal"
@@ -17,45 +18,51 @@
         android:orientation="horizontal">
 
         <FrameLayout
+            android:id="@+id/flAvatar"
             android:layout_width="@dimen/image_avatar_status_size"
             android:layout_height="@dimen/image_avatar_status_size">
-        <de.hdodenhof.circleimageview.CircleImageView
-            app:room="@{result.room.get(0)}"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/image_circle" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="@dimen/status_online_size"
-            android:layout_height="@dimen/status_online_size"
-            android:layout_gravity="end|bottom"
-            android:layout_marginEnd="@dimen/margin_status_online"
-            android:layout_marginBottom="@dimen/margin_status_online"
-            app:cardCornerRadius="@dimen/radius_border_online_status"
-            app:cardElevation="0dp"
-            app:contentPadding="@dimen/padding_status_online"
-            app:cardBackgroundColor="#FFFFFF"
-            >
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/circle_image_view_status"
-                app:currentUserId="@{result.room.get(0).id}"
-                app:listUser="@{result.user}"
-                app:cardBackgroundColor="@color/main_text_color_hint"
-                app:cardCornerRadius="@dimen/radius_online_status"
-                app:cardElevation="0dp"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/image_circle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                app:room="@{result.room.get(0)}" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="@dimen/status_online_size"
+                android:layout_height="@dimen/status_online_size"
+                android:layout_gravity="end|bottom"
+                android:layout_marginEnd="@dimen/margin_status_online"
+                android:layout_marginBottom="@dimen/margin_status_online"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="@dimen/radius_border_online_status"
+                app:cardElevation="0dp"
+                app:contentPadding="@dimen/padding_status_online">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/circle_image_view_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:cardBackgroundColor="@color/main_text_color_hint"
+                    app:cardCornerRadius="@dimen/radius_online_status"
+                    app:cardElevation="0dp"
+                    app:currentUserId="@{result.room.get(0).id}"
+                    app:listUser="@{result.user}" />
 
 
-        </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
         </FrameLayout>
 
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginVertical="@dimen/margin_small"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_toEndOf="@+id/flAvatar"
+            android:layout_toStartOf="@+id/imgCallVideo"
+
+
+            android:gravity="center_vertical"
             android:orientation="vertical">
 
             <TextView
@@ -64,28 +71,44 @@
                 android:layout_height="0dp"
                 android:layout_marginHorizontal="@dimen/margin_normal"
                 android:layout_weight="1"
+                android:textColor="@{result.message.encryptedContent.equals(`m.miss_call`)? @color/notification_color:@color/transparent_black_50}"
                 android:text="@{result.room.get(0).name}"
-                android:textSize="@dimen/text_17_sp"
-                android:textStyle="bold" />
+                android:layout_marginBottom="@dimen/margin_small"
+
+                android:textSize="@dimen/text_17_sp" />
 
             <TextView
-                android:id="@+id/text_view_last_message"
+                android:id="@+id/text_view_time"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginHorizontal="@dimen/margin_normal"
                 android:layout_weight="1"
-                android:text="@{result.message.id}"
                 android:textColor="@color/main_text_color_hint"
-                android:textSize="@dimen/text_13_sp" />
+                android:textSize="@dimen/text_13_sp"
+                app:timeStamp="@{result.message.createdAt}"
+                tools:text="Today 10:23" />
         </LinearLayout>
 
-
-        <TextView
-            android:id="@+id/text_view_time"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgCallVideo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            app:timeStamp="@{result.message.createdAt}"
+            android:layout_centerInParent="true"
+            android:layout_marginHorizontal="@dimen/margin_normal"
+            android:layout_toStartOf="@+id/imgCallVoice"
+            android:padding="@dimen/padding_small"
+            app:srcCompat="@drawable/ic_svg_video" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgCallVoice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:padding="@dimen/padding_small"
+            app:srcCompat="@drawable/ic_call"
+
             />
-    </LinearLayout>
+
+    </RelativeLayout>
 </layout>
