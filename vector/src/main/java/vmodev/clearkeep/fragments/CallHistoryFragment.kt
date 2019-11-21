@@ -1,12 +1,10 @@
 package vmodev.clearkeep.fragments
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
@@ -15,18 +13,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.leanback.widget.DiffCallback
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import im.vector.R
 import im.vector.activity.JitsiCallActivity
 import im.vector.activity.VectorMediaPickerActivity
 import im.vector.databinding.FragmentCallHistoryBinding
-import im.vector.databinding.FragmentContactsBinding
 import im.vector.util.*
 import im.vector.widgets.Widget
 import im.vector.widgets.WidgetManagerProvider
-import io.reactivex.Observable
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.call.IMXCall
 import org.matrix.androidsdk.core.callback.ApiCallback
@@ -35,16 +30,15 @@ import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.crypto.MXCryptoError
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo
 import org.matrix.androidsdk.crypto.data.MXUsersDevicesMap
+import org.matrix.androidsdk.data.Room
 import vmodev.clearkeep.activities.OutgoingCallActivity
-import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.CallHistoryRecyclerViewAdapter
-import vmodev.clearkeep.adapters.ListSearchMessageRecyclerViewAdapter
+import vmodev.clearkeep.enums.TypeCallEnum
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
 import vmodev.clearkeep.viewmodels.interfaces.AbstractCallHistoryViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractContactFragmentViewModel
 import java.util.*
 import javax.inject.Inject
 
@@ -62,6 +56,7 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
     private val CAMERA_VALUE_TITLE = "attachment"
     private var mLatestTakePictureCameraUri: String? = null
     private var mxSession: MXSession? = null
+    private var currentRoom: Room? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -71,6 +66,34 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mxSession = im.vector.Matrix.getInstance(activity)!!.defaultSession
+
+        setupRecycleView()
+        initData()
+    }
+
+    override fun getFragment(): Fragment {
+        return this
+    }
+
+    private fun initData() {
+        viewModelFactory.getViewModel().getListMessageRoomUser().observe(viewLifecycleOwner, Observer {
+            it?.data?.let { it1 ->
+                viewModelFactory.getViewModel().getListCallHistory(it1).observe(viewLifecycleOwner, Observer { dataResult ->
+                    dataResult?.data?.let {
+                        val sortCallHistory = it.sortedWith(compareBy { it.message?.createdAt })?.reversed()
+                        listSearchAdapter.submitList(sortCallHistory)
+                    }
+
+                })
+            }
+        })
+        viewModelFactory.getViewModel().setTimeForRefreshLoadMessage(Calendar.getInstance().timeInMillis);
+    }
+
+
+    private fun setupRecycleView() {
+        binding.rvCallHistory.setHasFixedSize(true)
         listSearchAdapter = CallHistoryRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
             override fun areItemsTheSame(oldItem: MessageRoomUser, newItem: MessageRoomUser): Boolean {
                 return oldItem.message?.id == newItem.message?.id
@@ -80,26 +103,38 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
                 return oldItem.room?.get(0)?.avatarUrl == newItem.room?.get(0)?.avatarUrl && oldItem.message?.encryptedContent == newItem.message?.encryptedContent
                         && oldItem.user?.get(0)?.name == newItem.user?.get(0)?.name;
             }
-        }, dataBindingComponent = dataBinding) {
+        }, dataBindingComponent = dataBinding)
+        binding.rvCallHistory.adapter = listSearchAdapter;
+
+        listSearchAdapter.setOnItemClick { messageRoomUser, i ->
+            onCallItemClicked(i, messageRoomUser)
 
         }
-        binding.rvCallHistory.adapter = listSearchAdapter;
-        viewModelFactory.getViewModel().getListMessageRoomUser().observe(viewLifecycleOwner, Observer {
-            it?.data?.let { it1 ->
-                viewModelFactory.getViewModel().getListCallHistory(it1).observe(viewLifecycleOwner, Observer { dataResult ->
-                    val sortCallHistory = dataResult.data?.sortedWith(compareBy { it.message?.createdAt })?.reversed()
-                    listSearchAdapter.submitList(sortCallHistory)
-                })
-            }
-        })
-        viewModelFactory.getViewModel().setTimeForRefreshLoadMessage(Calendar.getInstance().timeInMillis);
-    }
 
-    override fun getFragment(): Fragment {
-        return this
     }
 
 //    Handel Call
+
+    private fun onCallItemClicked(typeCallEnum: Int, messageRoomUser: MessageRoomUser) {
+        val isVideoCall: Boolean
+        val permissions: Int
+        val requestCode: Int
+        currentRoom = mxSession!!.dataHandler.getRoom(messageRoomUser.room?.get(0)?.id, false)
+
+        if (typeCallEnum == TypeCallEnum.CALL_VOICE.value) {
+            isVideoCall = false
+            permissions = PERMISSIONS_FOR_AUDIO_IP_CALL
+            requestCode = PERMISSION_REQUEST_CODE_AUDIO_CALL
+        } else {
+            isVideoCall = true
+            permissions = PERMISSIONS_FOR_VIDEO_IP_CALL
+            requestCode = PERMISSION_REQUEST_CODE_VIDEO_CALL
+        }
+
+        if (checkPermissions(permissions, activity!!, requestCode)) {
+            startIpCall(PreferencesManager.useJitsiConfCall(activity!!), isVideoCall)
+        }
+    }
 
     /**
      * Launch the camera
@@ -130,7 +165,7 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        if (0 == permissions.size) {
+        if (permissions.isNullOrEmpty()) {
             org.matrix.androidsdk.core.Log.d(LOG_TAG, "## onRequestPermissionsResult(): cancelled $requestCode")
         } else if ((requestCode == PERMISSION_REQUEST_CODE_LAUNCH_CAMERA
                         || requestCode == PERMISSION_REQUEST_CODE_LAUNCH_NATIVE_CAMERA
@@ -208,7 +243,7 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
             return
         }
 
-        if ((currentRoom!!.getNumberOfMembers() > 2) && useJitsiCall) {
+        if ((currentRoom!!.numberOfMembers > 2) && useJitsiCall) {
             startJitsiCall(aIsVideoCall)
             return
         }
@@ -219,7 +254,7 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
             override fun onSuccess(call: IMXCall) {
                 org.matrix.androidsdk.core.Log.d(LOG_TAG, "## startIpCall(): onSuccess")
                 activity!!.runOnUiThread {
-//                    hideWaitingView()
+                    //                    hideWaitingView()
                     val intent = Intent(activity!!, OutgoingCallActivity::class.java);
                     startActivity(intent);
                 }
@@ -227,7 +262,7 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
 
             private fun onError(errorMessage: String) {
                 activity!!.runOnUiThread {
-//                    hideWaitingView()
+                    //                    hideWaitingView()
                     Toast.makeText(activity,
                             getString(R.string.cannot_start_call) + " (" + errorMessage + ")", Toast.LENGTH_SHORT).show()
                 }
@@ -277,6 +312,7 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
             }
         })
     }
+
     /**
      * Convert a MXUsersDevicesMap to a list of List
      *
@@ -309,32 +345,28 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
      * @param aIsVideoCall true if the call is a video one
      */
     private fun startJitsiCall(aIsVideoCall: Boolean) {
-        val wm = WidgetManagerProvider.getWidgetManager(activity!!)
-        if (wm != null) {
+        WidgetManagerProvider.getWidgetManager(activity!!)?.createJitsiWidget(mxSession, currentRoom, aIsVideoCall, object : ApiCallback<Widget> {
+            override fun onSuccess(widget: Widget) {
 
-            wm.createJitsiWidget(mxSession, mRoom, aIsVideoCall, object : ApiCallback<Widget> {
-                override fun onSuccess(widget: Widget) {
+                launchJitsiActivity(widget, aIsVideoCall)
+            }
 
-                    launchJitsiActivity(widget, aIsVideoCall)
-                }
+            private fun onError(errorMessage: String?) {
+                Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show()
+            }
 
-                private fun onError(errorMessage: String?) {
-                    Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show()
-                }
+            override fun onNetworkError(e: Exception) {
+                onError(e.localizedMessage)
+            }
 
-                override fun onNetworkError(e: Exception) {
-                    onError(e.localizedMessage)
-                }
+            override fun onMatrixError(e: MatrixError) {
+                onError(e.localizedMessage)
+            }
 
-                override fun onMatrixError(e: MatrixError) {
-                    onError(e.localizedMessage)
-                }
-
-                override fun onUnexpectedError(e: Exception) {
-                    onError(e.localizedMessage)
-                }
-            })
-        }
+            override fun onUnexpectedError(e: Exception) {
+                onError(e.localizedMessage)
+            }
+        })
     }
 
     /**
@@ -358,7 +390,6 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
             startActivity(intent)
         }
     }
-
 
 
 }

@@ -96,8 +96,10 @@
             android:layout_centerInParent="true"
             android:layout_marginHorizontal="@dimen/margin_normal"
             android:layout_toStartOf="@+id/imgCallVoice"
-            android:padding="@dimen/padding_small"
-            app:srcCompat="@drawable/ic_svg_video" />
+            android:padding="@dimen/padding_normal"
+            app:srcCompat="@drawable/ic_svg_video"
+            android:background="?actionBarItemBackground"
+            />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgCallVoice"
@@ -105,9 +107,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
-            android:padding="@dimen/padding_small"
-            app:srcCompat="@drawable/ic_call"
-
+            android:padding="@dimen/padding_normal"
+            app:srcCompat="@drawable/ic_phone"
+            android:background="?actionBarItemBackground"
             />
 
     </RelativeLayout>

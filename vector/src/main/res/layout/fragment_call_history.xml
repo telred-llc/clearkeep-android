@@ -33,7 +33,9 @@
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nested_scrollview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            >
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
@@ -52,7 +54,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/padding_normal"
-                        app:srcCompat="@drawable/ic_call_phone" />
+                        app:srcCompat="@drawable/ic_phone" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -69,7 +71,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_call_history" />
+                    tools:listitem="@layout/item_call_history"
+                    android:nestedScrollingEnabled="true"
+                    />
 
 
             </androidx.appcompat.widget.LinearLayoutCompat>
