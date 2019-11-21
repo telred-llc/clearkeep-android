@@ -1025,11 +1025,12 @@ internal constructor(// session
         convertView.isClickable = true
 
         // click on the message row select it
-        convertView.setOnClickListener {
-            if (null != mVectorMessagesAdapterEventsListener) {
-                mVectorMessagesAdapterEventsListener!!.onRowClick(position)
-            }
-        }
+//        convertView.setOnClickListener {
+//            Log.e("TAG", "--- Click tag item 6")
+//            if (null != mVectorMessagesAdapterEventsListener) {
+//                mVectorMessagesAdapterEventsListener!!.onRowClick(position)
+//            }
+//        }
 
         // long click on the message row display the message options menu
         convertView.setOnLongClickListener { null != mVectorMessagesAdapterEventsListener && mVectorMessagesAdapterEventsListener!!.onRowLongClick(position) }
@@ -2048,14 +2049,15 @@ internal constructor(// session
      * @param position    the item position
      */
     private fun addContentViewListeners(convertView: View, contentView: View, position: Int, msgType: Int) {
-        contentView.setOnClickListener {
-            if (null != mVectorMessagesAdapterEventsListener) {
-                // GA issue
-                if (position < count) {
-                    mVectorMessagesAdapterEventsListener!!.onContentClick(position)
-                }
-            }
-        }
+//        contentView.setOnClickListener {
+//            Log.e("TAG", "--- Click tag item 3")
+//            if (null != mVectorMessagesAdapterEventsListener) {
+//                // GA issue
+//                if (position < count) {
+//                    mVectorMessagesAdapterEventsListener!!.onContentClick(position)
+//                }
+//            }
+//        }
 
         contentView.setOnLongClickListener(View.OnLongClickListener {
             // GA issue
