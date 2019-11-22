@@ -87,4 +87,11 @@
     <dimen name="margin_camera_bottom_avatar">27dp</dimen>
     <dimen name="height_view_select_picture">63dp</dimen>
 
+    <dimen name="rippleStrokeWidth">2dp</dimen>
+    <dimen name="rippleRadius">64dp</dimen>
+    <dimen name="size_avatar_call">150dp</dimen>
+    <dimen name="margin_avatar_call">30dp</dimen>
+    <dimen name="size_radius_ripple_background">65dp</dimen>
+    <dimen name="size_stroke_width_ripple_background">4dp</dimen>
+
 </resources>

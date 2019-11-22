@@ -1,5 +1,6 @@
 package vmodev.clearkeep.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -19,6 +20,10 @@ class ListRoomContactRecyclerViewAdapter constructor(appExecutors: AppExecutors,
     : ListAdapter<RoomListUser, DataBoundViewHolder<ItemConversationBinding>>(AsyncDifferConfig.Builder<RoomListUser>(diffCallback)
         .setBackgroundThreadExecutor(appExecutors.diskIO())
         .build()), IListRoomRecyclerViewAdapter {
+    override fun getflag(flag: Int?) {
+        Log.d("" ,"")
+
+    }
 
     private lateinit var itemClick: (RoomListUser, Int) -> Unit?
     private lateinit var itemLongClick: (RoomListUser) -> Unit?

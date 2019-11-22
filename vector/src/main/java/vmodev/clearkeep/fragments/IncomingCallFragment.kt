@@ -110,7 +110,9 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
         }
         binding.imageViewDecline.setOnClickListener {
             mxCall.hangup(null);
+            binding.rippleBackground.stopRippleAnimation()
         }
+        binding.rippleBackground.startRippleAnimation()
         viewModelFactory.getViewModel().setRoomId(mxCall.room.roomId);
     }
 

@@ -15,6 +15,7 @@ import javax.inject.Singleton
 @Component(modules = [AndroidSupportInjectionModule::class, AndroidInjectionModule::class, AbstractWorkerModule::class, AbstractWorkerModule.ClearKeepAssistedInjectModule::class
     , AppModule::class, AbstractSplashActivityModule::class, AbstractHomeScreenActivityModule::class, AbstractProfileActivityModule::class
     , PreviewInviteRoomActivityModule::class
+    ,PreviewJoinActivityModule ::class
     , AbstractSearchActivityModule::class
     , AbstractRoomSettingsActivityModule::class
     , AbstractRoomFilesListActivityModule::class

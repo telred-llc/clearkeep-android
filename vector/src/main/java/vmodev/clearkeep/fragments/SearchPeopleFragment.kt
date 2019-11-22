@@ -1,26 +1,34 @@
 package vmodev.clearkeep.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DividerItemDecoration
 import im.vector.R
 import im.vector.databinding.FragmentSearchPeopleBinding
+import im.vector.extensions.hideKeyboard
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import vmodev.clearkeep.activities.SearchActivity
 import vmodev.clearkeep.activities.UserInformationActivity
 import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapter
+import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
+import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
+import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchPeopleFragmentViewModel
 import javax.inject.Inject
@@ -40,11 +48,17 @@ import javax.inject.Inject
 class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
     // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
-
+    private var gotoFragment: Boolean = false
+    private val listUserDirectFilter = ArrayList<User>();
+    private val listUserMatrixFilter = ArrayList<User>();
+    private var currentQuery: String = ""
+    private lateinit var listUserMatrixContactAdapter: ListUserRecyclerViewAdapter
+    private lateinit var listUserDirectAdapter: ListUserRecyclerViewAdapter
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractSearchPeopleFragmentViewModel>;
     @Inject
     lateinit var appExecutors: AppExecutors;
+
 
     private lateinit var binding: FragmentSearchPeopleBinding;
     private var disposable: Disposable? = null;
@@ -62,10 +76,15 @@ class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
         return binding.root;
     }
 
+    @SuppressLint("ClickableViewAccessibility", "CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.recyclerView.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        binding.recyclerViewMatrixContact.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        binding.userDirectory = 0
+        binding.matrixContact = 0
 
-        val listUserAdapter = ListUserRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<User>() {
+        listUserDirectAdapter = ListUserRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<User>() {
             override fun areItemsTheSame(p0: User, p1: User): Boolean {
                 return p0.id == p1.id;
             }
@@ -80,9 +99,63 @@ class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
                 startActivity(intentUserProfile);
             }
         }
-        binding.recyclerView.adapter = listUserAdapter;
+        listUserMatrixContactAdapter = ListUserRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<User>() {
+            override fun areItemsTheSame(p0: User, p1: User): Boolean {
+                return p0.id == p1.id;
+            }
+
+            override fun areContentsTheSame(p0: User, p1: User): Boolean {
+                return p0.name == p1.name && p0.avatarUrl == p1.avatarUrl;
+            }
+        }, dataBinding = dataBinding) { user ->
+            activity?.let {
+                val intentUserProfile = Intent(it, UserInformationActivity::class.java);
+                intentUserProfile.putExtra(UserInformationActivity.USER_ID, user.id);
+                startActivity(intentUserProfile);
+            }
+        }
+        binding.recyclerViewMatrixContact.adapter = listUserMatrixContactAdapter
+        binding.recyclerView.adapter = listUserDirectAdapter;
         binding.users = viewModelFactory.getViewModel().getSearchResult();
-        viewModelFactory.getViewModel().getSearchResult().observe(viewLifecycleOwner, Observer { t -> listUserAdapter.submitList(t?.data) });
+        viewModelFactory.getViewModel().getListUserMatrixContact(1, 65, application.getUserId()).observe(this, Observer {
+            if (it.status == Status.SUCCESS) {
+                it?.data?.let {
+                    listUserMatrixFilter.clear()
+                    listUserMatrixFilter.addAll(it)
+                    if (!gotoFragment) {
+                        gotoFragment = true
+                        filterMatrixContact(currentQuery)
+                    } else {
+                        getSearchViewTextChange()?.subscribe { s ->
+                            filterMatrixContact(s)
+                        }
+                    }
+                }
+            }
+        })
+        getSearchViewTextChange()?.subscribe { s ->
+            filterMatrixContact(s)
+            viewModelFactory.getViewModel().setQueryForSearch(s)
+        }
+        viewModelFactory.getViewModel().getSearchResult().observe(viewLifecycleOwner, Observer { t ->
+            listUserDirectAdapter.submitList(t?.data)
+            if (t.status == Status.SUCCESS) {
+                t.data.let {
+                    listUserDirectFilter.clear()
+                    listUserDirectFilter.addAll(it!!)
+                }
+                binding.userDirectory = t?.data!!.size
+            }
+        });
+        binding.layoutSearch.setOnTouchListener { v, event ->
+            hideKeyboard()
+            return@setOnTouchListener true
+        }
+
+        binding.nestScroll.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
+            hideKeyboard()
+        }
+
         binding.lifecycleOwner = viewLifecycleOwner;
 
     }
@@ -144,12 +217,9 @@ class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
     }
 
     override fun selectedFragment(query: String): ISearchFragment {
+        currentQuery = query
         viewModelFactory.getViewModel().setQueryForSearch(query);
-        disposable = getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe { t: String? ->
-            t?.let { s ->
-                viewModelFactory.getViewModel().setQueryForSearch(query);
-            }
-        }
+        filterMatrixContact(query)
         return this;
     }
 
@@ -159,5 +229,20 @@ class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
 
     override fun unSelectedFragment() {
         disposable?.dispose();
+    }
+
+    private fun filterMatrixContact(query: String) {
+        val listFilter = listUserMatrixFilter.filter { Users ->
+            Users.name?.let {
+                if (query.isNullOrEmpty())
+                    false;
+                else
+                    it.contains(query)
+            } ?: run {
+                false
+            }
+        }
+        listUserMatrixContactAdapter.submitList(listFilter);
+        binding.matrixContact = listFilter.size
     }
 }

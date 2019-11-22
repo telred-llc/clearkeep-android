@@ -448,6 +448,7 @@ public class CommonActivityUtils {
                             context.startActivity(intent);
                         }
                     }
+
                 }
             });
         }

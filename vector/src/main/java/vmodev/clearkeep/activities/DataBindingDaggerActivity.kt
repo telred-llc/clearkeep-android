@@ -16,6 +16,7 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import im.vector.Matrix
 import im.vector.activity.VectorHomeActivity
+import io.reactivex.disposables.CompositeDisposable
 import org.matrix.androidsdk.MXSession
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.bindingadapters.interfaces.IDataBindingComponent
@@ -23,7 +24,6 @@ import vmodev.clearkeep.dialogfragments.ReceivedShareFileDialogFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractDataBindingDaggerActivityViewModel
 import java.util.*
 import javax.inject.Inject
-
 
 @Suppress("LeakingThis")
 abstract class DataBindingDaggerActivity : AppCompatActivity(), HasAndroidInjector {
@@ -39,6 +39,8 @@ abstract class DataBindingDaggerActivity : AppCompatActivity(), HasAndroidInject
 
     private var session: MXSession? = null
 
+    val compositeDisposable = CompositeDisposable()
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
@@ -48,12 +50,18 @@ abstract class DataBindingDaggerActivity : AppCompatActivity(), HasAndroidInject
         dataBindingDaggerActivityViewModel = ViewModelProvider(this, _viewModelFactory).get(AbstractDataBindingDaggerActivityViewModel::class.java)
     }
 
+
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         if (currentFocus != null) {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
         }
         return super.dispatchTouchEvent(ev)
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.clear()
+        super.onDestroy()
     }
 
     override fun onResume() {

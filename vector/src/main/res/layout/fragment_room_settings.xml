@@ -90,8 +90,7 @@
                 <RelativeLayout
                     android:layout_width="@dimen/avatar_screen_profile_size"
                     android:layout_height="@dimen/avatar_screen_profile_size"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="@dimen/margin_large">
+                    android:layout_gravity="center_horizontal">
 
                     <vmodev.clearkeep.widget.CircleImage
                         android:id="@+id/imgAvatarRoom"
@@ -110,14 +109,16 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerInParent="true"
                         android:layout_margin="5dp"
-                        app:visibleGone="@{powerLevel == 100}" />
+                        app:visibleGone="@{powerLevel == 100}"
+                        />
 
                     <View
                         android:id="@+id/viewSelectPicture"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/height_view_select_picture"
                         android:layout_alignParentTop="true"
-                        app:visibleGone="@{powerLevel == 100}" />
+                        app:visibleGone="@{powerLevel == 100}"
+                        />
 
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -127,8 +128,8 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerInParent="true"
                         android:layout_marginBottom="@dimen/margin_camera_bottom_avatar"
-                        app:srcCompat="@drawable/ic_camera_color_white"
-                        app:visibleGone="@{powerLevel == 100}" />
+                        app:visibleGone="@{powerLevel == 100}"
+                        app:srcCompat="@drawable/ic_camera_color_white" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -197,7 +198,6 @@
                         android:layout_height="wrap_content"
                         android:drawableEnd="@{powerLevel == 100 ? @drawable/ic_pen : null}"
                         android:drawablePadding="@dimen/padding_small"
-                        android:enabled="@{powerLevel == 100}"
                         android:hint="@string/room_info_room_topic"
                         android:imeOptions="actionDone"
                         android:inputType="textCapCharacters|textNoSuggestions"
@@ -205,6 +205,7 @@
                         android:text="@{room.data.topic == null ? room.data.name : room.data.topic}"
                         android:textAllCaps="true"
                         android:textColor="@color/text_color_blue"
+                        android:enabled="@{powerLevel == 100}"
                         android:textSize="@dimen/text_17_sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 

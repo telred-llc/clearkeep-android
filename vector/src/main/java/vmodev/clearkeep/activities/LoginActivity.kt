@@ -1,11 +1,10 @@
 package vmodev.clearkeep.activities
 
-import android.os.Build
 import android.os.Bundle
+import android.os.Process
 import android.view.View
 import android.view.Window
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -24,23 +23,31 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
         , ForgotPasswordFragment.OnFragmentInteractionListener, ForgotPasswordVerifyEmailFragment.OnFragmentInteractionListener {
 
     @Inject
-    lateinit var viewModelFactory: IViewModelFactory<AbstractLoginActivityViewModel>;
-    private lateinit var binding: ActivityLoginBinding;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractLoginActivityViewModel>
+    private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val window: Window = this.getWindow();
+        val window: Window = this.window
 //        window.statusBarColor = ContextCompat.getColor(this, R.color.primary_hint_text_color_light)
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+//            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
 //        }
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
-        val loginFragment = LoginFragment.newInstance();
-        changeFragment(loginFragment);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
+        val loginFragment = LoginFragment.newInstance()
+        changeFragment(loginFragment)
     }
 
     override fun getActivity(): FragmentActivity {
-        return this;
+        return this
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 1) {
+            super.onBackPressed()
+        } else {
+            Process.killProcess(Process.myPid())
+        }
     }
 
     override fun onPressedSignUp() {
@@ -48,17 +55,17 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
             it?.let {
                 when (it.status) {
                     Status.SUCCESS -> {
-                        it?.data?.let {
-                            changeFragment(SignUpFragment.newInstance());
-                            binding.progressBar.visibility = View.GONE;
+                        it.data?.let {
+                            changeFragment(SignUpFragment.newInstance())
+                            binding.progressBar.visibility = View.GONE
                         }
                     }
                     Status.ERROR -> {
-                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
-                        binding.progressBar.visibility = View.GONE;
+                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                        binding.progressBar.visibility = View.GONE
                     }
                     Status.LOADING -> {
-                        binding.progressBar.visibility = View.VISIBLE;
+                        binding.progressBar.visibility = View.VISIBLE
                     }
                 }
             }
@@ -66,44 +73,44 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
     }
 
     override fun onPressSendToEmail(email: String, password: String) {
-        changeFragment(ForgotPasswordVerifyEmailFragment.newInstance(email, password));
+        changeFragment(ForgotPasswordVerifyEmailFragment.newInstance(email, password))
     }
 
     override fun onPressCancel() {
-        changeFragment(LoginFragment.newInstance());
+        changeFragment(LoginFragment.newInstance())
     }
 
     override fun onPressSignIn() {
-        changeFragment(LoginFragment.newInstance());
+        changeFragment(LoginFragment.newInstance())
     }
 
     override fun onPressedHaveAnAccount() {
-        val loginFragment = LoginFragment.newInstance();
-        changeFragment(loginFragment);
+        val loginFragment = LoginFragment.newInstance()
+        changeFragment(loginFragment)
     }
 
     override fun onPressForgotPassword() {
-        changeFragment(ForgotPasswordFragment.newInstance());
+        changeFragment(ForgotPasswordFragment.newInstance())
     }
 
     override fun onResetPasswordSuccess() {
-        Toast.makeText(this, "Your password has been reset", Toast.LENGTH_LONG).show();
-        changeFragment(LoginFragment.newInstance());
+        Toast.makeText(this, "Your password has been reset", Toast.LENGTH_LONG).show()
+        changeFragment(LoginFragment.newInstance())
     }
 
     private fun changeFragment(fragment: Fragment) {
-        val transaction = supportFragmentManager.beginTransaction();
-        transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-        transaction.replace(R.id.frame_layout_fragment_container, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+        transaction.replace(R.id.frame_layout_fragment_container, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 
     override fun onWaitingEmailValidation() {
-        changeFragment(HandlerVerifyEmailFragment.newInstance());
+        changeFragment(HandlerVerifyEmailFragment.newInstance())
     }
 
     override fun onPressedCancel() {
-        changeFragment(SignUpFragment.newInstance());
+        changeFragment(SignUpFragment.newInstance())
     }
 }

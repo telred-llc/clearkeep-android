@@ -14,6 +14,16 @@
         <variable
             name="room"
             type="LiveData&lt;Resource&lt;Room>>" />
+
+        <variable
+            name="call_sounds_manager"
+            type="org.matrix.androidsdk.call.CallSoundsManager" />
+
+        <variable
+            name="call_manager"
+            type="im.vector.util.CallsManager" />
+
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,30 +31,37 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_view_avatar"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            app:cardCornerRadius="75dp"
+        <vmodev.clearkeep.widget.RippleBackground
+            android:id="@+id/ripple_background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="@+id/text_view_name"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:rb_color="#0395C6"
+            app:rb_duration="3500"
+            app:rb_radius="@dimen/size_radius_ripple_background"
+            app:rb_rippleAmount="3"
+            app:rb_scale="1.5"
+            app:rb_strokeWidth="@dimen/size_stroke_width_ripple_background">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/image_view_avatar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="@dimen/size_avatar_call"
+                android:layout_height="@dimen/size_avatar_call"
+                android:layout_centerInParent="true"
+                android:layout_margin="@dimen/margin_avatar_call"
                 app:room="@{room.data}" />
-        </com.google.android.material.card.MaterialCardView>
+        </vmodev.clearkeep.widget.RippleBackground>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text_view_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{room.data.name}"
             android:textAlignment="center"
             android:textSize="@dimen/text_40_sp"
+            app:formatName="@{room.data}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -54,8 +71,8 @@
             android:id="@+id/text_view_calling"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/calling"
+            android:layout_marginTop="@dimen/margin_large"
+            android:text="@string/str_calling"
             android:textAlignment="center"
             android:textSize="@dimen/text_20_sp"
             android:textStyle="italic"
@@ -84,7 +101,8 @@
                     android:id="@+id/image_view_microphone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_microphone" />
+                    android:src="@{call_sounds_manager.isMicrophoneMute ? @drawable/ic_turn_off_microphone:@drawable/ic_microphone}"
+                    tools:src="@drawable/ic_microphone" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/image_view_go_to_room"
@@ -104,7 +122,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_normal"
                     android:layout_marginEnd="@dimen/margin_normal"
-                    android:src="@drawable/ic_speaker" />
+                    android:src="@{call_manager.isSpeakerphoneOn ? @drawable/ic_speaker: @drawable/ic_turn_off_speaker}"
+                    tools:src="@drawable/ic_speaker" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/image_view_hang_up"

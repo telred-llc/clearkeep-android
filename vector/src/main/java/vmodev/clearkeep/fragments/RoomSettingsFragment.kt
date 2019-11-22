@@ -57,7 +57,6 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
     private var isUpdateSuccess = false
     private var mRoom: org.matrix.androidsdk.data.Room? = null
     private var mSession: MXSession? = null
-    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_room_settings, container, false, dataBinding.getDataBindingComponent())
         return binding.root
@@ -141,7 +140,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
             binding.isLoading = true
             isUpdateSuccess = false
 
-            val name: String = binding.editTextRoomName.text.toString().toUpperCase().trim()
+            var name: String = binding.editTextRoomName.text.toString().toUpperCase().trim()
             var topic: String = binding.editTextRoomTopic.text.toString().trim()
             if (topic.isNullOrBlank()) {
                 topic = name

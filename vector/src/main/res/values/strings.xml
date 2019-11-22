@@ -247,8 +247,9 @@
     <string name="direct_chats_header">Conversations</string>
     <string name="local_address_book_header">Local address book</string>
 
-    <string name="user_directory_header">User directory</string>
+    <string name="user_directory_header">User Directory</string>
     <string name="matrix_only_filter">Matrix contacts only</string>
+    <string name="matrix_contact">Matrix Contact</string>
     <string name="no_conversation_placeholder">No conversations</string>
     <string name="no_contact_access_placeholder">You didn’t allow Riot to access your local contacts</string>
     <string name="no_result_placeholder">No results</string>
@@ -1821,6 +1822,7 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="room_filtering_footer_open_room_directory">View the room directory</string>
 
     <string name="room_directory_search_hint">Name or ID (#example:matrix.org)</string>
+    <string name="room_directory">Room Directory</string>
 
     <string name="labs_swipe_to_reply_in_timeline">Enable swipe to reply in timeline</string>
 
@@ -1861,6 +1863,7 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="speaker_phone_on">Speaker phone on</string>
     <string name="speaker_phone_off">Speaker phone off</string>
     <string name="calling">Incoming Call …</string>
+    <string name="str_calling">Calling …</string>
 
 
     <string name="identity_server">Identity server</string>
