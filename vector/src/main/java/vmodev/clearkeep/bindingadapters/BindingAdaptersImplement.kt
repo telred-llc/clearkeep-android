@@ -21,12 +21,14 @@ import org.matrix.androidsdk.crypto.MXDecryptionException
 import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
 import vmodev.clearkeep.jsonmodels.MessageContent
+import vmodev.clearkeep.ultis.FormatString
 import vmodev.clearkeep.ultis.toDateTime
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
 
 class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapters, ISwitchCompatViewBindingAdapters, CardViewBindingAdapters {
+
     override fun bindImage(imageView: ImageView, room: PublicRoom?, listener: RequestListener<Drawable?>?) {
         room?.let {
             if (room.avatarUrl.isNullOrEmpty()) {
@@ -172,4 +174,17 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
                 ResourcesCompat.getColor(cardView.context.resources, R.color.app_green, null))
         }
     }
+
+    override fun bindFormatName(textView: TextView, room: Room?) {
+        room?.name?.let {
+            if (it.contains("Invite from")) {
+                textView.text = it.replace("Invite from", "").trim()
+            } else if (it.contains("Call:")) {
+                textView.text = it.replace("Call:", "").trim()
+            } else {
+                textView.text = it
+            }
+        }
+    }
+
 }

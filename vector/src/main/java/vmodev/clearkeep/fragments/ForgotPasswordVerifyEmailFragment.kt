@@ -1,12 +1,14 @@
 package vmodev.clearkeep.fragments
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -25,7 +27,7 @@ import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val EMAIL = "EMAIL";
+private const val EMAIL = "EMAIL"
 private const val PASSWORD = "PASSWORD"
 
 /**
@@ -40,60 +42,59 @@ private const val PASSWORD = "PASSWORD"
 class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
-    lateinit var viewModelFactory: IViewModelFactory<AbstractForgotPasswordVerifyEmailFragmentViewModel>;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractForgotPasswordVerifyEmailFragmentViewModel>
 
     // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
-    private lateinit var email: String;
-    private lateinit var password: String;
-    private lateinit var binding: FragmentForgotPasswordVerifyEmailBinding;
-    private var currentThreePid: ThreePid? = null;
+    private lateinit var email: String
+    private lateinit var password: String
+    private lateinit var binding: FragmentForgotPasswordVerifyEmailBinding
+    private var currentThreePid: ThreePid? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            email = it.getString(EMAIL, "");
-            password = it.getString(PASSWORD, "");
+            email = it.getString(EMAIL, "")
+            password = it.getString(PASSWORD, "")
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_forgot_password_verify_email, container, false, dataBinding.getDataBindingComponent());
-        return binding.root;
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_forgot_password_verify_email, container, false, dataBinding.getDataBindingComponent())
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.buttonCancel.setOnClickListener {
-            onPressCancel();
+            onPressCancel()
         }
         viewModelFactory.getViewModel().getForgetPasswordResult().observe(viewLifecycleOwner, Observer {
             it?.let {
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let { threePid ->
-                            currentThreePid = threePid;
-                            viewModelFactory.getViewModel().setPasswordForResetPassword(password, threePid);
+                            currentThreePid = threePid
+                            viewModelFactory.getViewModel().setPasswordForResetPassword(password, threePid)
                         }
                     }
                     Status.ERROR -> {
-                        Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show();
-                        onPressCancel();
+                        Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show()
+                        onPressCancel()
                     }
                     else -> {
 
                     }
                 }
             }
-        });
+        })
         viewModelFactory.getViewModel().getResetPasswordResult().observe(viewLifecycleOwner, Observer {
             it?.let {
                 when (it.status) {
                     Status.SUCCESS -> {
                         it.data?.let {
-                            onResetPasswordSuccess();
+                            onResetPasswordSuccess()
                         }
                     }
                     Status.ERROR -> {
@@ -104,8 +105,8 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
                                         .subscribe { viewModelFactory.getViewModel().setPasswordForResetPassword(password, threePid) }
                             }
                         } else {
-                            Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show();
-                            onPressCancel();
+                            Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show()
+                            onPressCancel()
                         }
                     }
                     else -> {
@@ -113,22 +114,26 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
                     }
                 }
             }
-        });
-        viewModelFactory.getViewModel().setEmailForForgetPassword(email);
-        binding.lifecycleOwner = viewLifecycleOwner;
+        })
+        viewModelFactory.getViewModel().setEmailForForgetPassword(email)
+        binding.lifecycleOwner = viewLifecycleOwner
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     private fun onPressCancel() {
-        listener?.onPressCancel();
+        listener?.onPressCancel()
     }
 
     private fun onResetPasswordSuccess() {
-        listener?.onResetPasswordSuccess();
+        listener?.onResetPasswordSuccess()
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        activity?.window?.statusBarColor = ContextCompat.getColor(context, R.color.color_statusbar_splash)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        }
         if (context is OnFragmentInteractionListener) {
             listener = context
         } else {
@@ -142,7 +147,7 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
     }
 
     override fun getFragment(): Fragment {
-        return this;
+        return this
     }
 
     /**
@@ -158,9 +163,9 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onPressCancel();
+        fun onPressCancel()
 
-        fun onResetPasswordSuccess();
+        fun onResetPasswordSuccess()
     }
 
     companion object {
@@ -174,12 +179,11 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(email: String, password: String) =
-                ForgotPasswordVerifyEmailFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(EMAIL, email)
-                        putString(PASSWORD, password)
-                    }
-                }
+        fun newInstance(email: String, password: String) = ForgotPasswordVerifyEmailFragment().apply {
+            arguments = Bundle().apply {
+                putString(EMAIL, email)
+                putString(PASSWORD, password)
+            }
+        }
     }
 }

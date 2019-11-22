@@ -49,6 +49,41 @@ public abstract class MXCActionBarActivity extends VectorAppCompatActivity {
     protected MXSession mSession = null;
     protected Room mRoom = null;
 
+    /**
+     * Dismiss any opened dialog.
+     *
+     * @param activity the parent activity.
+     */
+    private static void dismissDialogs(FragmentActivity activity) {
+        // close any opened dialog
+        FragmentManager fm = activity.getSupportFragmentManager();
+        java.util.List<Fragment> fragments = fm.getFragments();
+
+        if (null != fragments) {
+            for (Fragment fragment : fragments) {
+                // VectorUnknownDevicesFragment must not be dismissed
+                // The user has to update the device statuses
+                if (fragment instanceof DialogFragment) {
+                    ((DialogFragment) fragment).dismissAllowingStateLoss();
+                }
+            }
+        }
+    }
+
+    /**
+     * Dismiss the soft keyboard if one view in the activity has the focus.
+     *
+     * @param activity the activity
+     */
+    public static void dismissKeyboard(Activity activity) {
+        // hide the soft keyboard
+        View view = activity.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
     @Override
     public void onLowMemory() {
         super.onLowMemory();
@@ -120,7 +155,6 @@ public abstract class MXCActionBarActivity extends VectorAppCompatActivity {
         }
     }
 
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_MENU) && (null == getSupportActionBar())) {
@@ -130,27 +164,6 @@ public abstract class MXCActionBarActivity extends VectorAppCompatActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
-    }
-
-    /**
-     * Dismiss any opened dialog.
-     *
-     * @param activity the parent activity.
-     */
-    private static void dismissDialogs(FragmentActivity activity) {
-        // close any opened dialog
-        FragmentManager fm = activity.getSupportFragmentManager();
-        java.util.List<Fragment> fragments = fm.getFragments();
-
-        if (null != fragments) {
-            for (Fragment fragment : fragments) {
-                // VectorUnknownDevicesFragment must not be dismissed
-                // The user has to update the device statuses
-                if (fragment instanceof DialogFragment) {
-                    ((DialogFragment) fragment).dismissAllowingStateLoss();
-                }
-            }
-        }
     }
 
     @Override
@@ -177,20 +190,6 @@ public abstract class MXCActionBarActivity extends VectorAppCompatActivity {
         if ((null != Matrix.getInstance(this)) && (null != Matrix.getInstance(this).getSessions())) {
             MyPresenceManager.createPresenceManager(this, Matrix.getInstance(this).getSessions());
             MyPresenceManager.advertiseAllOnline();
-        }
-    }
-
-    /**
-     * Dismiss the soft keyboard if one view in the activity has the focus.
-     *
-     * @param activity the activity
-     */
-    public static void dismissKeyboard(Activity activity) {
-        // hide the soft keyboard
-        View view = activity.getCurrentFocus();
-        if (view != null) {
-            InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 }
