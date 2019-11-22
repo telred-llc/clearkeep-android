@@ -76,7 +76,7 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
         } else {
             (p0.binding as RoomItemBinding).roomListUser = getItem(p1);
             if (getItem(p1).room?.notifyCount==0){
-                p0.binding.backgroundRoomItem.setBackgroundColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_white, null))
+                p0.binding.backgroundRoomItem.setBackgroundColor(ResourcesCompat.getColor(p0.itemView.resources,android.R.color.transparent, null))
             }else{
                 p0.binding.backgroundRoomItem.setBackgroundColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_background_notification,null))
 

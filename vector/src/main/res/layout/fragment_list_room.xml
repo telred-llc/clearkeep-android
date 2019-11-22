@@ -53,19 +53,20 @@
                 android:orientation="vertical">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_marginTop="10dp"
-                    android:background="@color/background_search"
                     android:id="@+id/linear_layout_favourites"
                     android:layout_width="match_parent"
                     android:layout_height="46dp"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:background="?attr/color_view_blank_setting"
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:layout_marginStart="10dp"
                         android:id="@+id/image_view_direction_favourites"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_normal"
                         android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
+                        android:tint="?attr/color_icon_app_default"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -76,28 +77,31 @@
                         android:layout_height="16dp"
                         android:layout_marginStart="10dp"
                         android:src="@drawable/ic_favourites"
+                        android:tint="?attr/color_icon_app_default"
                         app:layout_constraintBottom_toBottomOf="@+id/txtFavourites"
                         app:layout_constraintLeft_toRightOf="@+id/image_view_direction_favourites"
                         app:layout_constraintTop_toTopOf="@+id/txtFavourites" />
 
                     <TextView
-                        android:textColor="@color/text_color"
                         android:id="@+id/txtFavourites"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:text="@string/bottom_action_favourites"
+                        android:textColor="?attr/color_text_app_default"
                         android:textSize="@dimen/text_17_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toRightOf="@+id/icon_favourites"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+
+                        />
 
                     <TextView
-                        android:textColor="@color/text_color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:text="@{`(` + String.valueOf(listFavourites.data.size) + `)`}"
+                        android:textColor="?attr/color_text_app_default"
                         android:textSize="@dimen/text_17_sp"
                         app:layout_constraintBottom_toBottomOf="@+id/txtFavourites"
                         app:layout_constraintLeft_toRightOf="@+id/txtFavourites"
@@ -119,71 +123,73 @@
                 </net.cachapa.expandablelayout.ExpandableLayout>
 
 
-
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:background="@color/background_search"
                     android:id="@+id/linear_layout_group"
                     android:layout_width="match_parent"
                     android:layout_height="46dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:background="?attr/color_view_blank_setting"
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:layout_marginStart="10dp"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:id="@+id/image_view_direction_group"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
+                        android:layout_marginStart="@dimen/margin_normal"
+                        android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
+                        android:tint="?attr/color_icon_app_default"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
-                        android:layout_marginStart="10dp"
-                        app:layout_constraintLeft_toRightOf="@+id/image_view_direction_group"
-                        app:layout_constraintBottom_toBottomOf="@+id/txtRooms"
-                        app:layout_constraintTop_toTopOf="@+id/txtRooms"
                         android:id="@+id/icon_rooms"
                         android:layout_width="20dp"
                         android:layout_height="16dp"
-                        android:src="@drawable/ic_rooms" />
+                        android:layout_marginStart="@dimen/margin_normal"
+                        android:src="@drawable/ic_rooms"
+                        android:tint="?attr/color_icon_app_default"
+                        app:layout_constraintBottom_toBottomOf="@+id/txtRooms"
+                        app:layout_constraintLeft_toRightOf="@+id/image_view_direction_group"
+                        app:layout_constraintTop_toTopOf="@+id/txtRooms" />
 
                     <TextView
-                        android:textColor="@color/text_color"
                         android:id="@+id/txtRooms"
-                        android:layout_marginStart="10dp"
-                        app:layout_constraintLeft_toRightOf="@+id/icon_rooms"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_normal"
                         android:text="@string/rooms"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textColor="?attr/color_text_app_default"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toRightOf="@+id/icon_rooms"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:textColor="@color/text_color"
-                        app:layout_constraintLeft_toRightOf="@+id/txtRooms"
-                        app:layout_constraintBottom_toBottomOf="@+id/txtRooms"
-                        app:layout_constraintTop_toTopOf="@+id/txtRooms"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="5dp"
                         android:layout_weight="1"
                         android:text="@{`(` + String.valueOf(listGroup.data.size) + `)`}"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textColor="?attr/color_text_app_default"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/txtRooms"
+                        app:layout_constraintLeft_toRightOf="@+id/txtRooms"
+                        app:layout_constraintTop_toTopOf="@+id/txtRooms" />
 
 
                     <ImageView
-                        android:layout_marginEnd="17dp"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintBottom_toBottomOf="@+id/txtRooms"
-                        app:layout_constraintTop_toTopOf="@+id/txtRooms"
                         android:id="@+id/image_view_create_new_room"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/ic_add" />
+                        android:layout_marginEnd="17dp"
+                        android:src="@drawable/ic_add"
+                        android:tint="?attr/color_icon_app_default"
+                        app:layout_constraintBottom_toBottomOf="@+id/txtRooms"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/txtRooms" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
@@ -192,34 +198,36 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     app:visibleGone="@{listGroup.data.size == 0}">
+
                     <ImageView
-                        android:layout_marginTop="48dp"
-                        android:layout_gravity="center_horizontal"
-                        android:background="@drawable/ic_group"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="48dp"
+                        android:background="@drawable/ic_group" />
+
                     <TextView
-                        android:layout_marginTop="32dp"
-                        android:textSize="@dimen/text_13_sp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="32dp"
                         android:text="@string/you_have_no_chat_room"
                         android:textAlignment="center"
-                        android:textColor="@color/text_color" />
+                        android:textColor="@color/text_color"
+                        android:textSize="@dimen/text_13_sp" />
 
                     <Button
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="47dp"
                         android:id="@+id/button_start_group_chat"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="32dp"
+                        android:layout_marginTop="16dp"
                         android:layout_marginEnd="32dp"
+                        android:layout_marginBottom="47dp"
                         android:background="@drawable/bg_button_gradient_blue"
                         android:text="@string/start_room_chat"
-                        android:textStyle="bold"
+                        android:textColor="@color/main_text_color"
                         android:textSize="@dimen/text_15_sp"
-                        android:textColor="@color/main_text_color" />
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <net.cachapa.expandablelayout.ExpandableLayout
@@ -237,68 +245,71 @@
                 </net.cachapa.expandablelayout.ExpandableLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_marginTop="10dp"
-                    android:background="@color/background_search"
                     android:id="@+id/linear_layout_direct"
                     android:layout_width="match_parent"
                     android:layout_height="46dp"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:background="?attr/color_view_blank_setting"
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:layout_marginStart="10dp"
                         android:id="@+id/image_view_direction_direct"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_normal"
                         android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
+                        android:tint="?attr/color_icon_app_default"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
-                        android:layout_marginStart="10dp"
                         android:id="@+id/icon_direction_direct"
                         android:layout_width="20dp"
                         android:layout_height="16dp"
+                        android:layout_marginStart="@dimen/margin_normal"
                         android:src="@drawable/ic_derect_messages"
+                        android:tint="?attr/color_icon_app_default"
                         app:layout_constraintBottom_toBottomOf="@+id/txtDirectMessages"
                         app:layout_constraintLeft_toRightOf="@+id/image_view_direction_direct"
                         app:layout_constraintTop_toTopOf="@+id/txtDirectMessages" />
 
                     <TextView
-                        android:textColor="@color/text_color"
                         android:id="@+id/txtDirectMessages"
-                        android:layout_marginStart="10dp"
-                        app:layout_constraintLeft_toRightOf="@+id/icon_direction_direct"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
                         android:text="@string/direct_messages"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textColor="?attr/color_text_app_default"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toRightOf="@+id/icon_direction_direct"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:textColor="@color/text_color"
-                        app:layout_constraintLeft_toRightOf="@+id/txtDirectMessages"
-                        app:layout_constraintBottom_toBottomOf="@+id/txtDirectMessages"
-                        app:layout_constraintTop_toTopOf="@+id/txtDirectMessages"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:layout_weight="1"
                         android:text="@{`(` + String.valueOf(listDirect.data.size) + `)`}"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textColor="?attr/color_text_app_default"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/txtDirectMessages"
+                        app:layout_constraintLeft_toRightOf="@+id/txtDirectMessages"
+                        app:layout_constraintTop_toTopOf="@+id/txtDirectMessages" />
 
 
                     <ImageView
-                        android:layout_marginEnd="17dp"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintBottom_toBottomOf="@+id/txtDirectMessages"
-                        app:layout_constraintTop_toTopOf="@+id/txtDirectMessages"
                         android:id="@+id/image_view_create_new_direct"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/ic_add" />
+                        android:layout_marginEnd="17dp"
+                        android:src="@drawable/ic_add"
+                        android:tint="?attr/color_icon_app_default"
+                        app:layout_constraintBottom_toBottomOf="@+id/txtDirectMessages"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/txtDirectMessages" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
@@ -307,36 +318,37 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     app:visibleGone="@{listDirect.data.size == 0}">
+
                     <ImageView
-                        android:layout_marginTop="48dp"
-                        android:layout_gravity="center_horizontal"
-                        android:background="@drawable/ic_group"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="48dp"
+                        android:background="@drawable/ic_group" />
 
                     <TextView
-                        android:layout_marginTop="32dp"
-                        android:textSize="@dimen/text_13_sp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
+                        android:layout_marginTop="32dp"
                         android:text="@string/you_have_no_chat_derect"
                         android:textAlignment="center"
-                        android:textColor="@color/text_color" />
+                        android:textColor="@color/text_color"
+                        android:textSize="@dimen/text_13_sp" />
 
                     <Button
-                        android:textStyle="bold"
-                        android:textSize="@dimen/text_15_sp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="47dp"
                         android:id="@+id/button_start_direct_chat"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="32dp"
+                        android:layout_marginTop="16dp"
                         android:layout_marginEnd="32dp"
+                        android:layout_marginBottom="47dp"
                         android:background="@drawable/bg_button_gradient_blue"
                         android:text="@string/start_direct_chat"
-                        android:textColor="@color/main_text_color" />
+                        android:textColor="@color/main_text_color"
+                        android:textSize="@dimen/text_15_sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <net.cachapa.expandablelayout.ExpandableLayout
