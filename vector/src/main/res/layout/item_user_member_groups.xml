@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="java.util.List" />
+
+        <variable
+            name="user"
+            type="org.matrix.androidsdk.rest.model.RoomMember" />
+    </data>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_small">
+
+        <FrameLayout
+            android:id="@+id/avatar"
+            android:layout_width="@dimen/member_list_avatar_size"
+            android:layout_height="@dimen/member_list_avatar_size"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/circle_image_view_avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@color/app_green" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/circle_image_view_status"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="end|bottom"
+                android:src="@color/lock_background"
+                app:civ_border_color="@android:color/white"
+                app:civ_border_width="2dp" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_toStartOf="@+id/image_status_admin"
+            android:layout_toEndOf="@+id/avatar"
+            android:singleLine="true"
+            android:text="@{user.displayname}"
+            android:textColor="?attr/color_text_app_default"
+            android:textSize="@dimen/text_17_sp" />
+
+        <TextView
+            android:id="@+id/text_admin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/image_status_admin"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_toEndOf="@+id/avatar"
+            android:text="@string/title_room_admin" />
+
+        <ImageView
+            android:id="@+id/image_status_admin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/border_avatar_screen_profile_size"
+            android:elevation="5dp"
+            android:padding="@dimen/border_avatar_screen_profile_size"
+            android:src="@drawable/ic_room_admin"></ImageView>
+    </RelativeLayout>
+</layout>

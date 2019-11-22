@@ -27,4 +27,7 @@ abstract class AbstractVectorMediaPickerActivityModule {
 
     @ContributesAndroidInjector
     abstract fun contributeVectorSharedFilesActivity(): VectorSharedFilesActivity
+
+    @ContributesAndroidInjector
+    abstract fun contributeVectorCallViewActivity():VectorCallViewActivity
 }
