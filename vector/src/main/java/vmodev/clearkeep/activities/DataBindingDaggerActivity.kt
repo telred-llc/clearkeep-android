@@ -57,6 +57,7 @@ abstract class DataBindingDaggerActivity : AppCompatActivity(), HasAndroidInject
             imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
         }
         return super.dispatchTouchEvent(ev)
+    }
 
     override fun onDestroy() {
         compositeDisposable.clear()
