@@ -5,7 +5,10 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
+import android.widget.ImageView
+import androidx.annotation.ColorInt
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -59,11 +62,18 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.statusBarColor = ContextCompat.getColor(this, R.color.primary_hint_text_color_light)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        }
+//        window.statusBarColor = ContextCompat.getColor(this, R.color.primary_hint_text_color_light)
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+//        }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_search, dataBinding.getDataBindingComponent());
+
+        //setcolor for icon search
+//        val searchIcon : ImageView = binding.searchView.findViewById(androidx.appcompat.R.id.search_button)
+//        val typedValue : TypedValue = TypedValue();
+//        getTheme().resolveAttribute(R.attr.icon_color_setting, typedValue, true);
+//        @ColorInt val color = typedValue.data;
+//        searchIcon.setColorFilter(color)
         userId = intent.getStringExtra(USER_ID);
         arraySearchFragment = arrayOf(SearchRoomsFragment.newInstance(userId), SearchMessagesFragment.newInstance(userId),
                 SearchPeopleFragment.newInstance(), SearchFilesFragment.newInstance(userId));

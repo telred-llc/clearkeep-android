@@ -202,8 +202,8 @@
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">?android:textColorSecondary</item>
         <item name="textAllCaps">false</item>
-        <item name="tabSelectedTextColor">?attr/color_toolbar</item>
-        <item name="tabTextAppearance">?attr/color_toolbar</item>
+        <item name="tabSelectedTextColor">?attr/color_text_tablayout</item>
+        <item name="tabTextAppearance">?attr/color_text_tablayout</item>
 
     </style>
 
@@ -286,6 +286,7 @@
         <attr name="icon_color_setting" format="color" />
         <attr name="color_clear_cache" format="color" />
         <attr name="color_toolbar" format="color" />
+        <attr name="color_text_tablayout" format="color" />
         <attr name="color_text_setting" format="color" />
         <attr name="icon_gray_color" format="color" />
         <attr name="search_view_background" format="color" />
@@ -326,7 +327,7 @@
        <item name="android:windowBackground">@drawable/bg_app_dark_mode</item>
 <!--        <item name="android:">#121212</item>-->
         <item name="color_for_text_sign_up">#799CE0</item>
-        <item name="color_underline_tablayout">#5B8DEC</item>
+        <item name="color_underline_tablayout">#00C0D8</item>
         <item name="icon_color">#FFFFFF</item>
         <item name="text_color_hint">#F5F5F5</item>
         <item name="text_input_edit_text">#5787E3</item>
@@ -337,12 +338,13 @@
         <item name="icon_color_setting">#FFFFFFFF</item>
         <item name="color_clear_cache">#FFFFFFFF</item>
         <item name="color_toolbar">#FFFFFFFF</item>
+        <item name="color_text_tablayout">#FFFFFF</item>
         <item name="color_text_setting">#FFFFFFFF</item>
         <item name="icon_gray_color">#C1C1C1</item>
         <item name="vctr_list_header_background_color">#FF000000</item>
         <item name="vctr_list_header_primary_text_color">#FFFFFFFF</item>
         <item name="vctr_message_text_color">#FFFFFFFF</item>
-        <item name="search_view_background">@color/color_white</item>
+        <item name="search_view_background">#1F1F1F</item>
         <item name="text_available_send">#FFFFFFFF</item>
         <item name="text_not_available_send">@color/riot_tertiary_text_color_status</item>
         <item name="vctr_default_text_hint_color">@color/vector_dark_grey_color</item>
@@ -395,6 +397,7 @@
         <item name="icon_color_setting">#646464</item>
         <item name="color_clear_cache">#005311</item>
         <item name="color_toolbar">#444444</item>
+        <item name="color_text_tablayout">#444444</item>
         <item name="color_text_setting">#646464</item>
         <item name="icon_gray_color">#7B7B7B</item>
         <item name="vctr_list_header_background_color">#FFFFFFFF</item>
