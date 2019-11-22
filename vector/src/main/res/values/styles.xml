@@ -200,7 +200,7 @@
 
     <style name="MyCustomTabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">?android:textColorSecondary</item>
+        <item name="android:textColor">?attr/color_text_tablayout</item>
         <item name="textAllCaps">false</item>
         <item name="tabSelectedTextColor">?attr/color_text_tablayout</item>
         <item name="tabTextAppearance">?attr/color_text_tablayout</item>
