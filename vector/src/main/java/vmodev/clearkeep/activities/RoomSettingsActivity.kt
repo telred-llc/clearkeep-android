@@ -38,7 +38,7 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
             binding.toolbar.title = destination.label
         }
         disposable = RxEventBus.instanceOf<String>().getData()?.subscribe {
-            binding.toolbar.title = it
+            binding.toolbar.title = "Info"
         }
         val graph = navController.navInflater.inflate(R.navigation.navigation_room_settings)
         val navArgs = NavArgument.Builder().setDefaultValue(roomId).build()
