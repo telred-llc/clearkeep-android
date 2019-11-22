@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,20 +17,24 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
+import im.vector.Matrix
 
 import im.vector.R
+import im.vector.VectorApp
+import im.vector.activity.CommonActivityUtils
 import im.vector.activity.MXCActionBarActivity
+import im.vector.activity.VectorRoomActivity
 import im.vector.databinding.FragmentSearchRoomsBinding
 import im.vector.extensions.hideKeyboard
+import im.vector.fragments.VectorPublicRoomsListFragment
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.item_adapter_recent_room.*
 import org.matrix.androidsdk.MXSession
-import vmodev.clearkeep.activities.PreviewInviteRoomActivity
-import vmodev.clearkeep.activities.ProfileActivity
-import vmodev.clearkeep.activities.RoomActivity
-import vmodev.clearkeep.activities.ViewUserProfileActivity
+import vmodev.clearkeep.activities.*
+import vmodev.clearkeep.adapters.Interfaces.IListRoomDirectoryRecyclerViewAdapter
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapter
 import vmodev.clearkeep.applications.IApplication
@@ -39,6 +45,7 @@ import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchRoomsFragmentViewModel
+import java.util.HashMap
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -61,6 +68,7 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
     private var listener: OnFragmentInteractionListener? = null
     private lateinit var userId: String;
     private var currentRoomId: String = ""
+    private var mSession: MXSession? = null
 
     @Inject
     lateinit var applcation: IApplication;
@@ -79,12 +87,18 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
     lateinit var listRoomDerectRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
 
     @Inject
+    @field:Named(value = IListRoomDirectoryRecyclerViewAdapter.SEARCH_ROOMDIRECTORY)
+    lateinit var listRoomDirectoryRecyclerViewAdapter: IListRoomDirectoryRecyclerViewAdapter;
+
+    @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.SEARCH_ROOM)
     lateinit var listRoomNormalRecyclerViewAdapter: IListRoomRecyclerViewAdapter;
 
     private lateinit var session: MXSession;
     private lateinit var binding: FragmentSearchRoomsBinding;
     private var disposable: Disposable? = null;
+    private val ARG_MATRIX_ID = "SearchRoomsFragment.ARG_MATRIX_ID"
+    private val LOG_TAG = SearchRoomsFragment::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,6 +117,51 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val args = arguments
+        val matrixId = args!!.getString(ARG_MATRIX_ID)
+        mSession = Matrix.getInstance(activity)!!.getSession(matrixId)
+        listRoomInviteRecyclerViewAdapter.getflag(1)
+        binding.recyclerRoomDerectory.adapter = listRoomDirectoryRecyclerViewAdapter.getAdapter()
+        listRoomDirectoryRecyclerViewAdapter.setOnItemClick { roomListUser, i ->
+            roomListUser?.let {
+                when (i) {
+                    3 -> {
+                        val room = mSession!!.dataHandler.getRoom(it.roomId, false)
+                        if (null != room && room.isInvited) run {
+                            Log.d(LOG_TAG, "manageRoom : the user is invited -> display the preview " + VectorApp.getCurrentActivity())
+                            previewRoom(it.roomId);
+                        } else if (null != room && room.isJoined) run {
+                            Log.d(LOG_TAG, "manageRoom : the user joined the room -> open the room")
+                            gotoRoom(it.roomId)
+//                            val params = HashMap<String, Any>()
+//                            params[VectorRoomActivity.EXTRA_MATRIX_ID] = mSession!!.myUserId
+//                            params[VectorRoomActivity.EXTRA_ROOM_ID] = it.roomId
+//
+//                            if (!TextUtils.isEmpty(it.name)) {
+//                                params[VectorRoomActivity.EXTRA_DEFAULT_NAME] = it.name
+//                            }
+//
+//                            if (!TextUtils.isEmpty(it.topic)) {
+//                                params[VectorRoomActivity.EXTRA_DEFAULT_TOPIC] = it.topic
+//                            }
+//
+//                            CommonActivityUtils.goToRoomPage(activity!!, mSession, params)
+                        } else {
+                            // Display a preview by default.
+                            Log.d(LOG_TAG, "manageRoom : display the preview")
+                            previewJoin(it.roomId,it.name)
+                        }
+
+
+//                        val intentRoom = Intent(this.context, RoomActivity::class.java);
+//                        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, userId);
+//                        intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, it.roomId);
+//                        startActivity(intentRoom);
+                    }
+                }
+            }
+        }
+
         binding.recyclerDirects.adapter = listRoomDerectRecyclerViewAdapter.getAdapter();
         listRoomInviteRecyclerViewAdapter.setOnItemClick { roomListUser, i ->
             roomListUser.room?.let {
@@ -117,7 +176,7 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
                         previewRoom(it.id);
                     }
                     1 -> {
-                        joinRoom(it.id);
+                        previewRoom(it.id);
                     }
                     2 -> {
                         declineInvite(it.id);
@@ -156,6 +215,12 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
 
         binding.recyclerViewInvites.adapter = listRoomInviteRecyclerViewAdapter.getAdapter();
         binding.recyclerViewRooms.adapter = listRoomNormalRecyclerViewAdapter.getAdapter();
+        viewModelFactory.getViewModel().getListRoomDirectory().observe(viewLifecycleOwner, Observer {
+            listRoomDirectoryRecyclerViewAdapter.getAdapter().submitList(it?.data);
+        })
+//        viewModelFactory.getViewModel().getRoomDirectorySearchResult().observe(viewLifecycleOwner, Observer {
+//            listRoomDirectoryRecyclerViewAdapter.getAdapter().submitList(it?.data);
+//        })
         viewModelFactory.getViewModel().getRoomInviteSearchResult().observe(viewLifecycleOwner, Observer {
             listRoomInviteRecyclerViewAdapter.getAdapter().submitList(it?.data);
         });
@@ -177,7 +242,7 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
         binding.rooms = viewModelFactory.getViewModel().getRoomNormalSearchResult()
         binding.invites = viewModelFactory.getViewModel().getRoomInviteSearchResult()
         binding.derects = viewModelFactory.getViewModel().getDirectRoomNormalSearchResult()
-        binding.listRoomDirectory = viewModelFactory.getViewModel().getRoomInviteSearchResult()
+        binding.listRoomDirectory = viewModelFactory.getViewModel().getListRoomDirectory()
         binding.layoutSearch.setOnTouchListener { v, event ->
             hideKeyboard()
             return@setOnTouchListener true
@@ -201,7 +266,7 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
 //            hideKeyboard()
 //            return@setOnTouchListener true
 //        }
-//        binding.lifecycleOwner = viewLifecycleOwner;
+        binding.lifecycleOwner = viewLifecycleOwner;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -283,6 +348,13 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
         startActivity(intent);
     }
 
+    private fun previewJoin(roomId: String,roomName :String) {
+        val intent = Intent(this.context, PreviewJoinActivity::class.java);
+        intent.putExtra("ROOM_ID", roomId);
+        intent.putExtra("ROOM_NAME", roomName);
+        startActivity(intent);
+    }
+
     private fun joinRoom(roomId: String) {
         binding.room = viewModelFactory.getViewModel().joinRoomWithIdResult();
         viewModelFactory.getViewModel().setRoomIdForJoinRoom(roomId);
@@ -295,6 +367,7 @@ class SearchRoomsFragment : DataBindingDaggerFragment(), ISearchFragment {
         startActivityForResult(intentRoom, GO_TO_ROOM_CODE);
 
     }
+
     private fun declineInvite(roomId: String) {
         AlertDialog.Builder(activity!!).setTitle(R.string.leave_room)
                 .setMessage(R.string.do_you_want_leave_room)

@@ -48,18 +48,17 @@ import javax.inject.Inject
 class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
     // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
-    private var gotoFragment : Boolean = false
-    private val listUserFilter = ArrayList<User>();
-    private var currentQuery : String = ""
+    private var gotoFragment: Boolean = false
+    private val listUserDirectFilter = ArrayList<User>();
+    private val listUserMatrixFilter = ArrayList<User>();
+    private var currentQuery: String = ""
     private lateinit var listUserMatrixContactAdapter: ListUserRecyclerViewAdapter
-    private lateinit var listUserAdapter: ListUserRecyclerViewAdapter
+    private lateinit var listUserDirectAdapter: ListUserRecyclerViewAdapter
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractSearchPeopleFragmentViewModel>;
     @Inject
     lateinit var appExecutors: AppExecutors;
 
-    @Inject
-    lateinit var application: IApplication;
 
     private lateinit var binding: FragmentSearchPeopleBinding;
     private var disposable: Disposable? = null;
@@ -84,15 +83,8 @@ class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
         binding.recyclerViewMatrixContact.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.userDirectory = 0
         binding.matrixContact = 0
-        getSearchViewTextChange()?.subscribe { s ->
-            viewModelFactory.getViewModel().setQueryForSearch(s);
-            disposable = getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe { t: String? ->
-                t?.let { s ->
-                    viewModelFactory.getViewModel().setQueryForSearch(s);
-                }
-            }
-        }
-         listUserAdapter = ListUserRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<User>() {
+
+        listUserDirectAdapter = ListUserRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<User>() {
             override fun areItemsTheSame(p0: User, p1: User): Boolean {
                 return p0.id == p1.id;
             }
@@ -123,32 +115,35 @@ class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
             }
         }
         binding.recyclerViewMatrixContact.adapter = listUserMatrixContactAdapter
-        binding.recyclerView.adapter = listUserAdapter;
+        binding.recyclerView.adapter = listUserDirectAdapter;
         binding.users = viewModelFactory.getViewModel().getSearchResult();
-//        binding.matrixContact = viewModelFactory.getViewModel().getListUserContact(1,65,application.getUserId())
-        viewModelFactory.getViewModel().getListUserContact(1, 65, application.getUserId()).observe(this, Observer {
-           if (it.status==Status.SUCCESS){
-               it?.data?.let {
-                   listUserFilter.clear()
-                   listUserFilter.addAll(it)
-                   if (!gotoFragment){
-                       gotoFragment=true
-                       filterMatrixContact(currentQuery)
-                   }else{
-                       getSearchViewTextChange()?.subscribe { s ->
-                           filterMatrixContact(s)
-                       }
-                   }
-               }
-           }
+        viewModelFactory.getViewModel().getListUserMatrixContact(1, 65, application.getUserId()).observe(this, Observer {
+            if (it.status == Status.SUCCESS) {
+                it?.data?.let {
+                    listUserMatrixFilter.clear()
+                    listUserMatrixFilter.addAll(it)
+                    if (!gotoFragment) {
+                        gotoFragment = true
+                        filterMatrixContact(currentQuery)
+                    } else {
+                        getSearchViewTextChange()?.subscribe { s ->
+                            filterMatrixContact(s)
+                        }
+                    }
+                }
+            }
         })
         getSearchViewTextChange()?.subscribe { s ->
             filterMatrixContact(s)
-            currentQuery = s
+            viewModelFactory.getViewModel().setQueryForSearch(s)
         }
         viewModelFactory.getViewModel().getSearchResult().observe(viewLifecycleOwner, Observer { t ->
-            listUserAdapter.submitList(t?.data)
+            listUserDirectAdapter.submitList(t?.data)
             if (t.status == Status.SUCCESS) {
+                t.data.let {
+                    listUserDirectFilter.clear()
+                    listUserDirectFilter.addAll(it!!)
+                }
                 binding.userDirectory = t?.data!!.size
             }
         });
@@ -224,12 +219,6 @@ class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
     override fun selectedFragment(query: String): ISearchFragment {
         currentQuery = query
         viewModelFactory.getViewModel().setQueryForSearch(query);
-        disposable = getSearchViewTextChange()?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe { t: String? ->
-            t?.let { s ->
-                viewModelFactory.getViewModel().setQueryForSearch(query);
-            }
-        }
-        filterUserDectory(query)
         filterMatrixContact(query)
         return this;
     }
@@ -243,7 +232,7 @@ class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
     }
 
     private fun filterMatrixContact(query: String) {
-        val listFilter = listUserFilter.filter { Users ->
+        val listFilter = listUserMatrixFilter.filter { Users ->
             Users.name?.let {
                 if (query.isNullOrEmpty())
                     false;
@@ -255,20 +244,5 @@ class SearchPeopleFragment : DataBindingDaggerFragment(), ISearchFragment {
         }
         listUserMatrixContactAdapter.submitList(listFilter);
         binding.matrixContact = listFilter.size
-    }
-
-    private fun filterUserDectory(query: String) {
-        val listFilter = listUserFilter.filter { Users ->
-            Users.name?.let {
-                if (query.isNullOrEmpty())
-                    false;
-                else
-                    it.contains(query)
-            } ?: run {
-                false
-            }
-        }
-        listUserAdapter.submitList(listFilter);
-        binding.userDirectory = listFilter.size
     }
 }

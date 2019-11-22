@@ -23,7 +23,7 @@ class SearchPeopleFragmentViewModel @Inject constructor(userRepository: UserRepo
         return searchResult;
     }
 
-    override fun getListUserContact(typeOne: Int, typeTwo: Int, userID: String): LiveData<Resource<List<User>>> {
+    override fun getListUserMatrixContact(typeOne: Int, typeTwo: Int, userID: String): LiveData<Resource<List<User>>> {
         return roomUserJoinRepository.getListUserMatrixContact(typeOne,typeTwo, userID)
     }
 }

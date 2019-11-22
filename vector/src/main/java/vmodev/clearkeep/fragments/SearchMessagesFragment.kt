@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
@@ -50,6 +51,7 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
     // TODO: Rename and change types of parameters
     private var userId: String? = null
     private var listener: OnFragmentInteractionListener? = null
+    private var queryText : String? = null
 
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractSearchMessageFragmentViewModel>;
@@ -59,7 +61,6 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
     lateinit var binding: FragmentSearchMessagesBinding;
 
     private var disposableEditText: Disposable? = null;
-
     private val listMessage = ArrayList<MessageRoomUser>();
     private lateinit var listSearchAdapter: ListSearchMessageRecyclerViewAdapter;
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,22 +118,24 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
         binding.listMessage = 0;
         viewModelFactory.getViewModel().setTimeForRefreshLoadMessage(Calendar.getInstance().timeInMillis);
         getSearchViewTextChange()?.subscribe { s ->
+            listSearchAdapter.getSearchText(s)
             val listFilter = listMessage.filter { messageRoomUser ->
                 messageRoomUser.message?.let {
                     if (s.isNullOrEmpty())
                         false;
                     else
-                        it.encryptedContent.contains(s)
+                        it.encryptedContent.toLowerCase(Locale.US).contains(s.toLowerCase(Locale.US))
                 } ?: run {
                     false
                 }
             }
-            listSearchAdapter.submitList(listFilter);
+            listSearchAdapter.submitList(listFilter)
             binding.listMessage =  listFilter.size
+            listSearchAdapter.notifyDataSetChanged()
         }
-        binding.recyclerView.setOnTouchListener { v, event ->
+
+        binding.nestScroll.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
             hideKeyboard()
-            return@setOnTouchListener true
         }
         binding.lifecycleOwner = viewLifecycleOwner;
     }
@@ -191,16 +194,22 @@ class SearchMessagesFragment : DataBindingDaggerFragment(), ISearchFragment {
     }
 
     override fun selectedFragment(query: String): ISearchFragment {
-        listSearchAdapter.submitList(listMessage.filter { messageRoomUser ->
+        queryText = query
+       val listMessageFilter = listMessage.filter { messageRoomUser ->
             messageRoomUser.message?.let {
                 if (query.isNullOrEmpty())
                     false;
                 else
-                    it.encryptedContent.contains(query)
+                    listSearchAdapter.getSearchText(query)
+                    it.encryptedContent.toLowerCase(Locale.US).contains(query.toLowerCase(Locale.US))
             } ?: run {
                 false
             }
-        })
+        }
+       if (query.isNotEmpty()){
+           listSearchAdapter.submitList(listMessageFilter)
+           binding.listMessage = listMessageFilter.size
+       }
         return this;
     }
 

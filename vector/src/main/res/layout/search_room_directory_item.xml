@@ -8,7 +8,7 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.Room" />
 
-        <import type="vmodev.clearkeep.viewmodelobjects.User" />
+<!--        <import type="vmodev.clearkeep.viewmodelobjects.User" />-->
 
         <import type="androidx.lifecycle.LiveData" />
 
@@ -17,20 +17,20 @@
         <import type="vmodev.clearkeep.viewmodelobjects.Status" />
 
         <variable
-            name="room_list_user"
-            type="vmodev.clearkeep.viewmodelobjects.RoomListUser" />
+            name="room_directory"
+            type="org.matrix.androidsdk.rest.model.publicroom.PublicRoom" />
 
-        <variable
-            name="users"
-            type="LiveData&lt;Resource&lt;List&lt;User>>>" />
+<!--        <variable-->
+<!--            name="users"-->
+<!--            type="LiveData&lt;Resource&lt;List&lt;User>>>" />-->
 
-        <variable
-            name="current_user_id"
-            type="String" />
+<!--        <variable-->
+<!--            name="current_user_id"-->
+<!--            type="String" />-->
 
-        <variable
-            name="members"
-            type="String" />
+<!--        <variable-->
+<!--            name="members"-->
+<!--            type="String" />-->
     </data>
 
     <LinearLayout
@@ -48,36 +48,36 @@
             android:layout_width="@dimen/image_avatar_status_size"
             android:layout_height="@dimen/image_avatar_status_size">
             <vmodev.clearkeep.widget.CircleImage
-                app:room="@{room_list_user.room}"
+                app:publicRoom="@{room_directory}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/image_circle" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="@dimen/status_online_size"
-                android:layout_height="@dimen/status_online_size"
-                android:layout_gravity="end|bottom"
-                android:layout_marginEnd="@dimen/margin_status_online"
-                android:layout_marginBottom="@dimen/margin_status_online"
-                app:cardCornerRadius="@dimen/radius_border_online_status"
-                app:cardElevation="0dp"
-                app:contentPadding="@dimen/padding_status_online"
-                app:cardBackgroundColor="#FFFFFF"
-                app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}"
-                >
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/circle_image_view_status"
-                    app:currentUserId="@{current_user_id}"
-                    app:listUser="@{users.data}"
-                    app:cardBackgroundColor="@color/main_text_color_hint"
-                    app:cardCornerRadius="@dimen/radius_online_status"
-                    app:cardElevation="0dp"
-                    app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+<!--            <com.google.android.material.card.MaterialCardView-->
+<!--                android:layout_width="@dimen/status_online_size"-->
+<!--                android:layout_height="@dimen/status_online_size"-->
+<!--                android:layout_gravity="end|bottom"-->
+<!--                android:layout_marginEnd="@dimen/margin_status_online"-->
+<!--                android:layout_marginBottom="@dimen/margin_status_online"-->
+<!--                app:cardCornerRadius="@dimen/radius_border_online_status"-->
+<!--                app:cardElevation="0dp"-->
+<!--                app:contentPadding="@dimen/padding_status_online"-->
+<!--                app:cardBackgroundColor="#FFFFFF"-->
+<!--                app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}"-->
+<!--                >-->
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:id="@+id/circle_image_view_status"-->
+<!--                    app:currentUserId="@{current_user_id}"-->
+<!--                    app:listUser="@{users.data}"-->
+<!--                    app:cardBackgroundColor="@color/main_text_color_hint"-->
+<!--                    app:cardCornerRadius="@dimen/radius_online_status"-->
+<!--                    app:cardElevation="0dp"-->
+<!--                    app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"/>-->
 
 
-            </com.google.android.material.card.MaterialCardView>
+<!--            </com.google.android.material.card.MaterialCardView>-->
 
 
         </FrameLayout>
@@ -104,7 +104,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
-                    android:text="@{room_list_user.room.name}"
+                    android:text="@{room_directory.name}"
                     android:textSize="@dimen/text_17_sp" />
 
                 <TextView
@@ -126,7 +126,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:singleLine="true"
-                app:decryptMessage="@{room_list_user.lastMessage}"
+                android:text="@{room_directory.topic}"
                 android:textColor="@color/main_text_color_hint"
                 android:textSize="@dimen/text_13_sp" />
         </LinearLayout>

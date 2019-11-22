@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.request.RequestListener
+import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
 
@@ -13,6 +14,9 @@ interface ImageViewBindingAdapters {
 
     @BindingAdapter(value = ["room", "requestListener"], requireAll = false)
     fun bindImage(imageView: ImageView, room: Room?, listener: RequestListener<Drawable?>?);
+
+    @BindingAdapter(value = ["publicRoom", "requestListener"], requireAll = false)
+    fun bindImage(imageView: ImageView, room: PublicRoom?, listener: RequestListener<Drawable?>?);
 
     @BindingAdapter(value = ["user", "requestListener"], requireAll = false)
     fun bindImage(imageView: ImageView, user: User?, listener: RequestListener<Drawable?>?);

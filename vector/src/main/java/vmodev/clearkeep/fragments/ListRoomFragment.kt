@@ -185,6 +185,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun initListDirectChat() {
+        listDirectRoomAdapter.getflag(0)
 //        listDirectRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listDirectRoomAdapter.setLifeCycleOwner(viewLifecycleOwner, applcation.getUserId());
 
@@ -272,6 +273,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun initListGroupChat() {
+        listGroupRoomAdapter.getflag(0)
 //        listGroupRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listGroupRoomAdapter.setLifeCycleOwner(viewLifecycleOwner, applcation.getUserId());
         listGroupRoomAdapter.setOnItemLongClick { room ->

@@ -8,8 +8,11 @@ import dagger.Module
 import dagger.Provides
 import dagger.android.ContributesAndroidInjector
 import im.vector.BuildConfig
+import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
+import vmodev.clearkeep.adapters.Interfaces.IListRoomDirectoryRecyclerViewAdapter
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomRecyclerViewAdapter
+import vmodev.clearkeep.adapters.ListRoomSearchDirectoryRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListRoomSearchRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ShareFileRecyclerViewAdapter
 import vmodev.clearkeep.aes.AESCrypto
@@ -126,7 +129,23 @@ abstract class AppModule {
             }, dataBindingComponent = dataBindingComponent)
 
         }
+        @Provides
+        @JvmStatic
+        @Named(value = IListRoomDirectoryRecyclerViewAdapter.SEARCH_ROOMDIRECTORY)
+        fun provideListRoomDirectorySearchAdapter(appExecutors: AppExecutors, dataBindingComponent : IDataBindingComponent): IListRoomDirectoryRecyclerViewAdapter {
+            return ListRoomSearchDirectoryRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<PublicRoom>() {
+                override fun areItemsTheSame(p0: PublicRoom, p1: PublicRoom): Boolean {
+                    return TextUtils.equals(p0.roomId, p1.roomId);
+                }
 
+                override fun areContentsTheSame(p0: PublicRoom, p1: PublicRoom): Boolean {
+                    return p0.name == p1.name && p0.avatarUrl == p1.avatarUrl
+                            && p0.topic == p1.topic && p0.roomId == p1.roomId
+                            && p0.guestCanJoin == p1.guestCanJoin
+                }
+            }, dataBindingComponent = dataBindingComponent)
+
+        }
 
         @Provides
         @JvmStatic

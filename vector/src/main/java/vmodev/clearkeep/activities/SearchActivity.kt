@@ -3,6 +3,7 @@ package vmodev.clearkeep.activities
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.SearchView
@@ -29,6 +30,12 @@ import vmodev.clearkeep.fragments.SearchRoomsFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchActivityViewModel
 import java.util.*
 import javax.inject.Inject
+import androidx.core.os.HandlerCompat.postDelayed
+import com.dropbox.core.v2.teamlog.ActorLogInfo.app
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+
+
 
 class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragment.OnFragmentInteractionListener
         , SearchFilesFragment.OnFragmentInteractionListener
@@ -47,6 +54,7 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
     private var currentSearchFragment: ISearchFragment? = null;
 
     private lateinit var userId: String;
+    private lateinit var binding: ActivitySearchBinding
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +63,7 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
-        val binding: ActivitySearchBinding = DataBindingUtil.setContentView(this, R.layout.activity_search, dataBinding.getDataBindingComponent());
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_search, dataBinding.getDataBindingComponent());
         userId = intent.getStringExtra(USER_ID);
         arraySearchFragment = arrayOf(SearchRoomsFragment.newInstance(userId), SearchMessagesFragment.newInstance(userId),
                 SearchPeopleFragment.newInstance(), SearchFilesFragment.newInstance(userId));
@@ -65,6 +73,8 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
         binding.viewPager.adapter = pagerAdapter;
         val backgroundView = binding.searchView.findViewById(androidx.appcompat.R.id.search_plate) as View
         backgroundView.background = null
+        binding.searchView.onActionViewExpanded();
+        Handler().postDelayed(Runnable {  binding.searchView.clearFocus() }, 30)
         binding.searchView.setIconifiedByDefault(false);
         binding.searchView.isIconified = false;
 
@@ -84,7 +94,7 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
         }
 
         binding.layoutSearch.setOnTouchListener { v, event ->
-//            if (checkShowKeyBoard(binding.layoutSearch,this)){
+            Handler().postDelayed(Runnable {  binding.searchView.clearFocus() }, 30)
                 hideKeyboard()
 //            }else{
 //                Log.d("","")
@@ -112,6 +122,12 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
 
     override fun getSearchViewTextChange(): Observable<String> {
         return publishSubjectSearchView;
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Handler().postDelayed(Runnable {  binding.searchView.clearFocus() }, 30)
+
     }
 
     companion object {

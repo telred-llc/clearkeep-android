@@ -29,6 +29,8 @@
                 android:layout_centerInParent="true"
                 app:srcCompat="@drawable/ic_back" />
             <androidx.appcompat.widget.SearchView
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:layout_marginEnd="50dp"
                 android:layout_alignParentEnd="true"
                 android:layout_toEndOf="@+id/imgBack"
