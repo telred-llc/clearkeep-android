@@ -32,6 +32,10 @@
             name="isLoading"
             type="Boolean" />
 
+        <variable
+            name="powerLevel"
+            type="Integer" />
+
     </data>
 
     <RelativeLayout
@@ -75,6 +79,7 @@
 
                 </LinearLayout>
 
+
                 <!--                <TextView-->
                 <!--                    android:layout_width="match_parent"-->
                 <!--                    android:layout_height="wrap_content"-->
@@ -85,7 +90,8 @@
                 <RelativeLayout
                     android:layout_width="@dimen/avatar_screen_profile_size"
                     android:layout_height="@dimen/avatar_screen_profile_size"
-                    android:layout_gravity="center_horizontal">
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/margin_large">
 
                     <vmodev.clearkeep.widget.CircleImage
                         android:id="@+id/imgAvatarRoom"
@@ -103,13 +109,15 @@
                         android:layout_height="match_parent"
                         android:layout_alignParentBottom="true"
                         android:layout_centerInParent="true"
-                        android:layout_margin="5dp" />
+                        android:layout_margin="5dp"
+                        app:visibleGone="@{powerLevel == 100}" />
 
                     <View
                         android:id="@+id/viewSelectPicture"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/height_view_select_picture"
-                        android:layout_alignParentTop="true" />
+                        android:layout_alignParentTop="true"
+                        app:visibleGone="@{powerLevel == 100}" />
 
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -119,8 +127,35 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerInParent="true"
                         android:layout_marginBottom="@dimen/margin_camera_bottom_avatar"
-                        app:srcCompat="@drawable/ic_camera_color_white" />
+                        app:srcCompat="@drawable/ic_camera_color_white"
+                        app:visibleGone="@{powerLevel == 100}" />
                 </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@{@string/this_room_created_by+' '}"
+                        android:textColor="?attr/color_text_app_default"
+                        android:textSize="@dimen/text_13_sp"
+                        tools:text="This room created 3:39 AM by " />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="@{user.data.name.trim()}"
+                        android:textColor="@color/text_color_blue"
+                        android:textSize="@dimen/text_13_sp"
+                        tools:text="QuiNV" />
+
+                </LinearLayout>
 
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -134,8 +169,9 @@
                         android:id="@+id/edit_text_room_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:drawableEnd="@drawable/ic_pen"
+                        android:drawableEnd="@{powerLevel == 100 ? @drawable/ic_pen : null}"
                         android:drawablePadding="@dimen/padding_small"
+                        android:enabled="@{powerLevel == 100}"
                         android:hint="@string/create_room_name_hint"
                         android:inputType="textCapCharacters|textNoSuggestions"
                         android:singleLine="true"
@@ -159,8 +195,9 @@
                         android:id="@+id/edit_text_room_topic"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:drawableEnd="@drawable/ic_pen"
+                        android:drawableEnd="@{powerLevel == 100 ? @drawable/ic_pen : null}"
                         android:drawablePadding="@dimen/padding_small"
+                        android:enabled="@{powerLevel == 100}"
                         android:hint="@string/room_info_room_topic"
                         android:imeOptions="actionDone"
                         android:inputType="textCapCharacters|textNoSuggestions"
@@ -183,7 +220,8 @@
                     android:background="@drawable/bg_button_gradient_grey"
                     android:enabled="false"
                     android:text="@string/save"
-                    android:textColor="@color/color_white" />
+                    android:textColor="@color/color_white"
+                    app:visibleGone="@{powerLevel == 100}" />
 
 
                 <LinearLayout

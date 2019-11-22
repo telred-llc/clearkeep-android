@@ -28,6 +28,7 @@ import com.google.android.material.textfield.TextInputEditText
 import im.vector.R
 import im.vector.databinding.FragmentRoomSettingsBinding
 import io.reactivex.observers.DisposableCompletableObserver
+import org.matrix.androidsdk.MXSession
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import vmodev.clearkeep.activities.RoomfilesListActivity
@@ -54,7 +55,9 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
     private var avatarImage: InputStream? = null
     private var room: Room? = null
     private var isUpdateSuccess = false
-
+    private var mRoom: org.matrix.androidsdk.data.Room? = null
+    private var mSession: MXSession? = null
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_room_settings, container, false, dataBinding.getDataBindingComponent())
         return binding.root
@@ -62,6 +65,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mSession = im.vector.Matrix.getInstance(activity)!!.defaultSession
         setupButton()
         binding.room = viewModelFactory.getViewModel().getRoom()
         binding.user = viewModelFactory.getViewModel().getUserResult()
@@ -75,6 +79,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
             this.room = it.data
             // Send name group ro title activity
             RxEventBus.instanceOf<String>().putData(it.data?.name.toString())
+            checkRoomAdmin()
         })
         binding.lifecycleOwner = this
         args.roomId?.let {
@@ -99,7 +104,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
                                     }
                                 }
                             })
-                            args.roomId?.let { viewModelFactory.getViewModel().setLeaveRoom(it); }
+                            args.roomId?.let { viewModelFactory.getViewModel().setLeaveRoom(it) }
 
                         }.show()
             }
@@ -135,8 +140,13 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
         binding.btnSave.setOnClickListener {
             binding.isLoading = true
             isUpdateSuccess = false
+
             val name: String = binding.editTextRoomName.text.toString().toUpperCase().trim()
-            val topic: String = binding.editTextRoomTopic.text.toString().trim()
+            var topic: String = binding.editTextRoomTopic.text.toString().trim()
+            if (topic.isNullOrBlank()) {
+                topic = name
+                binding.editTextRoomTopic.setText(topic)
+            }
             room?.let {
                 if (!it.id.isNullOrBlank() && null != avatarImage) {
                     viewModelFactory.getViewModel().updateRoomAvatar(it.id, avatarImage!!).subscribe(object : DisposableCompletableObserver() {
@@ -346,6 +356,14 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
         } else {
             editText.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
             editText.setSelection(0)
+        }
+    }
+
+    private fun checkRoomAdmin() {
+        room?.let {
+            mRoom = mSession?.dataHandler?.getRoom(it.id)
+            val powerLevels = mRoom?.state?.powerLevels
+            binding.powerLevel = powerLevels?.getUserPowerLevel(application.getUserId())
         }
     }
 
