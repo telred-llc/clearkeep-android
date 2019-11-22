@@ -7,6 +7,7 @@ import vmodev.clearkeep.rests.models.requests.EditMessageRequest
 import vmodev.clearkeep.rests.models.responses.EditMessageResponse
 import vmodev.clearkeep.rests.models.responses.PassphraseResponse
 import vmodev.clearkeep.rests.models.responses.UserProfileResponse
+import vmodev.clearkeep.viewmodelobjects.RoomListUser
 import vmodev.clearkeep.viewmodelobjects.User
 
 interface ClearKeepApis {
@@ -27,4 +28,7 @@ interface ClearKeepApis {
 
     @GET("/" + RestClient.URI_API_PREFIX_PATH_R0 + "profile/{userId}")
     fun getUserProfile(@Path("userId") userId : String) : Observable<UserProfileResponse>
+
+    @GET("/" + RestClient.URI_API_PREFIX_PATH_R0 + "publicRooms")
+    fun getRoomPublic(@Path("limit") limit : Int) : Observable<List<RoomListUser>>
 }

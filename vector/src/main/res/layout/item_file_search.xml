@@ -32,7 +32,6 @@
         </FrameLayout>
 
         <LinearLayout
-            android:id="@+id/linearlayout"
             app:layout_constraintLeft_toRightOf="@+id/frameAvatar"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginStart="70dp"
@@ -43,34 +42,28 @@
 
             <TextView
                 android:textColor="@color/black_color"
-                android:layout_marginEnd="80dp"
+                android:layout_marginEnd="30dp"
                 android:singleLine="true"
                 android:id="@+id/text_view_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_normal"
-                android:text="@{result.room.get(0).name}"
+                android:text="@{result.user.get(0).name}"
                 android:textSize="@dimen/text_17_sp" />
 
             <TextView
-                android:layout_marginEnd="80dp"
                 android:id="@+id/text_view_last_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="@{result.message.encryptedContent}"
                 android:textColor="@color/main_text_color_hint"
                 android:textSize="@dimen/text_13_sp" />
         </LinearLayout>
 
-        <TextView
-            android:textSize="@dimen/text_11_sp"
-            android:textColor="@color/black_color"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/linearlayout"
-            app:timeStamp="@{result.message.createdAt}"
-            android:id="@+id/text_view_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" />
+        <!--        <TextView-->
+        <!--            android:id="@+id/text_view_time"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_gravity="center_vertical" />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

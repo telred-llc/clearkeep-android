@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="java.util.List" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Room" />
+
+<!--        <import type="vmodev.clearkeep.viewmodelobjects.User" />-->
+
+        <import type="androidx.lifecycle.LiveData" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Status" />
+
+        <variable
+            name="room_directory"
+            type="org.matrix.androidsdk.rest.model.publicroom.PublicRoom" />
+
+<!--        <variable-->
+<!--            name="users"-->
+<!--            type="LiveData&lt;Resource&lt;List&lt;User>>>" />-->
+
+<!--        <variable-->
+<!--            name="current_user_id"-->
+<!--            type="String" />-->
+
+<!--        <variable-->
+<!--            name="members"-->
+<!--            type="String" />-->
+    </data>
+
+    <LinearLayout
+        android:id="@+id/background_room_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/margin_small"
+        android:paddingBottom="@dimen/margin_small"
+        android:paddingStart="@dimen/margin_left"
+        android:paddingEnd="@dimen/margin_right"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="@dimen/image_avatar_status_size"
+            android:layout_height="@dimen/image_avatar_status_size">
+            <vmodev.clearkeep.widget.CircleImage
+                app:publicRoom="@{room_directory}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/image_circle" />
+
+<!--            <com.google.android.material.card.MaterialCardView-->
+<!--                android:layout_width="@dimen/status_online_size"-->
+<!--                android:layout_height="@dimen/status_online_size"-->
+<!--                android:layout_gravity="end|bottom"-->
+<!--                android:layout_marginEnd="@dimen/margin_status_online"-->
+<!--                android:layout_marginBottom="@dimen/margin_status_online"-->
+<!--                app:cardCornerRadius="@dimen/radius_border_online_status"-->
+<!--                app:cardElevation="0dp"-->
+<!--                app:contentPadding="@dimen/padding_status_online"-->
+<!--                app:cardBackgroundColor="#FFFFFF"-->
+<!--                app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}"-->
+<!--                >-->
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:id="@+id/circle_image_view_status"-->
+<!--                    app:currentUserId="@{current_user_id}"-->
+<!--                    app:listUser="@{users.data}"-->
+<!--                    app:cardBackgroundColor="@color/main_text_color_hint"-->
+<!--                    app:cardCornerRadius="@dimen/radius_online_status"-->
+<!--                    app:cardElevation="0dp"-->
+<!--                    app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"/>-->
+
+
+<!--            </com.google.android.material.card.MaterialCardView>-->
+
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_marginStart="13dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="@dimen/margin_small"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="30dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/txtmember"
+                    android:textColor="@color/black_color"
+                    android:id="@+id/text_view_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@{room_directory.name}"
+                    android:textSize="@dimen/text_17_sp" />
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentBottom="true"
+                    android:textColor="@color/black_color"
+                    android:textSize="@dimen/text_11_sp"
+                    android:id="@+id/txtmember"
+                    android:layout_alignParentEnd="true"
+                    android:singleLine="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </RelativeLayout>
+
+            <TextView
+                android:layout_marginEnd="70dp"
+                android:id="@+id/text_view_last_message"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:text="@{room_directory.topic}"
+                android:textColor="@color/main_text_color_hint"
+                android:textSize="@dimen/text_13_sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

@@ -18,15 +18,19 @@ package im.vector.extensions
 
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Rect
 import android.text.InputType
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.LinearLayout
 import androidx.annotation.AttrRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.ContentFrameLayout
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -98,4 +102,15 @@ fun Context.getColorFromAttr(
     theme.resolveAttribute(attrColor, typedValue, resolveRefs)
     return typedValue.data
 }
+
+//fun AppCompatActivity.checkShowKeyBoard(view: View, activity: AppCompatActivity): Boolean {
+//    var check: Boolean = false
+//    val r = Rect()
+//    val heightDiff = view.getRootView().getHeight() - view.getHeight();
+//    window.getDecorView().getWindowVisibleDisplayFrame(r);
+//    val contentViewTop = window.findViewById<ContentFrameLayout>(Window.ID_ANDROID_CONTENT).getTop()
+//    check = heightDiff <= contentViewTop
+//    return check
+
+//}
 

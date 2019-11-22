@@ -39,7 +39,11 @@ import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.data.RoomTag
 import org.matrix.androidsdk.listeners.IMXMediaUploadListener
 import org.matrix.androidsdk.rest.model.Event
+import org.matrix.androidsdk.rest.model.RoomDirectoryVisibility
 import org.matrix.androidsdk.rest.model.RoomMember
+import org.matrix.androidsdk.rest.model.pid.ThirdPartyProtocol
+import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
+import org.matrix.androidsdk.rest.model.publicroom.PublicRoomsResponse
 import org.matrix.androidsdk.rest.model.search.SearchResponse
 import org.matrix.androidsdk.rest.model.search.SearchResult
 import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
@@ -79,6 +83,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                                  , @Named(value = IRetrofit.BASE_URL_CLEAR_KEEP_SERVER) private val apisClearKeep: ClearKeepApis
                                                  , private val messageDao: AbstractMessageDao, private val roomDao: AbstractRoomDao
                                                  , private val roomUserJoin: AbstractRoomUserJoinDao) : MatrixService {
+
 
     //    @Inject
     private var session: MXSession? = null;
@@ -201,7 +206,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             run {
                 if (myUser != null) {
                     var avatar = "";
-                    var result = session!!.contentManager.getDownloadableThumbnailUrl(myUser.avatarUrl, 100, 100,"");
+                    var result = session!!.contentManager.getDownloadableThumbnailUrl(myUser.avatarUrl, 100, 100, "");
                     result?.let { avatar = result }
                     val user = User(name = myUser.displayname, id = myUser.user_id, avatarUrl = avatar, status = if (myUser.isActive) 1 else 0);
                     emitter.onNext(user);
@@ -438,7 +443,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             BingRulesManager.RoomNotificationState.MENTIONS_ONLY -> 0x04;
             BingRulesManager.RoomNotificationState.MUTE -> 0x08;
         }
-        val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableThumbnailUrl(room.avatarUrl,100,100,"");
+        val avatar: String? = if (room.avatarUrl.isNullOrEmpty()) "" else session!!.contentManager.getDownloadableThumbnailUrl(room.avatarUrl, 100, 100, "");
         val roomObj: vmodev.clearkeep.viewmodelobjects.Room = Room(id = room.roomId, name = room.getRoomDisplayName(application)
                 , type = (sourcePrimary or sourceSecondary or sourceThird), avatarUrl = avatar!!, notifyCount = room.notificationCount
                 , topic = if (room.topic.isNullOrEmpty()) "" else room.topic, version = 1, highlightCount = room.highlightCount, messageId = messageId
@@ -1864,7 +1869,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                 if (message.getContent().getMsgType().compareTo(msgType) == 0) {
                                     var messageResult: Message? = null
                                     item.message?.let {
-                                        messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = message.getContent().getBody(), createdAt = event.originServerTs)
+                                        messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = message.getContent().getBody(), createdAt = if (item.message != null) item.message!!.createdAt else 0)
                                     }
                                     val messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
                                     messagesResult.add(messageRooUser);
@@ -1953,6 +1958,33 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                         emitter.onError(it);
                         emitter.onComplete();
                     });
+        }
+    }
+
+    override fun getListRoomDirectory(limit: Int, query : String): Observable<List<PublicRoom>> {
+        setMXSession();
+        return Observable.create { emitter ->
+            session!!.eventsApiClient.loadPublicRooms(null, null, false, query, null, limit,object : ApiCallback<PublicRoomsResponse>{
+                override fun onSuccess(p0: PublicRoomsResponse?) {
+                    emitter.onNext(p0!!.chunk);
+                    emitter.onComplete();
+                }
+
+                override fun onUnexpectedError(p0: java.lang.Exception?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+
+                override fun onMatrixError(p0: MatrixError?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+
+                override fun onNetworkError(p0: java.lang.Exception?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+            })
         }
     }
 

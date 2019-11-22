@@ -136,6 +136,7 @@
             android:screenOrientation="portrait" />
         <activity android:name="vmodev.clearkeep.activities.SearchActivity" />
         <activity android:name="vmodev.clearkeep.activities.PreviewInviteRoomActivity" />
+        <activity android:name="vmodev.clearkeep.activities.PreviewJoinActivity" />
         <activity
             android:name="vmodev.clearkeep.activities.ProfileActivity"
             android:windowSoftInputMode="adjustPan" />

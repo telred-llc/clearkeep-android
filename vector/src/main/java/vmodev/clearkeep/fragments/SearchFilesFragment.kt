@@ -1,8 +1,10 @@
 package vmodev.clearkeep.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +12,20 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DividerItemDecoration
+import com.google.gson.JsonParser
 import im.vector.R
 import im.vector.databinding.FragmentSearchFilesBinding
+import im.vector.extensions.hideKeyboard
+import im.vector.util.SlidableMediaInfo
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
+import org.matrix.androidsdk.core.JsonUtils
+import org.matrix.androidsdk.rest.model.Event
+import org.matrix.androidsdk.rest.model.message.ImageMessage
+import org.matrix.androidsdk.rest.model.message.Message
 import vmodev.clearkeep.activities.RoomActivity
+import vmodev.clearkeep.adapters.ListSearchFileRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListSearchMessageRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
@@ -51,7 +62,7 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
     private lateinit var binding: FragmentSearchFilesBinding;
     private var disposable: Disposable? = null;
     private val listMessage = ArrayList<MessageRoomUser>();
-    private lateinit var listSearchAdapter: ListSearchMessageRecyclerViewAdapter;
+    private lateinit var listSearchAdapter: ListSearchFileRecyclerViewAdapter;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,10 +83,11 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
         return listener?.getSearchViewTextChange();
     }
 
+    @SuppressLint("CheckResult", "ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        listSearchAdapter = ListSearchMessageRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
+        binding.recyclerView.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
+        listSearchAdapter = ListSearchFileRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
             override fun areItemsTheSame(p0: MessageRoomUser, p1: MessageRoomUser): Boolean {
                 return p0.message?.id == p1.message?.id
             }
@@ -109,16 +121,33 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
         })
         viewModelFactory.getViewModel().setTimeForRefreshLoadMessage(Calendar.getInstance().timeInMillis);
         getSearchViewTextChange()?.subscribe { s ->
-            listSearchAdapter.submitList(listMessage.filter { messageRoomUser ->
+            val listFilter = listMessage.filter { messageRoomUser ->
                 messageRoomUser.message?.let {
                     if (s.isNullOrEmpty())
                         false;
                     else
                         it.encryptedContent.contains(s)
+
                 } ?: run {
                     false
                 }
-            })
+            }
+            listSearchAdapter.submitList(listFilter)
+//           if (listFilter.size >0){
+//               val parser = JsonParser();
+//               val event = Event(listFilter[0].message?.messageType, parser.parse(listFilter[0].message?.encryptedContent).asJsonObject, listFilter[0].message?.userId, listFilter[0].message?.roomId);
+//               val message = JsonUtils.toMessage(event.content)
+//               val imageMessage = message as ImageMessage
+//               val info = SlidableMediaInfo()
+//               info.mMessageType = Message.MSGTYPE_IMAGE
+//               info.mFileName = imageMessage.body
+//               info.mMediaUrl = imageMessage.getUrl()
+//               Log.d("aaa",info.mMediaUrl.toString())
+//           }
+        }
+        binding.recyclerView.setOnTouchListener { v, event ->
+            hideKeyboard()
+            return@setOnTouchListener true
         }
         binding.lifecycleOwner = viewLifecycleOwner;
     }
