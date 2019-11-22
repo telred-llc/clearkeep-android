@@ -322,7 +322,7 @@
 
     <style name="DarkTheme" parent="Theme.MaterialComponents.NoActionBar.Bridge">
         <item name="header_group">#333333</item>
-        <item name="android:statusBarColor">#121212</item>
+        <item name="android:statusBarColor">#101010</item>
         <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
        <item name="android:windowBackground">@drawable/bg_app_dark_mode</item>
 <!--        <item name="android:">#121212</item>-->

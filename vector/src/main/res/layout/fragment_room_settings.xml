@@ -31,6 +31,7 @@
         <variable
             name="isLoading"
             type="Boolean" />
+
         <variable
             name="powerLevel"
             type="Integer" />
@@ -89,8 +90,7 @@
                 <RelativeLayout
                     android:layout_width="@dimen/avatar_screen_profile_size"
                     android:layout_height="@dimen/avatar_screen_profile_size"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="@dimen/margin_large">
+                    android:layout_gravity="center_horizontal">
 
                     <vmodev.clearkeep.widget.CircleImage
                         android:id="@+id/imgAvatarRoom"
@@ -101,8 +101,7 @@
                         app:border_color="@color/border_color_avatar_profile"
                         app:civ_border_color="@color/border_color_avatar_profile"
                         app:room="@{room.data}"
-                        app:stroke_width="5dp"
-                        />
+                        app:stroke_width="5dp" />
 
                     <vmodev.clearkeep.widget.CustomAvatarPicture
                         android:layout_width="match_parent"
@@ -173,16 +172,17 @@
                         android:layout_height="wrap_content"
                         android:drawableEnd="@{powerLevel == 100 ? @drawable/ic_pen : null}"
                         android:drawablePadding="@dimen/padding_small"
+                        android:enabled="@{powerLevel == 100}"
                         android:hint="@string/create_room_name_hint"
                         android:inputType="textCapCharacters|textNoSuggestions"
                         android:singleLine="true"
                         android:text="@{room.data.name}"
                         android:textAllCaps="true"
                         android:textColor="@color/text_color_blue"
-                        android:textSize="@dimen/text_17_sp"
-                        android:enabled="@{powerLevel == 100}">
-                      <requestFocus></requestFocus>
-              </com.google.android.material.textfield.TextInputEditText>
+                        android:textSize="@dimen/text_17_sp">
+
+                        <requestFocus></requestFocus>
+                    </com.google.android.material.textfield.TextInputEditText>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout

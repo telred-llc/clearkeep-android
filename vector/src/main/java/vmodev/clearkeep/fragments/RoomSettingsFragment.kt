@@ -64,10 +64,10 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mSession = im.vector.Matrix.getInstance(activity)!!.defaultSession
         setupButton()
         binding.room = viewModelFactory.getViewModel().getRoom()
         binding.user = viewModelFactory.getViewModel().getUserResult()
-
         viewModelFactory.getViewModel().getRoom().observe(viewLifecycleOwner, Observer {
             it?.data?.avatarUrl?.let {
                 Log.d("RoomAvatar", it)
@@ -103,7 +103,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
                                     }
                                 }
                             })
-                            args.roomId?.let { viewModelFactory.getViewModel().setLeaveRoom(it); }
+                            args.roomId?.let { viewModelFactory.getViewModel().setLeaveRoom(it) }
 
                         }.show()
             }
