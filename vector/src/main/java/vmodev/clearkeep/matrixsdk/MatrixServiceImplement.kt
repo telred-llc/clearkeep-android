@@ -1880,21 +1880,13 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                     val callContent = gson.fromJson(result.mClearEvent, CallContent::class.java);
                                     var typeCall = ""
                                     typeCall = if (!callContent.getContent()?.getReason().isNullOrBlank() && callContent.getContent()?.getReason() == "invite_timeout") {
-                                        "m.miss_call"
+                                       CallStatusEnum.MISS_CALL.value
                                     } else if (callHistoryFilter.containsKey(callContent.getContent()?.getCallId()) && callHistoryFilter[callContent.getContent()?.getCallId()]?.message?.encryptedContent == "m.miss_call") {
-                                        "m.miss_call"
+                                        CallStatusEnum.MISS_CALL.value
                                     } else {
                                         callContent.getType().toString()
                                     }
-//                                    typeCall = if (callHistoryFilter.containsKey(callContent.getContent()?.getCallId())) {
-//                                        if (event.sender != application.getUserId() && callContent.getType() != Event.EVENT_TYPE_CALL_ANSWER) {
-//                                            CallStatusEnum.MISS_CALL.value
-//                                        } else {
-//                                            callContent.getType().toString()
-//                                        }
-//                                    } else {
-//                                        callContent.getType().toString()
-//                                    }
+//
                                     item.message?.let {
                                         messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = type, encryptedContent = typeCall, createdAt = it.createdAt)
                                     }

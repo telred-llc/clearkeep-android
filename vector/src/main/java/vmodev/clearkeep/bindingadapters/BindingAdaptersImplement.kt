@@ -20,6 +20,7 @@ import im.vector.ui.themes.ThemeUtils
 import im.vector.util.VectorUtils
 import org.matrix.androidsdk.crypto.MXDecryptionException
 import org.matrix.androidsdk.rest.model.Event
+import vmodev.clearkeep.enums.CallStatusEnum
 import vmodev.clearkeep.jsonmodels.MessageContent
 import vmodev.clearkeep.ultis.FormatString
 import vmodev.clearkeep.ultis.toDateTime
@@ -175,7 +176,7 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
 
     override fun bindCheckMissCall(textView: TextView, message: Message?) {
         message?.encryptedContent?.let {
-            if (message.encryptedContent == "m.call.miss_call") {
+            if (message.encryptedContent == CallStatusEnum.MISS_CALL.value) {
                 textView.setTextColor(ResourcesCompat.getColor(textView.resources, R.color.color_text_miss_Call, null))
             } else {
                 textView.setTextColor(ThemeUtils.getColor(textView.context, R.attr.color_text_app_default))

@@ -93,7 +93,6 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
 
 
     private fun setupRecycleView() {
-        binding.rvCallHistory.setHasFixedSize(true)
         listSearchAdapter = CallHistoryRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
             override fun areItemsTheSame(oldItem: MessageRoomUser, newItem: MessageRoomUser): Boolean {
                 return oldItem.message?.id == newItem.message?.id

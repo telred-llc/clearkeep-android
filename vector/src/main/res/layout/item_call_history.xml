@@ -71,10 +71,9 @@
                 android:layout_height="0dp"
                 android:layout_marginHorizontal="@dimen/margin_normal"
                 android:layout_weight="1"
-                android:textColor="@{result.message.encryptedContent.equals(`m.miss_call`)? @color/notification_color:@color/transparent_black_50}"
                 android:text="@{result.room.get(0).name}"
                 android:layout_marginBottom="@dimen/margin_small"
-
+                app:checkMissCall= "@{result.message}"
                 android:textSize="@dimen/text_17_sp" />
 
             <TextView
@@ -99,6 +98,7 @@
             android:padding="@dimen/padding_normal"
             app:srcCompat="@drawable/ic_svg_video"
             android:background="?actionBarItemBackground"
+            android:tint="?attr/color_icon_app_default"
             />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -110,6 +110,7 @@
             android:padding="@dimen/padding_normal"
             app:srcCompat="@drawable/ic_phone"
             android:background="?actionBarItemBackground"
+            android:tint="?attr/color_icon_app_default"
             />
 
     </RelativeLayout>
