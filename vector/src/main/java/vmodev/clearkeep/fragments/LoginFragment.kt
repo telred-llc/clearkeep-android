@@ -3,12 +3,14 @@ package vmodev.clearkeep.fragments
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -38,11 +40,11 @@ import javax.inject.Inject
 class LoginFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
-    lateinit var viewModelFactory: IViewModelFactory<AbstractLoginFragmentViewModel>;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractLoginFragmentViewModel>
 
     // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
-    private lateinit var binding: FragmentLoginBinding;
+    private lateinit var binding: FragmentLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,83 +52,85 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false, dataBinding.getDataBindingComponent());
-        return binding.root;
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false, dataBinding.getDataBindingComponent())
+        return binding.root
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.user = viewModelFactory.getViewModel().getLoginResult();
+        binding.user = viewModelFactory.getViewModel().getLoginResult()
         viewModelFactory.getViewModel().getLoginResult().observe(viewLifecycleOwner, Observer {
-            it?.let {resource ->
+            it?.let { resource ->
                 if (resource.status == Status.SUCCESS) {
                     resource.data?.let {
-                        gotoHomeActivity();
+                        gotoHomeActivity()
                     }
                 }
                 if (resource.status == Status.ERROR) {
-                    this.context?.let { AlertDialog.Builder(it).setTitle(R.string.sign_in_error).setMessage(resource.message).setNegativeButton(R.string.close, null).show(); }
+                    this.context?.let { AlertDialog.Builder(it).setTitle(R.string.sign_in_error).setMessage(resource.message).setNegativeButton(R.string.close, null).show() }
                 }
             }
-        });
+        })
         binding.nestedScrollview.setOnTouchListener { v, event ->
             hideKeyboard()
             return@setOnTouchListener true
         }
 
         binding.textForgotPassword.setOnClickListener {
-            onPressForgotPassword();
-        };
+            onPressForgotPassword()
+        }
         binding.buttonSignIn.setOnClickListener { v ->
             run {
-                val password = binding.editTextPassword.text.toString().trim();
-                val username = binding.editTextUsername.text.toString().trim();
+                val password = binding.editTextPassword.text.toString().trim()
+                val username = binding.editTextUsername.text.toString().trim()
                 if (TextUtils.isEmpty(username)) {
-                    binding.editTextUsername.setError(getString(R.string.error_empty_field_enter_user_name_or_email));
-                    return@run;
+                    binding.editTextUsername.error = getString(R.string.error_empty_field_enter_user_name_or_email)
+                    return@run
                 }
                 if (TextUtils.isEmpty(password)) {
-                    binding.editTextPassword.setError(getString(R.string.error_empty_field_your_password));
-                    return@run;
+                    binding.editTextPassword.error = getString(R.string.error_empty_field_your_password)
+                    return@run
                 }
 
                 if (username.isEmailValid())
-                    viewModelFactory.getViewModel().setUserNamePasswordForLogin(username.split("@")[0], password);
+                    viewModelFactory.getViewModel().setUserNamePasswordForLogin(username.split("@")[0], password)
                 else
-                    viewModelFactory.getViewModel().setUserNamePasswordForLogin(username, password);
-            }
-        };
-        binding.buttonSignUp.setOnClickListener { v ->
-            run {
-                onPressedSignUp();
+                    viewModelFactory.getViewModel().setUserNamePasswordForLogin(username, password)
             }
         }
-        binding.lifecycleOwner = viewLifecycleOwner;
+        binding.buttonSignUp.setOnClickListener { v ->
+            run {
+                onPressedSignUp()
+            }
+        }
+        binding.lifecycleOwner = viewLifecycleOwner
     }
 
     private fun gotoHomeActivity() {
-        val intent = Intent(this.context, SplashActivity::class.java);
-        intent.putExtra(SplashActivity.START_FROM_LOGIN, binding.editTextPassword.text.toString());
-        startActivity(intent);
-        activity?.finish();
+        val intent = Intent(this.context, SplashActivity::class.java)
+        intent.putExtra(SplashActivity.START_FROM_LOGIN, binding.editTextPassword.text.toString())
+        startActivity(intent)
+        activity?.finish()
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-
     private fun onPressedSignUp() {
-        listener?.onPressedSignUp();
+        listener?.onPressedSignUp()
     }
 
     private fun onPressForgotPassword() {
-        listener?.onPressForgotPassword();
+        listener?.onPressForgotPassword()
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        activity?.window?.statusBarColor = ContextCompat.getColor(activity!!, R.color.primary_hint_text_color_light)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        }
         if (context is OnFragmentInteractionListener) {
             listener = context
         } else {
@@ -140,7 +144,7 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     override fun getFragment(): Fragment {
-        return this;
+        return this
     }
 
     /**
@@ -155,8 +159,8 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
      * for more information.
      */
     interface OnFragmentInteractionListener {
-        fun onPressedSignUp();
-        fun onPressForgotPassword();
+        fun onPressedSignUp()
+        fun onPressForgotPassword()
     }
 
     companion object {
@@ -170,10 +174,9 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance() =
-                LoginFragment().apply {
-                    arguments = Bundle().apply {
-                    }
-                }
+        fun newInstance() = LoginFragment().apply {
+            arguments = Bundle().apply {
+            }
+        }
     }
 }
