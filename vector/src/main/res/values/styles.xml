@@ -386,9 +386,6 @@
         <item name="drawable_edit_default">@drawable/ic_pen_green</item>
         <item name="done_editext">@drawable/ic_done_color_green</item>
 
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:fitsSystemWindows">true</item>
     </style>
 
     <style name="LightTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
@@ -450,9 +447,6 @@
         <item name="drawable_edit_default">@drawable/ic_pen_blue</item>
         <item name="done_editext">@drawable/ic_done_color_blue</item>
 
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:fitsSystemWindows">true</item>
     </style>
 
     <style name="checkBoxStyle" parent="Base.Theme.AppCompat">
