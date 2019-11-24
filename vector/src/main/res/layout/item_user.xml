@@ -21,11 +21,12 @@
             android:layout_width="@dimen/member_list_avatar_size"
             android:layout_height="@dimen/member_list_avatar_size"
             android:layout_gravity="center_vertical">
+
             <vmodev.clearkeep.widget.CircleImage
-                app:user="@{user}"
+                android:id="@+id/image_circle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/image_circle" />
+                app:user="@{user}" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/circle_image_view_status"

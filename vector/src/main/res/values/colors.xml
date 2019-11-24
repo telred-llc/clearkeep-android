@@ -193,9 +193,9 @@
     <color name="text_color_header">#5787E3</color>
 <!--    text_color-->
     <color name="text_color_blue">#5787E3</color>
+    <color name="text_color_green">#3FC5B9</color>
     <color name="text_color_hint">#BEBEBE</color>
     <color name="message_own_background">#E1E1E1</color>
-
 
     <color name="color_avatar_edit_room">#707070</color>
 <!--    screen edit room-->

@@ -7,9 +7,9 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,7 +18,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -27,6 +26,7 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.textfield.TextInputEditText
 import im.vector.R
 import im.vector.databinding.FragmentRoomSettingsBinding
+import im.vector.extensions.getAttributeDrawable
 import io.reactivex.observers.DisposableCompletableObserver
 import org.matrix.androidsdk.MXSession
 import pub.devrel.easypermissions.AfterPermissionGranted
@@ -57,6 +57,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
     private var isUpdateSuccess = false
     private var mRoom: org.matrix.androidsdk.data.Room? = null
     private var mSession: MXSession? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_room_settings, container, false, dataBinding.getDataBindingComponent())
         return binding.root
@@ -140,7 +141,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
             binding.isLoading = true
             isUpdateSuccess = false
 
-            var name: String = binding.editTextRoomName.text.toString().toUpperCase().trim()
+            val name: String = binding.editTextRoomName.text.toString().toUpperCase().trim()
             var topic: String = binding.editTextRoomTopic.text.toString().trim()
             if (topic.isNullOrBlank()) {
                 topic = name
@@ -188,11 +189,12 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
                 }
                 if (isUpdateSuccess) {
                     Toast.makeText(activity, "Update room success", Toast.LENGTH_LONG).show()
-                    binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_grey, null)
                     binding.btnSave.isEnabled = false
-                    binding.editTextRoomName.requestFocus()
+                    binding.btnSave.isSelected = false
                     binding.editTextRoomName.setSelection(0)
                     binding.editTextRoomTopic.setSelection(0)
+                    binding.editTextRoomName.clearFocus()
+                    binding.editTextRoomTopic.clearFocus()
                 } else {
                     Toast.makeText(activity, "Update room error", Toast.LENGTH_LONG).show()
                 }
@@ -216,12 +218,12 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (!p0.isNullOrBlank() && room?.name != binding.editTextRoomName.text.toString()) {
-                    binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_blue, null)
+                if (!TextUtils.isEmpty(p0) && room?.name != binding.editTextRoomName.text.toString()) {
                     binding.btnSave.isEnabled = true
+                    binding.btnSave.isSelected = true
                 } else {
-                    binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_grey, null)
                     binding.btnSave.isEnabled = false
+                    binding.btnSave.isSelected = false
                 }
             }
         })
@@ -234,12 +236,12 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (!binding.editTextRoomName.text.toString().trim().isNullOrBlank() && (room?.topic != binding.editTextRoomTopic.text.toString() || room?.name != binding.editTextRoomName.text.toString())) {
-                    binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_blue, null)
+                if (!TextUtils.isEmpty(binding.editTextRoomName.text.toString().trim()) && (room?.topic != binding.editTextRoomTopic.text.toString() || room?.name != binding.editTextRoomName.text.toString())) {
                     binding.btnSave.isEnabled = true
+                    binding.btnSave.isSelected = true
                 } else {
-                    binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_grey, null)
                     binding.btnSave.isEnabled = false
+                    binding.btnSave.isSelected = false
                 }
 
             }
@@ -288,8 +290,8 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
                     val bitmapData = bos.toByteArray()
                     avatarImage = ByteArrayInputStream(bitmapData)
                     binding.imgAvatarRoom.setImageBitmap(selectedImage)
-                    binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_blue, null)
                     binding.btnSave.isEnabled = true
+                    binding.btnSave.isSelected = true
                 } catch (e: FileNotFoundException) {
                     e.printStackTrace()
                     Toast.makeText(activity!!, "Something went wrong", Toast.LENGTH_LONG).show()
@@ -304,8 +306,8 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
                     val bitmapData = bos.toByteArray()
                     avatarImage = ByteArrayInputStream(bitmapData)
                     image.let { binding.imgAvatarRoom.setImageBitmap(image) }
-                    binding.btnSave.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_button_gradient_blue, null)
                     binding.btnSave.isEnabled = true
+                    binding.btnSave.isSelected = true
                 } catch (e: FileNotFoundException) {
                     e.printStackTrace()
                     Toast.makeText(activity, "Something went wrong", Toast.LENGTH_LONG).show()
@@ -343,15 +345,10 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
 
     private fun setColorFocusEditText(editText: TextInputEditText, isFocus: Boolean) {
         val drawable = ResourcesCompat.getDrawable(this.resources, R.drawable.ic_pen, null)
-        val drawableFocus = ResourcesCompat.getDrawable(this.resources, R.drawable.ic_pen_blue, null)
-        val drawableCompat = drawableFocus?.let { DrawableCompat.wrap(it) }
-        drawableCompat?.let {
-            DrawableCompat.setTint(it, ResourcesCompat.getColor(this.resources, R.color.text_color_blue, null))
-            DrawableCompat.setTintMode(drawableCompat, PorterDuff.Mode.SRC_IN)
-        }
+        val drawableFocus = getAttributeDrawable(activity!!, R.attr.drawable_edit_default)
         if (isFocus) {
             editText.setCompoundDrawablesWithIntrinsicBounds(null, null, drawableFocus, null)
-            editText.setSelection(editText.text!!.length)
+            editText.setSelection(editText.text?.toString()!!.length)
         } else {
             editText.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
             editText.setSelection(0)
