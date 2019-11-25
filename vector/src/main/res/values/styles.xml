@@ -286,6 +286,7 @@
         <attr name="icon_color_setting" format="color" />
         <attr name="color_clear_cache" format="color" />
         <attr name="color_toolbar" format="color" />
+        <attr name="color_switch_compat" format="color" />
         <attr name="color_text_tablayout" format="color" />
         <attr name="color_text_setting" format="color" />
         <attr name="icon_gray_color" format="color" />
@@ -328,6 +329,7 @@
     </declare-styleable>
 
     <style name="DarkTheme" parent="Theme.MaterialComponents.NoActionBar.Bridge">
+        <item name="color_switch_compat">#00C0D8</item>
         <item name="header_group">#333333</item>
         <item name="color_highlight_text">@color/color_highlight_dark_mode</item>
         <item name="android:statusBarColor">#101010</item>
@@ -393,6 +395,7 @@
     </style>
 
     <style name="LightTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
+        <item name="color_switch_compat">#F1F1F1</item>
         <item name="header_group">#F0F0F0</item>
         <item name="color_highlight_text">@color/color_highlight_light_mode</item>
         <item name="android:statusBarColor">#FFFFFF</item>
@@ -484,5 +487,9 @@
 
     <style name="ToolbarColoredBackArrow" parent="AppTheme">
         <item name="android:textColorSecondary">?attr/color_toolbar</item>
+    </style>
+
+    <style name="Theme.ToogleTheme" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">?attr/color_switch_compat</item>
     </style>
 </resources>
