@@ -384,7 +384,7 @@
         <item name="bg_search_view">@drawable/bg_search_dark_mode</item>
         <item name="color_view_blank_setting">#1F1F1F</item>
         <item name="bg_button_app_default">@drawable/bg_button_app_default_dark_mode</item>
-        <item name="color_text_note_app_default">#3FC5B9</item>
+        <item name="color_text_note_app_default">#00C0D8</item>
         <item name="color_check_box">#3FC5B9</item>
         <item name="background_button_select">@drawable/bg_button_gradient_green</item>
         <item name="drawable_edit_default">@drawable/ic_pen_green</item>
