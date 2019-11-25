@@ -218,7 +218,7 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (!TextUtils.isEmpty(p0) && room?.name != binding.editTextRoomName.text.toString()) {
+                if (!TextUtils.isEmpty(p0.toString().trim()) && room?.name != binding.editTextRoomName.text.toString().trim()) {
                     binding.btnSave.isEnabled = true
                     binding.btnSave.isSelected = true
                 } else {
