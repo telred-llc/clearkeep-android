@@ -50,10 +50,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/room_name_required"
+                        android:importantForAutofill="noExcludeDescendants"
+                        android:inputType="textCapCharacters"
                         android:singleLine="true"
                         android:textAllCaps="true"
-                        android:inputType="textCapCharacters"
-                        android:textColor="@color/text_color_blue"
+                        android:textColor="?attr/color_text_note_app_default"
                         android:textSize="@dimen/text_17_sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -71,8 +72,9 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/room_topic_optional"
                         android:imeOptions="actionDone"
+                        android:importantForAutofill="noExcludeDescendants"
                         android:singleLine="true"
-                        android:textColor="@color/text_color_blue"
+                        android:textColor="?attr/color_text_note_app_default"
                         android:textSize="@dimen/text_17_sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -82,11 +84,11 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/til_text_room_topic"
                     android:layout_margin="@dimen/margin_normal"
+                    android:buttonTint="?attr/color_check_box"
                     android:singleLine="true"
                     android:text="@string/str_checkbox_public_mode"
                     android:textColor="?attr/color_text_app_default"
-                    android:textSize="@dimen/text_13_sp"
-                    android:theme="@style/checkBoxStyle" />
+                    android:textSize="@dimen/text_13_sp" />
 
                 <TextView
                     android:id="@+id/tvSuggested"
@@ -95,8 +97,8 @@
                     android:layout_below="@+id/checkbox_room_visibility"
                     android:layout_margin="@dimen/margin_normal"
                     android:singleLine="true"
-                    android:textColor="?attr/color_text_app_default"
                     android:text="@string/suggested"
+                    android:textColor="?attr/color_text_app_default"
                     android:textSize="@dimen/text_19_sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -129,7 +131,7 @@
             android:layout_marginTop="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_marginBottom="@dimen/margin_xxl"
-            android:background="@drawable/bg_button_gradient_grey"
+            android:background="?attr/background_button_select"
             android:text="@string/create"
             android:textColor="@color/color_white" />
     </RelativeLayout>
