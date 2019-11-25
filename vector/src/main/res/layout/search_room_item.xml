@@ -99,7 +99,7 @@
                     android:layout_marginEnd="30dp"
                     android:layout_alignParentStart="true"
                     android:layout_toStartOf="@+id/txtmember"
-                    android:textColor="@color/black_color"
+                    android:textColor="?attr/color_text_app_default"
                     android:id="@+id/text_view_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
                 <TextView
                     android:layout_centerVertical="true"
                     android:layout_alignParentBottom="true"
-                    android:textColor="@color/black_color"
+                    android:textColor="?attr/color_text_app_default"
                     android:textSize="@dimen/text_11_sp"
                     android:id="@+id/txtmember"
                     android:layout_alignParentEnd="true"
@@ -127,7 +127,7 @@
                 android:layout_weight="1"
                 android:singleLine="true"
                 app:decryptMessage="@{room_list_user.lastMessage}"
-                android:textColor="@color/main_text_color_hint"
+                android:textColor="?attr/color_text_app_default"
                 android:textSize="@dimen/text_13_sp" />
         </LinearLayout>
 

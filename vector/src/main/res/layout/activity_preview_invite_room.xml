@@ -112,7 +112,7 @@
                 android:layout_marginTop="@dimen/margin_xxl"
                 android:text="@{roomListUser.data.lastUserMessage.name}"
                 android:textAlignment="center"
-                android:textColor="@color/text_color_blue"
+                android:textColor="?attr/color_text_note_app_default"
                 android:textSize="@dimen/text_19_sp"
                 tools:text="Joe Hahn" />
 
@@ -130,7 +130,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_xxl"
-                android:background="?attr/background_button_select"
+                android:background="?attr/bg_button_app_default"
                 android:text="@string/join"
                 android:textColor="@color/main_text_color"
                 android:textStyle="bold" />

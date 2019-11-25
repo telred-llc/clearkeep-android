@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.text.style.TextAppearanceSpan
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -20,6 +21,11 @@ import vmodev.clearkeep.bindingadapters.interfaces.IDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
 import java.util.*
+import android.util.TypedValue
+import im.vector.extensions.getAttributeColor
+import androidx.core.content.ContextCompat
+import im.vector.extensions.getColorFromAttr
+
 
 class ListSearchMessageRecyclerViewAdapter constructor( appExecutors: AppExecutors,
                                                        private val dataBindingComponent: IDataBindingComponent,
@@ -47,18 +53,16 @@ class ListSearchMessageRecyclerViewAdapter constructor( appExecutors: AppExecuto
 
     override fun onBindViewHolder(p0: DataBoundViewHolder<ItemMessageSearchBinding>, p1: Int) {
         p0.binding.result = getItem(p1);
-        var fullText =getItem(p1).message?.encryptedContent
+        val fullText =getItem(p1).message?.encryptedContent
         if (searchText!= null && !searchText!!.isEmpty()) {
-            var spannable = SpannableString(fullText)
-//            var searchWords = searchText!!.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-//            for (searchWord in searchWords) {
-                var startPos = fullText!!.toLowerCase(Locale.US).indexOf(searchText!!.toLowerCase(Locale.US))
-                var endPos = startPos + searchText!!.length
-
+            val spannable = SpannableString(fullText)
+            val startPos = fullText!!.toLowerCase(Locale.US).indexOf(searchText!!.toLowerCase(Locale.US))
+            val endPos = startPos + searchText!!.length
                 if (startPos != -1) {
-                    val blueColor = ColorStateList(arrayOf(intArrayOf()), intArrayOf(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_highlight, null)))
-                    val highlightSpan = TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null)
-                    spannable.setSpan(highlightSpan, startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    val colors =p0.itemView.context.getColorFromAttr(R.attr.color_highlight_text)
+//                    val blueColor = ColorStateList(arrayOf(intArrayOf()), intArrayOf(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_highlight_light_mode, null)))
+//                    val highlightSpan = TextAppearanceSpan(null, Typeface.NORMAL, -1, blueColor, null)
+                    spannable.setSpan(ForegroundColorSpan(colors), startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 }
 //            }
             p0.binding.textViewLastMessage.text= spannable

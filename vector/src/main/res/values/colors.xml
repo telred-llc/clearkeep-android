@@ -21,7 +21,8 @@
     <color name="tab_rooms_secondary">#5EA584</color>
     <color name="tab_groups">#a6d0e5</color>
     <color name="tab_groups_secondary">#81bddb</color>
-    <color name="color_highlight">#5B8DEC</color>
+    <color name="color_highlight_light_mode">#5B8DEC</color>
+    <color name="color_highlight_dark_mode">#00C0D8</color>
 
     <!-- color of the direct chat avatar ring (it's 50% of color accent) -->
     <color name="direct_chat_ring_color_light">#7F03b381</color>

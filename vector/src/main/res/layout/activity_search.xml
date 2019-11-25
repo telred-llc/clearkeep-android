@@ -12,7 +12,6 @@
         android:id="@+id/layout_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/color_white"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -21,6 +20,7 @@
             android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:tint="?attr/icon_color_setting"
                 android:id="@+id/imgBack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
                 android:id="@+id/search_view"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@drawable/search_view_background"
+                android:background="?attr/bg_search_view"
                 android:layout_marginStart="10dp"/>
         </RelativeLayout>
 
