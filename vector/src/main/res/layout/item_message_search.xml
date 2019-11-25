@@ -42,7 +42,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:textColor="@color/black_color"
+                android:textColor="?attr/color_text_app_default"
                 android:layout_marginEnd="80dp"
                 android:singleLine="true"
                 android:id="@+id/text_view_name"
@@ -57,13 +57,13 @@
                 android:id="@+id/text_view_last_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/main_text_color_hint"
+                android:textColor="?attr/color_text_app_default"
                 android:textSize="@dimen/text_13_sp" />
         </LinearLayout>
 
         <TextView
             android:textSize="@dimen/text_11_sp"
-            android:textColor="@color/black_color"
+            android:textColor="?attr/color_text_app_default"
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/linearlayout"

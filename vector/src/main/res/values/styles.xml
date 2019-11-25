@@ -323,11 +323,13 @@
         <attr name="color_check_box" format="color" />
         <attr name="drawable_edit_default" format="reference" />
         <attr name="done_editext" format="reference" />
+        <attr name="color_highlight_text" format="reference" />
 
     </declare-styleable>
 
     <style name="DarkTheme" parent="Theme.MaterialComponents.NoActionBar.Bridge">
         <item name="header_group">#333333</item>
+        <item name="color_highlight_text">@color/color_highlight_dark_mode</item>
         <item name="android:statusBarColor">#101010</item>
         <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
        <item name="android:windowBackground">@drawable/bg_app_dark_mode</item>
@@ -392,6 +394,7 @@
 
     <style name="LightTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <item name="header_group">#F0F0F0</item>
+        <item name="color_highlight_text">@color/color_highlight_light_mode</item>
         <item name="android:statusBarColor">#FFFFFF</item>
         <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
         <item name="android:windowBackground">@drawable/bg_app_light_mode</item>
