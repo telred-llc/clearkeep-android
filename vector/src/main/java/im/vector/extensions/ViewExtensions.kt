@@ -17,24 +17,22 @@
 package im.vector.extensions
 
 import android.content.Context
-import android.content.res.Resources
-import android.graphics.Rect
+import android.content.res.Resources.NotFoundException
+import android.graphics.drawable.Drawable
 import android.text.InputType
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.LinearLayout
 import androidx.annotation.AttrRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.ContentFrameLayout
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import im.vector.R
+
 
 /**
  * Remove left margin of a SearchView
@@ -94,13 +92,36 @@ fun Fragment.showKeyboard() {
         activity.showKeyboard()
     }
 }
-fun Context.getColorFromAttr(
-        @AttrRes attrColor: Int,
-        typedValue: TypedValue = TypedValue(),
-        resolveRefs: Boolean = true
-): Int {
+
+fun Context.getColorFromAttr(@AttrRes attrColor: Int, typedValue: TypedValue = TypedValue(), resolveRefs: Boolean = true): Int {
     theme.resolveAttribute(attrColor, typedValue, resolveRefs)
     return typedValue.data
+}
+
+fun getAttributeColor(context: Context, attributeId: Int): Int {
+    val typedValue = TypedValue()
+    context.theme.resolveAttribute(attributeId, typedValue, true)
+    val colorRes = typedValue.resourceId
+    var color = -1
+    try {
+        color = context.resources.getColor(colorRes)
+    } catch (e: NotFoundException) {
+        Log.w("Tag", "Not found color resource by id: $colorRes")
+    }
+    return color
+}
+
+fun getAttributeDrawable(context: Context, attributeId: Int): Drawable? {
+    val typedValue = TypedValue()
+    context.theme.resolveAttribute(attributeId, typedValue, true)
+    val drawableRes = typedValue.resourceId
+    var drawable: Drawable? = null
+    try {
+        drawable = context.resources.getDrawable(drawableRes)
+    } catch (e: NotFoundException) {
+        Log.w("Tag", "Not found drawable resource by id: $drawableRes")
+    }
+    return drawable
 }
 
 //fun AppCompatActivity.checkShowKeyBoard(view: View, activity: AppCompatActivity): Boolean {

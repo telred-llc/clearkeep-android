@@ -35,6 +35,10 @@
             name="isEditTextNameFocus"
             type="Boolean" />
         <variable name="colorTextDefault" type="int"/>
+
+        <variable
+            name="colorTextFocus"
+            type="int" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -147,7 +151,7 @@
                     android:focusableInTouchMode="false"
                     android:singleLine="true"
                     android:text="@{user.data.name}"
-                    android:textColor="@{isEditTextNameFocus ? @color/text_color_blue: colorTextDefault}"
+                    android:textColor="@{isEditTextNameFocus ? colorTextFocus: colorTextDefault}"
                     android:textSize="@dimen/text_21_sp"
                     android:minWidth="20dp"
                     android:drawableEnd="@drawable/ic_edit_grey"
@@ -162,7 +166,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_below="@+id/relativeLayout"
-                android:background="@color/text_color_blue"
+                android:background="@{colorTextFocus}"
                 android:visibility="@{isEditTextNameFocus ? View.VISIBLE : View.INVISIBLE}" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -174,7 +178,7 @@
                 android:scaleType="center"
                 android:layout_marginStart="@dimen/margin_small"
                 android:visibility="@{isEditTextNameFocus ? View.VISIBLE : View.GONE}"
-                app:srcCompat="@drawable/ic_done_color_blue" />
+                app:srcCompat="?attr/done_editext" />
 
         </RelativeLayout>
 

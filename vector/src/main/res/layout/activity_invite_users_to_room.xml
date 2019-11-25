@@ -4,6 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="vmodev.clearkeep.fragments.InviteUsersToRoomFragment">
 
+    <data>
+
+        <import type="java.util.List" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.User" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Status" />
+
+        <import type="androidx.lifecycle.LiveData" />
+
+        <import type="vmodev.clearkeep.viewmodelobjects.Room" />
+
+        <variable
+            name="users"
+            type="LiveData&lt;Resource&lt;List&lt;User>>>" />
+
+        <variable
+            name="room"
+            type="LiveData&lt;Resource&lt;Room>>" />
+    </data>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -24,8 +47,7 @@
                 android:layout_centerInParent="true"
                 android:layout_margin="@dimen/margin_small"
                 android:src="@drawable/ic_search_gray_24dp"
-                android:tint="?attr/color_icon_app_default"
-                />
+                android:tint="?attr/color_icon_app_default" />
 
             <EditText
                 android:id="@+id/edit_text_query"
@@ -60,9 +82,8 @@
                     android:layout_alignParentTop="true"
                     android:layout_margin="@dimen/margin_normal"
                     android:text="@string/suggested_user"
-                    android:textSize="@dimen/text_19_sp"
                     android:textColor="?attr/color_text_app_default"
-                    />
+                    android:textSize="@dimen/text_19_sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_list_user"
@@ -72,7 +93,7 @@
                     android:layout_margin="@dimen/margin_normal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                    tools:listitem="@layout/item_user" />
+                    tools:listitem="@layout/item_user_with_radio" />
             </RelativeLayout>
 
         </androidx.core.widget.NestedScrollView>
@@ -86,11 +107,9 @@
             android:layout_marginTop="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_marginBottom="@dimen/margin_large"
-            android:background="@drawable/bg_button_gradient_grey"
-            android:enabled="false"
+            android:background="?attr/background_button_select"
             android:text="@string/invite"
             android:textColor="@color/color_white" />
-
 
         <ProgressBar
             android:layout_width="wrap_content"
@@ -98,27 +117,4 @@
             android:layout_centerInParent="true"
             app:visibleGone="@{users.status == Status.LOADING || room.status == Status.LOADING}" />
     </RelativeLayout>
-
-    <data>
-
-        <import type="java.util.List" />
-
-        <import type="vmodev.clearkeep.viewmodelobjects.User" />
-
-        <import type="vmodev.clearkeep.viewmodelobjects.Resource" />
-
-        <import type="vmodev.clearkeep.viewmodelobjects.Status" />
-
-        <import type="androidx.lifecycle.LiveData" />
-
-        <import type="vmodev.clearkeep.viewmodelobjects.Room" />
-
-        <variable
-            name="users"
-            type="LiveData&lt;Resource&lt;List&lt;User>>>" />
-
-        <variable
-            name="room"
-            type="LiveData&lt;Resource&lt;Room>>" />
-    </data>
 </layout>

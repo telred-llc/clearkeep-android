@@ -88,7 +88,7 @@
                         android:layout_gravity="center_vertical"
                         android:singleLine="true"
                         android:text="@{name}"
-                        android:textColor="@color/black_color"
+                        android:textColor="?attr/color_text_app_default"
                         android:textSize="@dimen/text_17_sp" />
 
                     <TextView
@@ -109,17 +109,17 @@
                     android:layout_weight="1">
 
                     <vmodev.clearkeep.widget.CustomFontTextView
-                        android:singleLine="true"
                         android:id="@+id/text_view_notify"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:layout_alignParentStart="true"
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="30dp"
-                        android:text="@{room_list_user.lastUserMessage.name + ` invited you`}"
-                        android:textColor="@color/color_user_invite"
-                        android:textSize="@dimen/text_15_sp"
-                        android:layout_alignParentStart="true"
                         android:layout_toStartOf="@+id/imgNotify"
+                        android:singleLine="true"
+                        android:text="@{room_list_user.lastUserMessage.name + ` invited you`}"
+                        android:textColor="?attr/color_text_note_app_default"
+                        android:textSize="@dimen/text_15_sp"
                         app:customFont="light_italic.ttf" />
 
                     <ImageView
@@ -161,7 +161,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
-                android:background="@drawable/background_join"
+                android:background="?attr/bg_button_app_default"
                 android:text="@string/join"
                 android:textAllCaps="false"
                 android:textColor="@color/main_text_color"

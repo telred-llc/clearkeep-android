@@ -73,7 +73,7 @@
                         android:layout_height="wrap_content"
                         android:singleLine="true"
                         android:text="@{user.data.name.trim()}"
-                        android:textColor="@color/text_color_blue"
+                        android:textColor="?attr/color_text_note_app_default"
                         android:textSize="@dimen/text_13_sp"
                         tools:text="QuiNV" />
 
@@ -109,16 +109,14 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerInParent="true"
                         android:layout_margin="5dp"
-                        app:visibleGone="@{powerLevel == 100}"
-                        />
+                        app:visibleGone="@{powerLevel == 100}" />
 
                     <View
                         android:id="@+id/viewSelectPicture"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/height_view_select_picture"
                         android:layout_alignParentTop="true"
-                        app:visibleGone="@{powerLevel == 100}"
-                        />
+                        app:visibleGone="@{powerLevel == 100}" />
 
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -128,8 +126,8 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerInParent="true"
                         android:layout_marginBottom="@dimen/margin_camera_bottom_avatar"
-                        app:visibleGone="@{powerLevel == 100}"
-                        app:srcCompat="@drawable/ic_camera_color_white" />
+                        app:srcCompat="@drawable/ic_camera_color_white"
+                        app:visibleGone="@{powerLevel == 100}" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -152,7 +150,7 @@
                         android:layout_height="wrap_content"
                         android:singleLine="true"
                         android:text="@{user.data.name.trim()}"
-                        android:textColor="@color/text_color_blue"
+                        android:textColor="?attr/color_text_note_app_default"
                         android:textSize="@dimen/text_13_sp"
                         tools:text="QuiNV" />
 
@@ -174,15 +172,13 @@
                         android:drawablePadding="@dimen/padding_small"
                         android:enabled="@{powerLevel == 100}"
                         android:hint="@string/create_room_name_hint"
+                        android:importantForAutofill="noExcludeDescendants"
                         android:inputType="textCapCharacters|textNoSuggestions"
                         android:singleLine="true"
                         android:text="@{room.data.name}"
                         android:textAllCaps="true"
-                        android:textColor="@color/text_color_blue"
-                        android:textSize="@dimen/text_17_sp">
-
-                        <requestFocus></requestFocus>
-                    </com.google.android.material.textfield.TextInputEditText>
+                        android:textColor="?attr/color_text_note_app_default"
+                        android:textSize="@dimen/text_17_sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -198,17 +194,17 @@
                         android:layout_height="wrap_content"
                         android:drawableEnd="@{powerLevel == 100 ? @drawable/ic_pen : null}"
                         android:drawablePadding="@dimen/padding_small"
+                        android:enabled="@{powerLevel == 100}"
                         android:hint="@string/room_info_room_topic"
                         android:imeOptions="actionDone"
+                        android:importantForAutofill="noExcludeDescendants"
                         android:inputType="textCapCharacters|textNoSuggestions"
                         android:singleLine="true"
                         android:text="@{room.data.topic == null ? room.data.name : room.data.topic}"
                         android:textAllCaps="true"
-                        android:textColor="@color/text_color_blue"
-                        android:enabled="@{powerLevel == 100}"
+                        android:textColor="?attr/color_text_note_app_default"
                         android:textSize="@dimen/text_17_sp" />
                 </com.google.android.material.textfield.TextInputLayout>
-
 
                 <Button
                     android:id="@+id/btnSave"
@@ -218,7 +214,7 @@
                     android:layout_marginTop="@dimen/margin_large"
                     android:layout_marginEnd="@dimen/margin_normal"
                     android:layout_marginBottom="@dimen/margin_xxl"
-                    android:background="@drawable/bg_button_gradient_grey"
+                    android:background="?attr/background_button_select"
                     android:enabled="false"
                     android:text="@string/save"
                     android:textColor="@color/color_white"

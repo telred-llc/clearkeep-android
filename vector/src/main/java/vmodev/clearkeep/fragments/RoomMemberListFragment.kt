@@ -23,7 +23,15 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.matrix.androidsdk.core.callback.ApiCallback
 import org.matrix.androidsdk.core.model.MatrixError
+import org.matrix.androidsdk.data.MyUser
+import org.matrix.androidsdk.data.Room
+import org.matrix.androidsdk.data.RoomState
+import org.matrix.androidsdk.listeners.IMXEventListener
+import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.RoomMember
+import org.matrix.androidsdk.rest.model.User
+import org.matrix.androidsdk.rest.model.bingrules.BingRule
+import org.matrix.androidsdk.rest.model.sync.AccountDataElement
 import vmodev.clearkeep.activities.ProfileActivity
 import vmodev.clearkeep.activities.ViewUserProfileActivity
 import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapterCustom
@@ -33,7 +41,7 @@ import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment {
+class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment, IMXEventListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -45,7 +53,9 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment {
     private lateinit var listUserJoinAdapter: ListUserRecyclerViewAdapterCustom
     private lateinit var listUserInvitesAdapter: ListUserRecyclerViewAdapterCustom
     private val args: RoomMemberListFragmentArgs by navArgs()
+    var mRoom: Room? = null
     private var listUserSuggested: List<RoomMember>? = null
+    var callBackMembersAsync: ApiCallback<List<RoomMember>>? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_room_member_list, container, false, dataBinding.getDataBindingComponent())
@@ -63,11 +73,12 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment {
 
         args.roomId?.let { roomID ->
             val mSession = Matrix.getInstance(activity).defaultSession
-            val mRoom = mSession.dataHandler.getRoom(roomID)
+            mRoom = mSession.dataHandler.getRoom(roomID)
+            mRoom?.addEventListener(this)
             roomViewModel = ViewModelProvider(this, viewModelFactory).get(AbstractRoomViewModel::class.java)
             roomViewModel.setGetUserFromRoomId(roomID)
             binding.lifecycleOwner = viewLifecycleOwner
-            mRoom.getActiveMembersAsync(object : ApiCallback<List<RoomMember>> {
+            callBackMembersAsync = object : ApiCallback<List<RoomMember>> {
                 override fun onSuccess(mDataRoomMember: List<RoomMember>?) {
                     listUserSuggested = mDataRoomMember
                     initJoins(roomID, listUserSuggested?.filterIndexed { index, roomMember -> RoomMember.MEMBERSHIP_JOIN.equals(roomMember.membership) })
@@ -86,7 +97,8 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment {
                     Log.e("Tag", "Error: ${p0?.message}")
                 }
 
-            })
+            }
+            mRoom?.getActiveMembersAsync(callBackMembersAsync!!)
             binding.editTextQuery.textChanges().subscribe({
                 val disposable = Observable.timer(100, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread())
                         .subscribe { time: Long? ->
@@ -103,7 +115,6 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment {
                 Log.e("Tag", "Error: ${it.message}")
             })
         }
-
     }
 
     private fun initJoins(roomID: String, mDataJoin: List<RoomMember>?) {
@@ -154,6 +165,152 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment {
         listUserInvitesAdapter.submitList(mDataInvite)
         binding.recyclerViewInvites.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewInvites.isNestedScrollingEnabled = false
+    }
+
+    override fun onGroupInvitedUsersListUpdate(p0: String?) {
+        Log.e("Tag", "--- onGroupInvitedUsersListUpdate: $p0")
+    }
+
+    override fun onPresenceUpdate(p0: Event?, p1: User?) {
+        when (p0?.type) {
+            Event.EVENT_TYPE_PRESENCE -> {
+                Log.e("Tag", "--- onPresenceUpdate: ${p1?.displayname} \naction: ${p0.type}")
+                mRoom?.getActiveMembersAsync(callBackMembersAsync!!)
+            }
+        }
+    }
+
+    override fun onLiveEvent(p0: Event?, p1: RoomState?) {
+        when (p0?.type) {
+            Event.EVENT_TYPE_STATE_ROOM_MEMBER -> {
+                Log.e("Tag", "--- onLiveEvent: event: ${p0.type}")
+                mRoom?.getActiveMembersAsync(callBackMembersAsync!!)
+            }
+        }
+    }
+
+    override fun onDirectMessageChatRoomsListUpdate() {
+        Log.e("Tag", "--- onDirectMessageChatRoomsListUpdate: ")
+    }
+
+    override fun onSyncError(p0: MatrixError?) {
+        Log.e("Tag", "--- onSyncError: ")
+    }
+
+    override fun onEventSentStateUpdated(p0: Event?) {
+        Log.e("Tag", "--- onEventSentStateUpdated: ")
+    }
+
+    override fun onBingRulesUpdate() {
+        Log.e("Tag", "--- onBingRulesUpdate: ")
+    }
+
+    override fun onRoomTagEvent(p0: String?) {
+        Log.e("Tag", "--- onRoomTagEvent: $p0")
+    }
+
+    override fun onLeaveRoom(p0: String?) {
+        Log.e("Tag", "--- onLeaveRoom: $p0")
+    }
+
+    override fun onLiveEventsChunkProcessed(p0: String?, p1: String?) {
+        Log.e("Tag", "--- onLiveEventsChunkProcessed: type: ${p0}, ${p1}")
+    }
+
+    override fun onBingEvent(p0: Event?, p1: RoomState?, p2: BingRule?) {
+        Log.e("Tag", "--- onBingEvent: ")
+    }
+
+    override fun onReadMarkerEvent(p0: String?) {
+        Log.e("Tag", "--- onReadMarkerEvent: ")
+    }
+
+    override fun onStoreReady() {
+        Log.e("Tag", "--- onStoreReady: ")
+    }
+
+    override fun onCryptoSyncComplete() {
+        Log.e("Tag", "--- onCryptoSyncComplete: ")
+    }
+
+    override fun onJoinRoom(p0: String?) {
+        Log.e("Tag", "--- onJoinRoom: có user join room: $p0")
+    }
+
+    override fun onReceiptEvent(p0: String?, p1: MutableList<String>?) {
+        Log.e("Tag", "--- onReceiptEvent: có onReceiptEvent")
+    }
+
+    override fun onAccountInfoUpdate(p0: MyUser?) {
+        Log.e("Tag", "--- onAccountInfoUpdate: ")
+    }
+
+    override fun onGroupProfileUpdate(p0: String?) {
+        Log.e("Tag", "--- onGroupProfileUpdate: ")
+    }
+
+    override fun onIgnoredUsersListUpdate() {
+        Log.e("Tag", "--- onIgnoredUsersListUpdate: ")
+    }
+
+    override fun onRoomKick(p0: String?) {
+        Log.e("Tag", "--- onRoomKick: ")
+    }
+
+    override fun onLeaveGroup(p0: String?) {
+        Log.e("Tag", "--- onLeaveGroup: có user onLeaveGroup room")
+    }
+
+    override fun onGroupUsersListUpdate(p0: String?) {
+        Log.e("Tag", "--- onGroupUsersListUpdate: ")
+    }
+
+    override fun onEventSent(p0: Event?, p1: String?) {
+        Log.e("Tag", "--- onEventSent: ")
+    }
+
+    override fun onAccountDataUpdated(p0: AccountDataElement?) {
+        Log.e("Tag", "--- onAccountDataUpdated: ")
+    }
+
+    override fun onRoomFlush(p0: String?) {
+        Log.e("Tag", "--- onRoomFlush: ")
+    }
+
+    override fun onNotificationCountUpdate(p0: String?) {
+        Log.e("Tag", "--- onNotificationCountUpdate: ")
+    }
+
+    override fun onJoinGroup(p0: String?) {
+        Log.e("Tag", "--- onJoinGroup: ")
+    }
+
+    override fun onRoomInternalUpdate(p0: String?) {
+        Log.e("Tag", "--- onRoomInternalUpdate: ")
+    }
+
+    override fun onNewGroupInvitation(p0: String?) {
+        Log.e("Tag", "--- onNewGroupInvitation: ")
+    }
+
+    override fun onGroupRoomsListUpdate(p0: String?) {
+        Log.e("Tag", "--- onGroupRoomsListUpdate: ")
+    }
+
+    override fun onEventDecrypted(p0: String?, p1: String?) {
+        Log.e("Tag", "--- onEventDecrypted: ")
+    }
+
+    override fun onNewRoom(p0: String?) {
+        Log.e("Tag", "--- onNewRoom: ")
+    }
+
+    override fun onInitialSyncComplete(p0: String?) {
+        Log.e("Tag", "--- onInitialSyncComplete: ")
+    }
+
+    override fun onToDeviceEvent(p0: Event?) {
+        Log.e("Tag", "--- onToDeviceEvent: ")
     }
 
     override fun getFragment(): Fragment {
