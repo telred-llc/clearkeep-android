@@ -84,6 +84,10 @@ public class VectorOngoingConferenceCallView extends RelativeLayout {
         void onActiveWidgetUpdate();
     }
 
+
+
+
+
     // call information
     private MXSession mSession;
     private Room mRoom;

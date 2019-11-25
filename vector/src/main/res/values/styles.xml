@@ -190,19 +190,21 @@
 
 
     <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
-        <item name="tabIndicatorColor">?attr/colorAccent</item>
+        <item name="tabTextAppearance">@style/MyCustomTabTextAppearance</item>
+        <item name="tabIndicatorColor">?attr/color_underline_tablayout</item>
         <item name="tabIndicatorHeight">2dp</item>
         <item name="tabPaddingStart">5dp</item>
         <item name="tabPaddingEnd">5dp</item>
         <item name="tabBackground">?attr/selectableItemBackground</item>
-        <item name="tabTextAppearance">@style/MyCustomTabTextAppearance</item>
-        <item name="tabSelectedTextColor">?android:textColorPrimary</item>
     </style>
 
     <style name="MyCustomTabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">?android:textColorSecondary</item>
-        <item name="textAllCaps">true</item>
+        <item name="textAllCaps">false</item>
+        <item name="tabSelectedTextColor">?attr/color_toolbar</item>
+        <item name="tabTextAppearance">?attr/color_toolbar</item>
+
     </style>
 
     <style name="ListHeader">
@@ -273,6 +275,7 @@
 
     <declare-styleable name="ClearKeep">
         <attr name="icon_color" format="color" />
+        <attr name="color_underline_tablayout" format="color" />
         <attr name="color_for_text_sign_up" format="color" />
         <attr name="text_color_hint" format="color" />
         <attr name="text_input_edit_text" format="color" />
@@ -312,16 +315,24 @@
         <attr name="color_icon_app_default" format="color"/>
         <attr name="bg_search_view" format="reference"/>
         <attr name="color_view_blank_setting" format="color"></attr>
-
+        <attr name="header_group" format="color" />
+        <attr name="bg_button_app_default" format="reference" />
+        <attr name="bg_button_app_selected" format="reference" />
+        <attr name="color_text_note_app_default" format="color" />
+        <attr name="color_check_box" format="color" />
+        <attr name="drawable_edit_default" format="reference" />
+        <attr name="done_editext" format="reference" />
 
     </declare-styleable>
 
     <style name="DarkTheme" parent="Theme.MaterialComponents.NoActionBar.Bridge">
-        <item name="android:statusBarColor">#121212</item>
+        <item name="header_group">#333333</item>
+        <item name="android:statusBarColor">#101010</item>
         <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
        <item name="android:windowBackground">@drawable/bg_app_dark_mode</item>
 <!--        <item name="android:">#121212</item>-->
         <item name="color_for_text_sign_up">#799CE0</item>
+        <item name="color_underline_tablayout">#5B8DEC</item>
         <item name="icon_color">#FFFFFF</item>
         <item name="text_color_hint">#F5F5F5</item>
         <item name="text_input_edit_text">#5787E3</item>
@@ -351,10 +362,10 @@
 <!--        <item name="icon_new_chat">@drawable/ic_new_chat_dark_mode</item>-->
 
 
-        <item name="background_button_select">@drawable/bg_button_gradient_blue_theme_dark_mode</item>
         <!--        screen join room-->
         <item name="text_color_decline">#9AA1AD</item>
-        <item name="image_notification_join_room">@drawable/image_notification_join_room_dark_mode</item>
+        <item name="image_notification_join_room">@drawable/image_notification_join_room_dark_mode
+        </item>
         <item name="color_text_title">@color/color_white</item>
         <item name="color_text_name_invited">#00D1E4</item>
 
@@ -367,15 +378,23 @@
         <item name="color_text_app_default">#F5F5F5</item>
         <item name="color_icon_app_default">#F5F5F5</item>
         <item name="bg_search_view">@drawable/bg_search_dark_mode</item>
-        <item name="color_view_blank_setting">#000000</item>
+        <item name="color_view_blank_setting">#1F1F1F</item>
+        <item name="bg_button_app_default">@drawable/bg_button_app_default_dark_mode</item>
+        <item name="color_text_note_app_default">#3FC5B9</item>
+        <item name="color_check_box">#3FC5B9</item>
+        <item name="background_button_select">@drawable/bg_button_gradient_green</item>
+        <item name="drawable_edit_default">@drawable/ic_pen_green</item>
+        <item name="done_editext">@drawable/ic_done_color_green</item>
 
     </style>
 
     <style name="LightTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
+        <item name="header_group">#F0F0F0</item>
         <item name="android:statusBarColor">#FFFFFF</item>
         <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
         <item name="android:windowBackground">@drawable/bg_app_light_mode</item>
         <item name="icon_color">#FF000000</item>
+        <item name="color_underline_tablayout">#5B8DEC</item>
         <item name="text_color_hint">#BEBEBE</item>
         <item name="text_input_edit_text">#5787E3</item>
         <item name="text_login">#FFFFFF</item>
@@ -404,7 +423,7 @@
 
 
 
-        <item name="background_button_select">@drawable/bg_button_gradient_blue</item>
+
         <!--        screen join room-->
         <item name="text_color_decline">#9AA1AD</item>
         <item name="image_notification_join_room">@drawable/image_notification_join_room</item>
@@ -421,6 +440,12 @@
         <item name="color_icon_app_default">#242424</item>
         <item name="bg_search_view">@drawable/bg_search_light_mode</item>
         <item name="color_view_blank_setting">#F0F0F0</item>
+        <item name="bg_button_app_default">@drawable/bg_button_app_default_line_mode</item>
+        <item name="color_text_note_app_default">#6093EA</item>
+        <item name="color_check_box">#6093EA</item>
+        <item name="background_button_select">@drawable/bg_button_gradient_blue</item>
+        <item name="drawable_edit_default">@drawable/ic_pen_blue</item>
+        <item name="done_editext">@drawable/ic_done_color_blue</item>
 
     </style>
 
@@ -430,25 +455,18 @@
     </style>
 
     <style name="editTextStyle" parent="Widget.Design.TextInputLayout">
-<!--        <item name="android:textColorHint">@color/text_color_blue</item>-->
-
-        <item name="hintTextAppearance">@color/text_color_blue</item>
-<!--        <item name="android:textColorHint">@color/text_color_blue</item>-->
-<!--        <item name="colorControlNormal">@color/text_color_blue</item>-->
-<!--        <item name="colorControlHighlight">@color/text_color_blue</item>-->
-
-
-        <item name="colorAccent">@color/text_color_blue</item>
-        <item name="colorPrimary">@color/text_color_blue</item>
-        <item name="android:textColor">@color/text_color_blue</item>
+        <item name="hintTextAppearance">?attr/color_text_note_app_default</item>
+        <item name="colorAccent">?attr/color_text_note_app_default</item>
+        <item name="colorPrimary">?attr/color_text_note_app_default</item>
+        <item name="android:textColor">?attr/color_text_note_app_default</item>
         <item name="android:textSize">@dimen/text_18_sp</item>
-        <item name="colorPrimaryDark">@color/text_color_blue</item>
-        <item name="colorControlActivated">@color/text_color_blue</item>
+        <item name="colorPrimaryDark">?attr/color_text_note_app_default</item>
+        <item name="colorControlActivated">?attr/color_text_note_app_default</item>
     </style>
 
     <style name="TextAppearance.App.TextInputLayout" parent="@android:style/TextAppearance">
         <item name="android:textSize">@dimen/text_16_sp</item>
-        <item name="android:textColor">@color/text_color_blue</item>
+        <item name="android:textColor">?attr/color_text_note_app_default</item>
     </style>
 
     <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light.NoActionBar">

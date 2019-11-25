@@ -21,7 +21,9 @@ import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.ultis.FormatString
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
 
-class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<RoomListUser>, private val dataBindingComponent : IDataBindingComponent)
+class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<RoomListUser>, private val dataBindingComponent : IDataBindingComponent
+//                                              ,private val flag : Int
+)
 
     : ListAdapter<RoomListUser, DataBoundViewHolder<ViewDataBinding>>(AsyncDifferConfig.Builder(diffCallback)
         .setBackgroundThreadExecutor(appExecutors.diskIO())
@@ -32,7 +34,7 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
     private lateinit var itemLongClick: (RoomListUser) -> Unit?
     private var lifecycleOwner: LifecycleOwner? = null;
     private var currentUserId: String? = null;
-
+    private  var checklayout : Int? = -1
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DataBoundViewHolder<ViewDataBinding> {
         val binding: ViewDataBinding;
         if (p1 == 0) {
@@ -64,12 +66,17 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
     override fun onBindViewHolder(p0: DataBoundViewHolder<ViewDataBinding>, p1: Int) {
         if (getItemViewType(p1) == 0) {
             (p0.binding as RoomInviteItemBinding).roomListUser = getItem(p1);
+            if (checklayout ==1){
+                p0.binding.buttonJoin.text = p0.itemView.resources.getText(R.string.preview)
+            }else{
+                p0.binding.buttonJoin.text = p0.itemView.resources.getText(R.string.join)
+            }
             p0.binding.name = getItem(p1).room?.name?.let { FormatString.formatName(it) }
             p0.binding.executePendingBindings();
         } else {
             (p0.binding as RoomItemBinding).roomListUser = getItem(p1);
             if (getItem(p1).room?.notifyCount==0){
-                p0.binding.backgroundRoomItem.setBackgroundColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_white, null))
+                p0.binding.backgroundRoomItem.setBackgroundColor(ResourcesCompat.getColor(p0.itemView.resources,android.R.color.transparent, null))
             }else{
                 p0.binding.backgroundRoomItem.setBackgroundColor(ResourcesCompat.getColor(p0.itemView.resources,R.color.color_background_notification,null))
 
@@ -89,5 +96,9 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
 
     override fun getAdapter(): ListAdapter<RoomListUser, *> {
         return this;
+    }
+
+    override fun getflag(flag: Int?) {
+       checklayout = flag
     }
 }

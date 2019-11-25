@@ -248,8 +248,9 @@
     <string name="direct_chats_header">Conversations</string>
     <string name="local_address_book_header">Local address book</string>
 
-    <string name="user_directory_header">User directory</string>
+    <string name="user_directory_header">User Directory</string>
     <string name="matrix_only_filter">Matrix contacts only</string>
+    <string name="matrix_contact">Matrix Contact</string>
     <string name="no_conversation_placeholder">No conversations</string>
     <string name="no_contact_access_placeholder">You didn’t allow Riot to access your local contacts</string>
     <string name="no_result_placeholder">No results</string>
@@ -1814,6 +1815,7 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="no_message_edits_found">No edits found</string>
 
     <!-- Room filtering -->
+    <string name="filter_members">Filter Members</string>
     <string name="room_filtering_filter_hint">Filter conversations…</string>
     <string name="room_filtering_footer_title">Can’t find what you’re looking for?</string>
     <string name="room_filtering_footer_create_new_room">Create a new room</string>
@@ -1821,6 +1823,7 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="room_filtering_footer_open_room_directory">View the room directory</string>
 
     <string name="room_directory_search_hint">Name or ID (#example:matrix.org)</string>
+    <string name="room_directory">Room Directory</string>
 
     <string name="labs_swipe_to_reply_in_timeline">Enable swipe to reply in timeline</string>
 
@@ -1888,6 +1891,9 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="settings_discovery_disconnect_with_bound_pid">You are currently sharing email addresses or phone numbers on the identity server %s. You will need to reconnect to %s to stop sharing them.</string>
     <string name="settings_agree_to_terms">Agree to the identity server (%s) Terms of Service to allow yourself to be discoverable by email address or phone number.</string>
     <string name="msg_invited_you_to_this_room">invited you to this room</string>
+    <string name="title_room_admin">Room\'s Admin</string>
+    <string name="title_group_member_participants">Participants</string>
+    <string name="title_group_member_invited">Invited</string>
     <string name="call_log">Call Log</string>
 
 </resources>

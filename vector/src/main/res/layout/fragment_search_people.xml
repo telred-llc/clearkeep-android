@@ -13,29 +13,124 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.User" />
 
+        <import type="vmodev.clearkeep.viewmodelobjects.RoomListUser" />
+
         <import type="vmodev.clearkeep.viewmodelobjects.Status" />
+
+        <variable
+            name="user_directory"
+            type="Integer" />
 
         <variable
             name="users"
             type="LiveData&lt;Resource&lt;List&lt;User>>>" />
+
+        <variable
+            name="matrix_contact"
+            type="Integer" />
     </data>
 
     <FrameLayout
+        android:id="@+id/layout_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestScroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/linear_layout_room_derectory"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@color/background_search"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txt_room_derectory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="@string/user_directory_header"
+                        android:textColor="?attr/color_toolbar"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:text="@{`(` + user_directory + `)`}"
+                        android:textColor="@color/text_color"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toRightOf="@+id/txt_room_derectory"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_user" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/linear_maxtrix"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@color/background_search"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txt_matrix_contact"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="@string/matrix_contact"
+                        android:textColor="?attr/color_toolbar"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:text="@{`(` + matrix_contact + `)`}"
+                        android:textColor="@color/text_color"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toRightOf="@+id/txt_matrix_contact"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_matrix_contact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_user" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:visibleGone="@{users.status == Status.LOADING}"/>
+            app:visibleGone="@{users.status == Status.LOADING}" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_user" />
     </FrameLayout>
 
 </layout>

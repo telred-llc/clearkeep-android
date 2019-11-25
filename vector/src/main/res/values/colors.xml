@@ -21,6 +21,7 @@
     <color name="tab_rooms_secondary">#5EA584</color>
     <color name="tab_groups">#a6d0e5</color>
     <color name="tab_groups_secondary">#81bddb</color>
+    <color name="color_highlight">#5B8DEC</color>
 
     <!-- color of the direct chat avatar ring (it's 50% of color accent) -->
     <color name="direct_chat_ring_color_light">#7F03b381</color>
@@ -192,9 +193,9 @@
     <color name="text_color_header">#5787E3</color>
 <!--    text_color-->
     <color name="text_color_blue">#5787E3</color>
+    <color name="text_color_green">#3FC5B9</color>
     <color name="text_color_hint">#BEBEBE</color>
     <color name="message_own_background">#E1E1E1</color>
-
 
     <color name="color_avatar_edit_room">#707070</color>
 <!--    screen edit room-->
@@ -204,6 +205,8 @@
 
 <!--    color item toolbar-->
     <color name="color_text_tool_bar">#242424</color>
+
+    <color name="yellow">#FFFFC666</color>
     <color name="rippelColor">#0099CC</color>
     <color name="color_text_miss_Call">#E06363</color>
 </resources>

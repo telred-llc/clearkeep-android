@@ -108,7 +108,9 @@
             android:exported="false"
             tools:node="remove" />
 
-        <activity android:name="vmodev.clearkeep.activities.RoomSettingsActivity" />
+        <activity
+            android:name="vmodev.clearkeep.activities.RoomSettingsActivity"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name="vmodev.clearkeep.activities.SettingsActivity" />
         <activity
             android:name="vmodev.clearkeep.activities.NewRoomActivity"
@@ -134,6 +136,7 @@
             android:screenOrientation="portrait" />
         <activity android:name="vmodev.clearkeep.activities.SearchActivity" />
         <activity android:name="vmodev.clearkeep.activities.PreviewInviteRoomActivity" />
+        <activity android:name="vmodev.clearkeep.activities.PreviewJoinActivity" />
         <activity
             android:name="vmodev.clearkeep.activities.ProfileActivity"
             android:windowSoftInputMode="adjustPan" />

@@ -25,6 +25,9 @@ class ShareFileRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffC
     : ListAdapter<RoomListUser, DataBoundViewHolder<ViewDataBinding>>(AsyncDifferConfig.Builder(diffCallback)
         .setBackgroundThreadExecutor(appExecutors.diskIO())
         .build()), IListRoomRecyclerViewAdapter {
+    override fun getflag(flag: Int?) {
+        Log.d("","")
+    }
 
     private val layouts: Array<Int> = arrayOf(R.layout.room_invite_item, R.layout.room_item);
     private lateinit var itemClick: (RoomListUser, Int) -> Unit?

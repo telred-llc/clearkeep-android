@@ -1,19 +1,19 @@
 package vmodev.clearkeep.repositories
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
+import org.matrix.androidsdk.rest.model.publicroom.PublicRoomsResponse
 import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.wayloads.*
-import vmodev.clearkeep.viewmodelobjects.Resource
-import vmodev.clearkeep.viewmodelobjects.RoomListUser
-import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
-import vmodev.clearkeep.viewmodelobjects.User
+import vmodev.clearkeep.viewmodelobjects.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -96,6 +96,14 @@ class RoomUserJoinRepository @Inject constructor(private val roomUserJoinDao: Ab
         }.asLiveData();
     }
 
+//    fun getListRoomDirectoryWithListRoomId(filters: List<Int>, ecrypted: Byte, query: String): LiveData<Resource<List<RoomListUser>>> {
+//        return object : AbstractLocalLoadSource<List<RoomListUser>>(appExecutors) {
+//            override fun loadFromDB(): LiveData<List<RoomListUser>> {
+//                return roomUserJoinDao.findRoomDirectoryByNameContain(filters, ecrypted, "%" + query + "%");
+//            }
+//        }.asLiveData();
+//    }
+
     fun getRoomListUserSortWithName(filters: Array<Int>): LiveData<Resource<List<RoomListUser>>> {
         return object : AbstractLocalLoadSource<List<RoomListUser>>(appExecutors) {
             override fun loadFromDB(): LiveData<List<RoomListUser>> {
@@ -112,11 +120,31 @@ class RoomUserJoinRepository @Inject constructor(private val roomUserJoinDao: Ab
         }.asLiveData();
     }
 
+    fun getListUserMatrixContact(typeOne: Int, typeTwo: Int, userId: String): LiveData<Resource<List<User>>> {
+        return object : AbstractLocalLoadSource<List<User>>(appExecutors) {
+            override fun loadFromDB(): LiveData<List<User>> {
+                return roomUserJoinDao.getListUserMatrixContact(typeOne, typeTwo, userId);
+            }
+        }.asLiveData();
+    }
+
     fun getRoomListUserFindByID(userId: String): LiveData<Resource<RoomListUser>> {
         return object : AbstractLocalLoadSource<RoomListUser>(appExecutors) {
             override fun loadFromDB(): LiveData<RoomListUser> {
                 return roomUserJoinDao.getRoomListUserFindByID(userId);
             }
         }.asLiveData();
+    }
+
+    fun getListRoomDirectory(limit: Int, query: String): LiveData<Resource<List<PublicRoom>>> {
+       return object : AbstractLoadFromNetworkRx<List<PublicRoom>>(){
+           override fun createCall(): Observable<List<PublicRoom>> {
+               return matrixService.getListRoomDirectory(limit, query);
+           }
+
+           override fun saveCallResult(item: List<PublicRoom>) {
+               //Do something
+           }
+       }.asLiveData();
     }
 }

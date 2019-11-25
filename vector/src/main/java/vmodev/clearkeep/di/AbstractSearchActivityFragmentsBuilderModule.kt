@@ -98,7 +98,9 @@ abstract class AbstractSearchActivityFragmentsBuilderModule {
                     return p0.room?.name == p1.room?.name && p0.room?.avatarUrl == p1.room?.avatarUrl
                             && p0.room?.notifyCount == p1.room?.notifyCount;
                 }
-            }, dataBindingComponent = dataBindingComponent)
+            }, dataBindingComponent = dataBindingComponent
+//                    ,flag = 1
+            )
         }
     }
 }

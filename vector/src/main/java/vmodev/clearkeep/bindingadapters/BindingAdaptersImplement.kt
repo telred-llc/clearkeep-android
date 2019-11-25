@@ -21,6 +21,7 @@ import im.vector.util.VectorUtils
 import org.matrix.androidsdk.crypto.MXDecryptionException
 import org.matrix.androidsdk.rest.model.Event
 import vmodev.clearkeep.enums.CallStatusEnum
+import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
 import vmodev.clearkeep.jsonmodels.MessageContent
 import vmodev.clearkeep.ultis.FormatString
 import vmodev.clearkeep.ultis.toDateTime
@@ -29,6 +30,18 @@ import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
 
 class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapters, ISwitchCompatViewBindingAdapters, CardViewBindingAdapters {
+
+    override fun bindImage(imageView: ImageView, room: PublicRoom?, listener: RequestListener<Drawable?>?) {
+        room?.let {
+            if (room.avatarUrl.isNullOrEmpty()) {
+                val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(room.roomId), if (room.name.isNullOrEmpty()) room.roomId else room.name, true);
+                imageView.setImageBitmap(bitmap);
+            } else {
+                Glide.with(imageView.context).load(room.avatarUrl).centerCrop().error(R.drawable.ic_launcher_app).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
+            }
+        }
+    }
+
     override fun bindImage(imageView: ImageView, imageUrl: String?, listener: RequestListener<Drawable?>?) {
         if (!TextUtils.isEmpty(imageUrl)) {
             Glide.with(imageView.context).load(imageUrl).centerCrop().into(imageView);

@@ -39,7 +39,11 @@ import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.data.RoomTag
 import org.matrix.androidsdk.listeners.IMXMediaUploadListener
 import org.matrix.androidsdk.rest.model.Event
+import org.matrix.androidsdk.rest.model.RoomDirectoryVisibility
 import org.matrix.androidsdk.rest.model.RoomMember
+import org.matrix.androidsdk.rest.model.pid.ThirdPartyProtocol
+import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
+import org.matrix.androidsdk.rest.model.publicroom.PublicRoomsResponse
 import org.matrix.androidsdk.rest.model.search.SearchResponse
 import org.matrix.androidsdk.rest.model.search.SearchResult
 import org.matrix.androidsdk.rest.model.search.SearchUsersResponse
@@ -1869,7 +1873,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                 if (!type.isNullOrEmpty() && type == Event.EVENT_TYPE_MESSAGE) {
                                     if (message.getContent().getMsgType().compareTo(msgType) == 0) {
                                         item.message?.let {
-                                            messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = message.getContent().getBody(), createdAt = it.createdAt)
+                                            messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = message.getContent().getBody(), createdAt = if (item.message != null) item.message!!.createdAt else 0)
                                         }
                                         messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
                                     }
@@ -1888,7 +1892,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                     }
 //
                                     item.message?.let {
-                                        messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = type, encryptedContent = typeCall, createdAt = it.createdAt)
+                                        messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = typeCall, createdAt = if (item.message != null) item.message!!.createdAt else 0)
                                     }
                                     messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
                                     callContent.getContent()?.getCallId()?.let { it1 -> callHistoryFilter.put(it1, messageRooUser) }
@@ -1983,6 +1987,33 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                         emitter.onError(it);
                         emitter.onComplete();
                     });
+        }
+    }
+
+    override fun getListRoomDirectory(limit: Int, query : String): Observable<List<PublicRoom>> {
+        setMXSession();
+        return Observable.create { emitter ->
+            session!!.eventsApiClient.loadPublicRooms(null, null, false, query, null, limit,object : ApiCallback<PublicRoomsResponse>{
+                override fun onSuccess(p0: PublicRoomsResponse?) {
+                    emitter.onNext(p0!!.chunk);
+                    emitter.onComplete();
+                }
+
+                override fun onUnexpectedError(p0: java.lang.Exception?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+
+                override fun onMatrixError(p0: MatrixError?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+
+                override fun onNetworkError(p0: java.lang.Exception?) {
+                    emitter.onError(Throwable(p0?.message));
+                    emitter.onComplete();
+                }
+            })
         }
     }
 

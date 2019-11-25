@@ -4,24 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="vmodev.clearkeep.fragments.RoomMemberListFragment">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:visibleGone="@{users.status == Status.LOADING}" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_user" />
-    </FrameLayout>
-
     <data>
 
         <import type="java.util.List" />
@@ -38,4 +20,93 @@
             name="users"
             type="LiveData&lt;Resource&lt;List&lt;User>>>" />
     </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:visibleGone="@{users.status == Status.LOADING}" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="?attr/bg_search_view"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/ic_search_gray_24dp" />
+
+                <EditText
+                    android:id="@+id/edit_text_query"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/search"
+                    android:imeOptions="actionSearch"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="?attr/header_group"
+                        android:padding="10dp"
+                        android:text="@string/title_group_member_participants"
+                        android:textColor="?attr/color_text_app_default"
+                        android:textSize="@dimen/text_20_sp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view_join"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_user_member_groups" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="?attr/header_group"
+                        android:padding="10dp"
+                        android:text="@string/title_group_member_invited"
+                        android:textColor="?attr/color_text_app_default"
+                        android:textSize="@dimen/text_20_sp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view_invites"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/item_user_member_groups" />
+
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+        </LinearLayout>
+    </FrameLayout>
+
 </layout>

@@ -142,6 +142,7 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
             return@setOnEditorActionListener false
         }
         binding.colorTextDefault = getColorFromAttr(R.attr.color_text_app_default)
+        binding.colorTextFocus = getColorFromAttr(R.attr.color_text_note_app_default)
         binding.lifecycleOwner = this
     }
 

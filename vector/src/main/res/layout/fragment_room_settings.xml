@@ -32,6 +32,10 @@
             name="isLoading"
             type="Boolean" />
 
+        <variable
+            name="powerLevel"
+            type="Integer" />
+
     </data>
 
     <RelativeLayout
@@ -49,6 +53,32 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_normal"
+                    android:orientation="horizontal">
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@{@string/this_room_created_by+' '}"
+                        android:textColor="?attr/color_text_app_default"
+                        android:textSize="@dimen/text_13_sp"
+                        tools:text="This room created 3:39 AM by " />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="@{user.data.name.trim()}"
+                        android:textColor="?attr/color_text_note_app_default"
+                        android:textSize="@dimen/text_13_sp"
+                        tools:text="QuiNV" />
+
+                </LinearLayout>
+
 
                 <!--                <TextView-->
                 <!--                    android:layout_width="match_parent"-->
@@ -60,8 +90,7 @@
                 <RelativeLayout
                     android:layout_width="@dimen/avatar_screen_profile_size"
                     android:layout_height="@dimen/avatar_screen_profile_size"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="@dimen/margin_large">
+                    android:layout_gravity="center_horizontal">
 
                     <vmodev.clearkeep.widget.CircleImage
                         android:id="@+id/imgAvatarRoom"
@@ -72,8 +101,7 @@
                         app:border_color="@color/border_color_avatar_profile"
                         app:civ_border_color="@color/border_color_avatar_profile"
                         app:room="@{room.data}"
-                        app:stroke_width="5dp"
-                        />
+                        app:stroke_width="5dp" />
 
                     <vmodev.clearkeep.widget.CustomAvatarPicture
                         android:layout_width="match_parent"
@@ -81,16 +109,14 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerInParent="true"
                         android:layout_margin="5dp"
-                        app:visibleGone="@{room.data.type == 2 || room.data.type == 130}"
-                        />
+                        app:visibleGone="@{powerLevel == 100}" />
 
                     <View
                         android:id="@+id/viewSelectPicture"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/height_view_select_picture"
                         android:layout_alignParentTop="true"
-                        app:visibleGone="@{room.data.type == 2 || room.data.type == 130}"
-                        />
+                        app:visibleGone="@{powerLevel == 100}" />
 
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -100,8 +126,8 @@
                         android:layout_alignParentBottom="true"
                         android:layout_centerInParent="true"
                         android:layout_marginBottom="@dimen/margin_camera_bottom_avatar"
-                        app:visibleGone="@{room.data.type == 2 || room.data.type == 130}"
-                        app:srcCompat="@drawable/ic_camera_color_white" />
+                        app:srcCompat="@drawable/ic_camera_color_white"
+                        app:visibleGone="@{powerLevel == 100}" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -124,7 +150,7 @@
                         android:layout_height="wrap_content"
                         android:singleLine="true"
                         android:text="@{user.data.name.trim()}"
-                        android:textColor="@color/text_color_blue"
+                        android:textColor="?attr/color_text_note_app_default"
                         android:textSize="@dimen/text_13_sp"
                         tools:text="QuiNV" />
 
@@ -142,17 +168,17 @@
                         android:id="@+id/edit_text_room_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:drawableEnd="@{room.data.type == 2 || room.data.type == 130 ? @drawable/ic_pen : null}"
+                        android:drawableEnd="@{powerLevel == 100 ? @drawable/ic_pen : null}"
                         android:drawablePadding="@dimen/padding_small"
+                        android:enabled="@{powerLevel == 100}"
                         android:hint="@string/create_room_name_hint"
+                        android:importantForAutofill="noExcludeDescendants"
                         android:inputType="textCapCharacters|textNoSuggestions"
                         android:singleLine="true"
                         android:text="@{room.data.name}"
                         android:textAllCaps="true"
-                        android:textColor="@color/text_color_blue"
-                        android:textSize="@dimen/text_17_sp"
-                        android:enabled="@{room.data.type == 2 || room.data.type == 130}"
-                        />
+                        android:textColor="?attr/color_text_note_app_default"
+                        android:textSize="@dimen/text_17_sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -166,19 +192,19 @@
                         android:id="@+id/edit_text_room_topic"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:drawableEnd="@{room.data.type == 2 || room.data.type == 130 ? @drawable/ic_pen : null}"
+                        android:drawableEnd="@{powerLevel == 100 ? @drawable/ic_pen : null}"
                         android:drawablePadding="@dimen/padding_small"
+                        android:enabled="@{powerLevel == 100}"
                         android:hint="@string/room_info_room_topic"
                         android:imeOptions="actionDone"
+                        android:importantForAutofill="noExcludeDescendants"
                         android:inputType="textCapCharacters|textNoSuggestions"
                         android:singleLine="true"
-                        android:text="@{room.data.topic}"
+                        android:text="@{room.data.topic == null ? room.data.name : room.data.topic}"
                         android:textAllCaps="true"
-                        android:textColor="@color/text_color_blue"
-                        android:enabled="@{room.data.type == 2 || room.data.type == 130}"
+                        android:textColor="?attr/color_text_note_app_default"
                         android:textSize="@dimen/text_17_sp" />
                 </com.google.android.material.textfield.TextInputLayout>
-
 
                 <Button
                     android:id="@+id/btnSave"
@@ -188,11 +214,11 @@
                     android:layout_marginTop="@dimen/margin_large"
                     android:layout_marginEnd="@dimen/margin_normal"
                     android:layout_marginBottom="@dimen/margin_xxl"
-                    android:background="@drawable/bg_button_gradient_grey"
+                    android:background="?attr/background_button_select"
                     android:enabled="false"
                     android:text="@string/save"
                     android:textColor="@color/color_white"
-                    app:visibleGone="@{room.data.type == 2 || room.data.type == 130}" />
+                    app:visibleGone="@{powerLevel == 100}" />
 
 
                 <LinearLayout
@@ -200,9 +226,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-
                 </LinearLayout>
-
 
                 <LinearLayout
                     android:id="@+id/members_group"
