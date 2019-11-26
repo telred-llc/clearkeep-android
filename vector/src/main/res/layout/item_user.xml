@@ -48,7 +48,7 @@
             android:layout_weight="1"
             android:singleLine="true"
             android:text="@{user.name.toString().trim()}"
-            android:textColor="@color/black_color"
+            android:textColor="?attr/color_text_app_default"
             android:textSize="@dimen/text_17_sp" />
     </LinearLayout>
 </layout>

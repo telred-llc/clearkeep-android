@@ -50,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="46dp"
                     android:layout_marginTop="2dp"
-                    android:background="@color/background_search"
+                    android:background="?attr/color_view_blank_setting"
                     android:orientation="horizontal">
 
                     <TextView
@@ -59,7 +59,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
                         android:text="@string/user_directory_header"
-                        android:textColor="?attr/color_toolbar"
+                        android:textColor="?attr/color_text_app_default"
                         android:textSize="@dimen/text_17_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -70,7 +70,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:text="@{`(` + user_directory + `)`}"
-                        android:textColor="@color/text_color"
+                        android:textColor="?attr/color_text_app_default"
                         android:textSize="@dimen/text_17_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toRightOf="@+id/txt_room_derectory"
@@ -89,7 +89,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="46dp"
                     android:layout_marginTop="2dp"
-                    android:background="@color/background_search"
+                    android:background="?attr/color_view_blank_setting"
                     android:orientation="horizontal">
 
                     <TextView
@@ -98,7 +98,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
                         android:text="@string/matrix_contact"
-                        android:textColor="?attr/color_toolbar"
+                        android:textColor="?attr/color_text_app_default"
                         android:textSize="@dimen/text_17_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -109,7 +109,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:text="@{`(` + matrix_contact + `)`}"
-                        android:textColor="@color/text_color"
+                        android:textColor="?attr/color_text_app_default"
                         android:textSize="@dimen/text_17_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toRightOf="@+id/txt_matrix_contact"

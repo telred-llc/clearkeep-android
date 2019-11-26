@@ -98,7 +98,7 @@
                         android:layout_alignParentEnd="true"
                         android:singleLine="true"
                         android:textAlignment="textEnd"
-                        android:textColor="@color/black_color"
+                        android:textColor="?attr/color_text_app_default"
                         android:textSize="@dimen/text_11_sp"
                         app:timeStamp="@{room_list_user.lastMessage.createdAt}" />
                 </RelativeLayout>
