@@ -67,7 +67,6 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mxSession = im.vector.Matrix.getInstance(activity)!!.defaultSession
-
         setupRecycleView()
         initData()
     }
