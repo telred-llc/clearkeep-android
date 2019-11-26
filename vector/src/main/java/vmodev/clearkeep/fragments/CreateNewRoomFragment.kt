@@ -46,10 +46,6 @@ class CreateNewRoomFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.window?.statusBarColor = ContextCompat.getColor(activity!!, R.color.primary_hint_text_color_light)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        }
         binding.room = viewModelFactory.getViewModel().createNewRoomResult()
         binding.rvListUserSuggested.setHasFixedSize(true)
         binding.rvListUserSuggested.isNestedScrollingEnabled = false
