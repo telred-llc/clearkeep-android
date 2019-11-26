@@ -552,7 +552,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         val mRoomId = intent.getStringExtra(EXTRA_ROOM_ID)
         mRoom = mxSession?.dataHandler?.store?.getRoom(mRoomId)
 
-        if ((mxSession == null) || !mxSession!!.isAlive()) {
+        if ((mxSession == null) || !mxSession!!.isAlive) {
             Log.e(LOG_TAG, "No MXSession.")
             finish()
             return

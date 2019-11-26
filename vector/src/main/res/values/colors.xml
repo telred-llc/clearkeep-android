@@ -209,4 +209,5 @@
 
     <color name="yellow">#FFFFC666</color>
     <color name="rippelColor">#0099CC</color>
+    <color name="color_text_miss_Call">#E06363</color>
 </resources>

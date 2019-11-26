@@ -21,7 +21,6 @@ abstract class OnSingleClickListener : View.OnClickListener {
     }
 
     companion object {
-        private val MIN_CLICK_INTERVAL: Long = 2000
+        private val MIN_CLICK_INTERVAL: Long = 600
     }
-
 }

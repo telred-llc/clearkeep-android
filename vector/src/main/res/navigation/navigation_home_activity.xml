@@ -15,4 +15,10 @@
         android:name="vmodev.clearkeep.fragments.ContactsFragment"
         android:label="ContactsFragment"
         tools:layout="@layout/fragment_contacts"/>
+
+    <fragment
+        android:id="@+id/action_call_history"
+        android:name="vmodev.clearkeep.fragments.CallHistoryFragment"
+        android:label="Call"
+        tools:layout="@layout/fragment_call_history"/>
 </navigation>

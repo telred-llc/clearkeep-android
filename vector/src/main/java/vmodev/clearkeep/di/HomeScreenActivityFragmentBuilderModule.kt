@@ -16,21 +16,12 @@ import vmodev.clearkeep.factories.activitiesandfragments.FavouritesFragmentFacto
 import vmodev.clearkeep.factories.activitiesandfragments.HomeScreenFragmentFactory
 import vmodev.clearkeep.factories.activitiesandfragments.ListRoomFragmentFactory
 import vmodev.clearkeep.factories.activitiesandfragments.interfaces.IFragmentFactory
-import vmodev.clearkeep.factories.viewmodels.ContactFragmentViewModelFactory
-import vmodev.clearkeep.factories.viewmodels.FavouritesFragmentViewModelFactory
-import vmodev.clearkeep.factories.viewmodels.HomeScreenFragmentViewModelFactory
-import vmodev.clearkeep.factories.viewmodels.ListRoomFragmentViewModelFactory
+import vmodev.clearkeep.factories.viewmodels.*
 import vmodev.clearkeep.factories.viewmodels.interfaces.*
-import vmodev.clearkeep.fragments.ContactsFragment
-import vmodev.clearkeep.fragments.FavouritesFragment
-import vmodev.clearkeep.fragments.HomeScreenFragment
+import vmodev.clearkeep.fragments.*
 import vmodev.clearkeep.fragments.Interfaces.*
-import vmodev.clearkeep.fragments.ListRoomFragment
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
-import vmodev.clearkeep.viewmodels.interfaces.AbstractContactFragmentViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractFavouritesFragmentViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractHomeScreenFragmentViewModel
-import vmodev.clearkeep.viewmodels.interfaces.AbstractListRoomFragmentViewModel
+import vmodev.clearkeep.viewmodels.interfaces.*
 import javax.inject.Named
 
 @Suppress("unused")
@@ -47,6 +38,11 @@ abstract class HomeScreenActivityFragmentBuilderModule {
 
     @ContributesAndroidInjector(modules = [FragmentListRoomBindModule::class])
     abstract fun contributeListRoomFragment(): ListRoomFragment;
+
+    @ContributesAndroidInjector(modules = [FragmentCallHistoryModule::class])
+    abstract fun contributeCallHistoryFragment():CallHistoryFragment
+
+
 
     @Module
     abstract class FragmentHomeScreenBindModule {
@@ -135,5 +131,15 @@ abstract class HomeScreenActivityFragmentBuilderModule {
         fun provideListRoomFragmentFactory(application: IApplication): IFragmentFactory {
             return ListRoomFragmentFactory(application);
         }
+    }
+
+    @Module
+    abstract class FragmentCallHistoryModule {
+        @Binds
+        @Named(IFragment.CALL_HISTORY_FRAGMENT)
+        abstract fun bindCallHistoryFragment(fragment: CallHistoryFragment): IFragment;
+
+        @Binds
+        abstract fun bindCallHistoryFragmentViewModelFactory(factory: CallHistoryViewModelFactory): IViewModelFactory<AbstractCallHistoryViewModel>;
     }
 }

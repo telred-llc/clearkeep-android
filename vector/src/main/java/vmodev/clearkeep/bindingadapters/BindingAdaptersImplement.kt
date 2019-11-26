@@ -16,9 +16,11 @@ import com.google.gson.Gson
 import com.google.gson.JsonParser
 import im.vector.Matrix
 import im.vector.R
+import im.vector.ui.themes.ThemeUtils
 import im.vector.util.VectorUtils
 import org.matrix.androidsdk.crypto.MXDecryptionException
 import org.matrix.androidsdk.rest.model.Event
+import vmodev.clearkeep.enums.CallStatusEnum
 import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
 import vmodev.clearkeep.jsonmodels.MessageContent
 import vmodev.clearkeep.ultis.FormatString
@@ -177,14 +179,23 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
 
     override fun bindFormatName(textView: TextView, room: Room?) {
         room?.name?.let {
-            if (it.contains("Invite from")) {
-                textView.text = it.replace("Invite from", "").trim()
-            } else if (it.contains("Call:")) {
-                textView.text = it.replace("Call:", "").trim()
-            } else {
-                textView.text = it
+            when {
+                it.contains("Invite from") -> textView.text = it.replace("Invite from", "").trim()
+                it.contains("Call:") -> textView.text = it.replace("Call:", "").trim()
+                else -> textView.text = it
             }
         }
     }
+
+    override fun bindCheckMissCall(textView: TextView, message: Message?) {
+        message?.encryptedContent?.let {
+            if (message.encryptedContent == CallStatusEnum.MISS_CALL.value) {
+                textView.setTextColor(ResourcesCompat.getColor(textView.resources, R.color.color_text_miss_Call, null))
+            } else {
+                textView.setTextColor(ThemeUtils.getColor(textView.context, R.attr.color_text_app_default))
+            }
+        }
+    }
+
 
 }

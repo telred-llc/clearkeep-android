@@ -206,8 +206,8 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
         }.getObject();
     }
 
-    fun editMessageRx(event : Event) : Observable<EditMessageResponse>{
-        return object : AbstractLoadFromNetworkReturnRx<EditMessageResponse>(){
+    fun editMessageRx(event: Event): Observable<EditMessageResponse> {
+        return object : AbstractLoadFromNetworkReturnRx<EditMessageResponse>() {
             override fun createCall(): Observable<EditMessageResponse> {
                 return matrixService.editMessage(event);
             }
@@ -218,7 +218,8 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
         }.getObject();
     }
 
-    fun insertMessage(message : Message) : Completable{
+    fun insertMessage(message: Message): Completable {
         return Completable.fromAction { messageDao.insert(message) }
     }
+
 }

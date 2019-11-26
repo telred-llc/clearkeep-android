@@ -67,6 +67,7 @@ class MatrixEventHandler @Inject constructor(
 
     override fun onLiveEvent(event: Event?, roomState: RoomState?) {
         Log.d("EventType", event?.type + "--" + event?.roomId);
+        Log.d("EventType", event?.toString());
         event?.let { e ->
             when (event.type) {
                 IMatrixEventHandler.M_ROOM_CREATE -> {
@@ -189,6 +190,7 @@ class MatrixEventHandler @Inject constructor(
             ?
     ) {
         super.onBingEvent(event, roomState, bingRule)
+        Log.d("hang_call",event?.type + "--" + event?.roomId)
     }
 
     override fun getMXEventListener(mxSession: MXSession)
@@ -208,4 +210,5 @@ class MatrixEventHandler @Inject constructor(
         keyBackupRepository.updateKeyBackup(mxSession!!.myUserId);
         signatureRepository.updateSignature(mxSession!!.myUserId);
     }
+
 }
