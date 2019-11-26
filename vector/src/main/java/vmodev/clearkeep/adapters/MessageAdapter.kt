@@ -2049,15 +2049,19 @@ internal constructor(// session
      * @param position    the item position
      */
     private fun addContentViewListeners(convertView: View, contentView: View, position: Int, msgType: Int) {
-//        contentView.setOnClickListener {
-//            Log.e("TAG", "--- Click tag item 3")
-//            if (null != mVectorMessagesAdapterEventsListener) {
-//                // GA issue
-//                if (position < count) {
-//                    mVectorMessagesAdapterEventsListener!!.onContentClick(position)
-//                }
-//            }
-//        }
+        when (msgType) {
+            ROW_TYPE_FILE, ROW_TYPE_IMAGE -> {
+                contentView.setOnClickListener {
+                    Log.e("TAG", "--- Click tag item 3")
+                    if (null != mVectorMessagesAdapterEventsListener) {
+                        // GA issue
+                        if (position < count) {
+                            mVectorMessagesAdapterEventsListener!!.onContentClick(position)
+                        }
+                    }
+                }
+            }
+        }
 
         contentView.setOnLongClickListener(View.OnLongClickListener {
             // GA issue
