@@ -1,16 +1,10 @@
 package vmodev.clearkeep.activities
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
-import android.util.TypedValue
 import android.view.View
-import android.widget.ImageView
-import androidx.annotation.ColorInt
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import com.jakewharton.rxbinding3.viewpager.pageSelections
@@ -31,13 +25,7 @@ import vmodev.clearkeep.fragments.SearchMessagesFragment
 import vmodev.clearkeep.fragments.SearchPeopleFragment
 import vmodev.clearkeep.fragments.SearchRoomsFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchActivityViewModel
-import java.util.*
 import javax.inject.Inject
-import androidx.core.os.HandlerCompat.postDelayed
-import com.dropbox.core.v2.teamlog.ActorLogInfo.app
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-
 
 
 class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragment.OnFragmentInteractionListener
@@ -46,27 +34,23 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
         , SearchPeopleFragment.OnFragmentInteractionListener {
 
     @Inject
-    lateinit var viewModelFactory: IViewModelFactory<AbstractSearchActivityViewModel>;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractSearchActivityViewModel>
 
-    private val publishSubjectSearchView: PublishSubject<String> = PublishSubject.create();
+    private val publishSubjectSearchView: PublishSubject<String> = PublishSubject.create()
 
-    private var disposable: Disposable? = null;
+    private var disposable: Disposable? = null
 
-    private lateinit var arraySearchFragment: Array<ISearchFragment>;
+    private lateinit var arraySearchFragment: Array<ISearchFragment>
 
-    private var currentSearchFragment: ISearchFragment? = null;
+    private var currentSearchFragment: ISearchFragment? = null
 
-    private lateinit var userId: String;
+    private lateinit var userId: String
     private lateinit var binding: ActivitySearchBinding
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        window.statusBarColor = ContextCompat.getColor(this, R.color.primary_hint_text_color_light)
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-//        }
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_search, dataBinding.getDataBindingComponent());
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_search, dataBinding.getDataBindingComponent())
 
         //setcolor for icon search
 //        val searchIcon : ImageView = binding.searchView.findViewById(androidx.appcompat.R.id.search_button)
@@ -74,33 +58,33 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
 //        getTheme().resolveAttribute(R.attr.icon_color_setting, typedValue, true);
 //        @ColorInt val color = typedValue.data;
 //        searchIcon.setColorFilter(color)
-        userId = intent.getStringExtra(USER_ID);
+        userId = intent.getStringExtra(USER_ID)
         arraySearchFragment = arrayOf(SearchRoomsFragment.newInstance(userId), SearchMessagesFragment.newInstance(userId),
-                SearchPeopleFragment.newInstance(), SearchFilesFragment.newInstance(userId));
+                SearchPeopleFragment.newInstance(), SearchFilesFragment.newInstance(userId))
         binding.imgBack.setOnClickListener { v -> finish() }
-        val pagerAdapter = SearchViewPagerAdapter(supportFragmentManager, arraySearchFragment);
-        binding.tabLayout.setupWithViewPager(binding.viewPager);
-        binding.viewPager.adapter = pagerAdapter;
+        val pagerAdapter = SearchViewPagerAdapter(supportFragmentManager, arraySearchFragment)
+        binding.tabLayout.setupWithViewPager(binding.viewPager)
+        binding.viewPager.adapter = pagerAdapter
         val backgroundView = binding.searchView.findViewById(androidx.appcompat.R.id.search_plate) as View
         backgroundView.background = null
-        binding.searchView.onActionViewExpanded();
+        binding.searchView.onActionViewExpanded()
         Handler().postDelayed(Runnable {  binding.searchView.clearFocus() }, 30)
-        binding.searchView.setIconifiedByDefault(false);
-        binding.searchView.isIconified = false;
+        binding.searchView.setIconifiedByDefault(false)
+        binding.searchView.isIconified = false
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(p0: String?): Boolean {
-                p0?.let { s -> publishSubjectSearchView.onNext(s) };
-                return false;
+                p0?.let { s -> publishSubjectSearchView.onNext(s) }
+                return false
             }
 
             override fun onQueryTextSubmit(p0: String?): Boolean {
-                return false;
+                return false
             }
-        });
+        })
         disposable = binding.viewPager.pageSelections().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe {
-            currentSearchFragment?.unSelectedFragment();
-            currentSearchFragment = arraySearchFragment[it].selectedFragment(binding.searchView.query.toString());
+            currentSearchFragment?.unSelectedFragment()
+            currentSearchFragment = arraySearchFragment[it].selectedFragment(binding.searchView.query.toString())
         }
 
         binding.layoutSearch.setOnTouchListener { v, event ->
@@ -111,27 +95,27 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
 //            }
             return@setOnTouchListener true
         }
-        binding.lifecycleOwner = this;
+        binding.lifecycleOwner = this
     }
 
     override fun getActivity(): FragmentActivity {
-        return this;
+        return this
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        finish();
+        finish()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        publishSubjectSearchView.onComplete();
-        disposable?.dispose();
+        publishSubjectSearchView.onComplete()
+        disposable?.dispose()
     }
 
 
     override fun getSearchViewTextChange(): Observable<String> {
-        return publishSubjectSearchView;
+        return publishSubjectSearchView
     }
 
     override fun onResume() {
@@ -141,6 +125,6 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
     }
 
     companion object {
-        const val USER_ID = "USER_ID";
+        const val USER_ID = "USER_ID"
     }
 }
