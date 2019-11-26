@@ -70,10 +70,10 @@ class CreateNewCallFragment : DataBindingDaggerFragment(), IFragment {
             }
         }, dataBindingComponent = dataBinding.getDataBindingComponent()) { user, status ->
             if (listSelected.size > 0) {
-                binding.btnCreate.background = ResourcesCompat.getDrawable(this.resources, R.drawable.bg_button_gradient_blue, null)
+                binding.btnCreate.isSelected = true
                 binding.btnCreate.isEnabled = true;
             } else {
-                binding.btnCreate.background = ResourcesCompat.getDrawable(this.resources, R.drawable.bg_button_gradient_grey, null)
+                binding.btnCreate.isSelected = false
                 binding.btnCreate.isEnabled = false;
             }
         }
