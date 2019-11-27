@@ -34,18 +34,21 @@
         <variable
             name="isEditTextNameFocus"
             type="Boolean" />
-        <variable name="colorTextDefault" type="int"/>
+
+        <variable
+            name="colorTextDefault"
+            type="int" />
 
         <variable
             name="colorTextFocus"
             type="int" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
 
         <RelativeLayout
             android:id="@+id/rlToolbar"
@@ -63,8 +66,8 @@
                 android:layout_centerInParent="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/padding_normal"
-                app:tint="?attr/color_tint_img_back"
-                app:srcCompat="@drawable/ic_back" />
+                app:srcCompat="@drawable/ic_back"
+                app:tint="?attr/color_tint_img_back" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -86,11 +89,9 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/padding_normal"
                 app:srcCompat="@drawable/ic_setting"
-                app:tint="?attr/color_icon_app_default"
-                />
+                app:tint="?attr/color_icon_app_default" />
 
         </RelativeLayout>
-
 
         <FrameLayout
             android:id="@+id/frAvatarProfile"
@@ -121,7 +122,6 @@
                 app:civ_border_width="@dimen/border_status_active_size" />
         </FrameLayout>
 
-
         <RelativeLayout
             android:id="@+id/rlEditTextName"
             android:layout_width="match_parent"
@@ -139,26 +139,49 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/imgDone"
                 android:gravity="center"
-                android:layout_toStartOf="@+id/imgDone">
+                android:orientation="vertical">
 
                 <EditText
                     android:id="@+id/edtName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@null"
+                    android:drawableEnd="@drawable/ic_edit_grey"
+                    android:drawablePadding="@dimen/padding_normal"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
+                    android:minWidth="20dp"
                     android:singleLine="true"
                     android:text="@{user.data.name}"
                     android:textColor="@{isEditTextNameFocus ? colorTextFocus: colorTextDefault}"
                     android:textSize="@dimen/text_21_sp"
-                    android:minWidth="20dp"
-                    android:drawableEnd="@drawable/ic_edit_grey"
-                    android:drawablePadding="@dimen/padding_normal"
                     tools:text="Linh Nguyen" />
 
+                <LinearLayout
+                    android:id="@+id/layout_state"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:visibility="visible">
 
+                    <ImageView
+                        android:id="@+id/image_status_admin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:elevation="5dp"
+                        android:padding="@dimen/border_avatar_screen_profile_size"
+                        android:src="@drawable/ic_room_admin"></ImageView>
+
+                    <TextView
+                        android:id="@+id/text_admin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/margin_normal"
+                        android:text="@string/title_room_admin" />
+                </LinearLayout>
             </LinearLayout>
 
             <View
@@ -175,8 +198,8 @@
                 android:layout_height="match_parent"
                 android:layout_alignBottom="@+id/relativeLayout"
                 android:layout_alignParentEnd="true"
-                android:scaleType="center"
                 android:layout_marginStart="@dimen/margin_small"
+                android:scaleType="center"
                 android:visibility="@{isEditTextNameFocus ? View.VISIBLE : View.GONE}"
                 app:srcCompat="?attr/done_editext" />
 
@@ -229,8 +252,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
-                app:tint="?attr/color_icon_app_default"
-                app:srcCompat="@drawable/ic_location" />
+                app:srcCompat="@drawable/ic_location"
+                app:tint="?attr/color_icon_app_default" />
 
             <TextView
                 android:id="@+id/tvLocation"
@@ -260,8 +283,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
-                app:tint="?attr/color_icon_app_default"
-                app:srcCompat="@drawable/ic_phone" />
+                app:srcCompat="@drawable/ic_phone"
+                app:tint="?attr/color_icon_app_default" />
 
             <TextView
                 android:id="@+id/tvPhone"

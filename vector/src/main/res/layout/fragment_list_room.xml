@@ -212,7 +212,7 @@
                         android:layout_marginTop="32dp"
                         android:text="@string/you_have_no_chat_room"
                         android:textAlignment="center"
-                        android:textColor="@color/text_color"
+                        android:textColor="?attr/color_text_app_default"
                         android:textSize="@dimen/text_13_sp" />
 
                     <Button
@@ -223,7 +223,7 @@
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="32dp"
                         android:layout_marginBottom="47dp"
-                        android:background="@drawable/bg_button_gradient_blue"
+                        android:background="?attr/background_button_select"
                         android:text="@string/start_room_chat"
                         android:textColor="@color/main_text_color"
                         android:textSize="@dimen/text_15_sp"
@@ -298,7 +298,6 @@
                         app:layout_constraintLeft_toRightOf="@+id/txtDirectMessages"
                         app:layout_constraintTop_toTopOf="@+id/txtDirectMessages" />
 
-
                     <ImageView
                         android:id="@+id/image_view_create_new_direct"
                         android:layout_width="wrap_content"
@@ -333,7 +332,7 @@
                         android:layout_marginTop="32dp"
                         android:text="@string/you_have_no_chat_derect"
                         android:textAlignment="center"
-                        android:textColor="@color/text_color"
+                        android:textColor="?attr/color_text_app_default"
                         android:textSize="@dimen/text_13_sp" />
 
                     <Button
@@ -344,7 +343,7 @@
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="32dp"
                         android:layout_marginBottom="47dp"
-                        android:background="@drawable/bg_button_gradient_blue"
+                        android:background="?attr/background_button_select"
                         android:text="@string/start_direct_chat"
                         android:textColor="@color/main_text_color"
                         android:textSize="@dimen/text_15_sp"
