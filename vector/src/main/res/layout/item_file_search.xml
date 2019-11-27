@@ -7,6 +7,10 @@
         <variable
             name="result"
             type="vmodev.clearkeep.viewmodelobjects.MessageRoomUser" />
+
+        <variable
+            name="file"
+            type="vmodev.clearkeep.jsonmodels.FileContent" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,10 +22,10 @@
 
         <FrameLayout
             android:id="@+id/frameAvatar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="@dimen/image_avatar_status_size"
-            android:layout_height="@dimen/image_avatar_status_size">
+            android:layout_height="@dimen/image_avatar_status_size"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/circle_image_view_avatar"
@@ -32,38 +36,38 @@
         </FrameLayout>
 
         <LinearLayout
-            app:layout_constraintLeft_toRightOf="@+id/frameAvatar"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="70dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginVertical="@dimen/margin_small"
-            android:orientation="vertical">
+            android:layout_marginStart="70dp"
+            android:orientation="vertical"
+            app:layout_constraintLeft_toRightOf="@+id/frameAvatar"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:textColor="?attr/color_text_app_default"
-                android:layout_marginEnd="30dp"
-                android:singleLine="true"
                 android:id="@+id/text_view_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_normal"
-                android:text="@{result.user.get(0).name}"
+                android:layout_marginEnd="30dp"
+                android:singleLine="true"
+                android:text="@{file.content.body }"
+                android:textColor="?attr/color_text_app_default"
                 android:textSize="@dimen/text_17_sp" />
 
             <TextView
                 android:id="@+id/text_view_last_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{result.message.encryptedContent}"
+                android:text="@{file.content.info.size +``}"
                 android:textColor="?attr/color_text_app_default"
                 android:textSize="@dimen/text_13_sp" />
         </LinearLayout>
 
-        <!--        <TextView-->
-        <!--            android:id="@+id/text_view_time"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_gravity="center_vertical" />-->
+                <TextView
+                    android:id="@+id/text_view_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

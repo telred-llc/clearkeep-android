@@ -7,14 +7,16 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import com.google.gson.Gson
 import im.vector.R
 import im.vector.databinding.ItemFileSearchBinding
 import im.vector.databinding.ItemMessageSearchBinding
 import vmodev.clearkeep.bindingadapters.interfaces.IDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
+import vmodev.clearkeep.jsonmodels.FileContent
 import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
 
-class ListSearchFileRecyclerViewAdapter constructor(appExecutors: AppExecutors,
+class ListSearchFileRecyclerViewAdapter constructor(appExecutors: AppExecutors, private val gson: Gson,
                                                     private val dataBindingComponent: IDataBindingComponent,
                                                     diffCallback: DiffUtil.ItemCallback<MessageRoomUser>,
                                                     private val itemClick: (MessageRoomUser) -> Unit?)
@@ -35,6 +37,7 @@ class ListSearchFileRecyclerViewAdapter constructor(appExecutors: AppExecutors,
 
     override fun onBindViewHolder(p0: DataBoundViewHolder<ItemFileSearchBinding>, p1: Int) {
         p0.binding.result = getItem(p1);
+        p0.binding.file = gson.fromJson(getItem(p1).message?.encryptedContent, FileContent::class.java)
     }
 
 

@@ -13,7 +13,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.bumptech.glide.Glide
+import com.google.gson.Gson
+import com.google.gson.JsonElement
 import com.google.gson.JsonParser
+import im.vector.Matrix
 import im.vector.R
 import im.vector.databinding.FragmentSearchFilesBinding
 import im.vector.extensions.hideKeyboard
@@ -21,6 +25,8 @@ import im.vector.util.SlidableMediaInfo
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import org.matrix.androidsdk.core.JsonUtils
+import org.matrix.androidsdk.core.callback.SimpleApiCallback
+import org.matrix.androidsdk.crypto.model.crypto.EncryptedFileInfo
 import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.message.ImageMessage
 import org.matrix.androidsdk.rest.model.message.Message
@@ -30,8 +36,10 @@ import vmodev.clearkeep.adapters.ListSearchMessageRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
+import vmodev.clearkeep.jsonmodels.FileContent
 import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchFilesFragmentViewModel
+import java.io.File
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
@@ -63,6 +71,7 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
     private var disposable: Disposable? = null;
     private val listMessage = ArrayList<MessageRoomUser>();
     private lateinit var listSearchAdapter: ListSearchFileRecyclerViewAdapter;
+    private lateinit var gson: Gson
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +96,8 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerView.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
-        listSearchAdapter = ListSearchFileRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
+        gson = Gson()
+        listSearchAdapter = ListSearchFileRecyclerViewAdapter(appExecutors = appExecutors, gson = gson, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
             override fun areItemsTheSame(p0: MessageRoomUser, p1: MessageRoomUser): Boolean {
                 return p0.message?.id == p1.message?.id
             }
@@ -96,7 +106,7 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
                 return p0.room?.get(0)?.avatarUrl == p1.room?.get(0)?.avatarUrl && p0.message?.encryptedContent == p1.message?.encryptedContent
                         && p0.user?.get(0)?.name == p1.user?.get(0)?.name;
             }
-        },dataBindingComponent = dataBinding) { messageSearchText ->
+        }, dataBindingComponent = dataBinding) { messageSearchText ->
             val intentRoom = Intent(this.activity, RoomActivity::class.java);
             messageSearchText.room?.let {
                 intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, it[0].id);
@@ -112,21 +122,28 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
         binding.recyclerView.adapter = listSearchAdapter;
         viewModelFactory.getViewModel().getListMessageRoomUser().observe(viewLifecycleOwner, Observer {
             it?.data?.let {
-                viewModelFactory.getViewModel().decryptListMessage(it).observe(this, Observer {
+                viewModelFactory.getViewModel().decryptListMessage(it).observe(viewLifecycleOwner, Observer {
                     it?.data?.let {
                         listMessage.addAll(it);
+                        val jelem = gson.fromJson(it?.get(0).message?.encryptedContent, JsonElement::class.java);
+                        val imageMessage = JsonUtils.toImageMessage(jelem)
+                        imageMessage.getUrl()?.let { it1 -> imageMessage.mimeType?.let { it2 -> showImage(it1, it2,imageMessage.file) } }
+                        Log.d("XXXXX", it?.get(0).message?.encryptedContent)
                     }
                 })
             }
         })
         viewModelFactory.getViewModel().setTimeForRefreshLoadMessage(Calendar.getInstance().timeInMillis);
+
         getSearchViewTextChange()?.subscribe { s ->
             val listFilter = listMessage.filter { messageRoomUser ->
                 messageRoomUser.message?.let {
-                    if (s.isNullOrEmpty())
+                    var data = gson.fromJson(it.encryptedContent, FileContent::class.java)
+
+                    if (data.getContent()?.getBody().isNullOrEmpty())
                         false;
                     else
-                        it.encryptedContent.contains(s)
+                        data.getContent()?.getBody()?.contains(s)
 
                 } ?: run {
                     false
@@ -221,5 +238,25 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
 
     override fun unSelectedFragment() {
         disposable?.dispose();
+    }
+
+    fun showImage(mediaUrl: String, mimeType: String, ecry: EncryptedFileInfo) {
+        val session = Matrix.getInstance(activity!!).defaultSession;
+        val mediaCache = session.mediaCache
+        mediaCache.createTmpDecryptedMediaFile(mediaUrl, -1, -1, mimeType, ecry, object : SimpleApiCallback<File>() {
+            override fun onSuccess(mediaFile: File?) {
+                if (null != mediaFile) {
+                    // Max zoom is PhotoViewAttacher.DEFAULT_MAX_SCALE (= 3)
+                    // I set the max zoom to 1 because it leads to too many crashed due to high memory usage.
+                    val maxZoom = 1f // imageView.getMaximumScale();
+
+                    Glide.with(activity!!)
+                            .load(mediaFile)
+                            // Override image wanted size, to keep good quality when image is zoomed in
+                            .override((binding.imgDemo.getWidth() * maxZoom).toInt(), (binding.imgDemo.getHeight() * maxZoom).toInt())
+                            .into(binding.imgDemo)
+                }
+            }
+        })
     }
 }
