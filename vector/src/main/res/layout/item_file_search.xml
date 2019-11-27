@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -10,64 +11,77 @@
 
         <variable
             name="file"
-            type="vmodev.clearkeep.jsonmodels.FileContent" />
+            type="org.matrix.androidsdk.rest.model.message.ImageMessage" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal"
         android:baselineAligned="false"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
         <FrameLayout
             android:id="@+id/frameAvatar"
-            android:layout_width="@dimen/image_avatar_status_size"
-            android:layout_height="@dimen/image_avatar_status_size"
+            android:layout_width="40dp"
+            android:layout_height="80dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/circle_image_view_avatar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_launcher_app"
-                app:room="@{result.room.get(0)}" />
+                app:imageFile="@{file}" />
         </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginVertical="@dimen/margin_small"
-            android:layout_marginStart="70dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintLeft_toRightOf="@+id/frameAvatar"
-            app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/text_view_name"
+            >
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin_normal"
-                android:layout_marginEnd="30dp"
-                android:singleLine="true"
-                android:text="@{file.content.body }"
-                android:textColor="?attr/color_text_app_default"
-                android:textSize="@dimen/text_17_sp" />
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/text_view_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@{file.body }"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:textColor="?attr/color_text_app_default"
+                    android:textSize="@dimen/text_17_sp"
+                    tools:text="File_03690863"
+                    android:layout_toStartOf="@+id/tvTime"
+                    android:layout_alignParentStart="true"
+                    />
+                <TextView
+                    android:id="@+id/tvTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_11_sp"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="?attr/color_text_app_default"
+                    app:timeStamp="@{result.message.createdAt}"
+                    />
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/text_view_last_message"
+                android:layout_marginTop="@dimen/margin_normal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{file.content.info.size +``}"
                 android:textColor="?attr/color_text_app_default"
-                android:textSize="@dimen/text_13_sp" />
+                android:textSize="@dimen/text_13_sp"
+                android:layout_marginHorizontal="@dimen/margin_normal"
+                app:dataSize="@{file}"
+                />
         </LinearLayout>
 
-                <TextView
-                    android:id="@+id/text_view_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
 </layout>

@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -125,10 +126,6 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
                 viewModelFactory.getViewModel().decryptListMessage(it).observe(viewLifecycleOwner, Observer {
                     it?.data?.let {
                         listMessage.addAll(it);
-                        val jelem = gson.fromJson(it?.get(0).message?.encryptedContent, JsonElement::class.java);
-                        val imageMessage = JsonUtils.toImageMessage(jelem)
-                        imageMessage.getUrl()?.let { it1 -> imageMessage.mimeType?.let { it2 -> showImage(it1, it2,imageMessage.file) } }
-                        Log.d("XXXXX", it?.get(0).message?.encryptedContent)
                     }
                 })
             }
@@ -138,33 +135,19 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
         getSearchViewTextChange()?.subscribe { s ->
             val listFilter = listMessage.filter { messageRoomUser ->
                 messageRoomUser.message?.let {
-                    var data = gson.fromJson(it.encryptedContent, FileContent::class.java)
+                    val jsonElement = gson.fromJson(it.encryptedContent, JsonElement::class.java);
+                    val imageMessage = JsonUtils.toImageMessage(jsonElement)
 
-                    if (data.getContent()?.getBody().isNullOrEmpty())
+                    if (imageMessage.body.isNullOrEmpty())
                         false;
                     else
-                        data.getContent()?.getBody()?.contains(s)
+                        imageMessage.body.contains(s)
 
                 } ?: run {
                     false
                 }
             }
             listSearchAdapter.submitList(listFilter)
-//           if (listFilter.size >0){
-//               val parser = JsonParser();
-//               val event = Event(listFilter[0].message?.messageType, parser.parse(listFilter[0].message?.encryptedContent).asJsonObject, listFilter[0].message?.userId, listFilter[0].message?.roomId);
-//               val message = JsonUtils.toMessage(event.content)
-//               val imageMessage = message as ImageMessage
-//               val info = SlidableMediaInfo()
-//               info.mMessageType = Message.MSGTYPE_IMAGE
-//               info.mFileName = imageMessage.body
-//               info.mMediaUrl = imageMessage.getUrl()
-//               Log.d("aaa",info.mMediaUrl.toString())
-//           }
-        }
-        binding.recyclerView.setOnTouchListener { v, event ->
-            hideKeyboard()
-            return@setOnTouchListener true
         }
         binding.lifecycleOwner = viewLifecycleOwner;
     }
@@ -238,25 +221,5 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
 
     override fun unSelectedFragment() {
         disposable?.dispose();
-    }
-
-    fun showImage(mediaUrl: String, mimeType: String, ecry: EncryptedFileInfo) {
-        val session = Matrix.getInstance(activity!!).defaultSession;
-        val mediaCache = session.mediaCache
-        mediaCache.createTmpDecryptedMediaFile(mediaUrl, -1, -1, mimeType, ecry, object : SimpleApiCallback<File>() {
-            override fun onSuccess(mediaFile: File?) {
-                if (null != mediaFile) {
-                    // Max zoom is PhotoViewAttacher.DEFAULT_MAX_SCALE (= 3)
-                    // I set the max zoom to 1 because it leads to too many crashed due to high memory usage.
-                    val maxZoom = 1f // imageView.getMaximumScale();
-
-                    Glide.with(activity!!)
-                            .load(mediaFile)
-                            // Override image wanted size, to keep good quality when image is zoomed in
-                            .override((binding.imgDemo.getWidth() * maxZoom).toInt(), (binding.imgDemo.getHeight() * maxZoom).toInt())
-                            .into(binding.imgDemo)
-                }
-            }
-        })
     }
 }

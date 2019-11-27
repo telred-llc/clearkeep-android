@@ -24,12 +24,6 @@
         android:id="@+id/layout_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <ImageView
-            android:id="@+id/imgDemo"
-            android:src="@drawable/ic_svg_video"
-            android:layout_width="90dp"
-            android:layout_height="90dp"/>
-
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

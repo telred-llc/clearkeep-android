@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -18,16 +19,24 @@ import im.vector.Matrix
 import im.vector.R
 import im.vector.ui.themes.ThemeUtils
 import im.vector.util.VectorUtils
+import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.callback.SimpleApiCallback
 import org.matrix.androidsdk.crypto.MXDecryptionException
+import org.matrix.androidsdk.crypto.model.crypto.EncryptedFileInfo
+import org.matrix.androidsdk.db.MXMediaCache
+import org.matrix.androidsdk.listeners.MXMediaDownloadListener
 import org.matrix.androidsdk.rest.model.Event
+import org.matrix.androidsdk.rest.model.message.ImageMessage
 import vmodev.clearkeep.enums.EventTypeEnum
 import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
 import vmodev.clearkeep.jsonmodels.FileContent
 import vmodev.clearkeep.jsonmodels.MessageContent
+import vmodev.clearkeep.ultis.formatSizeData
 import vmodev.clearkeep.ultis.toDateTime
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
+import java.io.File
 
 class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapters, ISwitchCompatViewBindingAdapters, CardViewBindingAdapters {
 
@@ -196,13 +205,57 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
             }
         }
     }
-    override fun bindImageFile(imageView: ImageView, fileContent: FileContent) {
-        val session = Matrix.getInstance(imageView.context.applicationContext).defaultSession;
-        val mediaCache = session.mediaCache
-        fileContent?.let {
 
+    override fun bindImageFile(imageView: ImageView, fileContent: ImageMessage) {
+        fileContent?.let {
+            val session = Matrix.getInstance(imageView.context.applicationContext).defaultSession;
+            val mediaCache = session.mediaCache;
+            val data = it.mimeType?.split("/")
+            when (data?.get(0)) {
+                "video", "image" -> {
+                    loadImageCache(imageView, it, session, mediaCache)
+                }
+                "audio" -> {
+                    imageView.setImageDrawable(ContextCompat.getDrawable(imageView.context, R.drawable.ic_file_search_audio))
+                }
+                else -> {
+                    imageView.setImageDrawable(ContextCompat.getDrawable(imageView.context, R.drawable.ic_search_file_other))
+                }
+            }
         }
 
+    }
+
+    override fun bindDataSize(textView: TextView, fileContent: ImageMessage?) {
+        fileContent?.info?.size?.let {
+            textView.text = String().formatSizeData(it)
+        }
+    }
+
+
+    private fun loadImageCache(imageView: ImageView, fileContent: ImageMessage, session: MXSession, mediaCache: MXMediaCache) {
+        if (mediaCache.isMediaCached(fileContent.file.url, fileContent.mimeType)) {
+            mediaCache.createTmpDecryptedMediaFile(fileContent.file.url, fileContent.mimeType, fileContent.file, object : SimpleApiCallback<File>() {
+                override fun onSuccess(mediaFile: File?) {
+                    if (null != mediaFile) {
+                        val maxZoom = 1f // imageView.getMaximumScale();
+                        Glide.with(imageView.context)
+                                .load(mediaFile)
+                                // Override image wanted size, to keep good quality when image is zoomed in
+                                .into(imageView)
+                    }
+                }
+            })
+        } else {
+            val downloadId = mediaCache.downloadMedia(imageView.context.applicationContext, session.homeServerConfig, fileContent.file.url, fileContent.mimeType, fileContent.file)
+            mediaCache.addDownloadListener(downloadId, object : MXMediaDownloadListener() {
+                override fun onDownloadComplete(downloadId: String?) {
+                    super.onDownloadComplete(downloadId)
+                    loadImageCache(imageView, fileContent, session, mediaCache)
+                }
+
+            })
+        }
     }
 
 }

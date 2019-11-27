@@ -1,5 +1,6 @@
 package vmodev.clearkeep.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingComponent
@@ -8,9 +9,12 @@ import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.google.gson.Gson
+import com.google.gson.JsonElement
 import im.vector.R
 import im.vector.databinding.ItemFileSearchBinding
 import im.vector.databinding.ItemMessageSearchBinding
+import org.matrix.androidsdk.core.JsonUtils
+import org.matrix.androidsdk.rest.model.message.ImageMessage
 import vmodev.clearkeep.bindingadapters.interfaces.IDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.jsonmodels.FileContent
@@ -37,7 +41,9 @@ class ListSearchFileRecyclerViewAdapter constructor(appExecutors: AppExecutors, 
 
     override fun onBindViewHolder(p0: DataBoundViewHolder<ItemFileSearchBinding>, p1: Int) {
         p0.binding.result = getItem(p1);
-        p0.binding.file = gson.fromJson(getItem(p1).message?.encryptedContent, FileContent::class.java)
+        val jsonElement = gson.fromJson(getItem(p1).message?.encryptedContent, JsonElement::class.java);
+        val imageMessage = JsonUtils.toImageMessage(jsonElement)
+        p0.binding.file = imageMessage
     }
 
 
