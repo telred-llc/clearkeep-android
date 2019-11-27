@@ -129,10 +129,12 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment, IMXEventL
         }, dataBinding) { user ->
             if (application.getUserId().compareTo(user.userId) == 0) {
                 val userIntent = Intent(activity, ProfileActivity::class.java)
+                userIntent.putExtra(ViewUserProfileActivity.ROOM_ID, roomID)
                 startActivity(userIntent)
             } else {
                 val otherUserIntent = Intent(activity, ViewUserProfileActivity::class.java)
                 otherUserIntent.putExtra(ViewUserProfileActivity.USER_ID, user.userId)
+                otherUserIntent.putExtra(ViewUserProfileActivity.ROOM_ID, roomID)
                 startActivity(otherUserIntent)
             }
         }
@@ -154,10 +156,12 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment, IMXEventL
         }, dataBinding) { user ->
             if (application.getUserId().compareTo(user.userId) == 0) {
                 val userIntent = Intent(activity, ProfileActivity::class.java)
+                userIntent.putExtra(ViewUserProfileActivity.ROOM_ID, roomID)
                 startActivity(userIntent)
             } else {
                 val otherUserIntent = Intent(activity, ViewUserProfileActivity::class.java)
                 otherUserIntent.putExtra(ViewUserProfileActivity.USER_ID, user.userId)
+                otherUserIntent.putExtra(ViewUserProfileActivity.ROOM_ID, roomID)
                 startActivity(otherUserIntent)
             }
         }
@@ -215,6 +219,7 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment, IMXEventL
 
     override fun onLiveEventsChunkProcessed(p0: String?, p1: String?) {
         Log.e("Tag", "--- onLiveEventsChunkProcessed: type: ${p0}, ${p1}")
+        mRoom?.getActiveMembersAsync(callBackMembersAsync!!)
     }
 
     override fun onBingEvent(p0: Event?, p1: RoomState?, p2: BingRule?) {

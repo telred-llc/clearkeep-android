@@ -45,8 +45,9 @@ class ListUserRecyclerViewAdapterCustom(val mContext: Context, val mRoomId: Stri
     }
 
     override fun onBindViewHolder(dataBoundViewHolder: DataBoundViewHolder<ItemUserMemberGroupsBinding>, position: Int) {
-        dataBoundViewHolder.binding.user = getItem(position)
-        dataBoundViewHolder.binding.user?.let {
+        val item = getItem(position)
+        dataBoundViewHolder.binding.user = item
+        item?.let {
             val memberPowerLevel = powerLevels?.getUserPowerLevel(it.userId)!!.toFloat()
             if (memberPowerLevel == CommonActivityUtils.UTILS_POWER_LEVEL_ADMIN) {
                 dataBoundViewHolder.binding.imageStatusAdmin.visibility = View.VISIBLE

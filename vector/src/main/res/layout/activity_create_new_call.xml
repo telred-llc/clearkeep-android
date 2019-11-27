@@ -102,6 +102,7 @@
 
 
         <Button
+            android:background="?attr/background_button_select"
             android:id="@+id/btnCreate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -110,7 +111,6 @@
             android:layout_marginTop="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_marginBottom="@dimen/margin_large"
-            android:background="@drawable/bg_button_gradient_grey"
             android:enabled="false"
             android:text="@string/create"
             android:textColor="@color/color_white" />

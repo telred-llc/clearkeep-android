@@ -26,7 +26,7 @@ import vmodev.clearkeep.viewmodels.interfaces.AbstractListRoomFragmentViewModel
 import javax.inject.Inject
 import javax.inject.Named
 
-private const val GO_TO_ROOM_CODE = 12432;
+private const val GO_TO_ROOM_CODE = 12432
 
 /**
  * A simple [Fragment] subclass.
@@ -40,41 +40,40 @@ private const val GO_TO_ROOM_CODE = 12432;
 class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
-    lateinit var viewModelFactory: IViewModelFactory<AbstractListRoomFragmentViewModel>;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractListRoomFragmentViewModel>
     @Inject
-    lateinit var applcation: IApplication;
-    @Inject
-    @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
-    lateinit var listGroupRoomAdapter: IListRoomRecyclerViewAdapter;
+    lateinit var applcation: IApplication
     @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
-    lateinit var listDirectRoomAdapter: IListRoomRecyclerViewAdapter;
+    lateinit var listGroupRoomAdapter: IListRoomRecyclerViewAdapter
     @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
-    lateinit var listFavouritesRoomAdapter: IListRoomRecyclerViewAdapter;
+    lateinit var listDirectRoomAdapter: IListRoomRecyclerViewAdapter
+    @Inject
+    @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
+    lateinit var listFavouritesRoomAdapter: IListRoomRecyclerViewAdapter
 
-    private lateinit var binding: FragmentListRoomBinding;
-    private var onGoingRoom = false;
+    private lateinit var binding: FragmentListRoomBinding
+    private var onGoingRoom = false
     private var roomList: Int? = 0
     private var derectList: Int? = 0
     private var currentRoomId: String = ""
     private var alertDialog: AlertDialog? = null
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment     
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list_room, container, false, dataBinding.getDataBindingComponent());
-        return binding.root;
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list_room, container, false, dataBinding.getDataBindingComponent())
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initListDirectChat();
-        initListGroupChat();
-        initListFavouriteChat();
+        binding.buttonStartGroupChat.isSelected = true
+        binding.buttonStartDirectChat.isSelected = true
+        initListDirectChat()
+        initListGroupChat()
+        initListFavouriteChat()
         viewModelFactory.getViewModel().joinRoomWithIdResult().observe(this.viewLifecycleOwner, Observer {
             it?.data?.let {
                 if (it.id != currentRoomId) {
@@ -82,54 +81,53 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
                     gotoRoom(currentRoomId)
                 }
             }
-        });
+        })
         binding.buttonStartDirectChat.setOnClickListener {
-            val intentNewChat = Intent(context, NewRoomActivity::class.java);
-            intentNewChat.putExtra(NewRoomActivity.START_WITH, 0);
-            startActivity(intentNewChat);
+            val intentNewChat = Intent(context, NewRoomActivity::class.java)
+            intentNewChat.putExtra(NewRoomActivity.START_WITH, 0)
+            startActivity(intentNewChat)
         }
         binding.buttonStartGroupChat.setOnClickListener {
-            val intentNewChat = Intent(context, NewRoomActivity::class.java);
-            intentNewChat.putExtra(NewRoomActivity.START_WITH, 1);
-            startActivity(intentNewChat);
+            val intentNewChat = Intent(context, NewRoomActivity::class.java)
+            intentNewChat.putExtra(NewRoomActivity.START_WITH, 1)
+            startActivity(intentNewChat)
         }
         binding.imageViewCreateNewRoom.setOnClickListener {
-            val intentNewChat = Intent(context, NewRoomActivity::class.java);
-            intentNewChat.putExtra(NewRoomActivity.START_WITH, 1);
-            startActivity(intentNewChat);
+            val intentNewChat = Intent(context, NewRoomActivity::class.java)
+            intentNewChat.putExtra(NewRoomActivity.START_WITH, 1)
+            startActivity(intentNewChat)
         }
         binding.imageViewCreateNewDirect.setOnClickListener {
-            val intentNewChat = Intent(context, NewRoomActivity::class.java);
-            intentNewChat.putExtra(NewRoomActivity.START_WITH, 0);
-            startActivity(intentNewChat);
+            val intentNewChat = Intent(context, NewRoomActivity::class.java)
+            intentNewChat.putExtra(NewRoomActivity.START_WITH, 0)
+            startActivity(intentNewChat)
         }
 
         binding.lifecycleOwner = viewLifecycleOwner
 
-        viewModelFactory.getViewModel().setFiltersDirectRoom(arrayOf(1, 65));
-        viewModelFactory.getViewModel().setFiltersGroupRoom(arrayOf(2, 66));
+        viewModelFactory.getViewModel().setFiltersDirectRoom(arrayOf(1, 65))
+        viewModelFactory.getViewModel().setFiltersGroupRoom(arrayOf(2, 66))
         viewModelFactory.getViewModel().setFiltersFavouriteRoom(arrayOf(129, 130))
     }
 
     private fun initListFavouriteChat() {
-//        listFavouritesRoomAdapter.setDataBindingComponent(dataBindingComponent);
         listFavouritesRoomAdapter.setOnItemClick { room, i ->
             room.room?.let {
                 when (i) {
                     3 -> {
                         if (!onGoingRoom) {
-                            onGoingRoom = true;
-                            gotoRoom(it.id);
+                            onGoingRoom = true
+                            gotoRoom(it.id)
                         }
                     }
                     0 -> {
-                        previewRoom(it.id);
+                        previewRoom(it.id)
                     }
                     1 -> {
-                        joinRoom(it.id);
+                        joinRoom(it.id)
                     }
                     2 -> {
-                        declineInvite(it.id);
+                        declineInvite(it.id)
                     }
                 }
             }
@@ -141,71 +139,70 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
                         .setOnItemClickListener { dialog, item, view, position ->
                             when (position) {
                                 3 -> {
-                                    declineInvite(it.id);
+                                    declineInvite(it.id)
                                 }
                                 1 -> {
-                                    binding.room = viewModelFactory.getViewModel().getRemoveFromFavouriteResult();
-                                    viewModelFactory.getViewModel().setRemoveFromFavourite(it.id);
+                                    binding.room = viewModelFactory.getViewModel().getRemoveFromFavouriteResult()
+                                    viewModelFactory.getViewModel().setRemoveFromFavourite(it.id)
                                 }
                                 2 -> {
-                                    val intent = Intent(this.activity, RoomSettingsActivity::class.java);
-                                    intent.putExtra(RoomSettingsActivity.ROOM_ID, it.id);
-                                    startActivity(intent);
+                                    val intent = Intent(this.activity, RoomSettingsActivity::class.java)
+                                    intent.putExtra(RoomSettingsActivity.ROOM_ID, it.id)
+                                    startActivity(intent)
                                 }
                                 4 -> {
-                                    val intentGoRoom = Intent(activity, MessageListActivity::class.java);
-                                    intentGoRoom.putExtra(MessageListActivity.ROOM_ID, it.id);
-                                    startActivity(intentGoRoom);
+                                    val intentGoRoom = Intent(activity, MessageListActivity::class.java)
+                                    intentGoRoom.putExtra(MessageListActivity.ROOM_ID, it.id)
+                                    startActivity(intentGoRoom)
                                 }
                                 0 -> {
-                                    changeNotificationState(it.id, it.notificationState);
+                                    changeNotificationState(it.id, it.notificationState)
                                 }
                             }
 
-                            dialog?.dismiss();
-                        }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create();
-                bottomDialog.show();
+                            dialog?.dismiss()
+                        }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create()
+                bottomDialog.show()
             }
         }
         binding.recyclerViewListFavouritesChat.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
-        binding.recyclerViewListFavouritesChat.isNestedScrollingEnabled = false;
-        binding.recyclerViewListFavouritesChat.adapter = listFavouritesRoomAdapter.getAdapter();
-        binding.listFavourites = viewModelFactory.getViewModel().getListFavouritesResult();
+        binding.recyclerViewListFavouritesChat.isNestedScrollingEnabled = false
+        binding.recyclerViewListFavouritesChat.adapter = listFavouritesRoomAdapter.getAdapter()
+        binding.listFavourites = viewModelFactory.getViewModel().getListFavouritesResult()
         viewModelFactory.getViewModel().getListFavouritesResult().observe(this.viewLifecycleOwner, Observer {
-            listFavouritesRoomAdapter.getAdapter().submitList(it?.data);
-        });
+            listFavouritesRoomAdapter.getAdapter().submitList(it?.data)
+        })
         binding.linearLayoutFavourites.setOnClickListener {
-            binding.expandableLayoutListFavourites.isExpanded = !binding.expandableLayoutListFavourites.isExpanded;
+            binding.expandableLayoutListFavourites.isExpanded = !binding.expandableLayoutListFavourites.isExpanded
             if (binding.expandableLayoutListFavourites.isExpanded) {
-                binding.imageViewDirectionFavourites.rotation = 0f;
+                binding.imageViewDirectionFavourites.rotation = 0f
             } else {
-                binding.imageViewDirectionFavourites.rotation = 270f;
+                binding.imageViewDirectionFavourites.rotation = 270f
             }
         }
     }
 
     private fun initListDirectChat() {
         listDirectRoomAdapter.getflag(0)
-//        listDirectRoomAdapter.setDataBindingComponent(dataBindingComponent);
-        listDirectRoomAdapter.setLifeCycleOwner(viewLifecycleOwner, applcation.getUserId());
+        listDirectRoomAdapter.setLifeCycleOwner(viewLifecycleOwner, applcation.getUserId())
 
         listDirectRoomAdapter.setOnItemClick { room, i ->
             room.room?.let {
                 when (i) {
                     3 -> {
                         if (!onGoingRoom) {
-                            onGoingRoom = true;
-                            gotoRoom(it.id);
+                            onGoingRoom = true
+                            gotoRoom(it.id)
                         }
                     }
                     0 -> {
-                        previewRoom(it.id);
+                        previewRoom(it.id)
                     }
                     1 -> {
-                        joinRoom(it.id);
+                        joinRoom(it.id)
                     }
                     2 -> {
-                        declineInvite(it.id);
+                        declineInvite(it.id)
                     }
                 }
             }
@@ -217,53 +214,53 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
                         .setOnItemClickListener { dialog, item, view, position ->
                             when (position) {
                                 3 -> {
-                                    declineInvite(it.id);
+                                    declineInvite(it.id)
                                 }
                                 1 -> {
-                                    binding.room = viewModelFactory.getViewModel().getAddToFavouriteResult();
-                                    viewModelFactory.getViewModel().setAddToFavouriteRoomId(it.id);
+                                    binding.room = viewModelFactory.getViewModel().getAddToFavouriteResult()
+                                    viewModelFactory.getViewModel().setAddToFavouriteRoomId(it.id)
                                 }
                                 2 -> {
-                                    val intent = Intent(this.activity, RoomSettingsActivity::class.java);
-                                    intent.putExtra(RoomSettingsActivity.ROOM_ID, it.id);
-                                    startActivity(intent);
+                                    val intent = Intent(this.activity, RoomSettingsActivity::class.java)
+                                    intent.putExtra(RoomSettingsActivity.ROOM_ID, it.id)
+                                    startActivity(intent)
                                 }
                                 4 -> {
-                                    val intentGoRoom = Intent(activity, MessageListActivity::class.java);
-                                    intentGoRoom.putExtra(MessageListActivity.ROOM_ID, it.id);
-                                    startActivity(intentGoRoom);
+                                    val intentGoRoom = Intent(activity, MessageListActivity::class.java)
+                                    intentGoRoom.putExtra(MessageListActivity.ROOM_ID, it.id)
+                                    startActivity(intentGoRoom)
                                 }
                                 0 -> {
-                                    changeNotificationState(it.id, it.notificationState);
+                                    changeNotificationState(it.id, it.notificationState)
                                 }
                             }
 
-                            dialog?.dismiss();
-                        }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create();
-                bottomDialog.show();
+                            dialog?.dismiss()
+                        }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create()
+                bottomDialog.show()
             }
         }
         binding.recyclerViewListDirectChat.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
-        binding.recyclerViewListDirectChat.isNestedScrollingEnabled = false;
-        binding.recyclerViewListDirectChat.adapter = listDirectRoomAdapter.getAdapter();
-        binding.listDirect = viewModelFactory.getViewModel().getListDirectRoomResult();
+        binding.recyclerViewListDirectChat.isNestedScrollingEnabled = false
+        binding.recyclerViewListDirectChat.adapter = listDirectRoomAdapter.getAdapter()
+        binding.listDirect = viewModelFactory.getViewModel().getListDirectRoomResult()
         viewModelFactory.getViewModel().getListDirectRoomResult().observe(this.viewLifecycleOwner, Observer {
-            listDirectRoomAdapter.getAdapter().submitList(it?.data);
+            listDirectRoomAdapter.getAdapter().submitList(it?.data)
             if (it?.status == Status.SUCCESS) {
-                derectList = it?.data!!.size
+                derectList = it.data!!.size
             }
 
-        });
+        })
         binding.linearLayoutDirect.setOnClickListener {
-            binding.expandableLayoutListDirect.isExpanded = !binding.expandableLayoutListDirect.isExpanded;
+            binding.expandableLayoutListDirect.isExpanded = !binding.expandableLayoutListDirect.isExpanded
             if (binding.expandableLayoutListDirect.isExpanded) {
-                binding.imageViewDirectionDirect.rotation = 0f;
+                binding.imageViewDirectionDirect.rotation = 0f
                 if (derectList == 0) {
                     binding.layoutEmptyDerect.visibility = View.VISIBLE
                 }
 
             } else {
-                binding.imageViewDirectionDirect.rotation = 270f;
+                binding.imageViewDirectionDirect.rotation = 270f
                 if (derectList == 0) {
                     binding.layoutEmptyDerect.visibility = View.GONE
                 }
@@ -274,8 +271,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
 
     private fun initListGroupChat() {
         listGroupRoomAdapter.getflag(0)
-//        listGroupRoomAdapter.setDataBindingComponent(dataBindingComponent);
-        listGroupRoomAdapter.setLifeCycleOwner(viewLifecycleOwner, applcation.getUserId());
+        listGroupRoomAdapter.setLifeCycleOwner(viewLifecycleOwner, applcation.getUserId())
         listGroupRoomAdapter.setOnItemLongClick { room ->
             room.room?.let {
                 val bottomDialog = DialogPlus.newDialog(this.context)
@@ -283,30 +279,30 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
                         .setOnItemClickListener { dialog, item, view, position ->
                             when (position) {
                                 3 -> {
-                                    declineInvite(it.id);
+                                    declineInvite(it.id)
                                 }
                                 1 -> {
-                                    binding.room = viewModelFactory.getViewModel().getAddToFavouriteResult();
-                                    viewModelFactory.getViewModel().setAddToFavouriteRoomId(it.id);
+                                    binding.room = viewModelFactory.getViewModel().getAddToFavouriteResult()
+                                    viewModelFactory.getViewModel().setAddToFavouriteRoomId(it.id)
                                 }
                                 2 -> {
-                                    val intent = Intent(this.activity, RoomSettingsActivity::class.java);
-                                    intent.putExtra(RoomSettingsActivity.ROOM_ID, it.id);
-                                    startActivity(intent);
+                                    val intent = Intent(this.activity, RoomSettingsActivity::class.java)
+                                    intent.putExtra(RoomSettingsActivity.ROOM_ID, it.id)
+                                    startActivity(intent)
                                 }
                                 4 -> {
-                                    val intentGoRoom = Intent(activity, MessageListActivity::class.java);
-                                    intentGoRoom.putExtra(MessageListActivity.ROOM_ID, it.id);
-                                    startActivity(intentGoRoom);
+                                    val intentGoRoom = Intent(activity, MessageListActivity::class.java)
+                                    intentGoRoom.putExtra(MessageListActivity.ROOM_ID, it.id)
+                                    startActivity(intentGoRoom)
                                 }
                                 0 -> {
-                                    changeNotificationState(it.id, it.notificationState);
+                                    changeNotificationState(it.id, it.notificationState)
                                 }
                             }
 
-                            dialog?.dismiss();
-                        }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create();
-                bottomDialog.show();
+                            dialog?.dismiss()
+                        }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create()
+                bottomDialog.show()
             }
         }
         listGroupRoomAdapter.setOnItemClick { room, i ->
@@ -314,42 +310,42 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
                 when (i) {
                     3 -> {
                         if (!onGoingRoom) {
-                            onGoingRoom = true;
-                            gotoRoom(it.id);
+                            onGoingRoom = true
+                            gotoRoom(it.id)
                         }
                     }
                     0 -> {
-                        previewRoom(it.id);
+                        previewRoom(it.id)
                     }
                     1 -> {
-                        joinRoom(it.id);
+                        joinRoom(it.id)
                     }
                     2 -> {
-                        declineInvite(it.id);
+                        declineInvite(it.id)
                     }
                 }
             }
         }
         binding.recyclerViewListGroupChat.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
-        binding.recyclerViewListGroupChat.isNestedScrollingEnabled = false;
-        binding.recyclerViewListGroupChat.adapter = listGroupRoomAdapter.getAdapter();
-        binding.listGroup = viewModelFactory.getViewModel().getListGroupRoomResult();
+        binding.recyclerViewListGroupChat.isNestedScrollingEnabled = false
+        binding.recyclerViewListGroupChat.adapter = listGroupRoomAdapter.getAdapter()
+        binding.listGroup = viewModelFactory.getViewModel().getListGroupRoomResult()
         viewModelFactory.getViewModel().getListGroupRoomResult().observe(this.viewLifecycleOwner, Observer {
             listGroupRoomAdapter.getAdapter().submitList(it?.data)
             if (it?.status == Status.SUCCESS) {
-                roomList = it?.data!!.size
+                roomList = it.data!!.size
             }
 
-        });
+        })
         binding.linearLayoutGroup.setOnClickListener {
-            binding.expandableLayoutListGroup.isExpanded = !binding.expandableLayoutListGroup.isExpanded;
+            binding.expandableLayoutListGroup.isExpanded = !binding.expandableLayoutListGroup.isExpanded
             if (binding.expandableLayoutListGroup.isExpanded) {
-                binding.imageViewDirectionGroup.rotation = 0f;
+                binding.imageViewDirectionGroup.rotation = 0f
                 if (roomList == 0) {
                     binding.layoutEmptyRoom.visibility = View.VISIBLE
                 }
             } else {
-                binding.imageViewDirectionGroup.rotation = 270f;
+                binding.imageViewDirectionGroup.rotation = 270f
                 if (roomList == 0) {
                     binding.layoutEmptyRoom.visibility = View.GONE
                 }
@@ -359,34 +355,34 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun previewRoom(roomId: String) {
-        val intent = Intent(this.context, PreviewInviteRoomActivity::class.java);
-        intent.putExtra("ROOM_ID", roomId);
-        startActivity(intent);
+        val intent = Intent(this.context, PreviewInviteRoomActivity::class.java)
+        intent.putExtra("ROOM_ID", roomId)
+        startActivity(intent)
     }
 
     private fun joinRoom(roomId: String) {
-        binding.room = viewModelFactory.getViewModel().joinRoomWithIdResult();
-        viewModelFactory.getViewModel().setRoomIdForJoinRoom(roomId);
+        binding.room = viewModelFactory.getViewModel().joinRoomWithIdResult()
+        viewModelFactory.getViewModel().setRoomIdForJoinRoom(roomId)
     }
 
     private fun gotoRoom(roomId: String) {
-        val intentRoom = Intent(this.context, RoomActivity::class.java);
-        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, applcation.getUserId());
-        intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId);
-        startActivityForResult(intentRoom, GO_TO_ROOM_CODE);
+        val intentRoom = Intent(this.context, RoomActivity::class.java)
+        intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, applcation.getUserId())
+        intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId)
+        startActivityForResult(intentRoom, GO_TO_ROOM_CODE)
 
 //        val intentRoom = Intent(this.context, RoomDetailActivity::class.java);
 //        intentRoom.putExtra(RoomDetailActivity.ROOM_ID, roomId);
 //        startActivity(intentRoom);
 
-        onGoingRoom = false;
+        onGoingRoom = false
     }
 
     private fun changeNotificationState(roomId: String, state: Byte) {
-        binding.room = viewModelFactory.getViewModel().getChangeNotificationStateResult();
+        binding.room = viewModelFactory.getViewModel().getChangeNotificationStateResult()
         when (state) {
-            0x01.toByte(), 0x02.toByte() -> viewModelFactory.getViewModel().setChangeNotificationState(roomId, 0x04);
-            0x04.toByte() -> viewModelFactory.getViewModel().setChangeNotificationState(roomId, 0x02);
+            0x01.toByte(), 0x02.toByte() -> viewModelFactory.getViewModel().setChangeNotificationState(roomId, 0x04)
+            0x04.toByte() -> viewModelFactory.getViewModel().setChangeNotificationState(roomId, 0x02)
         }
     }
 
@@ -394,7 +390,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == GO_TO_ROOM_CODE && resultCode == -1) {
             data?.let {
-                binding.room = viewModelFactory.getViewModel().getUpdateRoomNotifyResult();
+                binding.room = viewModelFactory.getViewModel().getUpdateRoomNotifyResult()
                 viewModelFactory.getViewModel().setIdForUpdateRoomNotify(it.getStringExtra(RoomActivity.RESULT_ROOM_ID))
             }
         }
@@ -405,13 +401,13 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
                 .setMessage(R.string.do_you_want_leave_room)
                 .setNegativeButton(R.string.no, null)
                 .setPositiveButton(R.string.yes) { dialog, v ->
-                    binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult();
-                    viewModelFactory.getViewModel().setLeaveRoomId(roomId);
+                    binding.leaveRoom = viewModelFactory.getViewModel().getLeaveRoomWithIdResult()
+                    viewModelFactory.getViewModel().setLeaveRoomId(roomId)
 
-                }.show();
+                }.show()
     }
 
     override fun getFragment(): Fragment {
-        return this;
+        return this
     }
 }
