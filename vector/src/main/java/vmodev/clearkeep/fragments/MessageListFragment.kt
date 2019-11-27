@@ -19,7 +19,6 @@ import im.vector.BuildConfig
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.*
-import vmodev.clearkeep.adapters.MessagesAdapter
 import im.vector.extensions.getFingerprintHumanReadable
 import im.vector.fragments.VectorMessagesFragment
 import im.vector.fragments.VectorReadReceiptsDialogFragment
@@ -55,10 +54,10 @@ import vmodev.clearkeep.activities.ProfileActivity
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.activities.UserInformationActivity
 import vmodev.clearkeep.activities.ViewUserProfileActivity
+import vmodev.clearkeep.adapters.MessagesAdapter
 import vmodev.clearkeep.fragments.BaseMessageListFragment.Companion.VERIF_REQ_CODE
 import java.io.File
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessagesAdapterActionsListener {
 
@@ -236,7 +235,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
 
         // when an event id is defined, display a thick green line to its left
         if (args!!.containsKey(ARG_EVENT_ID)) {
-            mAdapter.setSearchedEventId(args!!.getString(ARG_EVENT_ID, ""))
+            mAdapter.setSearchedEventId(args.getString(ARG_EVENT_ID, ""))
         }
 
         if (null != mRoom) {
@@ -272,10 +271,8 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
 
     override fun onPause() {
         super.onPause()
-
         mAdapter.setVectorMessagesAdapterActionsListener(null)
         mAdapter.onPause()
-
         mVectorImageGetter!!.setListener(null)
     }
 
@@ -412,16 +409,16 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
             deviceInfoLayout.visibility = View.VISIBLE
 
             textView = layout.findViewById(R.id.encrypted_info_name)
-            textView.text = deviceInfo!!.displayName()
+            textView.text = deviceInfo.displayName()
 
             textView = layout.findViewById(R.id.encrypted_info_device_id)
-            textView.text = deviceInfo!!.deviceId
+            textView.text = deviceInfo.deviceId
 
             textView = layout.findViewById(R.id.encrypted_info_verification)
 
-            if (deviceInfo!!.isUnknown || deviceInfo!!.isUnverified) {
+            if (deviceInfo.isUnknown || deviceInfo.isUnverified) {
                 textView.setText(R.string.encryption_information_not_verified)
-            } else if (deviceInfo!!.isVerified) {
+            } else if (deviceInfo.isVerified) {
                 textView.setText(R.string.encryption_information_verified)
             } else {
                 textView.setText(R.string.encryption_information_blocked)
@@ -444,7 +441,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
         // the current id cannot be blocked, verified...
         if (!TextUtils.equals(encryptedEventContent.device_id, mSession.credentials.deviceId)) {
             if ((null == event.cryptoError) && (null != deviceInfo)) {
-                if (deviceInfo!!.isUnverified || deviceInfo!!.isUnknown) {
+                if (deviceInfo.isUnverified || deviceInfo.isUnknown) {
                     builder.setNegativeButton(R.string.encryption_information_verify) { dialog, id ->
                         CommonActivityUtils.displayDeviceVerificationDialog(deviceInfo,
                                 event.getSender(), mSession, activity, this, VERIF_REQ_CODE)
@@ -452,17 +449,17 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
 
                     builder.setPositiveButton(R.string.encryption_information_block) { dialog, id ->
                         mSession.crypto!!.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_BLOCKED,
-                                deviceInfo!!.deviceId, event.getSender(), mDeviceVerificationCallback)
+                                deviceInfo.deviceId, event.getSender(), mDeviceVerificationCallback)
                     }
-                } else if (deviceInfo!!.isVerified) {
+                } else if (deviceInfo.isVerified) {
                     builder.setNegativeButton(R.string.encryption_information_unverify) { dialog, id ->
                         mSession.crypto!!.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_UNVERIFIED,
-                                deviceInfo!!.deviceId, event.getSender(), mDeviceVerificationCallback)
+                                deviceInfo.deviceId, event.getSender(), mDeviceVerificationCallback)
                     }
 
                     builder.setPositiveButton(R.string.encryption_information_block) { dialog, id ->
                         mSession.crypto!!.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_BLOCKED,
-                                deviceInfo!!.deviceId, event.getSender(), mDeviceVerificationCallback)
+                                deviceInfo.deviceId, event.getSender(), mDeviceVerificationCallback)
                     }
                 } else { // BLOCKED
                     builder.setNegativeButton(R.string.encryption_information_verify) { dialog, id ->
@@ -472,7 +469,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
 
                     builder.setPositiveButton(R.string.encryption_information_unblock) { dialog, id ->
                         mSession.crypto!!.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_UNVERIFIED,
-                                deviceInfo!!.deviceId, event.getSender(), mDeviceVerificationCallback)
+                                deviceInfo.deviceId, event.getSender(), mDeviceVerificationCallback)
                     }
                 }
             }
@@ -487,7 +484,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
                         override fun onSuccess(info: MXUsersDevicesMap<MXDeviceInfo>) {
                             val activity = activity
 
-                            if ((null != activity) && !activity!!.isFinishing && dialog.isShowing) {
+                            if ((null != activity) && !activity.isFinishing && dialog.isShowing) {
                                 val encryptedEventContent = JsonUtils.toEncryptedEventContent(event.wireContent.asJsonObject)
 
                                 val deviceInfo = mSession.crypto!!
@@ -590,7 +587,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
                         quotedTextMsg += "\n\n"
                     }
                 }
-                (attachedActivity as RoomActivity).insertQuoteInTextEditor(quotedTextMsg + "\n\n")
+                attachedActivity.insertQuoteInTextEditor(quotedTextMsg + "\n\n")
             }
         } else if ((action == R.id.ic_action_vector_share) || (action == R.id.ic_action_vector_forward) || (action == R.id.ic_action_vector_save)) {
             //
@@ -601,13 +598,13 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
             var encryptedFileInfo: EncryptedFileInfo? = null
 
             if (message is ImageMessage) {
-                val imageMessage = message as ImageMessage
+                val imageMessage = message
 
                 mediaUrl = imageMessage.getUrl()
                 mediaMimeType = imageMessage.mimeType
                 encryptedFileInfo = imageMessage.file
             } else if (message is VideoMessage) {
-                val videoMessage = message as VideoMessage
+                val videoMessage = message
 
                 mediaUrl = videoMessage.getUrl()
                 encryptedFileInfo = videoMessage.file
@@ -616,7 +613,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
                     mediaMimeType = videoMessage.info.mimetype
                 }
             } else if (message is FileMessage) {
-                val fileMessage = message as FileMessage
+                val fileMessage = message
 
                 mediaUrl = fileMessage.getUrl()
                 mediaMimeType = fileMessage.mimeType
@@ -687,7 +684,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
 
             if ((null != attachedActivity) && (attachedActivity is RoomActivity) && !textMsg.isNullOrEmpty()) {
                 // Quote all paragraphs instead
-                (attachedActivity as RoomActivity).insertSelectedMessageInTextEditor(event, textMsg);
+                attachedActivity.insertSelectedMessageInTextEditor(event, textMsg)
             }
         }
     }
@@ -767,7 +764,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
         val mediasCache = Matrix.getInstance(activity)!!.mediaCache
         // check if the media has already been downloaded
         if (mediasCache!!.isMediaCached(mediaUrl, mediaMimeType)) {
-            mediasCache!!.createTmpDecryptedMediaFile(mediaUrl, mediaMimeType, encryptedFileInfo, object : SimpleApiCallback<File>() {
+            mediasCache.createTmpDecryptedMediaFile(mediaUrl, mediaMimeType, encryptedFileInfo, object : SimpleApiCallback<File>() {
                 override fun onSuccess(file: File?) {
                     var file: File? = file ?: return
                     // sanity check
@@ -781,7 +778,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
                                         if (menuAction == ACTION_VECTOR_SAVE) {
                                             Toast.makeText(activity, getText(R.string.media_slider_saved), Toast.LENGTH_LONG).show()
                                         } else {
-                                            openMedia(activity!!, savedMediaPath!!, mediaMimeType!!)
+                                            openMedia(activity!!, savedMediaPath, mediaMimeType!!)
                                         }
                                     }
                                 }
@@ -796,12 +793,12 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
                     } else {
                         // Move the file to the Share folder, to avoid it to be deleted because the Activity will be paused while the
                         // user select an application to share the file
-                        file = mediasCache!!.moveToShareFolder(file!!, trimmedFileName)
+                        file = mediasCache.moveToShareFolder(file!!, trimmedFileName)
 
                         // shared / forward
                         var mediaUri: Uri? = null
                         try {
-                            mediaUri = FileProvider.getUriForFile(activity!!, BuildConfig.APPLICATION_ID + ".fileProvider", file);
+                            mediaUri = FileProvider.getUriForFile(activity!!, BuildConfig.APPLICATION_ID + ".fileProvider", file)
                         } catch (e: Exception) {
                             Log.e(LOG_TAG, "onMediaAction VectorContentProvider.absolutePathToUri: " + e.message, e)
                         }
@@ -823,17 +820,17 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
             })
         } else {
             // else download it
-            val downloadId = mediasCache!!.downloadMedia(activity!!.applicationContext,
+            val downloadId = mediasCache.downloadMedia(activity!!.applicationContext,
                     mSession.homeServerConfig, mediaUrl, mediaMimeType, encryptedFileInfo)
             mAdapter.notifyDataSetChanged()
 
             if (null != downloadId) {
-                mediasCache!!.addDownloadListener(downloadId, object : MXMediaDownloadListener() {
+                mediasCache.addDownloadListener(downloadId, object : MXMediaDownloadListener() {
                     override fun onDownloadError(downloadId: String?, jsonElement: JsonElement?) {
                         val error = JsonUtils.toMatrixError(jsonElement)
 
-                        if ((null != error) && error!!.isSupportedErrorCode && (null != activity)) {
-                            Toast.makeText(activity, error!!.localizedMessage, Toast.LENGTH_LONG).show()
+                        if ((null != error) && error.isSupportedErrorCode && (null != activity)) {
+                            Toast.makeText(activity, error.localizedMessage, Toast.LENGTH_LONG).show()
                         }
                     }
 
@@ -914,7 +911,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
                 continue
             }
 
-            val message = JsonUtils.toMessage(row!!.event.content)
+            val message = JsonUtils.toMessage(row.event.content)
 
             if (Message.MSGTYPE_IMAGE == message.msgtype) {
                 val imageMessage = message as ImageMessage
@@ -954,9 +951,9 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
         var url: String? = null
 
         if (mediaMessage is ImageMessage) {
-            url = (mediaMessage as ImageMessage).getUrl()
+            url = mediaMessage.getUrl()
         } else if (mediaMessage is VideoMessage) {
-            url = (mediaMessage as VideoMessage).getUrl()
+            url = mediaMessage.getUrl()
         }
 
         // sanity check
@@ -1053,14 +1050,14 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
 //        } catch (e: Exception) {
 //            Log.e(LOG_TAG, "## onAvatarClick() failed " + e.message, e)
 //        }
-        var intent: Intent? = null;
+        var intent: Intent? = null
         if (userId.compareTo(mSession.myUserId) != 0) {
-            intent = Intent(this.context, ViewUserProfileActivity::class.java);
-            intent.putExtra(ViewUserProfileActivity.USER_ID, userId);
+            intent = Intent(this.context, ViewUserProfileActivity::class.java)
+            intent.putExtra(ViewUserProfileActivity.USER_ID, userId)
         } else {
-            intent = Intent(this.context, ProfileActivity::class.java);
+            intent = Intent(this.context, ProfileActivity::class.java)
         }
-        startActivity(intent);
+        startActivity(intent)
     }
 
     override fun onAvatarLongClick(userId: String): Boolean {
@@ -1069,7 +1066,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
                 val state = mRoom.state
 
                 if (null != state) {
-                    val displayName = state!!.getMemberName(userId)
+                    val displayName = state.getMemberName(userId)
                     if (!TextUtils.isEmpty(displayName)) {
                         (activity as VectorRoomActivity).insertUserDisplayNameInTextEditor(displayName)
                     }
@@ -1101,10 +1098,10 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
 
             var fragment = fm.findFragmentByTag(TAG_FRAGMENT_RECEIPTS_DIALOG) as VectorReadReceiptsDialogFragment?
             if (fragment != null) {
-                fragment!!.dismissAllowingStateLoss()
+                fragment.dismissAllowingStateLoss()
             }
             fragment = VectorReadReceiptsDialogFragment.newInstance(mSession.myUserId, mRoom.roomId, eventId)
-            fragment!!.show(fm, TAG_FRAGMENT_RECEIPTS_DIALOG)
+            fragment.show(fm, TAG_FRAGMENT_RECEIPTS_DIALOG)
         } catch (e: Exception) {
             Log.e(LOG_TAG, "## onMoreReadReceiptClick() failed " + e.message, e)
         }
@@ -1117,7 +1114,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
 
             var fragment = fm.findFragmentByTag(TAG_FRAGMENT_USER_GROUPS_DIALOG) as VectorUserGroupsDialogFragment?
             if (fragment != null) {
-                fragment!!.dismissAllowingStateLoss()
+                fragment.dismissAllowingStateLoss()
             }
             fragment = VectorUserGroupsDialogFragment.newInstance(mSession.myUserId, userId, groupIds)
             fragment!!.show(fm, TAG_FRAGMENT_USER_GROUPS_DIALOG)
@@ -1134,10 +1131,10 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
 
                 if (null != universalParams) {
                     // open the member sheet from the current activity
-                    if (universalParams!!.containsKey(PermalinkUtils.ULINK_MATRIX_USER_ID_KEY)) {
+                    if (universalParams.containsKey(PermalinkUtils.ULINK_MATRIX_USER_ID_KEY)) {
                         val roomDetailsIntent = Intent(activity, VectorMemberDetailsActivity::class.java)
                         roomDetailsIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MEMBER_ID,
-                                universalParams!![PermalinkUtils.ULINK_MATRIX_USER_ID_KEY])
+                                universalParams[PermalinkUtils.ULINK_MATRIX_USER_ID_KEY])
                         roomDetailsIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MATRIX_ID, mSession.credentials.userId)
                         activity!!.startActivityForResult(roomDetailsIntent, VectorRoomActivity.GET_MENTION_REQUEST_CODE)
                     } else {
@@ -1233,15 +1230,15 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
 
     override fun shouldHighlightEvent(event: Event?): Boolean {
         // sanity check
-        if ((null == event) || (null == event!!.eventId)) {
+        if ((null == event) || (null == event.eventId)) {
             return false
         }
 
-        val eventId = event!!.eventId
+        val eventId = event.eventId
         val status = mHighlightStatusByEventId[eventId]
 
         if (null != status) {
-            return status!!
+            return status
         }
 
         val res = (null != mSession.dataHandler.bingRulesManager.fulfilledHighlightBingRule(event))
@@ -1251,7 +1248,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
     }
 
     companion object {
-        private val LOG_TAG = MessageListFragment::class.java!!.simpleName
+        private val LOG_TAG = MessageListFragment::class.java.simpleName
 
         private val TAG_FRAGMENT_RECEIPTS_DIALOG = "TAG_FRAGMENT_RECEIPTS_DIALOG"
         private val TAG_FRAGMENT_USER_GROUPS_DIALOG = "TAG_FRAGMENT_USER_GROUPS_DIALOG"

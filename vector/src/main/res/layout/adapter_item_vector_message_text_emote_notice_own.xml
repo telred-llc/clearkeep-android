@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <include
@@ -53,49 +53,59 @@
                 </LinearLayout>
             </RelativeLayout>
 
+
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/messagesAdapter_body_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                app:cardCornerRadius="@dimen/margin_normal"
-                app:cardBackgroundColor="@color/message_own_background">
+                android:layout_marginEnd="4dp"
+                app:cardCornerRadius="@dimen/margin_normal">
 
-                <!-- the body is here -->
-                <RelativeLayout
-                    android:id="@+id/messagesAdapter_text_layout"
+                <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/margin_normal">
-
-                    <ImageView
-                        android:id="@+id/message_adapter_e2e_icon"
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:src="@drawable/e2e_verified"
-                        android:visibility="gone"/>
-
-                    <TextView
-                        android:id="@+id/messagesAdapter_body"
+                    android:background="?attr/background_message_text_emote_notice_own">
+                    <!-- the body is here -->
+                    <RelativeLayout
+                        android:id="@+id/messagesAdapter_text_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:textIsSelectable="false"
-                        android:textSize="14sp"
-                        tools:text="A body www.example.org" />
-
-                    <TextView
-                        android:id="@+id/messagesAdapter_re_request_e2e_key"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/messagesAdapter_body"
                         android:layout_gravity="start"
-                        android:text="@string/e2e_re_request_encryption_key"
-                        android:textIsSelectable="false"
-                        android:textSize="14sp" />
+                        android:layout_margin="@dimen/margin_normal">
 
-                </RelativeLayout>
+                        <ImageView
+                            android:id="@+id/message_adapter_e2e_icon"
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:src="@drawable/e2e_verified"
+                            android:visibility="gone" />
 
+                        <TextView
+                            android:id="@+id/messagesAdapter_body"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start"
+                            android:layout_marginStart="4dp"
+                            android:layout_toEndOf="@id/message_adapter_e2e_icon"
+                            android:textColor="#ffffff"
+                            android:textIsSelectable="false"
+                            android:textSize="14sp"
+                            tools:text="A body www.example.org" />
+
+                        <TextView
+                            android:id="@+id/messagesAdapter_re_request_e2e_key"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/messagesAdapter_body"
+                            android:layout_alignStart="@+id/messagesAdapter_body"
+                            android:layout_gravity="start"
+                            android:text="@string/e2e_re_request_encryption_key"
+                            android:textColor="#ffffff"
+                            android:textIsSelectable="false"
+                            android:textSize="14sp" />
+                    </RelativeLayout>
+                </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
@@ -117,8 +127,8 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/avatar"
             android:scaleType="centerCrop"
-            tools:src="@tools:sample/avatars"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            tools:src="@tools:sample/avatars" />
     </LinearLayout>
 
     <LinearLayout
