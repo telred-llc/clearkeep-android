@@ -28,6 +28,14 @@
         <variable
             name="room"
             type="LiveData&lt;Resource&lt;Room>>" />
+
+        <variable
+            name="powerLevel"
+            type="Integer" />
+
+        <variable
+            name="myAdmin"
+            type="Integer" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -53,9 +61,8 @@
                 android:layout_centerInParent="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/padding_normal"
-                app:srcCompat="@drawable/ic_back"
                 android:tint="?attr/color_icon_app_default"
-                />
+                app:srcCompat="@drawable/ic_back" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -64,22 +71,20 @@
                 android:layout_marginStart="@dimen/margin_small"
                 android:layout_toEndOf="@+id/imgBack"
                 android:text="@string/profile"
-                android:textSize="@dimen/text_20_sp"
                 android:textColor="?attr/color_text_app_default"
-                />
+                android:textSize="@dimen/text_20_sp" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgChat"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
+                android:layout_marginEnd="@dimen/margin_normal"
+                android:layout_toStartOf="@+id/imgCall"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/padding_normal"
-                app:srcCompat="@drawable/ic_message"
-                android:layout_toStartOf="@+id/imgCall"
-                android:layout_marginEnd="@dimen/margin_normal"
                 android:tint="?attr/color_icon_app_default"
-                />
+                app:srcCompat="@drawable/ic_message" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/imgCall"
@@ -87,12 +92,11 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
+                android:layout_marginEnd="@dimen/margin_normal"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/padding_normal"
-                app:srcCompat="@drawable/ic_call_phone"
-                android:layout_marginEnd="@dimen/margin_normal"
                 android:tint="?attr/color_icon_app_default"
-                />
+                app:srcCompat="@drawable/ic_call_phone" />
 
 
             <!--            <RelativeLayout-->
@@ -144,22 +148,44 @@
                 app:civ_border_width="@dimen/border_status_active_size" />
         </FrameLayout>
 
-
         <TextView
             android:id="@+id/tvName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_xxl"
             android:layout_marginTop="@dimen/margin_medium"
-            app:layout_constraintTop_toBottomOf="@+id/frAvatarProfile"
-            android:text="@{user.data.name}"
-            android:singleLine="true"
             android:gravity="center"
-            tools:text="Nguyen van Qui"
-            android:textSize="@dimen/text_21_sp"
+            android:singleLine="true"
+            android:text="@{user.data.name}"
             android:textColor="?attr/color_text_app_default"
-            />
+            android:textSize="@dimen/text_21_sp"
+            app:layout_constraintTop_toBottomOf="@+id/frAvatarProfile"
+            tools:text="Nguyen van Qui" />
 
+        <LinearLayout
+            android:id="@+id/layout_state"
+            visibleGone="@{powerLevel== 100}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/tvName">
+
+            <ImageView
+                android:id="@+id/image_status_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="5dp"
+                android:padding="@dimen/border_avatar_screen_profile_size"
+                android:src="@drawable/ic_room_admin"></ImageView>
+
+            <TextView
+                android:id="@+id/text_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_normal"
+                android:text="@string/title_room_admin" />
+        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/rlID"
@@ -175,9 +201,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
-                app:srcCompat="@drawable/ic_profile"
                 android:tint="?attr/color_icon_app_default"
-                />
+                app:srcCompat="@drawable/ic_profile" />
 
             <TextView
                 android:id="@+id/text_view_user_id"
@@ -208,9 +233,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
-                app:srcCompat="@drawable/ic_location"
                 android:tint="?attr/color_icon_app_default"
-                />
+                app:srcCompat="@drawable/ic_location" />
 
             <TextView
                 android:id="@+id/tvLocation"
@@ -240,9 +264,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
-                app:srcCompat="@drawable/ic_phone"
                 android:tint="?attr/color_icon_app_default"
-                />
+                app:srcCompat="@drawable/ic_phone" />
 
             <TextView
                 android:id="@+id/tvPhone"
@@ -254,18 +277,17 @@
                 android:text="+84 222 11 5550"
                 android:textColor="?attr/color_text_app_default"
                 android:textSize="@dimen/text_19_sp"
-                tools:text="+84 222 11 5550"
-                />
+                tools:text="+84 222 11 5550" />
         </RelativeLayout>
 
         <Button
-            android:id="@+id/button_sign_out"
+            android:id="@+id/button_make_admin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_normal"
             android:layout_marginTop="@dimen/margin_xl"
             android:layout_marginEnd="@dimen/margin_normal"
-            android:background="@drawable/bg_button_gradient_blue"
+            android:background="?attr/background_button_select"
             android:text="@string/room_participants_action_set_admin"
             android:textColor="@color/color_white"
             android:textStyle="bold"
@@ -277,114 +299,114 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-<!--    <FrameLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent">-->
+    <!--    <FrameLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent">-->
 
-<!--        <ProgressBar-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="center"-->
-<!--            app:visibleGone="@{userResource.status == Status.LOADING || room.status == Status.LOADING}" />-->
+    <!--        <ProgressBar-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_gravity="center"-->
+    <!--            app:visibleGone="@{userResource.status == Status.LOADING || room.status == Status.LOADING}" />-->
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:orientation="vertical">-->
+    <!--        <LinearLayout-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="match_parent"-->
+    <!--            android:orientation="vertical">-->
 
-<!--            <androidx.appcompat.widget.Toolbar-->
-<!--                android:id="@+id/toolbar"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content" />-->
+    <!--            <androidx.appcompat.widget.Toolbar-->
+    <!--                android:id="@+id/toolbar"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content" />-->
 
-<!--            <FrameLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="250dp">-->
+    <!--            <FrameLayout-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="250dp">-->
 
-<!--                <ImageView-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:src="@color/accent_color_dark"-->
-<!--                    app:imageUrl="@{user.data.avatarUrl}" />-->
+    <!--                <ImageView-->
+    <!--                    android:layout_width="match_parent"-->
+    <!--                    android:layout_height="match_parent"-->
+    <!--                    android:src="@color/accent_color_dark"-->
+    <!--                    app:imageUrl="@{user.data.avatarUrl}" />-->
 
-<!--                <LinearLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="70dp"-->
-<!--                    android:layout_gravity="bottom"-->
-<!--                    android:background="@color/transparent_black_50"-->
-<!--                    android:orientation="horizontal">-->
+    <!--                <LinearLayout-->
+    <!--                    android:layout_width="match_parent"-->
+    <!--                    android:layout_height="70dp"-->
+    <!--                    android:layout_gravity="bottom"-->
+    <!--                    android:background="@color/transparent_black_50"-->
+    <!--                    android:orientation="horizontal">-->
 
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_gravity="center_vertical"-->
-<!--                        android:layout_marginHorizontal="10dp"-->
-<!--                        android:text="@{user.data.name}"-->
-<!--                        android:textColor="@color/main_text_color"-->
-<!--                        android:textSize="@dimen/text_main_size" />-->
+    <!--                    <TextView-->
+    <!--                        android:layout_width="wrap_content"-->
+    <!--                        android:layout_height="wrap_content"-->
+    <!--                        android:layout_gravity="center_vertical"-->
+    <!--                        android:layout_marginHorizontal="10dp"-->
+    <!--                        android:text="@{user.data.name}"-->
+    <!--                        android:textColor="@color/main_text_color"-->
+    <!--                        android:textSize="@dimen/text_main_size" />-->
 
-<!--                    <de.hdodenhof.circleimageview.CircleImageView-->
-<!--                        android:layout_width="15dp"-->
-<!--                        android:layout_height="15dp"-->
-<!--                        android:layout_gravity="center_vertical"-->
-<!--                        android:src="@color/accent_color_light"-->
-<!--                        app:civ_border_color="@color/main_text_color"-->
-<!--                        app:civ_border_width="2dp" />-->
-<!--                </LinearLayout>-->
-<!--            </FrameLayout>-->
+    <!--                    <de.hdodenhof.circleimageview.CircleImageView-->
+    <!--                        android:layout_width="15dp"-->
+    <!--                        android:layout_height="15dp"-->
+    <!--                        android:layout_gravity="center_vertical"-->
+    <!--                        android:src="@color/accent_color_light"-->
+    <!--                        app:civ_border_color="@color/main_text_color"-->
+    <!--                        app:civ_border_width="2dp" />-->
+    <!--                </LinearLayout>-->
+    <!--            </FrameLayout>-->
 
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="horizontal">-->
+    <!--            <LinearLayout-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:orientation="horizontal">-->
 
-<!--                <Button-->
-<!--                    android:id="@+id/button_message"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_margin="10dp"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:background="@drawable/bg_button_gradient_blue"-->
-<!--                    android:text="@string/message"-->
-<!--                    android:textStyle="bold" />-->
+    <!--                <Button-->
+    <!--                    android:id="@+id/button_message"-->
+    <!--                    android:layout_width="0dp"-->
+    <!--                    android:layout_height="wrap_content"-->
+    <!--                    android:layout_margin="10dp"-->
+    <!--                    android:layout_weight="1"-->
+    <!--                    android:background="@drawable/bg_button_gradient_blue"-->
+    <!--                    android:text="@string/message"-->
+    <!--                    android:textStyle="bold" />-->
 
-<!--                <Button-->
-<!--                    android:id="@+id/button_call"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_margin="10dp"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:background="@drawable/bg_button_gradient_blue"-->
-<!--                    android:text="@string/call"-->
-<!--                    android:textStyle="bold" />-->
-<!--            </LinearLayout>-->
+    <!--                <Button-->
+    <!--                    android:id="@+id/button_call"-->
+    <!--                    android:layout_width="0dp"-->
+    <!--                    android:layout_height="wrap_content"-->
+    <!--                    android:layout_margin="10dp"-->
+    <!--                    android:layout_weight="1"-->
+    <!--                    android:background="@drawable/bg_button_gradient_blue"-->
+    <!--                    android:text="@string/call"-->
+    <!--                    android:textStyle="bold" />-->
+    <!--            </LinearLayout>-->
 
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_margin="10dp"-->
-<!--                android:text="@string/display_name"-->
-<!--                android:textColor="@android:color/darker_gray" />-->
+    <!--            <TextView-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_margin="10dp"-->
+    <!--                android:text="@string/display_name"-->
+    <!--                android:textColor="@android:color/darker_gray" />-->
 
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_margin="10dp"-->
-<!--                android:text="@{user.data.name}" />-->
+    <!--            <TextView-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_margin="10dp"-->
+    <!--                android:text="@{user.data.name}" />-->
 
-<!--            <TextView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_margin="10dp"-->
-<!--                android:text="@string/user_id"-->
-<!--                android:textColor="@android:color/darker_gray" />-->
+    <!--            <TextView-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_margin="10dp"-->
+    <!--                android:text="@string/user_id"-->
+    <!--                android:textColor="@android:color/darker_gray" />-->
 
-<!--            <TextView-->
-<!--                android:id="@+id/text_view_user_id"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_margin="10dp"-->
-<!--                android:text="@{user.data.id}" />-->
-<!--        </LinearLayout>-->
-<!--    </FrameLayout>-->
+    <!--            <TextView-->
+    <!--                android:id="@+id/text_view_user_id"-->
+    <!--                android:layout_width="match_parent"-->
+    <!--                android:layout_height="wrap_content"-->
+    <!--                android:layout_margin="10dp"-->
+    <!--                android:text="@{user.data.id}" />-->
+    <!--        </LinearLayout>-->
+    <!--    </FrameLayout>-->
 </layout>

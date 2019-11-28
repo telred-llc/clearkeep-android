@@ -3,7 +3,6 @@ package vmodev.clearkeep.activities
 import android.os.Bundle
 import android.os.Process
 import android.view.View
-import android.view.Window
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment

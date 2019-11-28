@@ -6,10 +6,13 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.text.TextUtils
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
@@ -24,6 +27,7 @@ import im.vector.extensions.showKeyboard
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_profile.*
 import org.matrix.androidsdk.MXSession
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
@@ -74,12 +78,26 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
         supportActionBar?.setTitle(R.string.profile)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-        binding.user = viewModelFactory.getViewModel().getCurrentUserResult()
-        viewModelFactory.getViewModel().getCurrentUserResult().observe(this, Observer {
-            this.user = it?.data
-        })
+        binding.colorTextDefault = getColorFromAttr(R.attr.color_text_app_default)
+        binding.colorTextFocus = getColorFromAttr(R.attr.color_text_note_app_default)
+        val user = viewModelFactory.getViewModel().getCurrentUserResult()
+        binding.user = user
         binding.checkNeedBackup = viewModelFactory.getViewModel().getNeedBackupWhenLogout()
         viewModelFactory.getViewModel().setIdForGetCurrentUser(mxSession.myUserId)
+        intent?.let {
+            binding.imageStatusAdmin.setColorFilter(ContextCompat.getColor(this, R.color.yellow))
+            val roomID = intent.getStringExtra(ROOM_ID)
+            if (!TextUtils.isEmpty(roomID)) {
+                val powerLevel = mxSession.dataHandler.getRoom(roomID).state.powerLevels.getUserPowerLevel(application.getUserId())
+                if (powerLevel.toFloat() == CommonActivityUtils.UTILS_POWER_LEVEL_ADMIN) {
+                    layout_state.visibility = View.VISIBLE
+                } else {
+                    layout_state.visibility = View.GONE
+                }
+            } else {
+                layout_state.visibility = View.GONE
+            }
+        }
         binding.buttonSignOut.setOnClickListener {
             if (mxSession.crypto?.keysBackup?.isEnabled == true) {
                 viewModelFactory.getViewModel().setCheckNeedBackupWhenSignOut(Calendar.getInstance().timeInMillis)
@@ -141,8 +159,6 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
             }
             return@setOnEditorActionListener false
         }
-        binding.colorTextDefault = getColorFromAttr(R.attr.color_text_app_default)
-        binding.colorTextFocus = getColorFromAttr(R.attr.color_text_note_app_default)
         binding.lifecycleOwner = this
     }
 
@@ -350,5 +366,8 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
 
     companion object {
         const val WAITING_FOR_BACK_UP_KEY = 10343
+
+        const val USER_ID = "USER_ID"
+        const val ROOM_ID = "ROOM_ID"
     }
 }
