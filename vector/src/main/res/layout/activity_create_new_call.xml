@@ -49,8 +49,7 @@
                 android:layout_centerInParent="true"
                 android:layout_margin="@dimen/margin_small"
                 android:src="@drawable/ic_search_gray_24dp"
-                android:tint="?attr/color_icon_app_default"
-                />
+                android:tint="?attr/color_icon_app_default" />
 
             <EditText
                 android:id="@+id/edit_text_query"
@@ -100,9 +99,7 @@
 
         </androidx.core.widget.NestedScrollView>
 
-
         <Button
-            android:background="?attr/background_button_select"
             android:id="@+id/btnCreate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -111,6 +108,7 @@
             android:layout_marginTop="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
             android:layout_marginBottom="@dimen/margin_large"
+            android:background="?attr/background_button_select"
             android:enabled="false"
             android:text="@string/create"
             android:textColor="@color/color_white" />

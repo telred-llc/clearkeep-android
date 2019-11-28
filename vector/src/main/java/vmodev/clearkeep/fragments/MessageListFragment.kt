@@ -3,6 +3,7 @@ package vmodev.clearkeep.fragments
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -26,7 +27,6 @@ import im.vector.fragments.VectorUserGroupsDialogFragment
 import im.vector.listeners.IMessagesAdapterActionsListener
 import im.vector.listeners.YesNoListener
 import im.vector.receiver.VectorUniversalLinkReceiver
-import im.vector.ui.themes.ThemeUtils
 import im.vector.util.*
 import im.vector.widgets.WidgetsManager
 import org.matrix.androidsdk.MXSession
@@ -56,6 +56,7 @@ import vmodev.clearkeep.activities.UserInformationActivity
 import vmodev.clearkeep.activities.ViewUserProfileActivity
 import vmodev.clearkeep.adapters.MessagesAdapter
 import vmodev.clearkeep.fragments.BaseMessageListFragment.Companion.VERIF_REQ_CODE
+import vmodev.clearkeep.ultis.SharedPreferencesUtils
 import java.io.File
 import java.util.*
 
@@ -227,35 +228,31 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        Log.d(LOG_TAG, "onCreateView")
-
-        val v = super.onCreateView(inflater, container, savedInstanceState)
-
+        val view = super.onCreateView(inflater, container, savedInstanceState)
         val args = arguments
-
         // when an event id is defined, display a thick green line to its left
         if (args!!.containsKey(ARG_EVENT_ID)) {
             mAdapter.setSearchedEventId(args.getString(ARG_EVENT_ID, ""))
         }
-
         if (null != mRoom) {
             mAdapter.mIsRoomEncrypted = mRoom.isEncrypted
         }
-
         if (null != mSession) {
             mVectorImageGetter = VectorImageGetter(mSession)
             mAdapter.setImageGetter(mVectorImageGetter!!)
         }
-
         mMessageListView.onItemClickListener = object : AdapterView.OnItemClickListener {
             override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 onRowClick(position)
             }
         }
-
-        v!!.setBackgroundColor(ThemeUtils.getColor(activity!!, android.R.attr.colorBackground))
-
-        return v
+        val isDarkMode = SharedPreferencesUtils.getBoolean(activity, "DARK_MODE")
+        if (isDarkMode) {
+            mMessageListView.setBackgroundColor(Color.parseColor("#101010"))
+        } else {
+            mMessageListView.setBackgroundColor(Color.parseColor("#FFFFFF"))
+        }
+        return view
     }
 
     override fun createMessagesFragmentInstance(roomId: String): MatrixMessagesFragment {
@@ -279,9 +276,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
 
     override fun onResume() {
         super.onResume()
-
         mAdapter.setVectorMessagesAdapterActionsListener(this)
-
         mVectorImageGetter!!.setListener { mAdapter.notifyDataSetChanged() }
     }
 
@@ -430,10 +425,8 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
             noDeviceInfoLayout.visibility = View.VISIBLE
             deviceInfoLayout.visibility = View.GONE
         }
-
         builder.setView(layout)
         builder.setTitle(R.string.encryption_information_title)
-
         builder.setNeutralButton(R.string.ok) { dialog, id ->
             // nothing to do
         }

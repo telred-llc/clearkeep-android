@@ -1,7 +1,6 @@
 package vmodev.clearkeep.activities
 
 import android.os.Bundle
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
@@ -10,7 +9,6 @@ import im.vector.R
 import im.vector.databinding.ActivityNewRoomBinding
 import kotlinx.android.synthetic.main.item_view_toolbar.view.*
 import vmodev.clearkeep.activities.interfaces.IActivity
-import vmodev.clearkeep.enums.TypeIconToolBar
 
 class NewRoomActivity : DataBindingDaggerActivity(), IActivity {
 
@@ -39,25 +37,6 @@ class NewRoomActivity : DataBindingDaggerActivity(), IActivity {
         }
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             binding.toolbar.tvTitle.text = destination.label
-        }
-    }
-
-    fun setIconToolBar(typeIconToolBar: TypeIconToolBar) {
-        if (typeIconToolBar == TypeIconToolBar.ICON_BACK) {
-            binding.toolbar.imgBack.setImageDrawable(
-                    ContextCompat.getDrawable(
-                            applicationContext, // Context
-                            R.drawable.ic_back // Drawable
-                    )
-            )
-        } else if (typeIconToolBar == TypeIconToolBar.ICON_CLOSE) {
-            binding.toolbar.imgBack.setImageDrawable(
-                    ContextCompat.getDrawable(
-                            applicationContext, // Context
-                            R.drawable.ic_close_black_24dp // Drawable
-                    ))
-        } else {
-
         }
     }
 

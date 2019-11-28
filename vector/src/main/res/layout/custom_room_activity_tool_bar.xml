@@ -47,25 +47,26 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/circle_background_blue"
-            android:src="@mipmap/ic_video_call_new" />
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:src="?attr/drawable_video_call" />
 
         <ImageView
             android:id="@+id/image_view_voice_call"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/circle_background_blue"
-            android:src="@mipmap/ic_room_call" />
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:src="?attr/drawable_call" />
 
         <ImageView
             android:id="@+id/room_end_call_image_view"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="10dp"
+            android:layout_margin="5dp"
+            android:padding="5dp"
             android:background="@drawable/circle_background"
             android:contentDescription="@string/call_ended"
             android:src="@mipmap/ic_call_red_new"
@@ -77,25 +78,24 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/circle_background_blue"
-            android:src="@mipmap/ic_global_search" />
-
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:src="?attr/drawable_search" />
 
     </LinearLayout>
 
     <!--<ImageView-->
-        <!--android:id="@+id/open_chat_header_arrow"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_centerVertical="true"-->
-        <!--android:layout_marginStart="5dp"-->
-        <!--android:layout_marginLeft="5dp"-->
-        <!--android:contentDescription="@string/open_chat_header"-->
-        <!--android:src="@drawable/ic_arrow_drop_down_white"-->
-        <!--android:visibility="gone"-->
-        <!--tools:ignore="RtlHardcoded" />-->
+    <!--android:id="@+id/open_chat_header_arrow"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentEnd="true"-->
+    <!--android:layout_alignParentRight="true"-->
+    <!--android:layout_centerVertical="true"-->
+    <!--android:layout_marginStart="5dp"-->
+    <!--android:layout_marginLeft="5dp"-->
+    <!--android:contentDescription="@string/open_chat_header"-->
+    <!--android:src="@drawable/ic_arrow_drop_down_white"-->
+    <!--android:visibility="gone"-->
+    <!--tools:ignore="RtlHardcoded" />-->
 
 </RelativeLayout>

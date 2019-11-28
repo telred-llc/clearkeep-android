@@ -11,17 +11,16 @@
         android:layout_height="match_parent"
         android:layout_marginStart="@dimen/margin_normal"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_back"
-        app:tint="?attr/color_tint_img_back"
-        />
+        app:srcCompat="@drawable/ic_arrow_back_light"
+        app:tint="?attr/color_tint_img_back" />
 
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_normal"
-        android:textSize="@dimen/text_20_sp"
         android:textColor="?attr/color_text_tool_bar"
+        android:textSize="@dimen/text_20_sp"
         app:layout_constraintBottom_toBottomOf="@+id/imgBack"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imgBack"

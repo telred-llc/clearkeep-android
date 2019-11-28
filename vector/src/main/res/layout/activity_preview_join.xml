@@ -57,7 +57,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:layout_height="match_parent"
                     android:paddingHorizontal="@dimen/padding_small"
-                    app:srcCompat="@drawable/ic_back"
+                    app:srcCompat="@drawable/ic_arrow_back_light"
                     app:tint="?attr/color_tint_img_back" />
 
                 <LinearLayout

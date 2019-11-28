@@ -3,12 +3,10 @@ package vmodev.clearkeep.activities
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.Window
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -43,35 +41,36 @@ import javax.inject.Inject
 class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
 
     @Inject
-    lateinit var viewModelFactory: ISplashActivityViewModelFactory;
+    lateinit var viewModelFactory: ISplashActivityViewModelFactory
     @Inject
-    lateinit var clearKeepApplication: IApplication;
+    lateinit var clearKeepApplication: IApplication
 
-    private lateinit var binding: ActivitySplashBinding;
+    private lateinit var binding: ActivitySplashBinding
 
     private val mListeners = HashMap<MXSession, IMXEventListener>()
     private val mDoneListeners = HashMap<MXSession, IMXEventListener>()
 
-    private var startFromLogin: String? = null;
+    private var startFromLogin: String? = null
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val window: Window = this.getWindow();
+        val window: Window = this.window
         window.statusBarColor = ContextCompat.getColor(this, R.color.color_statusbar_splash)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            this.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_splash);
-        startFromLogin = intent.getStringExtra(START_FROM_LOGIN);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_splash)
+        startFromLogin = intent.getStringExtra(START_FROM_LOGIN)
         if (!hasCredentials()) {
-            val intent = Intent(this, LoginActivity::class.java);
-            startActivity(intent);
-            finish();
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.putExtra(START_FROM_LOGIN, startFromLogin)
+            startActivity(intent)
+            finish()
         } else {
-            startApp();
+            startApp()
         }
-        binding.lifecycleOwner = this;
+        binding.lifecycleOwner = this
     }
 
     private fun startApp() {
@@ -91,10 +90,10 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
 
             // Force a clear cache
 //            Matrix.getInstance(this)!!.reloadSessions(this)
-            reloadSession(applicationContext);
+            reloadSession(applicationContext)
             return
         }
-        checkLazyLoadingStatus(sessions);
+        checkLazyLoadingStatus(sessions)
     }
 
     private fun reloadSession(context: Context) {
@@ -113,15 +112,15 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                 // clear FCM token before launching the splash screen
                 Matrix.getInstance(context)!!.pushManager.clearFcmData(object : SimpleApiCallback<Void>() {
                     override fun onSuccess(anything: Void?) {
-//                        startApp();
+//                        startApp()
 //                        val intent = Intent(context.applicationContext, SplashActivity::class.java)
 //                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
 //                        context.applicationContext.startActivity(intent)
 
-                        val intent = Intent(this@SplashActivity, SplashActivity::class.java);
-                        intent.putExtra(START_FROM_LOGIN, startFromLogin);
-                        startActivity(intent);
-                        finish();
+                        val intent = Intent(this@SplashActivity, SplashActivity::class.java)
+                        intent.putExtra(START_FROM_LOGIN, startFromLogin)
+                        startActivity(intent)
+                        finish()
 
 //                        if (null != VectorApp.getCurrentActivity()) {
 //                            VectorApp.getCurrentActivity().finish()
@@ -139,10 +138,10 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
 
     private fun hasCredentials(): Boolean {
         try {
-            val session = Matrix.getInstance(applicationContext).defaultSession;
+            val session = Matrix.getInstance(applicationContext).defaultSession
             return null != session && session.isAlive
         } catch (e: Throwable) {
-            Log.d("Error Credentials: ", e?.message)
+            Log.d("Error Credentials: ", e.message)
         }
 
         runOnUiThread {
@@ -150,7 +149,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                 // getDefaultSession could trigger an exception if the login data are corrupted
                 CommonActivityUtils.logout(this@SplashActivity)
             } catch (e: Exception) {
-                Log.d("Error Credentials: ", e?.message)
+                Log.d("Error Credentials: ", e.message)
             }
         }
 
@@ -163,7 +162,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
 
         for (session in sessions) {
             if (session.isAlive) {
-                hasCorruptedStore = hasCorruptedStore or session.dataHandler.store!!!!.isCorrupted
+                hasCorruptedStore = hasCorruptedStore or session.dataHandler.store!!.isCorrupted
             }
         }
         return hasCorruptedStore
@@ -172,85 +171,85 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
     @SuppressLint("CheckResult")
     private fun onFinish() {
         if (!hasCorruptedStore()) {
-            binding.textViewContentLoading.setText(R.string.updating_rooms);
+            binding.textViewContentLoading.setText(R.string.updating_rooms)
             viewModelFactory.getViewModel().getAllRoomResultRx(arrayOf(1, 2, 65, 66, 129, 130)).subscribe({ rooms ->
                 if (rooms.isEmpty()) {
-                    startHomeScreen();
+                    startHomeScreen()
                 } else {
                     var currentObservable: Observable<List<RoomUserJoin>>? = null
                     for ((index, r) in rooms.withIndex()) {
                         if (index == 0) {
                             currentObservable = Observable.zip(viewModelFactory.getViewModel().updateUsersFromRoom(r.id), viewModelFactory.getViewModel().updateUsersFromRoom(rooms[1].id
                             ), BiFunction<List<User>, List<User>, List<RoomUserJoin>> { t1, t2 ->
-                                val mutableList = mutableListOf<RoomUserJoin>();
+                                val mutableList = mutableListOf<RoomUserJoin>()
                                 t1.forEach { mutableList.add(RoomUserJoin(r.id, it.id)) }
                                 t2.forEach { mutableList.add(RoomUserJoin(rooms[1].id, it.id)) }
-                                mutableList;
+                                mutableList
                             })
                         } else if (index > 1) {
                             currentObservable?.let {
                                 currentObservable = it.zipWith(viewModelFactory.getViewModel().updateUsersFromRoom(r.id), BiFunction<List<RoomUserJoin>, List<User>, List<RoomUserJoin>> { t1, t2 ->
-                                    val mutableList = mutableListOf<RoomUserJoin>();
-                                    mutableList.addAll(t1);
+                                    val mutableList = mutableListOf<RoomUserJoin>()
+                                    mutableList.addAll(t1)
                                     t2.forEach { mutableList.add(RoomUserJoin(r.id, it.id)) }
-                                    mutableList;
+                                    mutableList
                                 })
                             }
                         }
                     }
-                    binding.textViewContentLoading.setText(R.string.updating_users);
+                    binding.textViewContentLoading.setText(R.string.updating_users)
                     currentObservable?.let {
                         it.subscribe({
                             it.forEach {
-                                viewModelFactory.getViewModel().getUpdateRoomUserJoinResult(it.roomId, it.userId);
-                                viewModelFactory.getViewModel().updateRoomUserCreated(it.roomId, it.userId);
+                                viewModelFactory.getViewModel().getUpdateRoomUserJoinResult(it.roomId, it.userId)
+                                viewModelFactory.getViewModel().updateRoomUserCreated(it.roomId, it.userId)
                             }
-                            var currentZipMessage: Observable<List<Message>>? = null;
+                            var currentZipMessage: Observable<List<Message>>? = null
                             for ((index, r) in rooms.withIndex()) {
                                 if (index == 0) {
                                     currentZipMessage = Observable.zip(viewModelFactory.getViewModel().getUpdateLastMessageResult(r.id).onErrorReturn { Message("", "", "", "", "", 0) }
                                             , viewModelFactory.getViewModel().getUpdateLastMessageResult(rooms[1].id).onErrorReturn { Message("", "", "", "", "", 0) }
                                             , BiFunction<Message, Message, List<Message>> { t1, t2 ->
-                                        val mutableList = mutableListOf<Message>();
-                                        mutableList.add(t1);
-                                        mutableList.add(t2);
-                                        mutableList;
+                                        val mutableList = mutableListOf<Message>()
+                                        mutableList.add(t1)
+                                        mutableList.add(t2)
+                                        mutableList
                                     })
                                 } else if (index > 1) {
                                     currentZipMessage?.let {
                                         currentZipMessage = it.zipWith(viewModelFactory.getViewModel().getUpdateLastMessageResult(r.id).onErrorReturn { Message("", "", "", "", "", 0) }
                                                 , BiFunction<List<Message>, Message, List<Message>> { t1, t2 ->
-                                            val mutableList = mutableListOf<Message>();
-                                            mutableList.addAll(t1);
-                                            mutableList.add(t2);
-                                            mutableList;
+                                            val mutableList = mutableListOf<Message>()
+                                            mutableList.addAll(t1)
+                                            mutableList.add(t2)
+                                            mutableList
                                         })
                                     }
                                 }
                             }
-                            binding.textViewContentLoading.setText(R.string.updating_last_message);
+                            binding.textViewContentLoading.setText(R.string.updating_last_message)
                             currentZipMessage?.let {
                                 it.subscribe({
                                     it.forEach {
                                         if (it.roomId.isNullOrEmpty() or it.messageType.isNullOrEmpty())
-                                            return@forEach;
-                                        viewModelFactory.getViewModel().updateRoomLastMessage(it.roomId, it.id);
+                                            return@forEach
+                                        viewModelFactory.getViewModel().updateRoomLastMessage(it.roomId, it.id)
                                     }
-                                    startHomeScreen();
+                                    startHomeScreen()
                                 }, {
-                                    Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
-                                    startHomeScreen();
+                                    Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                                    startHomeScreen()
                                 })
                             }
                         }, {
-                            Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
-                            startHomeScreen();
+                            Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                            startHomeScreen()
                         })
                     }
                 }
             }, {
-                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show();
-                startHomeScreen();
+                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                startHomeScreen()
             })
         } else {
             CommonActivityUtils.logout(this)
@@ -258,8 +257,8 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
     }
 
     private fun startHomeScreen() {
-        android.util.Log.d("StartEvent", "Home");
-        application.setEventHandler();
+        android.util.Log.d("StartEvent", "Home")
+        application.setEventHandler()
         val intent = Intent(this, HomeScreenActivity::class.java)
 //            intent.putExtra(HomeScreenActivity.START_FROM_LOGIN, startFromLogin)
         clearKeepApplication.startAutoKeyBackup(startFromLogin)
@@ -309,7 +308,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                             PreferencesManager.setUseLazyLoading(this@SplashActivity, true)
 
                             // Reload the sessions
-                            reloadSession(this@SplashActivity);
+                            reloadSession(this@SplashActivity)
                         } else {
                             // Maybe in the future this home server will support it
                             startEventStreamService(sessions)
@@ -324,7 +323,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
         var matrixIds: MutableList<String> = ArrayList()
 
         for (session in sessions) {
-            val fSession = session;
+            val fSession = session
             val eventListener = object : MXEventListener() {
                 private fun onReady() {
                     val isAlreadyDone: Boolean
@@ -335,12 +334,12 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
 
                     if (!isAlreadyDone) {
                         synchronized("SplashActivity") {
-                            var noMoreListener: Boolean = true;
+                            var noMoreListener: Boolean = true
 
                             mDoneListeners[session] = mListeners[fSession]!!
                             // do not remove the listeners here
                             // it crashes the application because of the upper loop
-                            //fSession.getDataHandler().removeListener(mListeners.get(fSession));
+                            //fSession.getDataHandler().removeListener(mListeners.get(fSession))
                             // remove from the pending list
 
                             mListeners.remove(fSession)
@@ -433,11 +432,11 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
     }
 
     override fun getActivity(): FragmentActivity {
-        return this;
+        return this
     }
 
     companion object {
-        const val NEED_TO_CLEAR_CACHE_BEFORE_81200 = "NEED_TO_CLEAR_CACHE_BEFORE_81200";
-        const val START_FROM_LOGIN = "START_FROM_LOGIN";
+        const val NEED_TO_CLEAR_CACHE_BEFORE_81200 = "NEED_TO_CLEAR_CACHE_BEFORE_81200"
+        const val START_FROM_LOGIN = "START_FROM_LOGIN"
     }
 }
