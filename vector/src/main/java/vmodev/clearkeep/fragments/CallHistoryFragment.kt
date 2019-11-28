@@ -43,12 +43,13 @@ import java.util.*
 import javax.inject.Inject
 
 class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
-    lateinit var binding: FragmentCallHistoryBinding;
+
+    lateinit var binding: FragmentCallHistoryBinding
     @Inject
-    lateinit var viewModelFactory: IViewModelFactory<AbstractCallHistoryViewModel>;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractCallHistoryViewModel>
     @Inject
-    lateinit var appExecutors: AppExecutors;
-    private lateinit var listSearchAdapter: CallHistoryRecyclerViewAdapter;
+    lateinit var appExecutors: AppExecutors
+    private lateinit var listSearchAdapter: CallHistoryRecyclerViewAdapter
 
     /** Handel Call*/
     private val LOG_TAG = CallHistoryFragment::class.java.simpleName
@@ -60,8 +61,8 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_call_history, container, false, dataBinding.getDataBindingComponent());
-        return binding.root;
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_call_history, container, false, dataBinding.getDataBindingComponent())
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -80,14 +81,14 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
             it?.data?.let { it1 ->
                 viewModelFactory.getViewModel().getListCallHistory(it1).observe(viewLifecycleOwner, Observer { dataResult ->
                     dataResult?.data?.let {
-                        val sortCallHistory = it.sortedWith(compareBy { it.message?.createdAt })?.reversed()
+                        val sortCallHistory = it.sortedWith(compareBy { it.message?.createdAt }).reversed()
                         listSearchAdapter.submitList(sortCallHistory)
                     }
 
                 })
             }
         })
-        viewModelFactory.getViewModel().setTimeForRefreshLoadMessage(Calendar.getInstance().timeInMillis);
+        viewModelFactory.getViewModel().setTimeForRefreshLoadMessage(Calendar.getInstance().timeInMillis)
     }
 
 
@@ -99,10 +100,10 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
 
             override fun areContentsTheSame(oldItem: MessageRoomUser, newItem: MessageRoomUser): Boolean {
                 return oldItem.room?.get(0)?.avatarUrl == newItem.room?.get(0)?.avatarUrl && oldItem.message?.encryptedContent == newItem.message?.encryptedContent
-                        && oldItem.user?.get(0)?.name == newItem.user?.get(0)?.name;
+                        && oldItem.user?.get(0)?.name == newItem.user?.get(0)?.name
             }
         }, dataBindingComponent = dataBinding)
-        binding.rvCallHistory.adapter = listSearchAdapter;
+        binding.rvCallHistory.adapter = listSearchAdapter
 
         listSearchAdapter.setOnItemClick { messageRoomUser, i ->
             onCallItemClicked(i, messageRoomUser)
@@ -112,7 +113,6 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
     }
 
 //    Handel Call
-
     private fun onCallItemClicked(typeCallEnum: Int, messageRoomUser: MessageRoomUser) {
         val isVideoCall: Boolean
         val permissions: Int
@@ -139,7 +139,6 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
      */
     private fun launchNativeVideoRecorder() {
 //        enableActionBarHeader(RoomActivity.HIDE_ACTION_BAR_HEADER)
-
         openVideoRecorder(activity!!, TAKE_IMAGE_REQUEST_CODE)
     }
 
@@ -148,7 +147,6 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
      */
     private fun launchNativeCamera() {
 //        enableActionBarHeader(RoomActivity.HIDE_ACTION_BAR_HEADER)
-
         mLatestTakePictureCameraUri = openCamera(activity!!, CAMERA_VALUE_TITLE, TAKE_IMAGE_REQUEST_CODE)
     }
 
@@ -245,16 +243,14 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
             startJitsiCall(aIsVideoCall)
             return
         }
-//        showWaitingView()
-
         // create the call object
         mxSession!!.mCallsManager.createCallInRoom(currentRoom!!.roomId, aIsVideoCall, object : ApiCallback<IMXCall> {
             override fun onSuccess(call: IMXCall) {
                 org.matrix.androidsdk.core.Log.d(LOG_TAG, "## startIpCall(): onSuccess")
                 activity!!.runOnUiThread {
                     //                    hideWaitingView()
-                    val intent = Intent(activity!!, OutgoingCallActivity::class.java);
-                    startActivity(intent);
+                    val intent = Intent(activity!!, OutgoingCallActivity::class.java)
+                    startActivity(intent)
                 }
             }
 
@@ -275,13 +271,12 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
                 org.matrix.androidsdk.core.Log.e(LOG_TAG, "## startIpCall(): onMatrixError Msg=" + e.localizedMessage)
 
                 if (e is MXCryptoError) {
-                    val cryptoError = e as MXCryptoError
+                    val cryptoError = e
                     if (MXCryptoError.UNKNOWN_DEVICES_CODE == cryptoError.errcode) {
 //                        hideWaitingView()
-
-                        val devicesInfo = cryptoError.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>;
-                        devicesInfo?.let {
-                            val deviceList = getDevicesList(it);
+                        val devicesInfo = cryptoError.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>
+                        devicesInfo.let {
+                            val deviceList = getDevicesList(it)
                             deviceList.forEach { t: Pair<String, List<MXDeviceInfo>>? ->
                                 t?.second?.forEach { d: MXDeviceInfo? ->
                                     d?.let { mxDeviceInfo ->
@@ -388,6 +383,5 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
             startActivity(intent)
         }
     }
-
 
 }

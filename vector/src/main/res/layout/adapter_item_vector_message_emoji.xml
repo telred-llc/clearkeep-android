@@ -55,7 +55,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toStartOf="@+id/message_timestamp_layout"
-                    android:layout_toLeftOf="@+id/message_timestamp_layout"
                     android:orientation="horizontal">
 
                     <include layout="@layout/vector_message_sender" />
@@ -66,7 +65,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
                     android:orientation="horizontal">
 
                     <include layout="@layout/vector_message_timestamp" />
@@ -79,8 +77,7 @@
                 android:id="@+id/messagesAdapter_body_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:layout_marginRight="4dp">
+                android:layout_marginEnd="4dp">
 
                 <!-- the body is here -->
                 <RelativeLayout
@@ -101,9 +98,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:layout_marginStart="4dp"
-                        android:layout_marginLeft="4dp"
                         android:layout_toEndOf="@id/message_adapter_e2e_icon"
-                        android:layout_toRightOf="@id/message_adapter_e2e_icon"
                         android:textIsSelectable="false"
                         android:textSize="40sp"
                         tools:text="An emoji" />

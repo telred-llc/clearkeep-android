@@ -365,8 +365,7 @@ internal constructor(// session
         }
 
         // helpers
-        mMediasHelper = MessagesAdapterMediasHelper(mContext,
-                mSession, mMaxImageWidth, mMaxImageHeight, mNotSentMessageTextColor, mDefaultMessageTextColor)
+        mMediasHelper = MessagesAdapterMediasHelper(mContext, mSession, mMaxImageWidth, mMaxImageHeight, mNotSentMessageTextColor, mDefaultMessageTextColor)
         mHelper = MessagesAdapterHelper(mContext, mSession, this)
 
         mLocale = VectorLocale.applicationLocale
@@ -374,8 +373,7 @@ internal constructor(// session
         mAlwaysShowTimeStamps = PreferencesManager.alwaysShowTimeStamps(VectorApp.getInstance())
         mShowReadReceipts = PreferencesManager.showReadReceipts(VectorApp.getInstance())
 
-        mPadlockDrawable = ThemeUtils.tintDrawable(mContext,
-                ContextCompat.getDrawable(mContext, R.drawable.ic_lock_open_black_24dp)!!, R.attr.vctr_settings_icon_tint_color)
+        mPadlockDrawable = ThemeUtils.tintDrawable(mContext, ContextCompat.getDrawable(mContext, R.drawable.ic_lock_open_black_24dp)!!, R.attr.vctr_settings_icon_tint_color)
     }
 
     /*
@@ -2050,11 +2048,10 @@ internal constructor(// session
      */
     private fun addContentViewListeners(convertView: View, contentView: View, position: Int, msgType: Int) {
         when (msgType) {
-            ROW_TYPE_FILE, ROW_TYPE_IMAGE -> {
+            ROW_TYPE_FILE, ROW_TYPE_IMAGE, ROW_TYPE_VIDEO -> {
                 contentView.setOnClickListener {
                     Log.e("TAG", "--- Click tag item 3")
                     if (null != mVectorMessagesAdapterEventsListener) {
-                        // GA issue
                         if (position < count) {
                             mVectorMessagesAdapterEventsListener!!.onContentClick(position)
                         }

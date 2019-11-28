@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action_home"
         android:icon="@drawable/ic_home"
         android:title="@string/bottom_action_home" />
-    <!--<item-->
-        <!--android:id="@+id/action_favorites"-->
-        <!--android:enabled="true"-->
-        <!--android:icon="@drawable/ic_star_white_24dp"-->
-        <!--android:title="@string/bottom_action_favourites"-->
-        <!--app:showAsAction="ifRoom" />-->
     <item
         android:id="@+id/action_call_history"
         android:icon="@drawable/ic_call_history"

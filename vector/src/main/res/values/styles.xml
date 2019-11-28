@@ -325,6 +325,9 @@
         <attr name="drawable_edit_default" format="reference" />
         <attr name="done_editext" format="reference" />
         <attr name="color_highlight_text" format="reference" />
+        <attr name="drawable_call_log" format="reference" />
+        <attr name="background_message_text_emote_notice" format="reference" />
+        <attr name="background_message_text_emote_notice_own" format="color" />
 
     </declare-styleable>
 
@@ -392,7 +395,11 @@
         <item name="background_button_select">@drawable/bg_button_gradient_green</item>
         <item name="drawable_edit_default">@drawable/ic_pen_green</item>
         <item name="done_editext">@drawable/ic_done_color_green</item>
-
+        <item name="drawable_call_log">@drawable/ic_call_log_dark</item>
+        <item name="background_message_text_emote_notice">
+            @drawable/background_green_to_transparent_gradient
+        </item>
+        <item name="background_message_text_emote_notice_own">#707070</item>
     </style>
 
     <style name="LightTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
@@ -445,7 +452,7 @@
 <!--        implement ui light_mode 11/05/2019-->
         <item name="color_tint_img_back">#444444</item>
         <item name="color_text_tool_bar">#242424</item>
-        <item name="color_background_app_default">#FFFFFF</item>
+        <item name="color_background_app_default">#FFFFFF</item>green
         <item name="color_text_app_default">#242424</item>
         <item name="color_icon_app_default">#242424</item>
         <item name="bg_search_view">@drawable/bg_search_light_mode</item>
@@ -456,6 +463,11 @@
         <item name="background_button_select">@drawable/bg_button_gradient_blue</item>
         <item name="drawable_edit_default">@drawable/ic_pen_blue</item>
         <item name="done_editext">@drawable/ic_done_color_blue</item>
+        <item name="drawable_call_log">@drawable/ic_call_log_light</item>
+        <item name="background_message_text_emote_notice">
+            @drawable/background_purple_to_transparent_gradient
+        </item>
+        <item name="background_message_text_emote_notice_own">#F5F5F5</item>
 
     </style>
 

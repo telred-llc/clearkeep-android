@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <include
@@ -58,8 +58,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                app:cardCornerRadius="@dimen/margin_normal"
-                app:cardBackgroundColor="@color/message_own_background">
+                app:cardBackgroundColor="@color/message_own_background"
+                app:cardCornerRadius="@dimen/margin_normal">
 
                 <!-- the body is here -->
                 <RelativeLayout
@@ -73,15 +73,17 @@
                         android:layout_width="14dp"
                         android:layout_height="14dp"
                         android:src="@drawable/e2e_verified"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
+
                     <TextView
                         android:id="@+id/messagesAdapter_body"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="end"
                         android:textIsSelectable="false"
                         android:textSize="14sp"
-                        tools:text="A body www.example.org"
-                        android:layout_gravity="end" />
+                        tools:text="A body www.example.org" />
+
                     <TextView
                         android:id="@+id/messagesAdapter_re_request_e2e_key"
                         android:layout_width="wrap_content"
@@ -115,8 +117,8 @@
             android:adjustViewBounds="true"
             android:contentDescription="@string/avatar"
             android:scaleType="centerCrop"
-            tools:src="@tools:sample/avatars"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            tools:src="@tools:sample/avatars" />
     </LinearLayout>
 
     <LinearLayout
