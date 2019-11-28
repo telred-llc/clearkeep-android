@@ -93,5 +93,8 @@
     <dimen name="margin_avatar_call">30dp</dimen>
     <dimen name="size_radius_ripple_background">65dp</dimen>
     <dimen name="size_stroke_width_ripple_background">4dp</dimen>
+    <dimen name="size_image_width_search_file">40dp</dimen>
+    <dimen name="size_image_height_search_file">80dp</dimen>
+    <dimen name="size_image_player_search_file">20dp</dimen>
 
 </resources>

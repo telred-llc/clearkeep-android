@@ -1,69 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="result"
             type="vmodev.clearkeep.viewmodelobjects.MessageRoomUser" />
+
+        <variable
+            name="file"
+            type="org.matrix.androidsdk.rest.model.message.ImageMessage" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal"
         android:baselineAligned="false"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <FrameLayout
+        <RelativeLayout
             android:id="@+id/frameAvatar"
+            android:layout_width="@dimen/size_image_width_search_file"
+            android:layout_height="@dimen/size_image_height_search_file"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_width="@dimen/image_avatar_status_size"
-            android:layout_height="@dimen/image_avatar_status_size">
+            app:layout_constraintTop_toTopOf="parent">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/circle_image_view_avatar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_launcher_app"
-                app:room="@{result.room.get(0)}" />
-        </FrameLayout>
+                app:imageFile="@{file}" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="@dimen/size_image_player_search_file"
+                android:layout_height="@dimen/size_image_player_search_file"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_player_video"
+                app:showImagePlayer="@{file}"
+                app:tint="#82dab1" />
+        </RelativeLayout>
 
         <LinearLayout
-            app:layout_constraintLeft_toRightOf="@+id/frameAvatar"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="70dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginVertical="@dimen/margin_small"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
 
-            <TextView
-                android:textColor="?attr/color_text_app_default"
-                android:layout_marginEnd="30dp"
-                android:singleLine="true"
-                android:id="@+id/text_view_name"
+            >
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/margin_normal"
-                android:text="@{result.user.get(0).name}"
-                android:textSize="@dimen/text_17_sp" />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/text_view_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginHorizontal="@dimen/margin_normal"
+                    android:layout_toStartOf="@+id/tvTime"
+                    android:singleLine="true"
+                    android:text="@{file.body }"
+                    android:textColor="?attr/color_text_app_default"
+                    android:textSize="@dimen/text_17_sp"
+                    tools:text="File_03690863" />
+
+                <TextView
+                    android:id="@+id/tvTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="?attr/color_text_app_default"
+                    android:textSize="@dimen/text_11_sp"
+                    app:timeStamp="@{result.message.createdAt}" />
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/text_view_last_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{result.message.encryptedContent}"
+                android:layout_marginHorizontal="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_normal"
                 android:textColor="?attr/color_text_app_default"
-                android:textSize="@dimen/text_13_sp" />
+                android:textSize="@dimen/text_13_sp"
+                app:dataSize="@{file}" />
         </LinearLayout>
 
-        <!--        <TextView-->
-        <!--            android:id="@+id/text_view_time"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_gravity="center_vertical" />-->
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
 </layout>
