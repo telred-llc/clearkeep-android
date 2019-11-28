@@ -29,7 +29,10 @@ abstract class AbstractSettingsActivityFragmentBuilderModule {
     abstract fun contributePrivacyPolicyFragment(): PrivacyPolicyFragment;
 
     @ContributesAndroidInjector(modules = [FragmentDeactivateAccountBindModule::class])
-    abstract fun contributeDeactivateAccountFragment() : DeactivateAccountFragment;
+    abstract fun contributeDeactivateAccountFragment(): DeactivateAccountFragment;
+
+    @ContributesAndroidInjector(modules = [FragmentFeedBackBindModule::class])
+    abstract fun contributeFragmentFeedBackFragment(): FeedBackFragment;
 
     @Module
     abstract class FragmentProfileSettingsFragmentBindModule {
@@ -82,9 +85,19 @@ abstract class AbstractSettingsActivityFragmentBuilderModule {
     abstract class FragmentDeactivateAccountBindModule {
         @Binds
         @Named(IFragment.DEACTIVATE_ACCOUNT_FRAGMENT)
-        abstract fun bindDeactivateAccountFragment(fragment : DeactivateAccountFragment): IFragment;
+        abstract fun bindDeactivateAccountFragment(fragment: DeactivateAccountFragment): IFragment;
 
         @Binds
         abstract fun bindDeactivateAccountActivityViewModelFactory(factory: DeactivateAccountActivityViewModelFactory): IViewModelFactory<AbstractDeactivateAccountActivityViewModel>;
+    }
+
+    @Module
+    abstract class FragmentFeedBackBindModule {
+        @Binds
+        @Named(IFragment.FEED_BACK_FRAGMENT)
+        abstract fun bindDeactivateAccountFragment(fragment: FeedBackFragment): IFragment;
+
+        @Binds
+        abstract fun bindFeedBackFragmentViewModelFactory(factory: FeedBackFragmentViewModelFactory): IViewModelFactory<AbstractFeedBackFragmentViewModel>;
     }
 }

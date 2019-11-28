@@ -17,6 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -38,36 +39,36 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
                         android:id="@+id/imgProfile"
-                        android:layout_marginStart="22dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_profile" />
+                        android:layout_marginStart="22dp"
+                        android:src="@drawable/ic_profile"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:textColor="?attr/color_text_setting"
-                        app:layout_constraintLeft_toRightOf="@+id/imgProfile"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgProfile"
-                        app:layout_constraintTop_toTopOf="@+id/imgProfile"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="25dp"
                         android:text="@string/edit_profile"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textColor="?attr/color_text_setting"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgProfile"
+                        app:layout_constraintLeft_toRightOf="@+id/imgProfile"
+                        app:layout_constraintTop_toTopOf="@+id/imgProfile" />
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
-                        android:layout_marginEnd="18dp"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgProfile"
-                        app:layout_constraintTop_toTopOf="@+id/imgProfile"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
+                        android:layout_marginEnd="18dp"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgProfile"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/imgProfile" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <FrameLayout
@@ -82,36 +83,36 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
                         android:id="@+id/imgnotifi"
-                        android:layout_marginStart="22dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_notification" />
+                        android:layout_marginStart="22dp"
+                        android:src="@drawable/ic_notification"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:textColor="?attr/color_text_setting"
-                        app:layout_constraintLeft_toRightOf="@+id/imgnotifi"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgnotifi"
-                        app:layout_constraintTop_toTopOf="@+id/imgnotifi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="25dp"
                         android:text="@string/notifications"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textColor="?attr/color_text_setting"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgnotifi"
+                        app:layout_constraintLeft_toRightOf="@+id/imgnotifi"
+                        app:layout_constraintTop_toTopOf="@+id/imgnotifi" />
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
-                        android:layout_marginEnd="18dp"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgnotifi"
-                        app:layout_constraintTop_toTopOf="@+id/imgnotifi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
+                        android:layout_marginEnd="18dp"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgnotifi"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/imgnotifi" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -121,36 +122,36 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
                         android:id="@+id/imgCalls"
-                        android:layout_marginStart="22dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_call_light" />
+                        android:layout_marginStart="22dp"
+                        android:src="@drawable/ic_call_light"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:textColor="?attr/color_text_setting"
-                        app:layout_constraintLeft_toRightOf="@+id/imgCalls"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgCalls"
-                        app:layout_constraintTop_toTopOf="@+id/imgCalls"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="25dp"
                         android:text="@string/calls"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textColor="?attr/color_text_setting"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgCalls"
+                        app:layout_constraintLeft_toRightOf="@+id/imgCalls"
+                        app:layout_constraintTop_toTopOf="@+id/imgCalls" />
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
-                        android:layout_marginEnd="18dp"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgCalls"
-                        app:layout_constraintTop_toTopOf="@+id/imgCalls"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
+                        android:layout_marginEnd="18dp"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgCalls"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/imgCalls" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -160,36 +161,36 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
                         android:id="@+id/imgReport"
-                        android:layout_marginStart="22dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_report" />
+                        android:layout_marginStart="22dp"
+                        android:src="@drawable/ic_report"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:textColor="?attr/color_text_setting"
-                        app:layout_constraintLeft_toRightOf="@+id/imgReport"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgReport"
-                        app:layout_constraintTop_toTopOf="@+id/imgReport"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="25dp"
                         android:text="@string/report"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textColor="?attr/color_text_setting"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgReport"
+                        app:layout_constraintLeft_toRightOf="@+id/imgReport"
+                        app:layout_constraintTop_toTopOf="@+id/imgReport" />
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
-                        android:layout_marginEnd="18dp"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgReport"
-                        app:layout_constraintTop_toTopOf="@+id/imgReport"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
+                        android:layout_marginEnd="18dp"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgReport"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/imgReport" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -199,36 +200,75 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
                         android:id="@+id/imgSecurity"
-                        android:layout_marginStart="22dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_security" />
+                        android:layout_marginStart="22dp"
+                        android:src="@drawable/ic_security"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:textColor="?attr/color_text_setting"
-                        app:layout_constraintLeft_toRightOf="@+id/imgSecurity"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgSecurity"
-                        app:layout_constraintTop_toTopOf="@+id/imgSecurity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="25dp"
                         android:text="@string/security"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textColor="?attr/color_text_setting"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgSecurity"
+                        app:layout_constraintLeft_toRightOf="@+id/imgSecurity"
+                        app:layout_constraintTop_toTopOf="@+id/imgSecurity" />
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
-                        android:layout_marginEnd="18dp"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgSecurity"
-                        app:layout_constraintTop_toTopOf="@+id/imgSecurity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
+                        android:layout_marginEnd="18dp"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgSecurity"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/imgSecurity" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/feedBack_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imgFeedBack"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="22dp"
+                        android:src="@drawable/ic_feedback"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="25dp"
+                        android:text="@string/str_feed_back"
+                        android:textColor="?attr/color_text_setting"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgFeedBack"
+                        app:layout_constraintLeft_toRightOf="@+id/imgFeedBack"
+                        app:layout_constraintTop_toTopOf="@+id/imgFeedBack" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="18dp"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgFeedBack"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/imgFeedBack" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -244,36 +284,36 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
                         android:id="@+id/imgTheme"
-                        android:layout_marginStart="22dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_theme" />
+                        android:layout_marginStart="22dp"
+                        android:src="@drawable/ic_theme"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:textColor="?attr/color_text_setting"
-                        app:layout_constraintLeft_toRightOf="@+id/imgTheme"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgTheme"
-                        app:layout_constraintTop_toTopOf="@+id/imgTheme"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="25dp"
                         android:text="@string/dark_theme"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textColor="?attr/color_text_setting"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgTheme"
+                        app:layout_constraintLeft_toRightOf="@+id/imgTheme"
+                        app:layout_constraintTop_toTopOf="@+id/imgTheme" />
 
                     <androidx.appcompat.widget.SwitchCompat
-                        android:theme="@style/Theme.ToogleTheme"
-                        android:layout_marginEnd="18dp"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgTheme"
-                        app:layout_constraintTop_toTopOf="@+id/imgTheme"
                         android:id="@+id/switch_compat_change_theme"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="18dp"
+                        android:theme="@style/Theme.ToogleTheme"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgTheme"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/imgTheme" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <FrameLayout
@@ -288,36 +328,36 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
                         android:id="@+id/imgTermAndConditions"
-                        android:layout_marginStart="22dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_term_and_conditions" />
+                        android:layout_marginStart="22dp"
+                        android:src="@drawable/ic_term_and_conditions"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:textColor="?attr/color_text_setting"
-                        app:layout_constraintLeft_toRightOf="@+id/imgTermAndConditions"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgTermAndConditions"
-                        app:layout_constraintTop_toTopOf="@+id/imgTermAndConditions"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="25dp"
                         android:text="@string/term_and_conditions"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textColor="?attr/color_text_setting"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgTermAndConditions"
+                        app:layout_constraintLeft_toRightOf="@+id/imgTermAndConditions"
+                        app:layout_constraintTop_toTopOf="@+id/imgTermAndConditions" />
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
-                        android:layout_marginEnd="18dp"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgTermAndConditions"
-                        app:layout_constraintTop_toTopOf="@+id/imgTermAndConditions"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
+                        android:layout_marginEnd="18dp"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgTermAndConditions"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/imgTermAndConditions" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -327,36 +367,36 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
                         android:id="@+id/imgPrivacyPolicyGroup"
-                        android:layout_marginStart="22dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_privacy_policy_group" />
+                        android:layout_marginStart="22dp"
+                        android:src="@drawable/ic_privacy_policy_group"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:textColor="?attr/color_text_setting"
-                        app:layout_constraintLeft_toRightOf="@+id/imgPrivacyPolicyGroup"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgPrivacyPolicyGroup"
-                        app:layout_constraintTop_toTopOf="@+id/imgPrivacyPolicyGroup"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="25dp"
                         android:text="@string/privacy_and_policy"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textColor="?attr/color_text_setting"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgPrivacyPolicyGroup"
+                        app:layout_constraintLeft_toRightOf="@+id/imgPrivacyPolicyGroup"
+                        app:layout_constraintTop_toTopOf="@+id/imgPrivacyPolicyGroup" />
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
-                        android:layout_marginEnd="18dp"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgPrivacyPolicyGroup"
-                        app:layout_constraintTop_toTopOf="@+id/imgPrivacyPolicyGroup"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
+                        android:layout_marginEnd="18dp"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgPrivacyPolicyGroup"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/imgPrivacyPolicyGroup" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -366,36 +406,36 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
                         android:id="@+id/imgCopyRight"
-                        android:layout_marginStart="22dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_img_copy_right" />
+                        android:layout_marginStart="22dp"
+                        android:src="@drawable/ic_img_copy_right"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:textColor="?attr/color_text_setting"
-                        app:layout_constraintLeft_toRightOf="@+id/imgCopyRight"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgCopyRight"
-                        app:layout_constraintTop_toTopOf="@+id/imgCopyRight"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="25dp"
                         android:text="@string/copyright"
-                        android:textSize="@dimen/text_17_sp" />
+                        android:textColor="?attr/color_text_setting"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgCopyRight"
+                        app:layout_constraintLeft_toRightOf="@+id/imgCopyRight"
+                        app:layout_constraintTop_toTopOf="@+id/imgCopyRight" />
 
                     <ImageView
-                        android:tint="?attr/icon_color_setting"
-                        android:layout_marginEnd="18dp"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintBottom_toBottomOf="@+id/imgCopyRight"
-                        app:layout_constraintTop_toTopOf="@+id/imgCopyRight"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp" />
+                        android:layout_marginEnd="18dp"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgCopyRight"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/imgCopyRight" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <FrameLayout
@@ -409,19 +449,19 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:gravity="center_vertical"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
+                        android:gravity="center_vertical"
                         android:text="@string/mark_all_messages_as_read"
                         android:textAlignment="center"
                         android:textColor="?attr/color_clear_cache"
                         android:textSize="@dimen/text_17_sp" />
 
                     <TextView
-                        android:gravity="center_vertical"
                         android:id="@+id/text_view_clear_cache"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
+                        android:gravity="center_vertical"
                         android:text="@string/clear_cache"
                         android:textAlignment="center"
                         android:textColor="?attr/color_clear_cache"
@@ -429,11 +469,11 @@
                 </LinearLayout>
 
                 <TextView
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="40dp"
                     android:id="@+id/text_view_deactivate_account"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:layout_marginBottom="40dp"
+                    android:gravity="center_vertical"
                     android:text="@string/deactivate_account_title"
                     android:textAlignment="center"
                     android:textColor="?attr/color_clear_cache"
