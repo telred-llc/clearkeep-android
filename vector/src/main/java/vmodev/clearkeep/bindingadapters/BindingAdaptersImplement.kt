@@ -226,6 +226,17 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
 
     }
 
+    override fun bindShowImagePlayer(imageView: ImageView, fileContent: ImageMessage) {
+        fileContent?.let {
+            val data = it.mimeType?.split("/")
+            if (data?.get(0) == "video") {
+                imageView.visibility = View.VISIBLE
+            } else {
+                imageView.visibility = View.GONE
+            }
+        }
+    }
+
     override fun bindDataSize(textView: TextView, fileContent: ImageMessage?) {
         fileContent?.info?.size?.let {
             textView.text = String().formatSizeData(it)

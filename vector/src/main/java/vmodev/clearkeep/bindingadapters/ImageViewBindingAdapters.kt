@@ -37,4 +37,7 @@ interface ImageViewBindingAdapters {
 
     @BindingAdapter(value = ["imageFile"], requireAll = false)
     fun bindImageFile(imageView: ImageView, fileContent: ImageMessage)
+
+    @BindingAdapter(value = ["showImagePlayer"], requireAll = false)
+    fun bindShowImagePlayer(imageView: ImageView, fileContent: ImageMessage)
 }

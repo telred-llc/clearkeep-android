@@ -198,22 +198,20 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
         return this;
     }
 
-    private fun filterFile(query: String) {
-        if (!query.isNullOrBlank()) {
-            listSearchAdapter.submitList(listMessage.filter { messageRoomUser ->
-                messageRoomUser.message?.let {
-                    imageMessage = JsonUtils.toImageMessage(gson.fromJson(it.encryptedContent, JsonElement::class.java))
-                    if (imageMessage?.body.isNullOrEmpty())
-                        false;
-                    else
-                        imageMessage?.body?.contains(query)
-                } ?: run {
-                    false
-                }
-            })
-        } else {
-            listSearchAdapter.submitList(null)
-        }
+    private fun filterFile(query: String) = if (!query.isBlank() && listMessage.isNotEmpty()) {
+        listSearchAdapter.submitList(listMessage.filter { messageRoomUser ->
+            messageRoomUser.message?.let {
+                imageMessage = JsonUtils.toImageMessage(gson.fromJson(it.encryptedContent, JsonElement::class.java))
+                if (imageMessage?.body.isNullOrEmpty())
+                    false;
+                else
+                    imageMessage?.body?.contains(query)
+            } ?: run {
+                false
+            }
+        })
+    } else {
+        listSearchAdapter.submitList(null)
     }
 
     override fun getFragment(): Fragment {
