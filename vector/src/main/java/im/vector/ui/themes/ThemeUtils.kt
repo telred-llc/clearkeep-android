@@ -44,8 +44,8 @@ object ThemeUtils {
     const val APPLICATION_THEME_KEY = "APPLICATION_THEME_KEY"
 
     // the theme possible values
-    private const val THEME_DARK_VALUE = "dark"
-    private const val THEME_LIGHT_VALUE = "light"
+    const val THEME_DARK_VALUE = "dark"
+    const val THEME_LIGHT_VALUE = "light"
     private const val THEME_BLACK_VALUE = "black"
     private const val THEME_STATUS_VALUE = "status"
 

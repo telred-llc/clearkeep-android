@@ -246,7 +246,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
                 onRowClick(position)
             }
         }
-        val isDarkMode = SharedPreferencesUtils.getBoolean(activity, "DARK_MODE")
+        val isDarkMode = SharedPreferencesUtils.getBoolean(activity, "THEME_DARK")
         if (isDarkMode) {
             mMessageListView.setBackgroundColor(Color.parseColor("#101010"))
         } else {
