@@ -14,6 +14,7 @@ import im.vector.databinding.ActivityLoginBinding
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.*
+import vmodev.clearkeep.ultis.SharedPreferencesUtils
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractLoginActivityViewModel
 import javax.inject.Inject
@@ -28,11 +29,11 @@ class LoginActivity : DataBindingDaggerActivity(), IActivity, LoginFragment.OnFr
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        val window: Window = this.window
-//        window.statusBarColor = ContextCompat.getColor(this, R.color.primary_hint_text_color_light)
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            this.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR)
-//        }
+        val isDark = SharedPreferencesUtils.getBoolean(this, "THEME_DARK")
+        when(isDark){
+            true -> setTheme(R.style.DarkTheme)
+            else -> setTheme(R.style.LightTheme)
+        }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         val loginFragment = LoginFragment.newInstance()
         changeFragment(loginFragment)

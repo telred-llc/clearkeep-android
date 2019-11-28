@@ -336,15 +336,16 @@
         <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
        <item name="android:windowBackground">@drawable/bg_app_dark_mode</item>
 <!--        <item name="android:">#121212</item>-->
-        <item name="color_for_text_sign_up">#799CE0</item>
+        <item name="color_for_text_sign_up">#00C0D8
+        </item>
         <item name="color_underline_tablayout">#00C0D8</item>
         <item name="icon_color">#FFFFFF</item>
         <item name="text_color_hint">#F5F5F5</item>
-        <item name="text_input_edit_text">#5787E3</item>
+        <item name="text_input_edit_text">#3FC5B9</item>
         <item name="text_login">#FFFFFF</item>
         <item name="text_sign_up">#707070</item>
         <item name="forgot_password">#3FC5B9</item>
-        <item name="login_color">#40536F</item>
+        <item name="login_color">#121212</item>
         <item name="icon_color_setting">#FFFFFFFF</item>
         <item name="color_clear_cache">#FFFFFFFF</item>
         <item name="color_toolbar">#FFFFFFFF</item>
@@ -386,7 +387,7 @@
         <item name="bg_search_view">@drawable/bg_search_dark_mode</item>
         <item name="color_view_blank_setting">#1F1F1F</item>
         <item name="bg_button_app_default">@drawable/bg_button_app_default_dark_mode</item>
-        <item name="color_text_note_app_default">#00C0D8</item>
+        <item name="color_text_note_app_default">#3FC5B9</item>
         <item name="color_check_box">#00C0D8</item>
         <item name="background_button_select">@drawable/bg_button_gradient_green</item>
         <item name="drawable_edit_default">@drawable/ic_pen_green</item>

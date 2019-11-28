@@ -130,10 +130,10 @@ class ForgotPasswordVerifyEmailFragment : DataBindingDaggerFragment(), IFragment
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        activity?.window?.statusBarColor = ContextCompat.getColor(context, R.color.color_statusbar_splash)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        }
+//        activity?.window?.statusBarColor = ContextCompat.getColor(context, R.color.color_statusbar_splash)
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+//        }
         if (context is OnFragmentInteractionListener) {
             listener = context
         } else {

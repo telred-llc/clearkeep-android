@@ -127,10 +127,10 @@ class LoginFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        activity?.window?.statusBarColor = ContextCompat.getColor(activity!!, R.color.primary_hint_text_color_light)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        }
+//        activity?.window?.statusBarColor = ContextCompat.getColor(activity!!, R.color.primary_hint_text_color_light)
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            activity?.window?.decorView?.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+//        }
         if (context is OnFragmentInteractionListener) {
             listener = context
         } else {

@@ -17,6 +17,7 @@ import vmodev.clearkeep.activities.ExportKeyActivity
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.ultis.SharedPreferencesUtils
 import vmodev.clearkeep.viewmodels.interfaces.AbstractProfileSettingsActivityViewModel
 import java.util.*
 import javax.inject.Inject
@@ -80,7 +81,16 @@ class ProfileSettingsFragment : DataBindingDaggerFragment(), IFragment {
         }
         viewModelFactory.getViewModel().getThemeResult().observe(this, Observer {
             it?.data?.let {
-                binding.switchCompatChangeTheme.isChecked = it.theme == R.style.DarkTheme;
+                when(it.theme) {
+                    R.style.DarkTheme -> {
+                        binding.switchCompatChangeTheme.isChecked = true
+                        SharedPreferencesUtils.putBoolean(activity, "THEME_DARK", true)
+                    }
+                    else -> {
+                        binding.switchCompatChangeTheme.isChecked = false
+                        SharedPreferencesUtils.putBoolean(activity, "THEME_DARK", false)
+                    }
+                }
             }
         })
         binding.lifecycleOwner = this;
