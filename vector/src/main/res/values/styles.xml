@@ -328,6 +328,10 @@
         <attr name="drawable_call_log" format="reference" />
         <attr name="background_message_text_emote_notice" format="reference" />
         <attr name="background_message_text_emote_notice_own" format="color" />
+        <attr name="drawable_back" format="reference" />
+        <attr name="drawable_call" format="reference" />
+        <attr name="drawable_video_call" format="reference" />
+        <attr name="drawable_search" format="reference" />
 
     </declare-styleable>
 
@@ -399,6 +403,10 @@
             @drawable/background_green_to_transparent_gradient
         </item>
         <item name="background_message_text_emote_notice_own">#707070</item>
+        <item name="drawable_back">@drawable/ic_arrow_back_dark</item>
+        <item name="drawable_video_call">@drawable/ic_videocam_dark</item>
+        <item name="drawable_call">@drawable/ic_phone_in_talk_dark</item>
+        <item name="drawable_search">@drawable/ic_material_search_white</item>
     </style>
 
     <style name="LightTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
@@ -467,6 +475,10 @@
             @drawable/background_purple_to_transparent_gradient
         </item>
         <item name="background_message_text_emote_notice_own">#F5F5F5</item>
+        <item name="drawable_back">@drawable/ic_arrow_back_light</item>
+        <item name="drawable_video_call">@drawable/ic_videocam_light</item>
+        <item name="drawable_call">@drawable/ic_call_light</item>
+        <item name="drawable_search">@drawable/ic_material_search_black</item>
 
     </style>
 

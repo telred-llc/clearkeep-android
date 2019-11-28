@@ -29,7 +29,7 @@ class RoomSettingsActivity : DataBindingDaggerActivity(), IActivity {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-        val upArrow = resources.getDrawable(R.drawable.ic_back, null)
+        val upArrow = resources.getDrawable(R.drawable.ic_arrow_back_light, null)
         upArrow.setColorFilter(getColorFromAttr(R.attr.color_tint_img_back), PorterDuff.Mode.SRC_ATOP)
         supportActionBar?.setHomeAsUpIndicator(upArrow)
         binding.toolbar.setNavigationOnClickListener { onBackPressed() }
