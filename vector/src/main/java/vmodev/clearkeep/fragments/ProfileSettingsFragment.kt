@@ -76,7 +76,7 @@ class ProfileSettingsFragment : DataBindingDaggerFragment(), IFragment {
         }
         viewModelFactory.getViewModel().getThemeResult().observe(viewLifecycleOwner, Observer {
             it?.data?.let {
-                when (it.theme) {
+                when(it.theme) {
                     R.style.DarkTheme -> {
                         binding.switchCompatChangeTheme.isChecked = true
                         SharedPreferencesUtils.putBoolean(activity, "THEME_DARK", true)
