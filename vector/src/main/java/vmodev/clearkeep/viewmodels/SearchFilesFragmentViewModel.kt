@@ -30,7 +30,9 @@ class SearchFilesFragmentViewModel @Inject constructor(private val messageReposi
         return _loadMessagesResult;
     }
 
-    override fun decryptListMessage(messages: List<MessageRoomUser>): LiveData<Resource<List<MessageRoomUser>>> {
+    override fun
+
+            decryptListMessage(messages: List<MessageRoomUser>): LiveData<Resource<List<MessageRoomUser>>> {
         return messageRepository.decryptMessage(messages, "m.image");
     }
 

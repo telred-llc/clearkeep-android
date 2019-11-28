@@ -71,8 +71,12 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
     private lateinit var binding: FragmentSearchFilesBinding;
     private var disposable: Disposable? = null;
     private val listMessage = ArrayList<MessageRoomUser>();
+    private var listFilter: List<MessageRoomUser>? = null
+
     private lateinit var listSearchAdapter: ListSearchFileRecyclerViewAdapter;
     private lateinit var gson: Gson
+    private var imageMessage: ImageMessage? = null
+    private var currentSearch: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,30 +128,17 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
         viewModelFactory.getViewModel().getListMessageRoomUser().observe(viewLifecycleOwner, Observer {
             it?.data?.let {
                 viewModelFactory.getViewModel().decryptListMessage(it).observe(viewLifecycleOwner, Observer {
+                    listMessage.clear()
                     it?.data?.let {
                         listMessage.addAll(it);
+                        currentSearch?.let { it1 -> filterFile(it1) }
                     }
                 })
             }
         })
         viewModelFactory.getViewModel().setTimeForRefreshLoadMessage(Calendar.getInstance().timeInMillis);
-
         getSearchViewTextChange()?.subscribe { s ->
-            val listFilter = listMessage.filter { messageRoomUser ->
-                messageRoomUser.message?.let {
-                    val jsonElement = gson.fromJson(it.encryptedContent, JsonElement::class.java);
-                    val imageMessage = JsonUtils.toImageMessage(jsonElement)
-
-                    if (imageMessage.body.isNullOrEmpty())
-                        false;
-                    else
-                        imageMessage.body.contains(s)
-
-                } ?: run {
-                    false
-                }
-            }
-            listSearchAdapter.submitList(listFilter)
+            filterFile(s)
         }
         binding.lifecycleOwner = viewLifecycleOwner;
     }
@@ -202,17 +193,27 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
     }
 
     override fun selectedFragment(query: String): ISearchFragment {
-        listSearchAdapter.submitList(listMessage.filter { messageRoomUser ->
-            messageRoomUser.message?.let {
-                if (query.isNullOrEmpty())
-                    false;
-                else
-                    it.encryptedContent.contains(query)
-            } ?: run {
-                false
-            }
-        })
+        currentSearch = query
+        filterFile(query)
         return this;
+    }
+
+    private fun filterFile(query: String) {
+        if (!query.isNullOrBlank()) {
+            listSearchAdapter.submitList(listMessage.filter { messageRoomUser ->
+                messageRoomUser.message?.let {
+                    imageMessage = JsonUtils.toImageMessage(gson.fromJson(it.encryptedContent, JsonElement::class.java))
+                    if (imageMessage?.body.isNullOrEmpty())
+                        false;
+                    else
+                        imageMessage?.body?.contains(query)
+                } ?: run {
+                    false
+                }
+            })
+        } else {
+            listSearchAdapter.submitList(null)
+        }
     }
 
     override fun getFragment(): Fragment {
