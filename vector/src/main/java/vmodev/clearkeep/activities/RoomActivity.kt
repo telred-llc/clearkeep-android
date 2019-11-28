@@ -20,7 +20,6 @@ import android.text.TextWatcher
 import android.text.style.ClickableSpan
 import android.text.style.URLSpan
 import android.util.Pair
-import android.util.TypedValue
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -2296,43 +2295,12 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      * Display UI buttons according to user input text.
      */
     private fun manageSendMoreButtons() {
-        if (!isEditedMode) {
-            var img = R.drawable.ic_material_file
-            if (!PreferencesManager.sendMessageWithEnter(this) && mEditText.text.length > 0) {
-                img = R.drawable.ic_material_send_green
-                buttonSend.setBackgroundResource(R.drawable.background_radius_green)
-                buttonSend.setTextColor(Color.parseColor("#FFFFFF"))
-            } else {
-                buttonSend.setBackgroundResource(R.drawable.background_border_radius_gray)
-                val typeValue = TypedValue()
-                theme.resolveAttribute(R.attr.text_not_available_send, typeValue, true)
-//            buttonSend.setTextColor(Color.parseColor("#000000"))
-                buttonSend.setTextColor(typeValue.data)
-                when (PreferencesManager.getSelectedDefaultMediaSource(this)) {
-                    MEDIA_SOURCE_VOICE -> if (PreferencesManager.isSendVoiceFeatureEnabled(this)) {
-                        img = R.drawable.vector_micro_green
-                    }
-                    MEDIA_SOURCE_STICKER -> img = R.drawable.ic_send_sticker
-                    MEDIA_SOURCE_PHOTO -> img = R.drawable.ic_material_camera
-                    MEDIA_SOURCE_VIDEO -> img = R.drawable.ic_material_videocam
-                }
-            }
-//            mSendImageView!!.setImageResource(img)
+        if (!PreferencesManager.sendMessageWithEnter(this) && mEditText.text.length > 0) {
+            buttonSend.isSelected = true
+            buttonSend.setTextColor(Color.parseColor("#FFFFFF"))
         } else {
-            if (!PreferencesManager.sendMessageWithEnter(this) && mEditText.text.length > 0 && !TextUtils.equals(mEditText.text.toString(), currentMessageEdit)) {
-                buttonSend.setBackgroundResource(R.drawable.background_radius_green)
-                buttonSend.setTextColor(Color.parseColor("#FFFFFF"))
-            } else {
-                buttonSend.setBackgroundResource(R.drawable.background_border_radius_gray)
-                val typeValue = TypedValue()
-                theme.resolveAttribute(R.attr.text_not_available_send, typeValue, true)
-                buttonSend.setTextColor(typeValue.data)
-                when (PreferencesManager.getSelectedDefaultMediaSource(this)) {
-                    MEDIA_SOURCE_VOICE -> if (PreferencesManager.isSendVoiceFeatureEnabled(this)) {
-
-                    }
-                }
-            }
+            buttonSend.isSelected = false
+            buttonSend.setTextColor(Color.parseColor("#000000"))
         }
     }
 
