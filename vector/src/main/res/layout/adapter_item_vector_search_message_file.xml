@@ -22,7 +22,6 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
             android:fontFamily="sans-serif-medium"
             android:textColor="?attr/vctr_search_mode_room_name_text_color"
             android:textSize="16sp"
