@@ -297,8 +297,7 @@
         <attr name="bg_button" format="reference" />
         <attr name="bg_button_sign_up" format="reference" />
         <attr name="icon_logo" format="reference" />
-<!--        <attr name="icon_new_chat" format="reference" />-->
-
+        <!--        <attr name="icon_new_chat" format="reference" />-->
 
 
         <attr name="background_button_select" format="reference" />
@@ -310,12 +309,12 @@
         <attr name="color_text_name_invited" format="color" />
 
         <!--        implement ui dark_mode 11/05/2019      -->
-        <attr name="color_tint_img_back" format="color"/>
-        <attr name="color_text_tool_bar" format="color"/>
-        <attr name="color_background_app_default" format="color"/>
-        <attr name="color_text_app_default" format="color"/>
-        <attr name="color_icon_app_default" format="color"/>
-        <attr name="bg_search_view" format="reference"/>
+        <attr name="color_tint_img_back" format="color" />
+        <attr name="color_text_tool_bar" format="color" />
+        <attr name="color_background_app_default" format="color" />
+        <attr name="color_text_app_default" format="color" />
+        <attr name="color_icon_app_default" format="color" />
+        <attr name="bg_search_view" format="reference" />
         <attr name="color_view_blank_setting" format="color"></attr>
         <attr name="header_group" format="color" />
         <attr name="bg_button_app_default" format="reference" />
@@ -332,6 +331,7 @@
         <attr name="drawable_call" format="reference" />
         <attr name="drawable_video_call" format="reference" />
         <attr name="drawable_search" format="reference" />
+        <attr name="bg_edit_text_feed_back" format="reference" />
 
     </declare-styleable>
 
@@ -341,8 +341,8 @@
         <item name="color_highlight_text">@color/color_highlight_dark_mode</item>
         <item name="android:statusBarColor">#101010</item>
         <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
-       <item name="android:windowBackground">@drawable/bg_app_dark_mode</item>
-<!--        <item name="android:">#121212</item>-->
+        <item name="android:windowBackground">@drawable/bg_app_dark_mode</item>
+        <!--        <item name="android:">#121212</item>-->
         <item name="color_for_text_sign_up">#00C0D8
         </item>
         <item name="color_underline_tablayout">#00C0D8</item>
@@ -373,7 +373,7 @@
         <item name="bg_button">@drawable/bg_button_gradient_dark_mode</item>
         <item name="bg_button_sign_up">@drawable/bg_button_gradient_dark_mode</item>
         <item name="icon_logo">@drawable/ic_logo_ck_dark_mode</item>
-<!--        <item name="icon_new_chat">@drawable/ic_new_chat_dark_mode</item>-->
+        <!--        <item name="icon_new_chat">@drawable/ic_new_chat_dark_mode</item>-->
 
 
         <!--        screen join room-->
@@ -382,7 +382,6 @@
         </item>
         <item name="color_text_title">@color/color_white</item>
         <item name="color_text_name_invited">#00D1E4</item>
-
 
 
         <!--        implement ui dark_mode 11/05/2019    -->
@@ -408,6 +407,8 @@
         <item name="drawable_video_call">@drawable/ic_videocam_dark</item>
         <item name="drawable_call">@drawable/ic_phone_in_talk_dark</item>
         <item name="drawable_search">@drawable/ic_material_search_white</item>
+        <item name="bg_edit_text_feed_back">@drawable/bg_edit_text_feed_back_light_mode</item>
+
     </style>
 
     <style name="LightTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
@@ -444,9 +445,7 @@
         <item name="bg_button">@drawable/bg_button_gradient_blue</item>
         <item name="bg_button_sign_up">@drawable/bg_button_gradient_dark_mode</item>
         <item name="icon_logo">@drawable/ic_logo_ck_light_mode</item>
-<!--        <item name="icon_new_chat">@drawable/ic_new_chat_light_mode</item>-->
-
-
+        <!--        <item name="icon_new_chat">@drawable/ic_new_chat_light_mode</item>-->
 
 
         <!--        screen join room-->
@@ -456,8 +455,7 @@
         <item name="color_text_name_invited">#444444</item>
 
 
-
-<!--        implement ui light_mode 11/05/2019-->
+        <!--        implement ui light_mode 11/05/2019-->
         <item name="color_tint_img_back">#444444</item>
         <item name="color_text_tool_bar">#242424</item>
         <item name="color_background_app_default">#FFFFFF</item>green
@@ -480,6 +478,7 @@
         <item name="drawable_video_call">@drawable/ic_videocam_light</item>
         <item name="drawable_call">@drawable/ic_call_light</item>
         <item name="drawable_search">@drawable/ic_material_search_black</item>
+        <item name="bg_edit_text_feed_back">@drawable/bg_edit_text_feed_back_dark_mode</item>
 
     </style>
 
@@ -516,5 +515,9 @@
 
     <style name="Theme.ToogleTheme" parent="Theme.AppCompat.Light">
         <item name="colorAccent">?attr/color_switch_compat</item>
+    </style>
+
+    <style name="MyRatingBar" parent="Widget.AppCompat.RatingBar">
+        <item name="colorAccent">#F3CC30</item>
     </style>
 </resources>

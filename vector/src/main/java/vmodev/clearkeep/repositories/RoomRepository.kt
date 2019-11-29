@@ -16,7 +16,6 @@ import vmodev.clearkeep.repositories.wayloads.*
 import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
-import vmodev.clearkeep.viewmodelobjects.User
 import java.io.InputStream
 import javax.inject.Inject
 import javax.inject.Singleton

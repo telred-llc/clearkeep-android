@@ -8,16 +8,98 @@
 
     </data>
 
-    <FrameLayout
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:text="Feedback"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    </FrameLayout>
+            <TextView
+                android:id="@+id/tvQuestion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_xl"
+                android:text="@string/str_did_you_enjoy_clearkeep"
+                android:textColor="?attr/color_text_note_app_default"
+                android:textSize="@dimen/text_17_sp"
+                app:layout_constraintBottom_toTopOf="@+id/rating"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.31" />
 
+            <RatingBar
+                android:id="@+id/rating"
+                android:theme="@style/MyRatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_xxl"
+                android:stepSize="1.0"
+                app:layout_constraintEnd_toEndOf="@id/tvQuestion"
+                app:layout_constraintStart_toStartOf="@id/tvQuestion"
+                app:layout_constraintTop_toBottomOf="@id/tvQuestion" />
+
+            <TextView
+                android:id="@+id/tvNote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:text="We would love to hear back from you"
+                android:textColor="?attr/color_text_app_default"
+                android:textSize="@dimen/text_17_sp"
+                app:layout_constraintEnd_toEndOf="@+id/rating"
+                app:layout_constraintStart_toStartOf="@+id/rating"
+                app:layout_constraintTop_toBottomOf="@+id/rating" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edtComment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_large"
+                android:background="?attr/bg_edit_text_feed_back"
+                android:gravity="top"
+                android:hint="@string/str_enter_feedback"
+                android:maxLines="5"
+                android:minLines="5"
+                android:padding="@dimen/padding_normal"
+                android:textColor="?attr/color_text_app_default"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvNote"
+                app:layout_constraintVertical_bias="0.19" />
+
+            <Button
+                android:id="@+id/btnSubmit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/margin_large"
+                android:layout_marginTop="50dp"
+                android:background="?attr/background_button_select"
+                android:text="@string/submit"
+                android:textColor="@color/color_white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edtComment"
+                app:layout_constraintVertical_bias="0.72" />
+
+            <TextView
+                android:id="@+id/tvClearAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_large"
+                android:text="@string/str_clear_all"
+                android:textSize="@dimen/text_15_sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnSubmit"
+                app:layout_constraintVertical_bias="0.25" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </layout>

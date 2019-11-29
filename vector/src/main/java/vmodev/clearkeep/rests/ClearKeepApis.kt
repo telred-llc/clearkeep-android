@@ -5,10 +5,10 @@ import org.matrix.androidsdk.RestClient
 import retrofit2.http.*
 import vmodev.clearkeep.rests.models.requests.EditMessageRequest
 import vmodev.clearkeep.rests.models.responses.EditMessageResponse
+import vmodev.clearkeep.rests.models.responses.FeedbackResponse
 import vmodev.clearkeep.rests.models.responses.PassphraseResponse
 import vmodev.clearkeep.rests.models.responses.UserProfileResponse
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
-import vmodev.clearkeep.viewmodelobjects.User
 
 interface ClearKeepApis {
     @Headers("Content-Type: application/json")
@@ -27,8 +27,12 @@ interface ClearKeepApis {
     fun createPassphrase(@Header("Authorization") token: String, @Field("passphrase") passphrase: String): Observable<PassphraseResponse>;
 
     @GET("/" + RestClient.URI_API_PREFIX_PATH_R0 + "profile/{userId}")
-    fun getUserProfile(@Path("userId") userId : String) : Observable<UserProfileResponse>
+    fun getUserProfile(@Path("userId") userId: String): Observable<UserProfileResponse>
 
     @GET("/" + RestClient.URI_API_PREFIX_PATH_R0 + "publicRooms")
-    fun getRoomPublic(@Path("limit") limit : Int) : Observable<List<RoomListUser>>
+    fun getRoomPublic(@Path("limit") limit: Int): Observable<List<RoomListUser>>
+
+    @FormUrlEncoded
+    @POST("/api/feedback/email")
+    fun feedBackApp(@Header("Authorization") token: String, @Field("content") content: String, @Field("stars") stars: Int): Observable<FeedbackResponse>
 }

@@ -67,7 +67,7 @@ class ProfileSettingsFragment : DataBindingDaggerFragment(), IFragment {
         }
         binding.feedBackGroup.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View) {
-//            findNavController().navigate(ProfileSettingsFragmentDirections.)
+                findNavController().navigate(ProfileSettingsFragmentDirections.feedBack())
             }
         })
         binding.textViewClearCache.setOnClickListener {
