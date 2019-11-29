@@ -33,7 +33,7 @@ class MatrixMessageHandler constructor(private val roomId: String, context: Cont
 
                     if (e.content.asJsonObject.get("ciphertext") != null) {
                         Observable.create<Long> { emmiter ->
-                            val message = Message(id = e.eventId, roomId = e.roomId, userId = e.sender, messageType = e.type, encryptedContent = e.content.toString(), createdAt = e.originServerTs);
+                            val message = Message(id = e.eventId, roomId = e.roomId, userId = e.sender, messageType = e.type, encryptedContent = e.content.toString(), userKey =  e.senderKey,createdAt = e.originServerTs);
                             val value = messageDao.insert(message);
                             emmiter.onNext(value);
                             emmiter.onComplete();
@@ -85,7 +85,7 @@ class MatrixMessageHandler constructor(private val roomId: String, context: Cont
 
                         t?.let {
                             if (it.type.compareTo("m.room.encrypted") == 0) {
-                                val message = Message(id = it.eventId, roomId = it.roomId, userId = it.userId, messageType = it.type, encryptedContent = it.contentAsJsonObject.toString(), createdAt = it.originServerTs);
+                                val message = Message(id = it.eventId, roomId = it.roomId, userId = it.userId, messageType = it.type, encryptedContent = it.contentAsJsonObject.toString(), userKey = it.senderKey,createdAt = it.originServerTs);
                                 listMessage.add(message);
 //                                Log.d("MessageEvent", it.contentAsJsonObject.toString());
 //                                Log.d("MessageEvent", it.type);

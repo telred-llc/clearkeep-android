@@ -50,7 +50,7 @@ sealed class UpdateDatabaseFromMatrixEventWorker {
                 val userId = inputData.getString(USER_ID);
                 val createdAt = inputData.getLong(CREATED_AT, 0);
                 id?.let {id-> content?.let { content -> type?.let { type->roomId?.let { roomId->userId?.let { userId->
-                    val message = Message(id=id, encryptedContent = content, messageType = type, roomId = roomId, userId = userId, createdAt = createdAt);
+                    val message = Message(id=id, encryptedContent = content, messageType = type, roomId = roomId, userId = userId, createdAt = createdAt, userKey = null);
                     messageDao.insert(message);
                     roomDao.updateRoomLastMessage(roomId, id);
                 } } } } }

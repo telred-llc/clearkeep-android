@@ -112,45 +112,45 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
     }
 
     override fun startAutoKeyBackup(password: String?) {
-        session?.let { autoKeyBackup.startAutoKeyBackup(it.myUserId, password) }
-        session?.let { s ->
-            s.crypto?.let { crypto ->
-                userDao.findAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<List<User>> {
-                    override fun onSuccess(t: List<User>) {
-                        t.forEach { u ->
-                            crypto.getUserDevices(u.id).forEach {
-                                crypto.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, it.deviceId, u.id, object : ApiCallback<Void> {
-                                    override fun onSuccess(info: Void?) {
-
-                                    }
-
-                                    override fun onUnexpectedError(e: Exception?) {
-
-                                    }
-
-                                    override fun onMatrixError(e: MatrixError?) {
-
-                                    }
-
-                                    override fun onNetworkError(e: Exception?) {
-
-                                    }
-                                });
-
-                            }
-                        }
-                    }
-
-                    override fun onSubscribe(d: Disposable) {
-
-                    }
-
-                    override fun onError(e: Throwable) {
-                        Log.d("DeviceId", e.message)
-                    }
-                })
-            }
-        }
+//        session?.let { autoKeyBackup.startAutoKeyBackup(it.myUserId, password) }
+//        session?.let { s ->
+//            s.crypto?.let { crypto ->
+//                userDao.findAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<List<User>> {
+//                    override fun onSuccess(t: List<User>) {
+//                        t.forEach { u ->
+//                            crypto.getUserDevices(u.id).forEach {
+//                                crypto.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, it.deviceId, u.id, object : ApiCallback<Void> {
+//                                    override fun onSuccess(info: Void?) {
+//
+//                                    }
+//
+//                                    override fun onUnexpectedError(e: Exception?) {
+//
+//                                    }
+//
+//                                    override fun onMatrixError(e: MatrixError?) {
+//
+//                                    }
+//
+//                                    override fun onNetworkError(e: Exception?) {
+//
+//                                    }
+//                                });
+//
+//                            }
+//                        }
+//                    }
+//
+//                    override fun onSubscribe(d: Disposable) {
+//
+//                    }
+//
+//                    override fun onError(e: Throwable) {
+//                        Log.d("DeviceId", e.message)
+//                    }
+//                })
+//            }
+//        }
     }
 
     override fun getUserId(): String {

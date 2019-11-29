@@ -2,6 +2,7 @@ package vmodev.clearkeep.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +30,11 @@ class ProfileSettingsFragment : DataBindingDaggerFragment(), IFragment {
     lateinit var application: IApplication;
 
     private lateinit var binding: FragmentProfileSettingsBinding;
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("CreateFragment", "Created")
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile_settings, container, false, dataBinding.getDataBindingComponent());

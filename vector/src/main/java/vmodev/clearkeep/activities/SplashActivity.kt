@@ -208,8 +208,8 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                             var currentZipMessage: Observable<List<Message>>? = null;
                             for ((index, r) in rooms.withIndex()) {
                                 if (index == 0) {
-                                    currentZipMessage = Observable.zip(viewModelFactory.getViewModel().getUpdateLastMessageResult(r.id).onErrorReturn { Message("", "", "", "", "", 0) }
-                                            , viewModelFactory.getViewModel().getUpdateLastMessageResult(rooms[1].id).onErrorReturn { Message("", "", "", "", "", 0) }
+                                    currentZipMessage = Observable.zip(viewModelFactory.getViewModel().getUpdateLastMessageResult(r.id).onErrorReturn { Message("", "", "", "", "", null,0) }
+                                            , viewModelFactory.getViewModel().getUpdateLastMessageResult(rooms[1].id).onErrorReturn { Message("", "", "", "", "", null,0) }
                                             , BiFunction<Message, Message, List<Message>> { t1, t2 ->
                                         val mutableList = mutableListOf<Message>();
                                         mutableList.add(t1);
@@ -218,7 +218,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
                                     })
                                 } else if (index > 1) {
                                     currentZipMessage?.let {
-                                        currentZipMessage = it.zipWith(viewModelFactory.getViewModel().getUpdateLastMessageResult(r.id).onErrorReturn { Message("", "", "", "", "", 0) }
+                                        currentZipMessage = it.zipWith(viewModelFactory.getViewModel().getUpdateLastMessageResult(r.id).onErrorReturn { Message("", "", "", "", "", null,0) }
                                                 , BiFunction<List<Message>, Message, List<Message>> { t1, t2 ->
                                             val mutableList = mutableListOf<Message>();
                                             mutableList.addAll(t1);
@@ -348,6 +348,14 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
 
                             if (noMoreListener) {
                                 VectorApp.addSyncingSession(fSession)
+                                val ft = fSession.crypto?.myDevice?.fingerprint();
+                                android.util.Log.d("DeviceInfo", ft + "--" + fSession.credentials.deviceId + "--" + fSession.crypto?.getOlmDevice()?.deviceCurve25519Key + "--" + fSession.crypto?.getOlmDevice()?.privateDeviceCurve25519Key + "--" + fSession.crypto?.getOlmDevice()?.deviceEd25519Key + "--" + fSession.crypto?.getOlmDevice()?.privateDeviceEd25519Key);
+                                fSession.crypto?.getOlmDevice()?.privateOneTimeKeys?.forEach {
+                                    android.util.Log.d("OneTime", it.key);
+                                    it.value.forEach { item ->
+                                        android.util.Log.d("OneTime", item.value);
+                                    }
+                                }
                                 onFinish()
                             }
                         }

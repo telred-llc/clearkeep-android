@@ -486,7 +486,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         return Observable.create { emitter ->
             room.roomSummary?.let {
                 val event = it.latestReceivedEvent;
-                val message = Message(id = event.eventId, userId = event.sender, roomId = event.roomId, encryptedContent = event.content.toString(), messageType = event.type, createdAt = event.originServerTs);
+                val message = Message(id = event.eventId, userId = event.sender, roomId = event.roomId, encryptedContent = event.content.toString(), messageType = event.type, createdAt = event.originServerTs, userKey = event.senderKey);
                 emitter.onNext(message);
                 emitter.onComplete();
             } ?: run {
@@ -1809,7 +1809,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                         roomSync.timeline.events.forEach {
                             it?.let {
                                 if (it.type.compareTo("m.room.encrypted") == 0) {
-                                    val message = Message(id = it.eventId, roomId = it.roomId, userId = it.sender, messageType = it.type, encryptedContent = it.content.toString(), createdAt = it.originServerTs);
+                                    val message = Message(id = it.eventId, roomId = it.roomId, userId = it.sender, messageType = it.type, encryptedContent = it.content.toString(), createdAt = it.originServerTs, userKey = it.senderKey);
                                     messages.add(message);
                                 }
                             }
@@ -1864,7 +1864,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                 if (message.getContent().getMsgType().compareTo(msgType) == 0) {
                                     var messageResult: Message? = null
                                     item.message?.let {
-                                        messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = message.getContent().getBody(), createdAt = event.originServerTs)
+                                        messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = message.getContent().getBody(), createdAt = event.originServerTs, userKey = event.senderKey)
                                     }
                                     val messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
                                     messagesResult.add(messageRooUser);

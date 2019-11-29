@@ -67,6 +67,7 @@ import org.matrix.androidsdk.core.PermalinkUtils
 import org.matrix.androidsdk.core.callback.ApiCallback
 import org.matrix.androidsdk.core.callback.SimpleApiCallback
 import org.matrix.androidsdk.core.listeners.IMXNetworkEventListener
+import org.matrix.androidsdk.core.listeners.ProgressListener
 import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.crypto.MXCryptoError
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo
@@ -918,6 +919,30 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         }
 
         Log.d(LOG_TAG, "End of create")
+        mxSession?.crypto?.let {
+            it.keysBackup.maybeBackupKeys();
+            it.keysBackup.backupAllGroupSessions(object : ProgressListener{
+                override fun onProgress(progress: Int, total: Int) {
+                    android.util.Log.d("KeysBackup", progress.toString());
+                }
+            }, object : ApiCallback<Void?>{
+                override fun onSuccess(info: Void?) {
+                    android.util.Log.d("KeysBackup", "Success");
+                }
+
+                override fun onUnexpectedError(e: java.lang.Exception?) {
+                    android.util.Log.d("KeysBackup", e?.message);
+                }
+
+                override fun onNetworkError(e: java.lang.Exception?) {
+                    android.util.Log.d("KeysBackup", e?.message);
+                }
+
+                override fun onMatrixError(e: MatrixError?) {
+                    android.util.Log.d("KeysBackup", e?.message);
+                }
+            })
+        }
     }
 
     private fun checkIfUserHasBeenKicked() {
