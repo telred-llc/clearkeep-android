@@ -19,7 +19,6 @@ class FeedbackRepository @Inject constructor(private val matrixService: MatrixSe
                 return LiveDataReactiveStreams.fromPublisher(matrixService.feedBackApp(content, stars).observeOn(Schedulers.io())
                         .subscribeOn(Schedulers.io()).toFlowable(BackpressureStrategy.LATEST))
             }
-
         }.asLiveData()
 
     }
