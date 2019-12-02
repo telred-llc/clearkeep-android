@@ -344,7 +344,7 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
     }
 
     private fun saveProfile() {
-        if (binding.edtName.text.toString().trim().isBlank()) {
+        if (TextUtils.isEmpty(binding.edtName.text.toString().trim())) {
             binding.edtName.setText(binding.user?.value?.data?.name.toString().trim())
         } else {
             binding.user?.value?.data?.id?.let {
