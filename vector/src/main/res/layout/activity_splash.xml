@@ -23,8 +23,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/background_purple_to_transparent_gradient">
+        android:layout_height="match_parent">
 
 <!--        <FrameLayout-->
 <!--            android:layout_width="match_parent"-->
@@ -47,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:background="@drawable/ic_launcher_app_white" />
+                android:src="?attr/icon_logo" />
         </RelativeLayout>
 
         <LinearLayout
