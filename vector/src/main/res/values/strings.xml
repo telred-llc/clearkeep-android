@@ -1899,5 +1899,6 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="str_clear_all">Clear all</string>
     <string name="str_enter_feedback">Enter Feedback</string>
     <string name="str_did_you_enjoy_clearkeep">Did you enjoy ClearKeep ?</string>
+    <string name="str_we_would_love_to_hear_back_from_you">We would love to hear back from you!</string>
 
 </resources>

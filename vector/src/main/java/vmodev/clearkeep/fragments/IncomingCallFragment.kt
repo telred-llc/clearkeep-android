@@ -39,6 +39,7 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
     private val videoLayoutConfiguration = VideoLayoutConfiguration(5, 66, 25, 25)
     private val callListener = object : MXCallListener() {
 
+
         override fun onStateDidChange(state: String?) {
             super.onStateDidChange(state)
             when (state) {
