@@ -1532,7 +1532,7 @@ Why choose Riot.im?
     <string name="mark_all_messages_as_read">Mark all messages as read</string>
     <string name="clear_cache">Clear cache</string>
     <string name="enter_name">Enter name</string>
-    <string name="update_profile_success">Update profile picture successfully</string>
+    <string name="update_profile_success">Profile updated successfully</string>
     <string name="display_name_cannot_empty">An error occurred</string>
     <string name="do_you_want_leave_room">Are you sure to leave room ?</string>
     <string name="you_need_enter_you_name">Display name cannot be empty</string>
