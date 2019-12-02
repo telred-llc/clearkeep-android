@@ -48,6 +48,7 @@ import com.binaryfork.spanny.Spanny
 import im.vector.R
 import im.vector.VectorApp
 import im.vector.adapters.AdapterUtils
+import im.vector.extensions.getAttributeDrawable
 import im.vector.extensions.getSessionId
 import im.vector.listeners.IMessagesAdapterActionsListener
 import im.vector.settings.VectorLocale
@@ -246,7 +247,7 @@ internal constructor(// session
         get() = ThemeUtils.getColor(mContext, R.attr.vctr_message_text_color)
 
     private val noticeTextColor: Int
-        get() = ThemeUtils.getColor(mContext, R.attr.background_message_text_emote_notice_own)
+        get() = ThemeUtils.getColor(mContext, R.attr.text_color_decline)
 
     private val encryptingMessageTextColor: Int
         get() = ThemeUtils.getColor(mContext, R.attr.vctr_encrypting_message_text_color)
@@ -1582,7 +1583,7 @@ internal constructor(// session
             // Audio and File messages are managed by the same method
             val imageTypeView = convertView.findViewById<ImageView>(R.id.messagesAdapter_image_type)
 
-            imageTypeView?.setImageResource(if (Message.MSGTYPE_AUDIO == fileMessage.msgtype) R.drawable.filetype_audio else R.drawable.filetype_attachment)
+            imageTypeView?.setImageDrawable(if (Message.MSGTYPE_AUDIO == fileMessage.msgtype) getAttributeDrawable(mContext, R.attr.drawable_audio_attachment) else getAttributeDrawable(mContext, R.attr.drawable_file_attachment))
             imageTypeView!!.setBackgroundColor(Color.TRANSPARENT)
 
             mMediasHelper.managePendingFileDownload(convertView, event, fileMessage, position)
@@ -1679,8 +1680,6 @@ internal constructor(// session
                         imageView.visibility = View.GONE
                     }
                 }
-
-
                 summaryTextView.text = event.toString(mContext)
             }
 

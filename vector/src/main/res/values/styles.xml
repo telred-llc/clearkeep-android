@@ -300,6 +300,7 @@
         <!--        <attr name="icon_new_chat" format="reference" />-->
 
 
+
         <attr name="background_button_select" format="reference" />
 
         <!--        screen join room-->
@@ -331,6 +332,9 @@
         <attr name="drawable_call" format="reference" />
         <attr name="drawable_video_call" format="reference" />
         <attr name="drawable_search" format="reference" />
+        <attr name="drawable_audio_attachment" format="reference" />
+        <attr name="drawable_file_attachment" format="reference" />
+        <attr name="drawable_attachment" format="reference" />
         <attr name="bg_edit_text_feed_back" format="reference" />
 
     </declare-styleable>
@@ -406,7 +410,10 @@
         <item name="drawable_back">@drawable/ic_arrow_back_dark</item>
         <item name="drawable_video_call">@drawable/ic_videocam_dark</item>
         <item name="drawable_call">@drawable/ic_phone_in_talk_dark</item>
-        <item name="drawable_search">@drawable/ic_material_search_white</item>
+        <item name="drawable_search">@drawable/ic_search_dark</item>
+        <item name="drawable_audio_attachment">@drawable/ic_type_audio_attachment_dark</item>
+        <item name="drawable_file_attachment">@drawable/ic_type_file_attachment_dark</item>
+        <item name="drawable_attachment">@drawable/ic_attachment_dark</item>
         <item name="bg_edit_text_feed_back">@drawable/bg_edit_text_feed_back_light_mode</item>
 
     </style>
@@ -476,8 +483,11 @@
         <item name="background_message_text_emote_notice_own">#F5F5F5</item>
         <item name="drawable_back">@drawable/ic_arrow_back_light</item>
         <item name="drawable_video_call">@drawable/ic_videocam_light</item>
-        <item name="drawable_call">@drawable/ic_call_light</item>
-        <item name="drawable_search">@drawable/ic_material_search_black</item>
+        <item name="drawable_call">@drawable/ic_phone_in_talk_light</item>
+        <item name="drawable_search">@drawable/ic_search_light</item>
+        <item name="drawable_audio_attachment">@drawable/ic_type_audio_attachment_light</item>
+        <item name="drawable_file_attachment">@drawable/ic_type_file_attachment_light</item>
+        <item name="drawable_attachment">@drawable/ic_attachment_light</item>
         <item name="bg_edit_text_feed_back">@drawable/bg_edit_text_feed_back_dark_mode</item>
 
     </style>

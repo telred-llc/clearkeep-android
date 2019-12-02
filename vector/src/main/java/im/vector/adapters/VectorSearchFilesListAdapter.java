@@ -123,7 +123,7 @@ public class VectorSearchFilesListAdapter extends VectorMessagesAdapter {
                 mediaSize = fileMessage.info.size;
             }
 
-            avatarId = Message.MSGTYPE_AUDIO.equals(message.msgtype) ? R.drawable.filetype_audio : R.drawable.filetype_attachment;
+//            avatarId = Message.MSGTYPE_AUDIO.equals(message.msgtype) ? R.drawable.filetype_audio : R.drawable.filetype_attachment;
         }
 
         // thumbnail

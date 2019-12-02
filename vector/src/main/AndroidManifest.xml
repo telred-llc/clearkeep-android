@@ -98,7 +98,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         tools:replace="allowBackup,label">
-        <activity android:name="vmodev.clearkeep.activities.IncomingCallActivity"></activity>
+        <activity android:name="vmodev.clearkeep.activities.IncomingCallActivity" />
         <activity android:name="vmodev.clearkeep.activities.RoomDetailActivity" />
         <activity android:name="vmodev.clearkeep.activities.OutgoingCallActivity" />
 

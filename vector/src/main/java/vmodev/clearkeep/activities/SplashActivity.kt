@@ -55,13 +55,8 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val window: Window = this.window
-        window.statusBarColor = ContextCompat.getColor(this, R.color.color_statusbar_splash)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            this.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        }
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_splash)
-        startFromLogin = intent.getStringExtra(START_FROM_LOGIN)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_splash);
+        startFromLogin = intent.getStringExtra(START_FROM_LOGIN); 
         if (!hasCredentials()) {
             val intent = Intent(this, LoginActivity::class.java)
             intent.putExtra(START_FROM_LOGIN, startFromLogin)
