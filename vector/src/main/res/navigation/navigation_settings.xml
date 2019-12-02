@@ -47,7 +47,7 @@
     <fragment
         android:id="@+id/feedBackFragment"
         android:name="vmodev.clearkeep.fragments.FeedBackFragment"
-        android:label="FeedBack"
+        android:label="Feedback"
         tools:layout="@layout/fragment_feed_back" />
     <fragment
         android:id="@+id/profileSettingsFragment"

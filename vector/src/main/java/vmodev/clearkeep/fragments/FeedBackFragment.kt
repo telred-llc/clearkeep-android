@@ -45,6 +45,7 @@ class FeedBackFragment : DataBindingDaggerFragment(), IFragment {
         })
         binding.rating.setOnRatingBarChangeListener { ratingBar, ratingNumber, b ->
             binding.btnSubmit.isSelected = ratingNumber > 0
+            binding.btnSubmit.isEnabled = ratingNumber > 0
 
         }
         binding.tvClearAll.setOnClickListener {
@@ -56,10 +57,10 @@ class FeedBackFragment : DataBindingDaggerFragment(), IFragment {
         feedBackViewModelFactory.getViewModel().submitFeedback(content, stars).observe(viewLifecycleOwner, Observer {
             it?.data?.message?.let {
                 if (it == "success") {
-                    Toast.makeText(activity!!, "Sent feedback success", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this.activity, "Sent feedback success", Toast.LENGTH_LONG).show()
                     clearAll()
                 } else {
-                    Toast.makeText(activity!!, "Sent feedback failed", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this.activity, "Sent feedback failed", Toast.LENGTH_LONG).show()
                 }
             }
         })
