@@ -1,5 +1,6 @@
 package vmodev.clearkeep.fragments
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +11,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import com.orhanobut.dialogplus.DialogPlus
 import im.vector.R
 import im.vector.activity.MXCActionBarActivity
@@ -361,8 +364,19 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun joinRoom(roomId: String) {
-        binding.room = viewModelFactory.getViewModel().joinRoomWithIdResult()
-        viewModelFactory.getViewModel().setRoomIdForJoinRoom(roomId)
+        TedPermission.with(activity)
+                .setPermissionListener(object : PermissionListener {
+                    override fun onPermissionGranted() {
+                        binding.room = viewModelFactory.getViewModel().joinRoomWithIdResult()
+                        viewModelFactory.getViewModel().setRoomIdForJoinRoom(roomId)
+                    }
+
+                    override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+                    }
+                })
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+                .check()
     }
 
     private fun gotoRoom(roomId: String) {
@@ -370,11 +384,6 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
         intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, applcation.getUserId())
         intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId)
         startActivityForResult(intentRoom, GO_TO_ROOM_CODE)
-
-//        val intentRoom = Intent(this.context, RoomDetailActivity::class.java);
-//        intentRoom.putExtra(RoomDetailActivity.ROOM_ID, roomId);
-//        startActivity(intentRoom);
-
         onGoingRoom = false
     }
 

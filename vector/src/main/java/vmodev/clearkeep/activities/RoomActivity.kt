@@ -31,6 +31,8 @@ import butterknife.OnClick
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import im.vector.Matrix
 import im.vector.R
 import im.vector.VectorApp
@@ -1517,42 +1519,19 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      * @param which 0 for voice call, 1 for video call
      */
     private fun onCallItemClicked(which: Int) {
-        val isVideoCall: Boolean
-        val permissions: Int
-        val requestCode: Int
+        TedPermission.with(this)
+                .setPermissionListener(object : PermissionListener {
+                    override fun onPermissionGranted() {
+                        val isVideoCall = which != 0
+                        startIpCall(PreferencesManager.useJitsiConfCall(this@RoomActivity), isVideoCall)
+                    }
 
-        if (which == 0) {
-            isVideoCall = false
-            permissions = PERMISSIONS_FOR_AUDIO_IP_CALL
-            requestCode = PERMISSION_REQUEST_CODE_AUDIO_CALL
-        } else {
-            isVideoCall = true
-            permissions = PERMISSIONS_FOR_VIDEO_IP_CALL
-            requestCode = PERMISSION_REQUEST_CODE_VIDEO_CALL
-        }
-
-//        val builder = AlertDialog.Builder(this@RoomActivity)
-//                .setTitle(R.string.dialog_title_confirmation)
-//
-//        if (isVideoCall) {
-//            builder.setMessage(getString(R.string.start_video_call_prompt_msg))
-//        } else {
-//            builder.setMessage(getString(R.string.start_voice_call_prompt_msg))
-//        }
-//
-//        builder
-//                .setPositiveButton(R.string.ok, object : DialogInterface.OnClickListener {
-//                    override fun onClick(dialog: DialogInterface, which: Int) {
-//                        if (checkPermissions(permissions, this@RoomActivity, requestCode)) {
-//                            startIpCall(PreferencesManager.useJitsiConfCall(this@RoomActivity), isVideoCall)
-//                        }
-//                    }
-//                })
-//                .setNegativeButton(R.string.cancel, null)
-//                .show()
-        if (checkPermissions(permissions, this@RoomActivity, requestCode)) {
-            startIpCall(PreferencesManager.useJitsiConfCall(this@RoomActivity), isVideoCall)
-        }
+                    override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+                    }
+                })
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+                .check()
     }
 
     /**
@@ -1789,8 +1768,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         } else {
             handleSlashCommand = true
         }
-
-
 
         VectorApp.markdownToHtml(textToSend) { text, htmlText ->
             runOnUiThread {
@@ -3100,11 +3077,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
                             params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession!!.myUserId
                             params[VectorRoomActivity.EXTRA_ROOM_ID] = currentRoom!!.roomId
-
                             // clear the activity stack to home activity
                             val intent = Intent(this@RoomActivity, VectorHomeActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-
                             intent.putExtra(VectorHomeActivity.EXTRA_JUMP_TO_ROOM_PARAMS, params as HashMap<*, *>)
                             startActivity(intent)
                         }

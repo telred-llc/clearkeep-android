@@ -68,17 +68,17 @@ class ListUserRecyclerViewAdapterCustom(val mContext: Context, val mRoomId: Stri
                 }
 
                 override fun onUnexpectedError(p0: java.lang.Exception?) {
-                    Log.e("Tag", "Lỗi: ${p0?.message}")
+                    Log.e("Tag", "--- Error: ${p0?.message}")
                     dataBoundViewHolder.binding.circleImageViewStatus.setColorFilter(ContextCompat.getColor(mContext, R.color.main_text_color_hint))
                 }
 
                 override fun onMatrixError(p0: MatrixError?) {
-                    Log.e("Tag", "Lỗi: ${p0?.message}")
+                    Log.e("Tag", "--- Error: ${p0?.message}")
                     dataBoundViewHolder.binding.circleImageViewStatus.setColorFilter(ContextCompat.getColor(mContext, R.color.main_text_color_hint))
                 }
 
                 override fun onNetworkError(p0: java.lang.Exception?) {
-                    Log.e("Tag", "Lỗi: ${p0?.message}")
+                    Log.e("Tag", "--- Error: ${p0?.message}")
                     dataBoundViewHolder.binding.circleImageViewStatus.setColorFilter(ContextCompat.getColor(mContext, R.color.main_text_color_hint))
                 }
 

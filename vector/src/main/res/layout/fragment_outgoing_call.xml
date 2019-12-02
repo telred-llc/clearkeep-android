@@ -40,11 +40,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_normal"
             android:layout_marginEnd="@dimen/margin_normal"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:gravity="center_horizontal"
-            >
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/image_view_switch_camera"
@@ -85,18 +84,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_normal"
                 android:src="@{mx_call.isVideoRecordingMuted ?  @drawable/ic_turn_off_make_video:@drawable/ic_turn_on_make_video}"
-                tools:src="@drawable/ic_turn_on_make_video"
-                />
+                tools:src="@drawable/ic_turn_on_make_video" />
 
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/image_view_microphone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@{call_sounds_manager.isMicrophoneMute ? @drawable/ic_turn_off_microphone:@drawable/ic_microphone}"
-                tools:src="@drawable/ic_microphone"
                 android:layout_marginEnd="@dimen/margin_large"
-                />
+                android:src="@{call_sounds_manager.isMicrophoneMute ? @drawable/ic_turn_off_microphone:@drawable/ic_microphone}"
+                tools:src="@drawable/ic_microphone" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/image_view_speaker"
@@ -104,16 +101,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_large"
                 android:src="@{call_manager.isSpeakerphoneOn ? @drawable/ic_speaker: @drawable/ic_turn_off_speaker}"
-                tools:src="@drawable/ic_speaker"
-                />
+                tools:src="@drawable/ic_speaker" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/image_view_hang_up"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_hang_up"
                 android:layout_marginHorizontal="@dimen/margin_normal"
-                />
+                android:src="@drawable/ic_hang_up" />
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
