@@ -6,7 +6,10 @@ import org.matrix.androidsdk.MXSession
 import java.io.File
 import java.io.FileWriter
 import java.net.URI
+import java.text.DecimalFormat
 import java.util.regex.Pattern
+import kotlin.math.log10
+import kotlin.math.pow
 
 fun String.writeToInternal(folderPath: String, fileName: String): String {
     val file = File(folderPath);
@@ -59,4 +62,13 @@ fun String.matrixUrlToRealUrl(session: MXSession?): String? {
     if (session == null)
         return null;
     return session.contentManager.getDownloadableUrl(this, false);
+
+}
+fun String.formatSizeData(size: Long):String?{
+    if (size <= 0) return "0"
+    val units = arrayOf("B", "KB", "MB", "GB", "TB", "PB", "EB")
+    val digitGroups = (log10(size.toDouble()) / log10(1024.0)).toInt()
+    var result: String? = null
+    result = DecimalFormat("#,##0.#").format(size / 1024.0.pow(digitGroups.toDouble())) + " " + units[digitGroups]
+    return result
 }

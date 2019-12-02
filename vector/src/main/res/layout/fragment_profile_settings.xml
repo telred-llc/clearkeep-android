@@ -129,7 +129,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_call" />
+                        android:src="@drawable/ic_call_light" />
 
                     <TextView
                         android:textColor="?attr/color_text_setting"

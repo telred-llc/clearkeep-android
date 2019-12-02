@@ -66,7 +66,7 @@
                 android:layout_centerInParent="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="@dimen/padding_normal"
-                app:srcCompat="@drawable/ic_back"
+                app:srcCompat="@drawable/ic_arrow_back_light"
                 app:tint="?attr/color_tint_img_back" />
 
             <TextView

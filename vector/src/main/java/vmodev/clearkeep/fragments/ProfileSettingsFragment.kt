@@ -12,9 +12,7 @@ import androidx.navigation.fragment.findNavController
 import im.vector.Matrix
 import im.vector.R
 import im.vector.databinding.FragmentProfileSettingsBinding
-import vmodev.clearkeep.activities.EditProfileActivity
 import vmodev.clearkeep.activities.ExportKeyActivity
-import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.ultis.SharedPreferencesUtils
@@ -27,20 +25,17 @@ class ProfileSettingsFragment : DataBindingDaggerFragment(), IFragment {
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractProfileSettingsActivityViewModel>
 
-    private lateinit var binding: FragmentProfileSettingsBinding;
+    private lateinit var binding: FragmentProfileSettingsBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile_settings, container, false, dataBinding.getDataBindingComponent());
-        return binding.root;
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile_settings, container, false, dataBinding.getDataBindingComponent())
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.lifecycleOwner = this;
+        binding.lifecycleOwner = this
         binding.editProfileGroup.setOnClickListener {
-            //            val intentEditProfile = Intent(this.activity, EditProfileActivity::class.java);
-//            intentEditProfile.putExtra(EditProfileActivity.USER_ID, application.getUserId());
-//            startActivity(intentEditProfile);
             activity!!.onBackPressed()
         }
         binding.callGroup.setOnClickListener {
@@ -50,12 +45,12 @@ class ProfileSettingsFragment : DataBindingDaggerFragment(), IFragment {
             findNavController().navigate(ProfileSettingsFragmentDirections.notifications())
         }
         binding.securityGroup.setOnClickListener {
-            val intentSecurity = Intent(this.activity, ExportKeyActivity::class.java);
-            intentSecurity.putExtra(ExportKeyActivity.USER_ID, application.getUserId());
-            startActivity(intentSecurity);
+            val intentSecurity = Intent(this.activity, ExportKeyActivity::class.java)
+            intentSecurity.putExtra(ExportKeyActivity.USER_ID, application.getUserId())
+            startActivity(intentSecurity)
         }
         binding.textViewDeactivateAccount.setOnClickListener {
-            findNavController().navigate(ProfileSettingsFragmentDirections.deactivateAccount());
+            findNavController().navigate(ProfileSettingsFragmentDirections.deactivateAccount())
         }
         binding.privacyPolicyGroup.setOnClickListener {
             findNavController().navigate(ProfileSettingsFragmentDirections.privacyPolicy().setUrl("https://riot.im/privacy"))
@@ -67,19 +62,19 @@ class ProfileSettingsFragment : DataBindingDaggerFragment(), IFragment {
             findNavController().navigate(ProfileSettingsFragmentDirections.privacyPolicy().setUrl("https://riot.im/copyright"))
         }
         binding.reportGroup.setOnClickListener {
-            findNavController().navigate(ProfileSettingsFragmentDirections.report());
+            findNavController().navigate(ProfileSettingsFragmentDirections.report())
         }
         binding.textViewClearCache.setOnClickListener {
-            Matrix.getInstance(application.getApplication()).reloadSessions(application.getApplication(), false);
+            Matrix.getInstance(application.getApplication()).reloadSessions(application.getApplication(), false)
         }
         binding.switchCompatChangeTheme.setOnCheckedChangeListener { compoundButton, b ->
             if (b) {
-                viewModelFactory.getViewModel().setChangeTheme(R.style.DarkTheme);
+                viewModelFactory.getViewModel().setChangeTheme(R.style.DarkTheme)
             } else {
                 viewModelFactory.getViewModel().setChangeTheme(R.style.LightTheme)
             }
         }
-        viewModelFactory.getViewModel().getThemeResult().observe(this, Observer {
+        viewModelFactory.getViewModel().getThemeResult().observe(viewLifecycleOwner, Observer {
             it?.data?.let {
                 when(it.theme) {
                     R.style.DarkTheme -> {
@@ -93,16 +88,16 @@ class ProfileSettingsFragment : DataBindingDaggerFragment(), IFragment {
                 }
             }
         })
-        binding.lifecycleOwner = this;
-        viewModelFactory.getViewModel().setTimeToGetTheme(Calendar.getInstance().timeInMillis);
+        binding.lifecycleOwner = this
+        viewModelFactory.getViewModel().setTimeToGetTheme(Calendar.getInstance().timeInMillis)
     }
 
 
     override fun getFragment(): Fragment {
-        return this;
+        return this
     }
 
     companion object {
-        const val USER_ID = "USER_ID";
+        const val USER_ID = "USER_ID"
     }
 }

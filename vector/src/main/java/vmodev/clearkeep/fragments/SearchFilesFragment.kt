@@ -8,12 +8,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.bumptech.glide.Glide
+import com.google.gson.Gson
+import com.google.gson.JsonElement
 import com.google.gson.JsonParser
+import im.vector.Matrix
 import im.vector.R
 import im.vector.databinding.FragmentSearchFilesBinding
 import im.vector.extensions.hideKeyboard
@@ -21,6 +26,8 @@ import im.vector.util.SlidableMediaInfo
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import org.matrix.androidsdk.core.JsonUtils
+import org.matrix.androidsdk.core.callback.SimpleApiCallback
+import org.matrix.androidsdk.crypto.model.crypto.EncryptedFileInfo
 import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.message.ImageMessage
 import org.matrix.androidsdk.rest.model.message.Message
@@ -30,8 +37,10 @@ import vmodev.clearkeep.adapters.ListSearchMessageRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
+import vmodev.clearkeep.jsonmodels.FileContent
 import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchFilesFragmentViewModel
+import java.io.File
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
@@ -62,7 +71,12 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
     private lateinit var binding: FragmentSearchFilesBinding;
     private var disposable: Disposable? = null;
     private val listMessage = ArrayList<MessageRoomUser>();
+    private var listFilter: List<MessageRoomUser>? = null
+
     private lateinit var listSearchAdapter: ListSearchFileRecyclerViewAdapter;
+    private lateinit var gson: Gson
+    private var imageMessage: ImageMessage? = null
+    private var currentSearch: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +101,8 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerView.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
-        listSearchAdapter = ListSearchFileRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
+        gson = Gson()
+        listSearchAdapter = ListSearchFileRecyclerViewAdapter(appExecutors = appExecutors, gson = gson, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
             override fun areItemsTheSame(p0: MessageRoomUser, p1: MessageRoomUser): Boolean {
                 return p0.message?.id == p1.message?.id
             }
@@ -96,7 +111,7 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
                 return p0.room?.get(0)?.avatarUrl == p1.room?.get(0)?.avatarUrl && p0.message?.encryptedContent == p1.message?.encryptedContent
                         && p0.user?.get(0)?.name == p1.user?.get(0)?.name;
             }
-        },dataBindingComponent = dataBinding) { messageSearchText ->
+        }, dataBindingComponent = dataBinding) { messageSearchText ->
             val intentRoom = Intent(this.activity, RoomActivity::class.java);
             messageSearchText.room?.let {
                 intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, it[0].id);
@@ -112,42 +127,18 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
         binding.recyclerView.adapter = listSearchAdapter;
         viewModelFactory.getViewModel().getListMessageRoomUser().observe(viewLifecycleOwner, Observer {
             it?.data?.let {
-                viewModelFactory.getViewModel().decryptListMessage(it).observe(this, Observer {
+                viewModelFactory.getViewModel().decryptListMessage(it).observe(viewLifecycleOwner, Observer {
+                    listMessage.clear()
                     it?.data?.let {
                         listMessage.addAll(it);
+                        currentSearch?.let { it1 -> filterFile(it1) }
                     }
                 })
             }
         })
         viewModelFactory.getViewModel().setTimeForRefreshLoadMessage(Calendar.getInstance().timeInMillis);
         getSearchViewTextChange()?.subscribe { s ->
-            val listFilter = listMessage.filter { messageRoomUser ->
-                messageRoomUser.message?.let {
-                    if (s.isNullOrEmpty())
-                        false;
-                    else
-                        it.encryptedContent.contains(s)
-
-                } ?: run {
-                    false
-                }
-            }
-            listSearchAdapter.submitList(listFilter)
-//           if (listFilter.size >0){
-//               val parser = JsonParser();
-//               val event = Event(listFilter[0].message?.messageType, parser.parse(listFilter[0].message?.encryptedContent).asJsonObject, listFilter[0].message?.userId, listFilter[0].message?.roomId);
-//               val message = JsonUtils.toMessage(event.content)
-//               val imageMessage = message as ImageMessage
-//               val info = SlidableMediaInfo()
-//               info.mMessageType = Message.MSGTYPE_IMAGE
-//               info.mFileName = imageMessage.body
-//               info.mMediaUrl = imageMessage.getUrl()
-//               Log.d("aaa",info.mMediaUrl.toString())
-//           }
-        }
-        binding.recyclerView.setOnTouchListener { v, event ->
-            hideKeyboard()
-            return@setOnTouchListener true
+            filterFile(s)
         }
         binding.lifecycleOwner = viewLifecycleOwner;
     }
@@ -202,17 +193,25 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
     }
 
     override fun selectedFragment(query: String): ISearchFragment {
+        currentSearch = query
+        filterFile(query)
+        return this;
+    }
+
+    private fun filterFile(query: String) = if (!query.isBlank() && listMessage.isNotEmpty()) {
         listSearchAdapter.submitList(listMessage.filter { messageRoomUser ->
             messageRoomUser.message?.let {
-                if (query.isNullOrEmpty())
+                imageMessage = JsonUtils.toImageMessage(gson.fromJson(it.encryptedContent, JsonElement::class.java))
+                if (imageMessage?.body.isNullOrEmpty())
                     false;
                 else
-                    it.encryptedContent.contains(query)
+                    imageMessage?.body?.contains(query)
             } ?: run {
                 false
             }
         })
-        return this;
+    } else {
+        listSearchAdapter.submitList(null)
     }
 
     override fun getFragment(): Fragment {

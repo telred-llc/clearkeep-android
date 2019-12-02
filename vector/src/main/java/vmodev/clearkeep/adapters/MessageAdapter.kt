@@ -246,7 +246,7 @@ internal constructor(// session
         get() = ThemeUtils.getColor(mContext, R.attr.vctr_message_text_color)
 
     private val noticeTextColor: Int
-        get() = ThemeUtils.getColor(mContext, R.attr.vctr_notice_text_color)
+        get() = ThemeUtils.getColor(mContext, R.attr.background_message_text_emote_notice_own)
 
     private val encryptingMessageTextColor: Int
         get() = ThemeUtils.getColor(mContext, R.attr.vctr_encrypting_message_text_color)
@@ -365,8 +365,7 @@ internal constructor(// session
         }
 
         // helpers
-        mMediasHelper = MessagesAdapterMediasHelper(mContext,
-                mSession, mMaxImageWidth, mMaxImageHeight, mNotSentMessageTextColor, mDefaultMessageTextColor)
+        mMediasHelper = MessagesAdapterMediasHelper(mContext, mSession, mMaxImageWidth, mMaxImageHeight, mNotSentMessageTextColor, mDefaultMessageTextColor)
         mHelper = MessagesAdapterHelper(mContext, mSession, this)
 
         mLocale = VectorLocale.applicationLocale
@@ -374,8 +373,8 @@ internal constructor(// session
         mAlwaysShowTimeStamps = PreferencesManager.alwaysShowTimeStamps(VectorApp.getInstance())
         mShowReadReceipts = PreferencesManager.showReadReceipts(VectorApp.getInstance())
 
-        mPadlockDrawable = ThemeUtils.tintDrawable(mContext,
-                ContextCompat.getDrawable(mContext, R.drawable.ic_lock_open_black_24dp)!!, R.attr.vctr_settings_icon_tint_color)
+        mPadlockDrawable = ThemeUtils.tintDrawable(mContext, ContextCompat.getDrawable(mContext, R.drawable.ic_lock_open_black_24dp)!!, R.attr.color_text_app_default)
+
     }
 
     /*
@@ -1296,7 +1295,6 @@ internal constructor(// session
             if (TextUtils.isEmpty(block)) {
                 continue
             }
-
             if (block.startsWith(MessagesAdapterHelper.START_FENCED_BLOCK) && block.endsWith(MessagesAdapterHelper.END_FENCED_BLOCK)) {
                 // Fenced block
                 val minusTags = block
@@ -1305,18 +1303,14 @@ internal constructor(// session
                         .replace("\n", "<br/>")
                         .replace(" ", "&nbsp;")
                         .trim { it <= ' ' }
-
                 val htmlReady = mHelper.convertToHtml(minusTags)
                 val blockView = mLayoutInflater.inflate(R.layout.adapter_item_vector_message_code_block, null)
                 val tv = blockView.findViewById<TextView>(R.id.messagesAdapter_body)
                 tv.text = htmlReady
-
                 mHelper.highlightFencedCode(tv)
                 mHelper.applyLinkMovementMethod(tv)
-
                 container.addView(blockView)
                 textViews.add(tv)
-
                 (tv.parent as View).setBackgroundColor(ThemeUtils.getColor(mContext, R.attr.vctr_markdown_block_background_color))
             } else {
                 // Not a fenced block
@@ -2012,7 +2006,6 @@ internal constructor(// session
         if (shouldBeMerged) {
             shouldBeMerged = null == headerMessage(position)
         }
-
         return shouldBeMerged && !event.isCallEvent
     }
 

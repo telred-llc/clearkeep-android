@@ -4,7 +4,9 @@ import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.request.RequestListener
+import org.matrix.androidsdk.rest.model.message.ImageMessage
 import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
+import vmodev.clearkeep.jsonmodels.FileContent
 import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
 
@@ -32,4 +34,10 @@ interface ImageViewBindingAdapters {
 
     @BindingAdapter(value = ["listUser", "currentUserId"], requireAll = false)
     fun bindStatusFromListUser(imageView: ImageView, users: List<User>?, currentUserId: String?)
+
+    @BindingAdapter(value = ["imageFile"], requireAll = false)
+    fun bindImageFile(imageView: ImageView, fileContent: ImageMessage)
+
+    @BindingAdapter(value = ["showImagePlayer"], requireAll = false)
+    fun bindShowImagePlayer(imageView: ImageView, fileContent: ImageMessage)
 }

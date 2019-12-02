@@ -3,7 +3,6 @@ package vmodev.clearkeep.activities
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.ActivityOptions
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -30,8 +29,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentActivity
 import butterknife.BindView
 import butterknife.OnClick
-import butterknife.OnLongClick
-import butterknife.OnTouch
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -43,20 +40,17 @@ import im.vector.activity.util.STICKER_PICKER_ACTIVITY_REQUEST_CODE
 import im.vector.dialogs.DialogCallAdapter
 import im.vector.dialogs.DialogListItem
 import im.vector.dialogs.DialogSendItemAdapter
+import im.vector.extensions.getAttributeDrawable
 import im.vector.features.hhs.ResourceLimitEventListener
 import im.vector.fragments.VectorMessageListFragment
 import im.vector.fragments.VectorReadReceiptsDialogFragment
-import im.vector.fragments.VectorUnknownDevicesFragment
 import im.vector.listeners.IMessagesAdapterActionsListener
-import im.vector.services.EventStreamService
-import im.vector.ui.themes.ThemeUtils
 import im.vector.util.*
 import im.vector.util.ReadMarkerManager.LIVE_MODE
 import im.vector.util.ReadMarkerManager.PREVIEW_MODE
 import im.vector.view.*
 import im.vector.widgets.Widget
 import im.vector.widgets.WidgetManagerProvider
-import im.vector.widgets.WidgetsManager
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.call.IMXCall
@@ -86,9 +80,7 @@ import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.MessageListFragment
-import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.MessageRepository
-import vmodev.clearkeep.repositories.RoomRepository
 import vmodev.clearkeep.ultis.ReadMarkerManager
 import vmodev.clearkeep.ultis.RoomMediasSender
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomActivityViewModel
@@ -137,12 +129,12 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         const val WAITING_INFORMATION_ACTIVITY = 13275
 
-        const val RESULT_ROOM_ID = "RESULT_ROOM_ID";
+        const val RESULT_ROOM_ID = "RESULT_ROOM_ID"
     }
 
     private val TAG_FRAGMENT_MATRIX_MESSAGE_LIST = "TAG_FRAGMENT_MATRIX_MESSAGE_LIST"
 
-    private val LOG_TAG = VectorRoomActivity::class.java!!.simpleName
+    private val LOG_TAG = VectorRoomActivity::class.java.simpleName
     private val TYPING_TIMEOUT_MS = 10000
 
     private val FIRST_VISIBLE_ROW = "FIRST_VISIBLE_ROW"
@@ -181,13 +173,13 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     private var mDefaultRoomName: String? = null
     private var mDefaultTopic: String? = null
     @Inject
-    lateinit var viewModelFactory: IViewModelFactory<AbstractRoomActivityViewModel>;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractRoomActivityViewModel>
 
     private var mLatestChatMessageCache: MXLatestChatMessageCache? = null
 
-    private var isEditedMode = false;
-    private var currentEvent: Event? = null;
-    private var currentMessageEdit: String? = null;
+    private var isEditedMode = false
+    private var currentEvent: Event? = null
+    private var currentMessageEdit: String? = null
 
     @BindView(R.id.room_sending_message_layout)
     lateinit var mSendingMessagesLayout: View
@@ -297,16 +289,16 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     @BindView(R.id.room_preview_subinvitation_textview)
     lateinit var subInvitationTextView: TextView
     @BindView(R.id.button_send)
-    lateinit var buttonSend: Button;
+    lateinit var buttonSend: Button
     @BindView(R.id.image_view_video_call)
-    lateinit var imageViewVideoCall: ImageView;
+    lateinit var imageViewVideoCall: ImageView
     @BindView(R.id.image_view_voice_call)
-    lateinit var imageViewVoiceCall: ImageView;
+    lateinit var imageViewVoiceCall: ImageView
     @BindView(R.id.image_view_cancel_edit)
-    lateinit var imageViewCancelEdit: ImageView;
+    lateinit var imageViewCancelEdit: ImageView
 
     @Inject
-    lateinit var messageRepository: MessageRepository;
+    lateinit var messageRepository: MessageRepository
 
     // network events
     private val mNetworkEventListener = IMXNetworkEventListener {
@@ -370,7 +362,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     private val mGlobalEventListener = object : MXEventListener() {
 
         override fun onSyncError(matrixError: MatrixError?) {
-            mSyncInProgressView!!.visibility = View.GONE
+            mSyncInProgressView.visibility = View.GONE
 
             checkSendEventStatus()
             refreshNotificationsArea()
@@ -400,7 +392,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         }
 
         override fun onLiveEventsChunkProcessed(fromToken: String?, toToken: String?) {
-            mSyncInProgressView!!.visibility = View.GONE
+            mSyncInProgressView.visibility = View.GONE
 
             checkSendEventStatus()
             refreshNotificationsArea()
@@ -425,14 +417,11 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         override fun onRoomKick(roomId: String?) {
             val params = HashMap<String, Any>()
-
             params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession!!.myUserId
             params[VectorRoomActivity.EXTRA_ROOM_ID] = currentRoom!!.roomId
-
             // clear the activity stack to home activity
             val intent = Intent(this@RoomActivity, VectorHomeActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-
             intent.putExtra(VectorHomeActivity.EXTRA_JUMP_TO_ROOM_PARAMS, params as HashMap<*, *>)
             startActivity(intent)
         }
@@ -449,16 +438,16 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                         updateRoomHeaderAvatar()
                     }
                     Event.EVENT_TYPE_STATE_ROOM_TOPIC -> {
-                        val stateEvent = JsonUtils.toStateEvent(event!!.content)
+                        val stateEvent = JsonUtils.toStateEvent(event.content)
                         setTopic(stateEvent.topic)
                     }
                     Event.EVENT_TYPE_STATE_ROOM_POWER_LEVELS -> checkSendEventStatus()
                     Event.EVENT_TYPE_TYPING -> onRoomTyping()
                     Event.EVENT_TYPE_STATE_ROOM_AVATAR -> updateRoomHeaderAvatar()
                     Event.EVENT_TYPE_MESSAGE_ENCRYPTION -> {
-                        val canSendEncryptedEvent = currentRoom!!.isEncrypted() && mxSession!!.isCryptoEnabled()
-                        mE2eImageView!!.setImageResource(if (canSendEncryptedEvent) R.drawable.e2e_verified else R.drawable.e2e_unencrypted)
-                        mVectorMessageListFragment!!.setIsRoomEncrypted(currentRoom!!.isEncrypted())
+                        val canSendEncryptedEvent = currentRoom!!.isEncrypted && mxSession!!.isCryptoEnabled
+                        mE2eImageView.setImageResource(if (canSendEncryptedEvent) R.drawable.e2e_verified else R.drawable.e2e_unencrypted)
+                        mVectorMessageListFragment!!.setIsRoomEncrypted(currentRoom!!.isEncrypted)
                     }
                     Event.EVENT_TYPE_STATE_ROOM_TOMBSTONE -> checkSendEventStatus()
                     else -> Log.d(LOG_TAG, "Ignored event type: $eventType")
@@ -521,14 +510,14 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     // Activity classes
     //================================================================================
 
-    private lateinit var application: IApplication;
+    private lateinit var application: IApplication
 
     override fun getLayoutRes(): Int {
-        val edit = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        edit.putString("SETTINGS_SHOW_INFO_AREA_KEY", "messages_and_errors");
-        edit.commit();
-        application = applicationContext as IApplication;
-        setTheme(application.getCurrentTheme());
+        val edit = PreferenceManager.getDefaultSharedPreferences(this).edit()
+        edit.putString("SETTINGS_SHOW_INFO_AREA_KEY", "messages_and_errors")
+        edit.commit()
+        application = applicationContext as IApplication
+        setTheme(application.getCurrentTheme())
         return R.layout.activity_room
     }
 
@@ -575,15 +564,15 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             return
         }
 
-        //setDragEdge(SwipeBackLayout.DragEdge.LEFT);
+        //setDragEdge(SwipeBackLayout.DragEdge.LEFT)
 
         // hide the header room as soon as the bottom layout (text edit zone) is touched
-        mBottomLayout!!.setOnTouchListener { view, motionEvent ->
+        mBottomLayout.setOnTouchListener { view, motionEvent ->
             enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
             false
         }
 
-        mNotificationsArea!!.delegate = object : NotificationAreaView.Delegate {
+        mNotificationsArea.delegate = object : NotificationAreaView.Delegate {
             override fun providesMessagesActionListener(): IMessagesAdapterActionsListener {
                 return mVectorMessageListFragment as IMessagesAdapterActionsListener
             }
@@ -609,15 +598,10 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 }
             }
         }
-
-        // use a toolbar instead of the actionbar
-        // to be able to display an expandable header
         configureToolbar()
-//        toolbar.setBackgroundResource(android.R.color.white)
-        toolbar.setNavigationIcon(R.drawable.ic_keyboard_arrow_left_green)
+        toolbar.navigationIcon = getAttributeDrawable(this, R.attr.drawable_back)
         toolbar.setNavigationOnClickListener {
-//            viewModelFactory.getViewModel().setIdForUpdateRoomNotifyCount(currentRoom!!.roomId).subscribeOn(Schedulers.io()).subscribe();
-            finishResult();
+            finishResult()
             finish()
         }
         mCallId = intent.getStringExtra(EXTRA_START_CALL_ID)
@@ -636,12 +620,12 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         if (PreferencesManager.sendMessageWithEnter(this)) {
             // imeOptions="actionSend" only works with single line, so we remove multiline inputType
-            mEditText!!.inputType = mEditText!!.inputType and EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE.inv()
-            mEditText!!.imeOptions = EditorInfo.IME_ACTION_SEND
+            mEditText.inputType = mEditText.inputType and EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE.inv()
+            mEditText.imeOptions = EditorInfo.IME_ACTION_SEND
         }
 
         // IME's DONE and SEND button is treated as a send action
-        mEditText!!.setOnEditorActionListener(TextView.OnEditorActionListener { textView, actionId, keyEvent ->
+        mEditText.setOnEditorActionListener(TextView.OnEditorActionListener { textView, actionId, keyEvent ->
             val imeActionId = actionId and EditorInfo.IME_MASK_ACTION
 
             if (EditorInfo.IME_ACTION_DONE == imeActionId || EditorInfo.IME_ACTION_SEND == imeActionId) {
@@ -649,7 +633,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 return@OnEditorActionListener true
             }
 
-            if (((null != keyEvent) && !keyEvent!!.isShiftPressed && keyEvent!!.keyCode == KeyEvent.KEYCODE_ENTER
+            if (((null != keyEvent) && !keyEvent.isShiftPressed && keyEvent.keyCode == KeyEvent.KEYCODE_ENTER
                             && resources.configuration.keyboard != Configuration.KEYBOARD_NOKEYS)) {
                 sendTextMessage(mEditText.text.toString())
                 return@OnEditorActionListener true
@@ -658,11 +642,11 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         })
 
         currentRoom = mxSession!!.dataHandler.getRoom(roomId, false)
-        if(!currentRoom?.roomId.isNullOrEmpty()){
-            viewModelFactory.getViewModel().setIdForUpdateRoomNotifyCount(currentRoom!!.roomId).subscribeOn(Schedulers.io()).subscribe();
+        if (!currentRoom?.roomId.isNullOrEmpty()) {
+            viewModelFactory.getViewModel().setIdForUpdateRoomNotifyCount(currentRoom!!.roomId).subscribeOn(Schedulers.io()).subscribe()
         }
-        mEditText!!.setAddColonOnFirstItem(true)
-        mEditText!!.addTextChangedListener(object : TextWatcher {
+        mEditText.setAddColonOnFirstItem(true)
+        mEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: android.text.Editable) {
                 if (null != currentRoom) {
                     val latestChatMessageCache = mLatestChatMessageCache
@@ -670,9 +654,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
                     // check if there is really an update
                     // avoid useless updates (initializations..)
-                    if (!mIgnoreTextUpdate && textInPlace != mEditText!!.text.toString()) {
-                        latestChatMessageCache!!.updateLatestMessage(this@RoomActivity, currentRoom!!.roomId, mEditText!!.text.toString())
-                        handleTypingNotification(mEditText!!.text.length != 0)
+                    if (!mIgnoreTextUpdate && textInPlace != mEditText.text.toString()) {
+                        latestChatMessageCache.updateLatestMessage(this@RoomActivity, currentRoom!!.roomId, mEditText.text.toString())
+                        handleTypingNotification(mEditText.text.length != 0)
                     }
 
                     manageSendMoreButtons()
@@ -685,11 +669,11 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 // Auto completion mode management
                 // The auto completion mode depends on the first character of the message
-                mEditText!!.updateAutoCompletionMode(false)
+                mEditText.updateAutoCompletionMode(false)
             }
         })
 
-        mMyUserId = mxSession!!.getCredentials().userId
+        mMyUserId = mxSession!!.credentials.userId
 
         val fm = supportFragmentManager
         mVectorMessageListFragment = fm.findFragmentByTag(TAG_FRAGMENT_MATRIX_MESSAGE_LIST) as MessageListFragment?
@@ -704,9 +688,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     null)
             else
                 VectorMessageListFragment.PREVIEW_MODE_READ_ONLY
-            mVectorMessageListFragment = MessageListFragment.newInstance(mMyUserId, roomId, mEventId,
-                    previewMode,
-                    org.matrix.androidsdk.R.layout.fragment_matrix_message_list_fragment)
+            mVectorMessageListFragment = MessageListFragment.newInstance(mMyUserId, roomId, mEventId, previewMode, org.matrix.androidsdk.R.layout.fragment_matrix_message_list_fragment)
             fm.beginTransaction().add(R.id.anchor_fragment_messages, mVectorMessageListFragment!!, TAG_FRAGMENT_MATRIX_MESSAGE_LIST).commit()
         } else {
             Log.d(LOG_TAG, "Reuse VectorMessageListFragment")
@@ -744,7 +726,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
                 // sanity check
                 if (null != mediaIntent) {
-                    mEditText!!.postDelayed({
+                    mEditText.postDelayed({
                         intent.removeExtra(EXTRA_ROOM_INTENT)
                         sendMediasIntent(mediaIntent)
                     }, 1000)
@@ -755,9 +737,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
         }
 
-        mActiveWidgetsBanner!!.initRoomInfo(mxSession, currentRoom)
+        mActiveWidgetsBanner.initRoomInfo(mxSession, currentRoom)
 
-        mActiveWidgetsBanner!!.setOnUpdateListener(object : ActiveWidgetsBanner.onUpdateListener {
+        mActiveWidgetsBanner.setOnUpdateListener(object : ActiveWidgetsBanner.onUpdateListener {
             override fun onCloseWidgetClick(widget: Widget) {
 
                 AlertDialog.Builder(this@RoomActivity)
@@ -829,8 +811,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
         })
 
-        mVectorOngoingConferenceCallView!!.initRoomInfo(mxSession, currentRoom)
-        mVectorOngoingConferenceCallView!!.setCallClickListener(object : VectorOngoingConferenceCallView.ICallClickListener {
+        mVectorOngoingConferenceCallView.initRoomInfo(mxSession, currentRoom)
+        mVectorOngoingConferenceCallView.setCallClickListener(object : VectorOngoingConferenceCallView.ICallClickListener {
             private fun startCall(isVideo: Boolean) {
                 if (checkPermissions(if (isVideo)
                             PERMISSIONS_FOR_VIDEO_IP_CALL
@@ -905,7 +887,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         intent.removeExtra(EXTRA_EXPAND_ROOM_HEADER)
 
         // Init read marker manager
-        if ((mIsUnreadPreviewMode || (currentRoom != null && currentRoom!!.getTimeline() != null && currentRoom!!.getTimeline().isLiveTimeline() && TextUtils.isEmpty(mEventId)))) {
+        if ((mIsUnreadPreviewMode || (currentRoom != null && currentRoom!!.timeline != null && currentRoom!!.timeline.isLiveTimeline && TextUtils.isEmpty(mEventId)))) {
             if (null == currentRoom) {
                 Log.e(LOG_TAG, "## onCreate() : null room")
             } else if (null == mxSession!!.dataHandler.store!!.getSummary(currentRoom!!.roomId)) {
@@ -922,19 +904,19 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     private fun checkIfUserHasBeenKicked() {
         val member = if ((null != currentRoom)) currentRoom!!.getMember(mMyUserId) else null
-        val hasBeenKicked = (null != member) && member!!.kickedOrBanned()
+        val hasBeenKicked = (null != member) && member.kickedOrBanned()
 
         // in timeline mode (i.e search in the forward and backward room history)
         // or in room preview mode
         // the edition items are not displayed
         if ((!TextUtils.isEmpty(mEventId) || (null != sRoomPreviewData)) || hasBeenKicked) {
             if (!mIsUnreadPreviewMode || hasBeenKicked) {
-                mNotificationsArea!!.visibility = View.GONE
-                mBottomSeparator!!.visibility = View.GONE
+                mNotificationsArea.visibility = View.GONE
+                mBottomSeparator.visibility = View.GONE
                 findViewById<View>(R.id.room_notification_separator).visibility = View.GONE
             }
 
-            mBottomLayout!!.layoutParams.height = 0
+            mBottomLayout.layoutParams.height = 0
         }
 
         if ((null == sRoomPreviewData) && hasBeenKicked) {
@@ -961,11 +943,11 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         }
 
         if (null != mVectorOngoingConferenceCallView) {
-            mVectorOngoingConferenceCallView!!.setCallClickListener(null)
+            mVectorOngoingConferenceCallView.setCallClickListener(null)
         }
 
         if (null != mActiveWidgetsBanner) {
-            mActiveWidgetsBanner!!.setOnUpdateListener(null)
+            mActiveWidgetsBanner.setOnUpdateListener(null)
         }
 
         super.onDestroy()
@@ -988,7 +970,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         Matrix.getInstance(this)!!.removeNetworkEventListener(mNetworkEventListener)
 
-        if (mxSession!!.isAlive()) {
+        if (mxSession!!.isAlive) {
             // GA reports a null dataHandler instance event if it seems impossible
             if (null != mxSession!!.dataHandler) {
                 mxSession!!.dataHandler.removeListener(mGlobalEventListener)
@@ -996,8 +978,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
         }
 
-        mVectorOngoingConferenceCallView!!.onActivityPause()
-        mActiveWidgetsBanner!!.onActivityPause()
+        mVectorOngoingConferenceCallView.onActivityPause()
+        mActiveWidgetsBanner.onActivityPause()
 
         // to have notifications for this room
         VectorApp.getInstance().notificationDrawerManager.setCurrentRoom(null)
@@ -1009,8 +991,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         if (null != currentRoom) {
             // check if the room has been left from another client.
-            if (currentRoom!!.isReady()) {
-                if (!currentRoom!!.isMember()) {
+            if (currentRoom!!.isReady) {
+                if (!currentRoom!!.isMember) {
                     Log.e(LOG_TAG, "## onResume() : the user is not anymore a member of the room.")
                     finish()
                     return
@@ -1022,7 +1004,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     return
                 }
 
-                if (currentRoom!!.isLeaving()) {
+                if (currentRoom!!.isLeaving) {
                     Log.e(LOG_TAG, "## onResume() : the user is leaving the room.")
                     finish()
                     return
@@ -1038,9 +1020,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
             setEditTextHint(mVectorMessageListFragment!!.currentSelectedEvent)
 
-            mSyncInProgressView!!.visibility = if (VectorApp.isSessionSyncing(mxSession)) View.VISIBLE else View.GONE
+            mSyncInProgressView.visibility = if (VectorApp.isSessionSyncing(mxSession)) View.VISIBLE else View.GONE
         } else {
-            mSyncInProgressView!!.visibility = View.GONE
+            mSyncInProgressView.visibility = View.GONE
         }
 
         mxSession!!.dataHandler.addListener(mGlobalEventListener)
@@ -1052,16 +1034,16 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         if ((null != currentRoom) && (null != Matrix.getInstance(this)!!.defaultLatestChatMessageCache)) {
             val cachedText = Matrix.getInstance(this)!!.defaultLatestChatMessageCache!!.getLatestText(this, currentRoom!!.roomId)
 
-            if (cachedText != mEditText!!.text.toString()) {
+            if (cachedText != mEditText.text.toString()) {
                 mIgnoreTextUpdate = true
-                mEditText!!.setText("")
-                mEditText!!.append(cachedText)
+                mEditText.setText("")
+                mEditText.append(cachedText)
                 mIgnoreTextUpdate = false
             }
 
-            val canSendEncryptedEvent = currentRoom!!.isEncrypted() && mxSession!!.isCryptoEnabled()
-            mE2eImageView!!.setImageResource(if (canSendEncryptedEvent) R.drawable.e2e_verified else R.drawable.e2e_unencrypted)
-            mVectorMessageListFragment!!.setIsRoomEncrypted(currentRoom!!.isEncrypted())
+            val canSendEncryptedEvent = currentRoom!!.isEncrypted && mxSession!!.isCryptoEnabled
+            mE2eImageView.setImageResource(if (canSendEncryptedEvent) R.drawable.e2e_verified else R.drawable.e2e_unencrypted)
+            mVectorMessageListFragment!!.setIsRoomEncrypted(currentRoom!!.isEncrypted)
         }
 
         manageSendMoreButtons()
@@ -1087,7 +1069,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         }
 
         // the device has been rotated
-        // so try to keep the same top/left item;
+        // so try to keep the same top/left item
         if (mScrollToIndex > 0) {
             mVectorMessageListFragment!!.scrollToIndexWhenLoaded(mScrollToIndex)
             mScrollToIndex = -1
@@ -1098,9 +1080,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
             // can only manage one call instance.
             // either there is no active call or resume the active one
-            if ((null == call) || call!!.callId == mCallId) {
+            if ((null == call) || call.callId == mCallId) {
                 val intent = Intent(this, VectorCallViewActivity::class.java)
-                intent.putExtra(VectorCallViewActivity.EXTRA_MATRIX_ID, mxSession!!.getCredentials().userId)
+                intent.putExtra(VectorCallViewActivity.EXTRA_MATRIX_ID, mxSession!!.credentials.userId)
                 intent.putExtra(VectorCallViewActivity.EXTRA_CALL_ID, mCallId)
 
                 enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
@@ -1112,13 +1094,13 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         // the pending call view is only displayed with "active " room
         if ((null == sRoomPreviewData) && (null == mEventId)) {
-            mVectorPendingCallView!!.checkPendingCall()
-            mVectorOngoingConferenceCallView!!.onActivityResume()
-            mActiveWidgetsBanner!!.onActivityResume()
+            mVectorPendingCallView.checkPendingCall()
+            mVectorOngoingConferenceCallView.onActivityResume()
+            mActiveWidgetsBanner.onActivityResume()
         }
 
         // init the auto-completion list from the room members
-        mEditText!!.initAutoCompletions(mxSession!!, currentRoom)
+        mEditText.initAutoCompletions(mxSession!!, currentRoom)
 
         if (mReadMarkerManager != null) {
             mReadMarkerManager!!.onResume()
@@ -1139,13 +1121,13 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         if (currentRoom!!.canReplyTo(selectedEvent)) {
             // User can reply to this event
-            mEditText!!.setHint(if ((currentRoom!!.isEncrypted() && mxSession!!.isCryptoEnabled()))
+            mEditText.setHint(if ((currentRoom!!.isEncrypted && mxSession!!.isCryptoEnabled))
                 R.string.room_message_placeholder_reply_to_encrypted
             else
                 R.string.room_message_placeholder_reply_to_not_encrypted)
         } else {
             // default hint
-            mEditText!!.setHint(if ((currentRoom!!.isEncrypted() && mxSession!!.isCryptoEnabled()))
+            mEditText.setHint(if ((currentRoom!!.isEncrypted && mxSession!!.isCryptoEnabled))
                 R.string.room_message_placeholder_encrypted
             else
                 R.string.room_message_placeholder_not_encrypted)
@@ -1169,7 +1151,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     }
                     mVectorRoomMediasSender!!.sendMedias(sharedDataItems)
                 }
-                WAITING_INFORMATION_ACTIVITY -> finish();
+                WAITING_INFORMATION_ACTIVITY -> finish()
             }
         }
     }
@@ -1200,9 +1182,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //            mVectorMessageListFragment!!.resendUnsentMessages()
 //            refreshNotificationsArea()
 //        }
-        val devicesInfo = error.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>;
-        devicesInfo?.let {
-            val deviceList = getDevicesList(it);
+        val devicesInfo = error.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>
+        devicesInfo.let {
+            val deviceList = getDevicesList(it)
             deviceList.forEach { t: Pair<String, List<MXDeviceInfo>>? ->
                 t?.second?.forEach { d: MXDeviceInfo? ->
                     d?.let { mxDeviceInfo ->
@@ -1231,7 +1213,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         // sanity check
         if (null != devicesInfo) {
-            val userIds = devicesInfo.getUserIds()
+            val userIds = devicesInfo.userIds
 
             for (userId in userIds) {
                 val deviceInfos = ArrayList<MXDeviceInfo>()
@@ -1271,8 +1253,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     try {
                         if (!isFinishing && (null != latestDisplayedEvent) && mVectorMessageListFragment!!.messageAdapter != null) {
 
-                            mVectorMessageListFragment!!.messageAdapter.updateReadMarker(currentRoom!!.getReadMarkerEventId(), latestDisplayedEvent!!.eventId)
-                            viewModelFactory.getViewModel().setIdForUpdateRoomNotifyCount(currentRoom!!.roomId).subscribeOn(Schedulers.io()).subscribe();
+                            mVectorMessageListFragment!!.messageAdapter.updateReadMarker(currentRoom!!.readMarkerEventId, latestDisplayedEvent.eventId)
+                            viewModelFactory.getViewModel().setIdForUpdateRoomNotifyCount(currentRoom!!.roomId).subscribeOn(Schedulers.io()).subscribe()
 
                         }
                     } catch (e: Exception) {
@@ -1298,23 +1280,23 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     }
 
     override fun onBackPressed() {
-        finishResult();
-        finish();
+        finishResult()
+        finish()
         super.onBackPressed()
     }
 
     private fun finishResult() {
 
-        val intentResult = Intent();
-        intentResult.putExtra(RESULT_ROOM_ID, currentRoom!!.roomId);
-        setResult(Activity.RESULT_OK, intentResult);
+        val intentResult = Intent()
+        intentResult.putExtra(RESULT_ROOM_ID, currentRoom!!.roomId)
+        setResult(Activity.RESULT_OK, intentResult)
     }
 
     override fun onScroll(firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
         val eventAtBottom = mVectorMessageListFragment!!.getEvent(firstVisibleItem + visibleItemCount - 1)
         val eventAtTop = mVectorMessageListFragment!!.getEvent(firstVisibleItem)
 
-        if ((null != eventAtBottom) && ((null == mLatestDisplayedEvent) || !TextUtils.equals(eventAtBottom!!.eventId, mLatestDisplayedEvent!!.eventId))) {
+        if ((null != eventAtBottom) && ((null == mLatestDisplayedEvent) || !TextUtils.equals(eventAtBottom.eventId, mLatestDisplayedEvent!!.eventId))) {
 
             Log.d(LOG_TAG, ("## onScroll firstVisibleItem " + firstVisibleItem
                     + " visibleItemCount " + visibleItemCount
@@ -1340,7 +1322,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         }
 
         if (mNotificationsArea != null) {
-            mNotificationsArea!!.scrollState = scrollState
+            mNotificationsArea.scrollState = scrollState
         }
     }
 
@@ -1453,90 +1435,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            R.id.ic_action_matrix_apps -> {
-//                openIntegrationManagerActivity(null)
-//                return true
-//            }
-//            R.id.ic_action_search_in_room -> {
-//                try {
-//                    enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
-//
-//                    val searchIntent = Intent(this, VectorUnifiedSearchActivity::class.java)
-//                    searchIntent.putExtra(VectorUnifiedSearchActivity.EXTRA_ROOM_ID, currentRoom!!.roomId)
-//                    startActivity(searchIntent)
-//                } catch (e: Exception) {
-//                    Log.i(LOG_TAG, "## onOptionsItemSelected(): ")
-//                }
-//
-//                return true
-//            }
-//            R.id.ic_action_room_settings -> {
-//                launchRoomDetails(VectorRoomDetailsActivity.PEOPLE_TAB_INDEX)
-//                return true
-//            }
-//            R.id.ic_action_room_resend_unsent -> {
-//                mVectorMessageListFragment!!.resendUnsentMessages()
-//                refreshNotificationsArea()
-//                return true
-//            }
-//            R.id.ic_action_room_delete_unsent -> {
-//                mVectorMessageListFragment!!.deleteUnsentEvents()
-//                refreshNotificationsArea()
-//                return true
-//            }
-//            R.id.ic_action_room_leave -> {
-//                if (null != currentRoom) {
-//                    Log.d(LOG_TAG, "Leave the room " + currentRoom!!.roomId)
-//                    AlertDialog.Builder(this)
-//                            .setTitle(R.string.room_participants_leave_prompt_title)
-//                            .setMessage(R.string.room_participants_leave_prompt_msg)
-//                            .setPositiveButton(R.string.leave, object : DialogInterface.OnClickListener {
-//                                override fun onClick(dialog: DialogInterface, which: Int) {
-//                                    showWaitingView()
-//
-//                                    currentRoom!!.leave(object : ApiCallback<Void> {
-//                                        override fun onSuccess(info: Void) {
-//                                            Log.d(LOG_TAG, "The room " + currentRoom!!.roomId + " is left")
-//                                            // close the activity
-//                                            finish()
-//                                        }
-//
-//                                        private fun onError(errorMessage: String) {
-//                                            hideWaitingView()
-//                                            Log.e(LOG_TAG, "Cannot leave the room " + currentRoom!!.roomId + " : " + errorMessage)
-//                                        }
-//
-//                                        override fun onNetworkError(e: Exception) {
-//                                            onError(e.localizedMessage)
-//                                        }
-//
-//                                        override fun onMatrixError(e: MatrixError) {
-//                                            if (MatrixError.M_CONSENT_NOT_GIVEN == e.errcode) {
-//                                                hideWaitingView()
-//                                                consentNotGivenHelper.displayDialog(e)
-//                                            } else {
-//                                                onError(e.localizedMessage)
-//                                            }
-//                                        }
-//
-//                                        override fun onUnexpectedError(e: Exception) {
-//                                            onError(e.localizedMessage)
-//                                        }
-//                                    })
-//                                }
-//                            })
-//                            .setNegativeButton(R.string.cancel, null)
-//                            .show()
-//                }
-//                return true
-//            }
-//        }
-
-        return super.onOptionsItemSelected(item)
-    }
-
     /**
      * Open Integration Manager activity
      *
@@ -1562,16 +1460,16 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     private fun isUserAllowedToStartConfCall(): Boolean {
         var isAllowed = false
 
-        if (currentRoom != null && currentRoom!!.isOngoingConferenceCall()) {
+        if (currentRoom != null && currentRoom!!.isOngoingConferenceCall) {
             // if a conf is in progress, the user can join the established conf anyway
             Log.d(LOG_TAG, "## isUserAllowedToStartConfCall(): conference in progress")
             isAllowed = true
-        } else if ((null != currentRoom) && (currentRoom!!.getNumberOfMembers() > 2)) {
-            val powerLevels = currentRoom!!.state.getPowerLevels()
+        } else if ((null != currentRoom) && (currentRoom!!.numberOfMembers > 2)) {
+            val powerLevels = currentRoom!!.state.powerLevels
 
             if (null != powerLevels) {
                 // to start a conf call, the user MUST have the power to invite someone (CFU)
-                isAllowed = powerLevels!!.getUserPowerLevel(mxSession!!.myUserId) >= powerLevels!!.invite
+                isAllowed = powerLevels.getUserPowerLevel(mxSession!!.myUserId) >= powerLevels.invite
             }
         } else {
             // 1:1 call
@@ -1730,7 +1628,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             return
         }
 
-        if ((currentRoom!!.getNumberOfMembers() > 2) && useJitsiCall) {
+        if ((currentRoom!!.numberOfMembers > 2) && useJitsiCall) {
             startJitsiCall(aIsVideoCall)
             return
         }
@@ -1753,8 +1651,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //
 //                        startActivity(intent)
 
-                        val intent = Intent(this@RoomActivity, OutgoingCallActivity::class.java);
-                        startActivity(intent);
+                        val intent = Intent(this@RoomActivity, OutgoingCallActivity::class.java)
+                        startActivity(intent)
                     }
                 })
             }
@@ -1778,7 +1676,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 Log.e(LOG_TAG, "## startIpCall(): onMatrixError Msg=" + e.localizedMessage)
 
                 if (e is MXCryptoError) {
-                    val cryptoError = e as MXCryptoError
+                    val cryptoError = e
                     if (MXCryptoError.UNKNOWN_DEVICES_CODE == cryptoError.errcode) {
                         hideWaitingView()
 //                        CommonActivityUtils.displayUnknownDevicesDialog(mxSession,
@@ -1790,9 +1688,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //                                        startIpCall(useJitsiCall, aIsVideoCall)
 //                                    }
 //                                })
-                        val devicesInfo = cryptoError.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>;
-                        devicesInfo?.let {
-                            val deviceList = getDevicesList(it);
+                        val devicesInfo = cryptoError.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>
+                        devicesInfo.let {
+                            val deviceList = getDevicesList(it)
                             deviceList.forEach { t: Pair<String, List<MXDeviceInfo>>? ->
                                 t?.second?.forEach { d: MXDeviceInfo? ->
                                     d?.let { mxDeviceInfo ->
@@ -1866,7 +1764,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                         mIsMarkDowning = false
                         enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
                         sendMessage(text, if (TextUtils.equals(text, htmlText)) null else htmlText, Message.FORMAT_MATRIX_HTML, handleSlashCommand)
-                        mEditText!!.setText("")
+                        mEditText.setText("")
                     }
                 })
             }
@@ -1883,7 +1781,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //        mSendImageView!!.isEnabled = false
         mIsMarkDowning = true
 
-        var textToSend = mEditText!!.text.toString().trim { it <= ' ' }
+        var textToSend = mEditText.text.toString().trim { it <= ' ' }
 
         val handleSlashCommand: Boolean
         if (textToSend.startsWith("\\/")) {
@@ -1901,28 +1799,28 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
                 currentEvent?.let {
                     if (textToSend.isNullOrEmpty())
-                        return@let;
-                    val mapNewContent = HashMap<String, String>();
-                    mapNewContent.put("msgtype", Message.MSGTYPE_TEXT);
-                    mapNewContent.put("body", textToSend);
-                    textToSend = "* $textToSend";
+                        return@let
+                    val mapNewContent = HashMap<String, String>()
+                    mapNewContent.put("msgtype", Message.MSGTYPE_TEXT)
+                    mapNewContent.put("body", textToSend)
+                    textToSend = "* $textToSend"
                     val jsonObject = JsonObject()
-                    jsonObject.addProperty("body", textToSend);
-                    jsonObject.addProperty("msgtype", "m.text");
-                    val gson = Gson();
-                    jsonObject.add("m.new_content", gson.toJsonTree(mapNewContent));
-                    val event = Event("m.room.message", jsonObject, it.sender, it.roomId);
-                    event.eventId = it.eventId;
+                    jsonObject.addProperty("body", textToSend)
+                    jsonObject.addProperty("msgtype", "m.text")
+                    val gson = Gson()
+                    jsonObject.add("m.new_content", gson.toJsonTree(mapNewContent))
+                    val event = Event("m.room.message", jsonObject, it.sender, it.roomId)
+                    event.eventId = it.eventId
                     messageRepository.editMessageRx(event).subscribe({
-                        Toast.makeText(this@RoomActivity, "Edited", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this@RoomActivity, "Edited", Toast.LENGTH_SHORT).show()
                     }, {
-                        Toast.makeText(this@RoomActivity, it.message, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this@RoomActivity, it.message, Toast.LENGTH_SHORT).show()
                     })
                 }
-                mEditText!!.setText("")
-                currentEvent = null;
-                isEditedMode = false;
-                currentMessageEdit = null;
+                mEditText.setText("")
+                currentEvent = null
+                isEditedMode = false
+                currentMessageEdit = null
             }
         }
     }
@@ -1978,15 +1876,15 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         // check the extras
         if ((0 == sharedDataItems.size) && (null != intent)) {
-            val bundle = intent!!.extras
+            val bundle = intent.extras
             // sanity checks
             if (null != bundle) {
-                if (bundle!!.containsKey(Intent.EXTRA_TEXT)) {
-                    mEditText!!.append(bundle!!.getString(Intent.EXTRA_TEXT))
+                if (bundle.containsKey(Intent.EXTRA_TEXT)) {
+                    mEditText.append(bundle.getString(Intent.EXTRA_TEXT))
 
-                    mEditText!!.post(object : Runnable {
+                    mEditText.post(object : Runnable {
                         override fun run() {
-                            mEditText!!.setSelection(mEditText!!.text.length)
+                            mEditText.setSelection(mEditText.text.length)
                         }
                     })
                 }
@@ -1998,16 +1896,16 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         if (hasItemToShare && !isTextOnly && shouldPreviewMedia) {
             if (null != intent) {
-                intent!!.setClass(this, MediaPreviewerActivity::class.java!!)
+                intent.setClass(this, MediaPreviewerActivity::class.java)
             } else {
                 intent = Intent(this, MediaPreviewerActivity::class.java)
             }
-            intent!!.setExtrasClassLoader(RoomMediaMessage::class.java!!.classLoader)
+            intent.setExtrasClassLoader(RoomMediaMessage::class.java.classLoader)
             if (currentRoom != null) {
-                intent!!.putExtra(MediaPreviewerActivity.EXTRA_ROOM_TITLE, currentRoom!!.getRoomDisplayName(this))
+                intent.putExtra(MediaPreviewerActivity.EXTRA_ROOM_TITLE, currentRoom!!.getRoomDisplayName(this))
             }
             if (null != mLatestTakePictureCameraUri) {
-                intent!!.putExtra(MediaPreviewerActivity.EXTRA_CAMERA_PICTURE_URI, mLatestTakePictureCameraUri)
+                intent.putExtra(MediaPreviewerActivity.EXTRA_CAMERA_PICTURE_URI, mLatestTakePictureCameraUri)
             }
             startActivityForResult(intent, CONFIRM_MEDIA_REQUEST_CODE)
         } else {
@@ -2036,7 +1934,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         val event = Event(Event.EVENT_TYPE_STICKER,
                 JsonParser().parse(contentStr).asJsonObject,
-                mxSession!!.getCredentials().userId,
+                mxSession!!.credentials.userId,
                 currentRoom!!.roomId)
 
         mVectorMessageListFragment!!.sendStickerMessage(event)
@@ -2160,12 +2058,12 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 override fun onNetworkError(e: java.lang.Exception?) {
                     super.onNetworkError(e)
                     mTypingTimerTask?.let { timerTask ->
-                        timerTask.cancel();
-                        mTypingTimerTask = null;
+                        timerTask.cancel()
+                        mTypingTimerTask = null
                     }
                     mTypingTimer?.let { timer ->
-                        timer.cancel();
-                        mTypingTimer = null;
+                        timer.cancel()
+                        mTypingTimer = null
                     }
                 }
             })
@@ -2213,7 +2111,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             // pop to the home activity
             val intent = Intent(this, VectorRoomDetailsActivity::class.java)
             intent.putExtra(VectorRoomDetailsActivity.EXTRA_ROOM_ID, currentRoom!!.roomId)
-            intent.putExtra(VectorRoomDetailsActivity.EXTRA_MATRIX_ID, mxSession!!.getCredentials().userId)
+            intent.putExtra(VectorRoomDetailsActivity.EXTRA_MATRIX_ID, mxSession!!.credentials.userId)
             intent.putExtra(VectorRoomDetailsActivity.EXTRA_SELECTED_TAB_ID, selectedTab)
             startActivityForResult(intent, GET_MENTION_REQUEST_CODE)
         }
@@ -2252,19 +2150,19 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     private fun startStickerPickerActivity() {
         // Search for the sticker picker widget in the user account
-        val userWidgets = mxSession!!.getUserWidgets()
+        val userWidgets = mxSession!!.userWidgets
 
         var stickerWidgetUrl: String? = null
         var stickerWidgetId: String? = null
 
         for (o in userWidgets.values) {
             if (o is Map<*, *>) {
-                val content = (o as Map<*, *>)["content"]
+                val content = o["content"]
                 if (content != null && content is Map<*, *>) {
-                    val type = (content as Map<*, *>)["type"]
+                    val type = content["type"]
                     if (type != null && type is String && type == StickerPickerActivity.WIDGET_NAME) {
-                        stickerWidgetUrl = (content as Map<*, *>)["url"] as String?
-                        stickerWidgetId = (o as Map<*, *>)["id"] as String?
+                        stickerWidgetUrl = content["url"] as String?
+                        stickerWidgetId = o["id"] as String?
                         break
                     }
                 }
@@ -2400,16 +2298,16 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     private fun manageSendMoreButtons() {
         if (!isEditedMode) {
             var img = R.drawable.ic_material_file
-            if (!PreferencesManager.sendMessageWithEnter(this) && mEditText!!.text.length > 0) {
+            if (!PreferencesManager.sendMessageWithEnter(this) && mEditText.text.length > 0) {
                 img = R.drawable.ic_material_send_green
                 buttonSend.setBackgroundResource(R.drawable.background_radius_green)
                 buttonSend.setTextColor(Color.parseColor("#FFFFFF"))
             } else {
                 buttonSend.setBackgroundResource(R.drawable.background_border_radius_gray)
-                val typeValue = TypedValue();
-                theme.resolveAttribute(R.attr.text_not_available_send, typeValue, true);
+                val typeValue = TypedValue()
+                theme.resolveAttribute(R.attr.text_not_available_send, typeValue, true)
 //            buttonSend.setTextColor(Color.parseColor("#000000"))
-                buttonSend.setTextColor(typeValue.data);
+                buttonSend.setTextColor(typeValue.data)
                 when (PreferencesManager.getSelectedDefaultMediaSource(this)) {
                     MEDIA_SOURCE_VOICE -> if (PreferencesManager.isSendVoiceFeatureEnabled(this)) {
                         img = R.drawable.vector_micro_green
@@ -2421,14 +2319,14 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
 //            mSendImageView!!.setImageResource(img)
         } else {
-            if (!PreferencesManager.sendMessageWithEnter(this) && mEditText!!.text.length > 0 && !TextUtils.equals(mEditText.text.toString(), currentMessageEdit)) {
+            if (!PreferencesManager.sendMessageWithEnter(this) && mEditText.text.length > 0 && !TextUtils.equals(mEditText.text.toString(), currentMessageEdit)) {
                 buttonSend.setBackgroundResource(R.drawable.background_radius_green)
                 buttonSend.setTextColor(Color.parseColor("#FFFFFF"))
             } else {
                 buttonSend.setBackgroundResource(R.drawable.background_border_radius_gray)
-                val typeValue = TypedValue();
-                theme.resolveAttribute(R.attr.text_not_available_send, typeValue, true);
-                buttonSend.setTextColor(typeValue.data);
+                val typeValue = TypedValue()
+                theme.resolveAttribute(R.attr.text_not_available_send, typeValue, true)
+                buttonSend.setTextColor(typeValue.data)
                 when (PreferencesManager.getSelectedDefaultMediaSource(this)) {
                     MEDIA_SOURCE_VOICE -> if (PreferencesManager.isSendVoiceFeatureEnabled(this)) {
 
@@ -2444,7 +2342,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     private fun refreshSelfAvatar() {
         // sanity check
         if (null != mAvatarImageView) {
-            VectorUtils.loadUserAvatar(this, mxSession, mAvatarImageView, mxSession!!.getMyUser())
+            VectorUtils.loadUserAvatar(this, mxSession, mAvatarImageView, mxSession!!.myUser)
         }
     }
 
@@ -2492,23 +2390,23 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         if (null != text) {
             var vibrate = false
 
-            if (TextUtils.equals(mxSession!!.getMyUser().displayname, text)) {
+            if (TextUtils.equals(mxSession!!.myUser.displayname, text)) {
                 // current user
-                if (TextUtils.isEmpty(mEditText!!.text)) {
-                    mEditText!!.append(SlashCommandsParser.SlashCommand.EMOTE.command + " ")
-                    mEditText!!.setSelection(mEditText!!.text.length)
+                if (TextUtils.isEmpty(mEditText.text)) {
+                    mEditText.append(SlashCommandsParser.SlashCommand.EMOTE.command + " ")
+                    mEditText.setSelection(mEditText.text.length)
                     vibrate = true
                 }
             } else {
                 // another user
-                if (TextUtils.isEmpty(mEditText!!.text)) {
+                if (TextUtils.isEmpty(mEditText.text)) {
                     // Ensure displayName will not be interpreted as a Slash command
-                    if (text!!.startsWith("/")) {
-                        mEditText!!.append("\\")
+                    if (text.startsWith("/")) {
+                        mEditText.append("\\")
                     }
-                    mEditText!!.append(sanitizeDisplayname(text) + ": ")
+                    mEditText.append(sanitizeDisplayname(text) + ": ")
                 } else {
-                    mEditText!!.text.insert(mEditText!!.selectionStart, sanitizeDisplayname(text) + " ")
+                    mEditText.text.insert(mEditText.selectionStart, sanitizeDisplayname(text) + " ")
                 }
 
                 vibrate = true
@@ -2516,8 +2414,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
             if (vibrate && PreferencesManager.vibrateWhenMentioning(this)) {
                 val v = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                if ((null != v) && v!!.hasVibrator()) {
-                    v!!.vibrate(100)
+                if ((null != v) && v.hasVibrator()) {
+                    v.vibrate(100)
                 }
             }
         }
@@ -2530,29 +2428,29 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      */
     fun insertQuoteInTextEditor(quote: String) {
         if (!TextUtils.isEmpty(quote)) {
-            if (TextUtils.isEmpty(mEditText!!.text)) {
-                mEditText!!.setText("")
-                mEditText!!.append(quote)
+            if (TextUtils.isEmpty(mEditText.text)) {
+                mEditText.setText("")
+                mEditText.append(quote)
             } else {
-                mEditText!!.text.insert(mEditText!!.selectionStart, "\n" + quote)
+                mEditText.text.insert(mEditText.selectionStart, "\n" + quote)
             }
         }
     }
 
     fun insertSelectedMessageInTextEditor(event: Event, textMsg: String?) {
-        currentEvent = event;
-        isEditedMode = true;
-        imageViewCancelEdit.visibility = View.VISIBLE;
-        mEditText.setText(textMsg);
-        textMsg?.let { mEditText.setSelection(it.length); }
+        currentEvent = event
+        isEditedMode = true
+        imageViewCancelEdit.visibility = View.VISIBLE
+        mEditText.setText(textMsg)
+        textMsg?.let { mEditText.setSelection(it.length) }
     }
 
     @OnClick(R.id.image_view_cancel_edit)
     internal fun onClickCancelEdit() {
-        isEditedMode = false;
-        currentEvent = null;
-        mEditText.setText("");
-        imageViewCancelEdit.visibility = View.GONE;
+        isEditedMode = false
+        currentEvent = null
+        mEditText.setText("")
+        imageViewCancelEdit.visibility = View.GONE
     }
 
     /* ==========================================================================================
@@ -2560,27 +2458,27 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      * ========================================================================================== */
 
     override fun showPreviousEventsLoadingWheel() {
-        mBackProgressView!!.visibility = View.VISIBLE
+        mBackProgressView.visibility = View.VISIBLE
     }
 
     override fun hidePreviousEventsLoadingWheel() {
-        mBackProgressView!!.visibility = View.GONE
+        mBackProgressView.visibility = View.GONE
     }
 
     override fun showNextEventsLoadingWheel() {
-        mForwardProgressView!!.visibility = View.VISIBLE
+        mForwardProgressView.visibility = View.VISIBLE
     }
 
     override fun hideNextEventsLoadingWheel() {
-        mForwardProgressView!!.visibility = View.GONE
+        mForwardProgressView.visibility = View.GONE
     }
 
     override fun showMainLoadingWheel() {
-        mMainProgressView!!.visibility = View.VISIBLE
+        mMainProgressView.visibility = View.VISIBLE
     }
 
     override fun hideMainLoadingWheel() {
-        mMainProgressView!!.visibility = View.GONE
+        mMainProgressView.visibility = View.GONE
     }
 
     override fun onSelectedEventChange(currentSelectedEvent: Event?) {
@@ -2602,7 +2500,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             return
         }
         val limitResourceState = mResourceLimitEventListener!!.limitResourceState
-        val hardResourceLimitExceededError = mxSession!!.dataHandler.getResourceLimitExceededError()
+        val hardResourceLimitExceededError = mxSession!!.dataHandler.resourceLimitExceededError
         val softResourceLimitExceededError = limitResourceState.softErrorOrNull()
 
         var state: NotificationAreaView.State = NotificationAreaView.State.Default
@@ -2610,9 +2508,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         if (!mIsUnreadPreviewMode && !TextUtils.isEmpty(mEventId)) {
             state = NotificationAreaView.State.Hidden
         } else if (hardResourceLimitExceededError != null) {
-            state = NotificationAreaView.State.ResourceLimitExceededError(false, hardResourceLimitExceededError!!)
+            state = NotificationAreaView.State.ResourceLimitExceededError(false, hardResourceLimitExceededError)
         } else if (softResourceLimitExceededError != null) {
-            state = NotificationAreaView.State.ResourceLimitExceededError(true, softResourceLimitExceededError!!)
+            state = NotificationAreaView.State.ResourceLimitExceededError(true, softResourceLimitExceededError)
         } else if (!Matrix.getInstance(this)!!.isConnected) {
             state = NotificationAreaView.State.ConnectionError
         } else if (mIsUnreadPreviewMode) {
@@ -2620,8 +2518,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         } else {
             val undeliveredEvents = mxSession!!.dataHandler.store!!.getUndeliveredEvents(currentRoom!!.roomId)
             val unknownDeviceEvents = mxSession!!.dataHandler.store!!.getUnknownDeviceEvents(currentRoom!!.roomId)
-            val hasUndeliverableEvents = (undeliveredEvents != null) && (undeliveredEvents!!.size > 0)
-            val hasUnknownDeviceEvents = (unknownDeviceEvents != null) && (unknownDeviceEvents!!.size > 0)
+            val hasUndeliverableEvents = (undeliveredEvents != null) && (undeliveredEvents.size > 0)
+            val hasUnknownDeviceEvents = (unknownDeviceEvents != null) && (unknownDeviceEvents.size > 0)
             if (hasUndeliverableEvents || hasUnknownDeviceEvents) {
                 mHasUnsentEvents = true
                 state = NotificationAreaView.State.UnsentEvents(hasUndeliverableEvents, hasUnknownDeviceEvents)
@@ -2629,24 +2527,24 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 var unreadCount = 0
                 val summary = currentRoom!!.dataHandler.store!!.getSummary(currentRoom!!.roomId)
                 if (summary != null) {
-                    unreadCount = currentRoom!!.dataHandler.store!!.eventsCountAfter(currentRoom!!.roomId, summary!!.getReadReceiptEventId())
+                    unreadCount = currentRoom!!.dataHandler.store!!.eventsCountAfter(currentRoom!!.roomId, summary.readReceiptEventId)
                 }
                 state = NotificationAreaView.State.ScrollToBottom(unreadCount, mLatestTypingMessage)
             } else if (!TextUtils.isEmpty(mLatestTypingMessage)) {
                 state = NotificationAreaView.State.Typing(mLatestTypingMessage!!)
-            } else if (currentRoom!!.state.isVersioned()) {
+            } else if (currentRoom!!.state.isVersioned) {
                 val roomTombstoneContent = currentRoom!!.state.roomTombstoneContent
                 val events = mRoom!!.state.getStateEvents(HashSet<String>(Arrays.asList(Event.EVENT_TYPE_STATE_ROOM_TOMBSTONE)))
 
                 var sender = ""
-                if (events != null && !events!!.isEmpty()) {
-                    sender = events!!.get(0).sender
+                if (events != null && !events.isEmpty()) {
+                    sender = events.get(0).sender
                 }
 
                 state = NotificationAreaView.State.Tombstone(roomTombstoneContent!!, sender)
             }
         }
-        mNotificationsArea!!.render(state)
+        mNotificationsArea.render(state)
 
         supportInvalidateOptionsMenu()
     }
@@ -2660,21 +2558,21 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         }
 
         if ((null == sRoomPreviewData) && (null == mEventId) && canSendMessages(currentRoom!!.state)) {
-            val isCallSupported = currentRoom!!.canPerformCall() && mxSession!!.isVoipCallSupported()
+            val isCallSupported = currentRoom!!.canPerformCall() && mxSession!!.isVoipCallSupported
             val call = CallsManager.getSharedInstance().activeCall
-            val activeWidget = mVectorOngoingConferenceCallView!!.activeWidget
+            val activeWidget = mVectorOngoingConferenceCallView.activeWidget
 
             if ((null == call) && (null == activeWidget)) {
-                /*mStartCallLayout!!.visibility =*/ if (((isCallSupported && ((mEditText!!.text.length == 0 || PreferencesManager.sendMessageWithEnter(this))))))
+                /*mStartCallLayout!!.visibility =*/ if (((isCallSupported && ((mEditText.text.length == 0 || PreferencesManager.sendMessageWithEnter(this))))))
                     View.VISIBLE
                 else
                     View.GONE
-                mStopCallLayout!!.visibility = View.GONE
+                mStopCallLayout.visibility = View.GONE
                 imageViewVideoCall.visibility = View.VISIBLE
                 imageViewVoiceCall.visibility = View.VISIBLE
             } else if (null != activeWidget) {
 //                mStartCallLayout!!.visibility = View.GONE
-                mStopCallLayout!!.visibility = View.GONE
+                mStopCallLayout.visibility = View.GONE
                 imageViewVideoCall.visibility = View.VISIBLE
                 imageViewVoiceCall.visibility = View.VISIBLE
             } else {
@@ -2682,22 +2580,22 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
                 // ensure that the listener is defined once
                 call!!.removeListener(mCallListener)
-                call!!.addListener(mCallListener)
+                call.addListener(mCallListener)
 
 //                mStartCallLayout!!.visibility = View.GONE
                 if ((call === roomCall)) {
-                    mStopCallLayout!!.visibility = View.VISIBLE
+                    mStopCallLayout.visibility = View.VISIBLE
                     imageViewVideoCall.visibility = View.GONE
                     imageViewVoiceCall.visibility = View.GONE
                 } else {
-                    mStopCallLayout!!.visibility = View.GONE
+                    mStopCallLayout.visibility = View.GONE
                     imageViewVideoCall.visibility = View.VISIBLE
                     imageViewVoiceCall.visibility = View.VISIBLE
                 }
             }
 
             if (refreshOngoingConferenceCallView) {
-                mVectorOngoingConferenceCallView!!.refresh()
+                mVectorOngoingConferenceCallView.refresh()
             }
         }
     }
@@ -2712,7 +2610,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             return
         }
 
-        val typingUsers = currentRoom!!.getTypingUsers()
+        val typingUsers = currentRoom!!.typingUsers
 
         if (!typingUsers.isEmpty()) {
             val myUserId = mxSession!!.myUserId
@@ -2724,8 +2622,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 val member = currentRoom!!.getMember(typingUsers.get(i))
 
                 // check if the user is known and not oneself
-                if ((null != member) && !TextUtils.equals(myUserId, member!!.userId) && (null != member!!.displayname)) {
-                    names.add(member!!.displayname)
+                if ((null != member) && !TextUtils.equals(myUserId, member.userId) && (null != member.displayname)) {
+                    names.add(member.displayname)
                 }
             }
 
@@ -2763,7 +2661,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         var topic: String? = null
 
         if (null != currentRoom) {
-            topic = currentRoom!!.getTopic()
+            topic = currentRoom!!.topic
         } else if ((null != sRoomPreviewData) && (null != sRoomPreviewData!!.roomState)) {
             topic = sRoomPreviewData!!.roomState!!.topic
         } else if ((null != sRoomPreviewData) && (null != sRoomPreviewData!!.publicRoom)) {
@@ -2781,13 +2679,13 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     private fun setTopic(aTopicValue: String?) {
         // in search mode, the topic is not displayed
         if (!TextUtils.isEmpty(mEventId)) {
-            mActionBarCustomTopic!!.visibility = View.GONE
+            mActionBarCustomTopic.visibility = View.GONE
         } else {
             // update the topic of the room header
             updateRoomHeaderTopic()
 
             // update the action bar topic anyway
-            mActionBarCustomTopic!!.text = aTopicValue
+            mActionBarCustomTopic.text = aTopicValue
 
 //             set the visibility of topic on the custom action bar only
 //             if header room view is gone, otherwise skipp it
@@ -2897,7 +2795,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         // set action bar title
         if (null != mActionBarCustomTitle) {
-            mActionBarCustomTitle!!.text = titleToApply
+            mActionBarCustomTitle.text = titleToApply
         } else {
             title = titleToApply
         }
@@ -2998,10 +2896,10 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         var canSendMessage = !state.isVersioned
         if (canSendMessage) {
             val powerLevels = state.powerLevels
-            canSendMessage = (powerLevels != null && powerLevels!!.maySendMessage(mMyUserId))
+            canSendMessage = (powerLevels != null && powerLevels.maySendMessage(mMyUserId))
         }
         if (canSendMessage) {
-            canSendMessage = mxSession!!.dataHandler.getResourceLimitExceededError() == null
+            canSendMessage = mxSession!!.dataHandler.resourceLimitExceededError == null
         }
         return canSendMessage
     }
@@ -3014,17 +2912,17 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             val state = currentRoom!!.state
 
             if (canSendMessages(state)) {
-                mBottomLayout!!.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
-                mBottomSeparator!!.visibility = View.VISIBLE
-                mSendingMessagesLayout!!.visibility = View.VISIBLE
-                mCanNotPostTextView!!.visibility = View.GONE
-            } else if (state.isVersioned() || mxSession!!.dataHandler.getResourceLimitExceededError() != null) {
-                mBottomSeparator!!.visibility = View.GONE
-                mBottomLayout!!.layoutParams.height = 0
+                mBottomLayout.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                mBottomSeparator.visibility = View.VISIBLE
+                mSendingMessagesLayout.visibility = View.VISIBLE
+                mCanNotPostTextView.visibility = View.GONE
+            } else if (state.isVersioned || mxSession!!.dataHandler.resourceLimitExceededError != null) {
+                mBottomSeparator.visibility = View.GONE
+                mBottomLayout.layoutParams.height = 0
             } else {
-                mBottomSeparator!!.visibility = View.GONE
-                mSendingMessagesLayout!!.visibility = View.GONE
-                mCanNotPostTextView!!.visibility = View.VISIBLE
+                mBottomSeparator.visibility = View.GONE
+                mSendingMessagesLayout.visibility = View.GONE
+                mCanNotPostTextView.visibility = View.VISIBLE
             }
         }
     }
@@ -3142,7 +3040,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      */
     fun dismissKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(mEditText!!.windowToken, 0)
+        imm.hideSoftInputFromWindow(mEditText.windowToken, 0)
     }
 
     /**
@@ -3158,7 +3056,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             // hide the name and the topic in the action bar.
             // these items are hidden when the header view is opened
 //            mActionBarCustomTitle!!.visibility = View.GONE
-            mActionBarCustomTopic!!.visibility = View.GONE
+            mActionBarCustomTopic.visibility = View.GONE
 
             // update the UI content of the action bar header
             updateActionBarHeaderView()
@@ -3166,7 +3064,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //            mActionBarCustomArrowImageView!!.setImageResource(R.drawable.ic_arrow_drop_up_white)
             // enable the header view to make it visible
 //            mRoomHeaderView!!.visibility = View.VISIBLE
-            toolbar!!.setBackgroundColor(Color.TRANSPARENT)
+            toolbar.setBackgroundColor(Color.TRANSPARENT)
         } else {
             // hide the room header only if it is displayed
 //            if (View.VISIBLE == mRoomHeaderView!!.visibility) {
@@ -3196,7 +3094,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      * Manage the room preview buttons area
      */
     private fun manageBannedHeader(member: RoomMember) {
-        mRoomPreviewLayout!!.visibility = View.VISIBLE
+        mRoomPreviewLayout.visibility = View.VISIBLE
 
         val invitationTextView = findViewById<TextView>(R.id.room_preview_invitation_textview)
 
@@ -3317,7 +3215,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      */
     private fun manageRoomPreview() {
         if (null != sRoomPreviewData) {
-            mRoomPreviewLayout!!.visibility = View.VISIBLE
+            mRoomPreviewLayout.visibility = View.VISIBLE
 
             val joinButton = findViewById<Button>(R.id.button_join_room)
             val declineButton = findViewById<Button>(R.id.button_decline)
@@ -3339,7 +3237,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 var inviter = ""
 
                 if (null != roomEmailInvitation) {
-                    inviter = roomEmailInvitation!!.inviterName
+                    inviter = roomEmailInvitation.inviterName
                 }
 
                 if (TextUtils.isEmpty(inviter)) {
@@ -3353,11 +3251,11 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                                 }
                             }
 
-                            invitationTextView!!.text = getString(R.string.room_preview_invitation_format, inviter)
+                            invitationTextView.text = getString(R.string.room_preview_invitation_format, inviter)
                         }
                     })
                 } else {
-                    invitationTextView!!.text = getString(R.string.room_preview_invitation_format, inviter)
+                    invitationTextView.text = getString(R.string.room_preview_invitation_format, inviter)
                 }
 
                 declineButton.setOnClickListener(object : View.OnClickListener {
@@ -3399,16 +3297,16 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 })
 
             } else {
-                if ((null != roomEmailInvitation) && !TextUtils.isEmpty(roomEmailInvitation!!.email)) {
-                    invitationTextView!!.text = getString(R.string.room_preview_invitation_format, roomEmailInvitation!!.inviterName)
-                    subInvitationTextView!!.text = getString(R.string.room_preview_unlinked_email_warning, roomEmailInvitation!!.email)
+                if ((null != roomEmailInvitation) && !TextUtils.isEmpty(roomEmailInvitation.email)) {
+                    invitationTextView.text = getString(R.string.room_preview_invitation_format, roomEmailInvitation.inviterName)
+                    subInvitationTextView.text = getString(R.string.room_preview_unlinked_email_warning, roomEmailInvitation.email)
                 } else {
-                    invitationTextView!!.text = getString(R.string.room_preview_try_join_an_unknown_room,
+                    invitationTextView.text = getString(R.string.room_preview_try_join_an_unknown_room,
                             if (TextUtils.isEmpty(sRoomPreviewData!!.roomName)) getString(R.string.room_preview_try_join_an_unknown_room_default) else roomName)
 
                     // the room preview has some messages
                     if ((null != sRoomPreviewData!!.roomResponse) && (null != sRoomPreviewData!!.roomResponse.messages)) {
-                        subInvitationTextView!!.text = getString(R.string.room_preview_room_interactions_disabled)
+                        subInvitationTextView.text = getString(R.string.room_preview_room_interactions_disabled)
                     }
                 }
 
@@ -3432,7 +3330,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                         var signUrl: String? = null
 
                         if (null != roomEmailInvitation) {
-                            signUrl = roomEmailInvitation!!.signUrl
+                            signUrl = roomEmailInvitation.signUrl
                         }
 
                         showWaitingView()
@@ -3473,7 +3371,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             enableActionBarHeader(SHOW_ACTION_BAR_HEADER)
 
         } else {
-            mRoomPreviewLayout!!.visibility = View.GONE
+            mRoomPreviewLayout.visibility = View.GONE
         }
     }
 
@@ -3520,12 +3418,12 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      */
     private fun processDirectMessageRoom() {
         val room = sRoomPreviewData!!.session.dataHandler.getRoom(sRoomPreviewData!!.roomId)
-        if ((null != room) && (room!!.isDirectChatInvitation)) {
+        if ((null != room) && (room.isDirectChatInvitation)) {
             if (currentRoom == null) {
                 return
             }
 
-            if (currentRoom!!.getNumberOfMembers() == 2) {
+            if (currentRoom!!.numberOfMembers == 2) {
                 // test if room is already seen as "direct message"
                 if (!RoomUtils.isDirectChat(mxSession, sRoomPreviewData!!.roomId)) {
                     currentRoom!!.getMembersAsync(object : SimpleApiCallback<List<RoomMember>>(this) {
@@ -3563,10 +3461,10 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     private fun onActivityResultRoomInvite(aData: Intent) {
         val userIds = aData.getSerializableExtra(VectorRoomInviteMembersActivity.EXTRA_OUT_SELECTED_USER_IDS) as List<String>
 
-        if (currentRoom != null && (null != userIds) && (userIds!!.size > 0)) {
+        if (currentRoom != null && (null != userIds) && (userIds.size > 0)) {
             showWaitingView()
 
-            currentRoom!!.invite(mxSession,userIds, object : ApiCallback<Void?> {
+            currentRoom!!.invite(mxSession, userIds, object : ApiCallback<Void?> {
 
                 private fun onDone(errorMessage: String?) {
                     if (!TextUtils.isEmpty(errorMessage)) {
@@ -3718,14 +3616,14 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     //    @OnClick(R.id.room_header_avatar)
     internal fun onRoomAvatarClick() {
-        if (currentRoom != null && !TextUtils.isEmpty(currentRoom!!.getAvatarUrl()))
+        if (currentRoom != null && !TextUtils.isEmpty(currentRoom!!.avatarUrl))
         // Display the avatar in fullscreen with animation
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                val options = ActivityOptions.makeSceneTransitionAnimation(this, mActionBarHeaderRoomAvatar, "vector_transition_avatar")
 //                startActivity(VectorAvatarViewerActivity.getIntent(this, mxSession!!.myUserId, currentRoom!!.getAvatarUrl()!!), options.toBundle())
             } else {
                 // No transition
-                startActivity(VectorAvatarViewerActivity.getIntent(this, mxSession!!.myUserId, currentRoom!!.getAvatarUrl()!!))
+                startActivity(VectorAvatarViewerActivity.getIntent(this, mxSession!!.myUserId, currentRoom!!.avatarUrl!!))
             }
     }
 
@@ -3734,11 +3632,11 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         // sanity checks : reported by GA
         if ((null != currentRoom) && (null != currentRoom!!.state)) {
             var canUpdateTitle = false
-            val powerLevels = currentRoom!!.state.getPowerLevels()
+            val powerLevels = currentRoom!!.state.powerLevels
 
             if (null != powerLevels) {
-                val powerLevel = powerLevels!!.getUserPowerLevel(mxSession!!.myUserId)
-                canUpdateTitle = powerLevel >= powerLevels!!.minimumPowerLevelForSendingEventAsStateEvent(Event.EVENT_TYPE_STATE_ROOM_NAME)
+                val powerLevel = powerLevels.getUserPowerLevel(mxSession!!.myUserId)
+                canUpdateTitle = powerLevel >= powerLevels.minimumPowerLevelForSendingEventAsStateEvent(Event.EVENT_TYPE_STATE_ROOM_NAME)
             }
 
             if (canUpdateTitle) {
@@ -3754,11 +3652,11 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         // sanity checks : reported by GA
         if ((null != currentRoom) && (null != currentRoom!!.state)) {
             var canUpdateTopic = false
-            val powerLevels = currentRoom!!.state.getPowerLevels()
+            val powerLevels = currentRoom!!.state.powerLevels
 
             if (null != powerLevels) {
-                val powerLevel = powerLevels!!.getUserPowerLevel(mxSession!!.myUserId)
-                canUpdateTopic = powerLevel >= powerLevels!!.minimumPowerLevelForSendingEventAsStateEvent(Event.EVENT_TYPE_STATE_ROOM_NAME)
+                val powerLevel = powerLevels.getUserPowerLevel(mxSession!!.myUserId)
+                canUpdateTopic = powerLevel >= powerLevels.minimumPowerLevelForSendingEventAsStateEvent(Event.EVENT_TYPE_STATE_ROOM_NAME)
             }
 
             if (canUpdateTopic) {
@@ -3793,7 +3691,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             val vectorMemberDetailIntent = Intent(this, VectorMemberDetailsActivity::class.java)
             vectorMemberDetailIntent.putExtra(VectorMemberDetailsActivity.EXTRA_ROOM_ID, currentRoom!!.roomId)
             vectorMemberDetailIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MEMBER_ID, userId)
-            vectorMemberDetailIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MATRIX_ID, mxSession!!.getCredentials().userId)
+            vectorMemberDetailIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MATRIX_ID, mxSession!!.credentials.userId)
             startActivityForResult(vectorMemberDetailIntent, VectorRoomActivity.GET_MENTION_REQUEST_CODE)
         }
     }
@@ -3845,7 +3743,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     //    @OnClick(R.id.room_send_image_view)
     internal fun onSendClick() {
-        if (!TextUtils.isEmpty(mEditText!!.text) && !PreferencesManager.sendMessageWithEnter(this)) {
+        if (!TextUtils.isEmpty(mEditText.text) && !PreferencesManager.sendMessageWithEnter(this)) {
             sendTextMessage(mEditText.text.toString())
         } else {
             val useNativeCamera = PreferencesManager.useNativeCamera(this)
@@ -3886,18 +3784,18 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     @OnClick(R.id.room_action_bar_title)
     internal fun onClickRoomTitle() {
-        val intent = Intent(this@RoomActivity, RoomSettingsActivity::class.java);
-        intent.putExtra(RoomSettingsActivity.ROOM_ID, currentRoom?.roomId);
-        startActivityForResult(intent, WAITING_INFORMATION_ACTIVITY);
+        val intent = Intent(this@RoomActivity, RoomSettingsActivity::class.java)
+        intent.putExtra(RoomSettingsActivity.ROOM_ID, currentRoom?.roomId)
+        startActivityForResult(intent, WAITING_INFORMATION_ACTIVITY)
     }
 
     @OnClick(R.id.button_send)
     internal fun onClickSend() {
-        imageViewCancelEdit.visibility = View.GONE;
+        imageViewCancelEdit.visibility = View.GONE
         if (!isEditedMode)
-            sendTextMessage(mEditText.text.toString());
+            sendTextMessage(mEditText.text.toString())
         else
-            editTextMessage();
+            editTextMessage()
     }
 
     @OnClick(R.id.imgFile)
@@ -3950,8 +3848,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     @SuppressLint("SetTextI18n")
     @OnClick(R.id.button_special_symbol)
     internal fun onClickSpecialSymbol() {
-        mEditText.setText(mEditText.text.toString() + "@");
-        mEditText.setSelection(mEditText.text.length);
+        mEditText.setText(mEditText.text.toString() + "@")
+        mEditText.setSelection(mEditText.text.length)
     }
 
     @OnClick(R.id.image_view_send_image)
@@ -3964,7 +3862,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     //    @OnLongClick(R.id.room_send_image_view)
     internal fun onLongClick(): Boolean {
-        if (!TextUtils.isEmpty(mEditText!!.text) && !PreferencesManager.sendMessageWithEnter(this)) {
+        if (!TextUtils.isEmpty(mEditText.text) && !PreferencesManager.sendMessageWithEnter(this)) {
             return false
         }
         val useNativeCamera = PreferencesManager.useNativeCamera(this)
@@ -4004,12 +3902,12 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         val call = CallsManager.getSharedInstance().activeCall
         if (null != call) {
             val intent = Intent(this, OutgoingCallActivity::class.java)
-            intent.putExtra(CallViewActivity.EXTRA_MATRIX_ID, call!!.session.credentials.userId)
-            intent.putExtra(CallViewActivity.EXTRA_CALL_ID, call!!.callId)
+            intent.putExtra(CallViewActivity.EXTRA_MATRIX_ID, call.session.credentials.userId)
+            intent.putExtra(CallViewActivity.EXTRA_CALL_ID, call.callId)
             startActivity(intent)
         } else {
             // if the call is no more active, just remove the view
-            mVectorPendingCallView!!.onCallTerminated()
+            mVectorPendingCallView.onCallTerminated()
         }
     }
 
@@ -4018,7 +3916,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     // when there is no text, it is quite small and some user thought the edition was disabled.
     @OnClick(R.id.room_sending_message_layout)
     internal fun onSendingMessageLayoutClick() {
-        if (mEditText!!.requestFocus()) {
+        if (mEditText.requestFocus()) {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(mEditText, InputMethodManager.SHOW_IMPLICIT)
         }
@@ -4060,19 +3958,19 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     @OnClick(R.id.image_view_video_call)
     internal fun onStartVideoCall() {
-        onCallItemClicked(1);
+        onCallItemClicked(1)
     }
 
     @OnClick(R.id.image_view_voice_call)
     internal fun onStartVoiceCall() {
-        onCallItemClicked(0);
+        onCallItemClicked(0)
     }
 
     @OnClick(R.id.image_view_search)
     internal fun onRoomSearch() {
-        val intentSearch = Intent(this, UnifiedSearchActivity::class.java);
-        intentSearch.putExtra(UnifiedSearchActivity.EXTRA_ROOM_ID, currentRoom?.roomId);
-        startActivity(intentSearch);
+        val intentSearch = Intent(this, UnifiedSearchActivity::class.java)
+        intentSearch.putExtra(UnifiedSearchActivity.EXTRA_ROOM_ID, currentRoom?.roomId)
+        startActivity(intentSearch)
     }
 
     @OnClick(R.id.room_end_call_image_view)
@@ -4084,14 +3982,14 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     internal fun onMarginRightClick() {
         // extend the right side of right button
         // to avoid clicking in the void
-        if (mStopCallLayout!!.visibility == View.VISIBLE) {
-            mStopCallLayout!!.performClick()
+        if (mStopCallLayout.visibility == View.VISIBLE) {
+            mStopCallLayout.performClick()
         }
 //        else if (mStartCallLayout!!.visibility == View.VISIBLE) {
 //            mStartCallLayout!!.performClick()
 //        }
-        else if (mSendImageView!!.visibility == View.VISIBLE) {
-            mSendImageView!!.performClick()
+        else if (mSendImageView.visibility == View.VISIBLE) {
+            mSendImageView.performClick()
         }
     }
 }

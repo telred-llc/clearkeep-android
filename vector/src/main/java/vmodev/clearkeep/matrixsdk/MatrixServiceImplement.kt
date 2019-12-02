@@ -39,9 +39,7 @@ import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.data.RoomTag
 import org.matrix.androidsdk.listeners.IMXMediaUploadListener
 import org.matrix.androidsdk.rest.model.Event
-import org.matrix.androidsdk.rest.model.RoomDirectoryVisibility
 import org.matrix.androidsdk.rest.model.RoomMember
-import org.matrix.androidsdk.rest.model.pid.ThirdPartyProtocol
 import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
 import org.matrix.androidsdk.rest.model.publicroom.PublicRoomsResponse
 import org.matrix.androidsdk.rest.model.search.SearchResponse
@@ -55,7 +53,7 @@ import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.databases.AbstractMessageDao
 import vmodev.clearkeep.databases.AbstractRoomDao
 import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
-import vmodev.clearkeep.enums.CallStatusEnum
+import vmodev.clearkeep.enums.EventTypeEnum
 import vmodev.clearkeep.jsonmodels.CallContent
 import vmodev.clearkeep.jsonmodels.MessageContent
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
@@ -1857,7 +1855,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             var messagesResult = ArrayList<MessageRoomUser>();
             val callHistoryFilter: HashMap<String, MessageRoomUser> = HashMap()
             val parser = JsonParser();
-            val gson = Gson();
+                val gson = Gson();
             session!!.dataHandler.crypto?.let { mxCrypto ->
                 messages.forEach { item ->
                     val event = Event(item.message?.messageType, parser.parse(item.message?.encryptedContent).asJsonObject, item.message?.userId, item.message?.roomId);
@@ -1870,36 +1868,88 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                 var messageResult: Message? = null
                                 var messageRooUser: MessageRoomUser? = null
                                 val message = gson.fromJson(result.mClearEvent, MessageContent::class.java);
-                                if (!type.isNullOrEmpty() && type == Event.EVENT_TYPE_MESSAGE) {
-                                    if (message.getContent().getMsgType().compareTo(msgType) == 0) {
-                                        item.message?.let {
-                                            messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = message.getContent().getBody(), createdAt = if (item.message != null) item.message!!.createdAt else 0)
+                                if (!type.isNullOrEmpty()) {
+                                    when (type) {
+                                        Event.EVENT_TYPE_MESSAGE -> {
+                                            val messageType = message.getContent().getMsgType()
+                                            if (msgType == EventTypeEnum.TEXT.value && messageType == EventTypeEnum.TEXT.value) {
+                                                item.message?.let {
+                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = message.getContent().getBody(), createdAt = if (item.message != null) item.message!!.createdAt else 0)
+                                                }
+                                                messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
+                                                messageRooUser?.let { it1 -> messagesResult.add(it1) };
+                                            } else if (msgType == EventTypeEnum.IMAGE.value && (messageType == EventTypeEnum.IMAGE.value || messageType == EventTypeEnum.VIDEO.value || messageType == EventTypeEnum.AUDIO.value || messageType == EventTypeEnum.FILE.value)) {
+                                                item.message?.let {
+                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent =json.getAsJsonObject("content").toString(), createdAt = if (item.message != null) item.message!!.createdAt else 0)
+//                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = message.getContent().getBody(), createdAt = if (item.message != null) item.message!!.createdAt else 0)
+                                                }
+                                                messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
+                                                messageRooUser?.let { it1 -> messagesResult.add(it1) };
+                                            } else {
+                                            }
                                         }
-                                        messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
-                                    }
-                                }
-                                // Filter Call History
-                                else if (!type.isNullOrEmpty() && (type == Event.EVENT_TYPE_CALL_INVITE || type == Event.EVENT_TYPE_CALL_ANSWER || type == Event.EVENT_TYPE_CALL_HANGUP || type == Event.EVENT_TYPE_CALL_CANDIDATES) && msgType == Event.EVENT_TYPE_CALL_INVITE) {
-                                    Log.d("Json Event", result.mClearEvent.toString())
-                                    val callContent = gson.fromJson(result.mClearEvent, CallContent::class.java);
-                                    var typeCall = ""
-                                    typeCall = if (!callContent.getContent()?.getReason().isNullOrBlank() && callContent.getContent()?.getReason() == "invite_timeout") {
-                                       CallStatusEnum.MISS_CALL.value
-                                    } else if (callHistoryFilter.containsKey(callContent.getContent()?.getCallId()) && callHistoryFilter[callContent.getContent()?.getCallId()]?.message?.encryptedContent == "m.miss_call") {
-                                        CallStatusEnum.MISS_CALL.value
-                                    } else {
-                                        callContent.getType().toString()
-                                    }
+
+                                        Event.EVENT_TYPE_CALL_INVITE, Event.EVENT_TYPE_CALL_ANSWER,
+                                        Event.EVENT_TYPE_CALL_HANGUP, Event.EVENT_TYPE_CALL_CANDIDATES -> {
+                                            if (msgType == Event.EVENT_TYPE_CALL_INVITE) {
+                                                val callContent = gson.fromJson(result.mClearEvent, CallContent::class.java);
+                                                var typeCall = ""
+                                                typeCall = if (!callContent.getContent()?.getReason().isNullOrBlank() && callContent.getContent()?.getReason() == EventTypeEnum.INVITE_TIMEOUT.value) {
+                                                    EventTypeEnum.MISS_CALL.value
+                                                } else if (callHistoryFilter.containsKey(callContent.getContent()?.getCallId()) && callHistoryFilter[callContent.getContent()?.getCallId()]?.message?.encryptedContent == EventTypeEnum.MISS_CALL.value) {
+                                                    EventTypeEnum.MISS_CALL.value
+                                                } else {
+                                                    callContent.getType().toString()
+                                                }
 //
-                                    item.message?.let {
-                                        messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = "m.room.message", encryptedContent = typeCall, createdAt = if (item.message != null) item.message!!.createdAt else 0)
+                                                item.message?.let {
+                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = typeCall, createdAt = if (item.message != null) item.message!!.createdAt else 0)
+                                                }
+                                                messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
+                                                callContent.getContent()?.getCallId()?.let { it1 -> callHistoryFilter.put(it1, messageRooUser!!) }
+                                            }
+                                        }
                                     }
-                                    messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
-                                    callContent.getContent()?.getCallId()?.let { it1 -> callHistoryFilter.put(it1, messageRooUser) }
-                                } else {
-                                    //not working
                                 }
-                                messageRooUser?.let { it1 -> messagesResult.add(it1) };
+
+//
+//
+//                                if (!type.isNullOrEmpty() && type == Event.EVENT_TYPE_MESSAGE) {
+//                                    if (message.getContent().getMsgType().compareTo(msgType) == 0) {
+//                                        item.message?.let {
+//                                            messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = message.getContent().getBody(), createdAt = if (item.message != null) item.message!!.createdAt else 0)
+//                                        }
+//                                        messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
+//                                    }
+//                                }
+//                                // Filter Call History
+//                                else if (!type.isNullOrEmpty() && (type == Event.EVENT_TYPE_CALL_INVITE || type == Event.EVENT_TYPE_CALL_ANSWER || type == Event.EVENT_TYPE_CALL_HANGUP || type == Event.EVENT_TYPE_CALL_CANDIDATES) && msgType == Event.EVENT_TYPE_CALL_INVITE) {
+//                                    Log.d("Json Event", result.mClearEvent.toString())
+//                                    val callContent = gson.fromJson(result.mClearEvent, CallContent::class.java);
+//                                    var typeCall = ""
+//                                    typeCall = if (!callContent.getContent()?.getReason().isNullOrBlank() && callContent.getContent()?.getReason() == EventTypeEnum.INVITE_TIMEOUT.value) {
+//                                        EventTypeEnum.MISS_CALL.value
+//                                    } else if (callHistoryFilter.containsKey(callContent.getContent()?.getCallId()) && callHistoryFilter[callContent.getContent()?.getCallId()]?.message?.encryptedContent == EventTypeEnum.MISS_CALL.value) {
+//                                        EventTypeEnum.MISS_CALL.value
+//                                    } else {
+//                                        callContent.getType().toString()
+//                                    }
+////
+//                                    item.message?.let {
+//                                        messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = typeCall, createdAt = if (item.message != null) item.message!!.createdAt else 0)
+//                                    }
+//                                    messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
+//                                    callContent.getContent()?.getCallId()?.let { it1 -> callHistoryFilter.put(it1, messageRooUser) }
+//                                } else if (!type.isNullOrEmpty() && (type == EventTypeEnum.IMAGE.value || type == EventTypeEnum.VIDEO.value ||
+//                                                type == EventTypeEnum.AUDIO.value || type == EventTypeEnum.FILE.value
+//                                                )) {
+//
+//                                    Log.d("File", result.mClearEvent.toString())
+//
+//                                } else {
+//                                    //not working
+//                                }
+
                             }
                         }
                     } catch (e: MXDecryptionException) {
@@ -1990,10 +2040,10 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         }
     }
 
-    override fun getListRoomDirectory(limit: Int, query : String): Observable<List<PublicRoom>> {
+    override fun getListRoomDirectory(limit: Int, query: String): Observable<List<PublicRoom>> {
         setMXSession();
         return Observable.create { emitter ->
-            session!!.eventsApiClient.loadPublicRooms(null, null, false, query, null, limit,object : ApiCallback<PublicRoomsResponse>{
+            session!!.eventsApiClient.loadPublicRooms(null, null, false, query, null, limit, object : ApiCallback<PublicRoomsResponse> {
                 override fun onSuccess(p0: PublicRoomsResponse?) {
                     emitter.onNext(p0!!.chunk);
                     emitter.onComplete();

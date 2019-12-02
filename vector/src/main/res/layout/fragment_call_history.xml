@@ -34,8 +34,7 @@
             android:id="@+id/nested_scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            >
+            android:fitsSystemWindows="true">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
@@ -45,16 +44,16 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
+                    android:background="?attr/color_view_blank_setting"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:background="?attr/color_view_blank_setting"
                     android:paddingHorizontal="@dimen/padding_normal">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/padding_normal"
-                        app:srcCompat="@drawable/ic_phone" />
+                        app:srcCompat="?attr/drawable_call_log" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -70,11 +69,9 @@
                     android:id="@+id/rvCallHistory"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_call_history"
                     android:nestedScrollingEnabled="true"
-                    />
-
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_call_history" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 

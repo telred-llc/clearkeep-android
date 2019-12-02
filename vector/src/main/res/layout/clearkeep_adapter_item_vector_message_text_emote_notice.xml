@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <include
@@ -76,13 +76,14 @@
                 android:id="@+id/messagesAdapter_body_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="start"
                 android:layout_marginEnd="4dp"
-                app:cardCornerRadius="@dimen/margin_normal"
-                android:layout_gravity="start">
+                app:cardCornerRadius="@dimen/margin_normal">
+
                 <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/background_purple_to_transparent_gradient">
+                    android:background="?attr/background_message_text_emote_notice">
                     <!-- the body is here -->
                     <RelativeLayout
                         android:id="@+id/messagesAdapter_text_layout"
@@ -96,7 +97,7 @@
                             android:layout_width="14dp"
                             android:layout_height="14dp"
                             android:src="@drawable/e2e_verified"
-                            android:visibility="gone"/>
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/messagesAdapter_body"
@@ -105,6 +106,7 @@
                             android:layout_gravity="start"
                             android:layout_marginStart="4dp"
                             android:layout_toEndOf="@id/message_adapter_e2e_icon"
+                            android:textColor="#ffffff"
                             android:textIsSelectable="false"
                             android:textSize="14sp"
                             tools:text="A body www.example.org" />
@@ -117,6 +119,7 @@
                             android:layout_alignStart="@+id/messagesAdapter_body"
                             android:layout_gravity="start"
                             android:text="@string/e2e_re_request_encryption_key"
+                            android:textColor="#ffffff"
                             android:textIsSelectable="false"
                             android:textSize="14sp" />
                     </RelativeLayout>
