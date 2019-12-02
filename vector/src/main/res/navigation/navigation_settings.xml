@@ -9,7 +9,7 @@
         android:id="@+id/deactivateAccountFragment"
         android:name="vmodev.clearkeep.fragments.DeactivateAccountFragment"
         android:label="Deactivate account"
-        tools:layout="@layout/fragment_deactivate_user_account" >
+        tools:layout="@layout/fragment_deactivate_user_account">
         <action
             android:id="@+id/cancel"
             app:destination="@id/profileSettingsFragment"
@@ -22,12 +22,12 @@
         android:id="@+id/privacyPolicyFragment"
         android:name="vmodev.clearkeep.fragments.PrivacyPolicyFragment"
         android:label="Privacy policy"
-        tools:layout="@layout/fragment_privacy_policy" >
+        tools:layout="@layout/fragment_privacy_policy">
         <argument
             android:name="url"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/reportFragment"
@@ -44,6 +44,11 @@
         android:name="vmodev.clearkeep.fragments.NotificationSettingsFragment"
         android:label="Notifications"
         tools:layout="@layout/fragment_notification_settings" />
+    <fragment
+        android:id="@+id/feedBackFragment"
+        android:name="vmodev.clearkeep.fragments.FeedBackFragment"
+        android:label="FeedBack"
+        tools:layout="@layout/fragment_feed_back" />
     <fragment
         android:id="@+id/profileSettingsFragment"
         android:name="vmodev.clearkeep.fragments.ProfileSettingsFragment"
@@ -80,6 +85,14 @@
         <action
             android:id="@+id/deactivateAccount"
             app:destination="@id/deactivateAccountFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+
+        <action
+            android:id="@+id/feedBack"
+            app:destination="@id/feedBackFragment"
             app:enterAnim="@anim/fragment_open_enter"
             app:exitAnim="@anim/fragment_open_exit"
             app:popEnterAnim="@anim/fragment_close_enter"

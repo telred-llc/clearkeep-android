@@ -226,17 +226,17 @@ abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(AbstractIncomingCallFragmentViewModel::class)
-    abstract fun bindIncomingCallFragmentViewModel(viewModel : IncomingCallFragmentViewModel) : ViewModel;
+    abstract fun bindIncomingCallFragmentViewModel(viewModel: IncomingCallFragmentViewModel): ViewModel;
 
     @Binds
     @IntoMap
     @ViewModelKey(AbstractInProgressVoiceCallFragmentViewModel::class)
-    abstract fun bindInProgressVoiceCallFragmentViewModel(viewModel : InProgressVoiceCallFragmentViewModel) : ViewModel;
+    abstract fun bindInProgressVoiceCallFragmentViewModel(viewModel: InProgressVoiceCallFragmentViewModel): ViewModel;
 
     @Binds
     @IntoMap
     @ViewModelKey(AbstractOutgoingVoiceCallFragmentViewModel::class)
-    abstract fun bindOutgoingVoiceCallFragmentViewModel(viewModel : OutgoingVoiceCallFragmentViewModel) : ViewModel;
+    abstract fun bindOutgoingVoiceCallFragmentViewModel(viewModel: OutgoingVoiceCallFragmentViewModel): ViewModel;
 
     @Binds
     abstract fun bindViewModelFactory(clearKeepViewModelProviderFactory: ClearKeepViewModelProviderFactory): ViewModelProvider.Factory;
@@ -255,4 +255,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AbstractCallHistoryViewModel::class)
     abstract fun bindAbstractCallHistoryViewModel(viewModel: CallHistoryFragmentViewModel): ViewModel;
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AbstractFeedBackFragmentViewModel::class)
+    abstract fun bindAbstractFeedBackFragmentViewModel(viewModel: FeedBackFragmentViewModel): ViewModel;
 }

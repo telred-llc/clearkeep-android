@@ -5,10 +5,9 @@ import io.reactivex.Observable
 import org.matrix.androidsdk.crypto.data.ImportRoomKeysResult
 import org.matrix.androidsdk.data.Room
 import org.matrix.androidsdk.rest.model.Event
-import org.matrix.androidsdk.rest.model.pid.ThirdPartyProtocol
 import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
-import org.matrix.androidsdk.rest.model.publicroom.PublicRoomsResponse
 import vmodev.clearkeep.rests.models.responses.EditMessageResponse
+import vmodev.clearkeep.rests.models.responses.FeedbackResponse
 import vmodev.clearkeep.rests.models.responses.PassphraseResponse
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
@@ -60,10 +59,11 @@ public interface MatrixService {
     fun getPassphrase(): Observable<PassphraseResponse>;
     fun createPassphrase(passphrase: String): Observable<PassphraseResponse>;
     fun checkBackupKeyStateWhenStart(): Observable<Int>;
-    fun getRoomWithIdForCreate(roomId: String) : Observable<vmodev.clearkeep.viewmodelobjects.Room>;
-    fun getUserProfile(userId: String) : Observable<User>;
-    fun getListRoomDirectory(limit: Int, query : String) : Observable<List<PublicRoom>>;
-    fun updateRoomName(roomId : String, roomName : String) : Observable<String>;
-    fun updateRoomTopic(roomId : String, roomTopic : String) : Observable<String>;
-    fun updateRoomAvatar(roomId: String,inputStream: InputStream) : Observable<String>;
+    fun getRoomWithIdForCreate(roomId: String): Observable<vmodev.clearkeep.viewmodelobjects.Room>;
+    fun getUserProfile(userId: String): Observable<User>;
+    fun getListRoomDirectory(limit: Int, query: String): Observable<List<PublicRoom>>;
+    fun updateRoomName(roomId: String, roomName: String): Observable<String>;
+    fun updateRoomTopic(roomId: String, roomTopic: String): Observable<String>;
+    fun updateRoomAvatar(roomId: String, inputStream: InputStream): Observable<String>;
+    fun feedBackApp(contents: String, start: Int): Observable<FeedbackResponse>
 }

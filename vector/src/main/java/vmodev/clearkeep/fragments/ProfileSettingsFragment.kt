@@ -15,6 +15,7 @@ import im.vector.databinding.FragmentProfileSettingsBinding
 import vmodev.clearkeep.activities.ExportKeyActivity
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.ultis.OnSingleClickListener
 import vmodev.clearkeep.ultis.SharedPreferencesUtils
 import vmodev.clearkeep.viewmodels.interfaces.AbstractProfileSettingsActivityViewModel
 import java.util.*
@@ -64,6 +65,11 @@ class ProfileSettingsFragment : DataBindingDaggerFragment(), IFragment {
         binding.reportGroup.setOnClickListener {
             findNavController().navigate(ProfileSettingsFragmentDirections.report())
         }
+        binding.feedBackGroup.setOnClickListener(object : OnSingleClickListener() {
+            override fun onSingleClick(v: View) {
+                findNavController().navigate(ProfileSettingsFragmentDirections.feedBack())
+            }
+        })
         binding.textViewClearCache.setOnClickListener {
             Matrix.getInstance(application.getApplication()).reloadSessions(application.getApplication(), false)
         }

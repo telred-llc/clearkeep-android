@@ -361,6 +361,8 @@ class RoomSettingsFragment : DataBindingDaggerFragment(), IFragment {
             val powerLevels = mRoom?.state?.powerLevels
             binding.powerLevel = powerLevels?.getUserPowerLevel(application.getUserId())
         }
+
+
     }
 
     companion object {

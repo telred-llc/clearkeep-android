@@ -61,6 +61,7 @@ import vmodev.clearkeep.rests.ClearKeepApis
 import vmodev.clearkeep.rests.IRetrofit
 import vmodev.clearkeep.rests.models.requests.EditMessageRequest
 import vmodev.clearkeep.rests.models.responses.EditMessageResponse
+import vmodev.clearkeep.rests.models.responses.FeedbackResponse
 import vmodev.clearkeep.rests.models.responses.PassphraseResponse
 import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
 import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
@@ -1855,7 +1856,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             var messagesResult = ArrayList<MessageRoomUser>();
             val callHistoryFilter: HashMap<String, MessageRoomUser> = HashMap()
             val parser = JsonParser();
-                val gson = Gson();
+            val gson = Gson();
             session!!.dataHandler.crypto?.let { mxCrypto ->
                 messages.forEach { item ->
                     val event = Event(item.message?.messageType, parser.parse(item.message?.encryptedContent).asJsonObject, item.message?.userId, item.message?.roomId);
@@ -1880,7 +1881,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                                 messageRooUser?.let { it1 -> messagesResult.add(it1) };
                                             } else if (msgType == EventTypeEnum.IMAGE.value && (messageType == EventTypeEnum.IMAGE.value || messageType == EventTypeEnum.VIDEO.value || messageType == EventTypeEnum.AUDIO.value || messageType == EventTypeEnum.FILE.value)) {
                                                 item.message?.let {
-                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent =json.getAsJsonObject("content").toString(), createdAt = if (item.message != null) item.message!!.createdAt else 0)
+                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = json.getAsJsonObject("content").toString(), createdAt = if (item.message != null) item.message!!.createdAt else 0)
 //                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = message.getContent().getBody(), createdAt = if (item.message != null) item.message!!.createdAt else 0)
                                                 }
                                                 messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
@@ -2170,5 +2171,10 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                 }
             })
         }
+    }
+
+    override fun feedBackApp(contents: String, start: Int): Observable<FeedbackResponse> {
+        setMXSession()
+        return apisClearKeep.feedBackApp("Bearer " + session!!.credentials.accessToken, contents, start)
     }
 }

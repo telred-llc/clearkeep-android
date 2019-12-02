@@ -24,7 +24,7 @@ import javax.inject.Inject
  * A simple [Fragment] subclass.
  */
 class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
-    
+
     private var TIMEOUT = 45 * 1000L
     private var action = false
     var handler = Handler()

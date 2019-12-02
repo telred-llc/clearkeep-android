@@ -1,4 +1,4 @@
 package vmodev.clearkeep.repositories
 
-class MatrixRepositoty {
+class MatrixRepository {
 }

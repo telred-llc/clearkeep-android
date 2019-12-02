@@ -1895,5 +1895,9 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="title_group_member_participants">Participants</string>
     <string name="title_group_member_invited">Invited</string>
     <string name="call_log">Call Log</string>
+    <string name="str_feed_back">Feedback</string>
+    <string name="str_clear_all">Clear all</string>
+    <string name="str_enter_feedback">Enter Feedback</string>
+    <string name="str_did_you_enjoy_clearkeep">Did you enjoy ClearKeep ?</string>
 
 </resources>

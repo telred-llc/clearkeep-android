@@ -54,7 +54,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState) 
+        super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_splash);
         startFromLogin = intent.getStringExtra(START_FROM_LOGIN); 
         if (!hasCredentials()) {
