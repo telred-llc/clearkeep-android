@@ -8,6 +8,11 @@
     android:orientation="vertical">
 
     <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="?attr/text_color_decline"></View>
+
+    <View
         android:id="@+id/messagesAdapter_message_header_top_margin"
         android:layout_width="match_parent"
         android:layout_height="16dp" />
@@ -16,14 +21,13 @@
         android:id="@+id/messagesAdapter_message_header_text"
         android:layout_width="match_parent"
         android:layout_height="42dp"
-        android:background="?attr/vctr_list_header_background_color"
         android:gravity="center_vertical"
         android:paddingStart="18dp"
         android:paddingLeft="18dp"
         android:paddingEnd="18dp"
         android:paddingRight="18dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="?attr/vctr_list_header_primary_text_color"
+        android:textColor="?attr/text_color_decline"
         android:textStyle="bold"
         tools:text="Today" />
 

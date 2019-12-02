@@ -1706,7 +1706,7 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
             final ImageView imageTypeView = convertView.findViewById(R.id.messagesAdapter_image_type);
 
             if (null != imageTypeView) {
-                imageTypeView.setImageResource(Message.MSGTYPE_AUDIO.equals(fileMessage.msgtype) ? R.drawable.filetype_audio : R.drawable.filetype_attachment);
+//                imageTypeView.setImageResource(Message.MSGTYPE_AUDIO.equals(fileMessage.msgtype) ? R.drawable.filetype_audio : R.drawable.filetype_attachment);
             }
             imageTypeView.setBackgroundColor(Color.TRANSPARENT);
 
@@ -1784,11 +1784,11 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
                 avatarsLayout.setVisibility(View.VISIBLE);
                 List<ImageView> avatarView = new ArrayList<>();
 
-                avatarView.add((ImageView) convertView.findViewById(R.id.mels_list_avatar_1));
-                avatarView.add((ImageView) convertView.findViewById(R.id.mels_list_avatar_2));
-                avatarView.add((ImageView) convertView.findViewById(R.id.mels_list_avatar_3));
-                avatarView.add((ImageView) convertView.findViewById(R.id.mels_list_avatar_4));
-                avatarView.add((ImageView) convertView.findViewById(R.id.mels_list_avatar_5));
+                avatarView.add(convertView.findViewById(R.id.mels_list_avatar_1));
+                avatarView.add(convertView.findViewById(R.id.mels_list_avatar_2));
+                avatarView.add(convertView.findViewById(R.id.mels_list_avatar_3));
+                avatarView.add(convertView.findViewById(R.id.mels_list_avatar_4));
+                avatarView.add(convertView.findViewById(R.id.mels_list_avatar_5));
 
                 List<MessageRow> messageRows = event.getAvatarRows(avatarView.size());
 
