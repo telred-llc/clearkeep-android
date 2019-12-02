@@ -67,7 +67,6 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
     lateinit var binding: ActivityProfileBinding
     lateinit var mxSession: MXSession
 
-    private var user: User? = null
     private var avatarImage: InputStream? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -345,10 +344,10 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
     }
 
     private fun saveProfile() {
-        if (binding.edtName.text.toString().isNullOrEmpty()) {
-            binding.edtName.setText(user?.name.toString().trim())
+        if (binding.edtName.text.toString().trim().isBlank()) {
+            binding.edtName.setText(binding.user?.value?.data?.name.toString().trim())
         } else {
-            this.user?.id?.let {
+            binding.user?.value?.data?.id?.let {
                 viewModelFactory.getViewModel().setUpdateUser(it, binding.edtName.text.toString().trim(), avatarImage)
             }
         }
