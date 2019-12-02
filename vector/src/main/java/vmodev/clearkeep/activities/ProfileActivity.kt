@@ -36,7 +36,6 @@ import vmodev.clearkeep.adapters.BottomDialogSelectImages
 import vmodev.clearkeep.databases.*
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.viewmodelobjects.Status
-import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractProfileActivityViewModel
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -67,7 +66,6 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
     lateinit var binding: ActivityProfileBinding
     lateinit var mxSession: MXSession
 
-    private var user: User? = null
     private var avatarImage: InputStream? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -345,10 +343,14 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
     }
 
     private fun saveProfile() {
-        if (binding.edtName.text.toString().isNullOrEmpty()) {
-            binding.edtName.setText(user?.name.toString().trim())
+        if (TextUtils.isEmpty(binding.edtName.text.toString().trim())) {
+            if (!TextUtils.isEmpty(binding.user?.value?.data?.name!!.trim())) {
+                binding.edtName.setText(binding.user!!.value!!.data!!.name.trim())
+            } else {
+                Toast.makeText(this, "Please input username !", Toast.LENGTH_SHORT).show()
+            }
         } else {
-            this.user?.id?.let {
+            binding.user?.value?.data?.id?.let {
                 viewModelFactory.getViewModel().setUpdateUser(it, binding.edtName.text.toString().trim(), avatarImage)
             }
         }
