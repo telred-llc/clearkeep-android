@@ -36,7 +36,6 @@ import vmodev.clearkeep.adapters.BottomDialogSelectImages
 import vmodev.clearkeep.databases.*
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.viewmodelobjects.Status
-import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractProfileActivityViewModel
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -345,7 +344,11 @@ class ProfileActivity : DataBindingDaggerActivity(), IActivity {
 
     private fun saveProfile() {
         if (TextUtils.isEmpty(binding.edtName.text.toString().trim())) {
-            binding.edtName.setText(binding.user?.value?.data?.name.toString().trim())
+            if (!TextUtils.isEmpty(binding.user?.value?.data?.name!!.trim())) {
+                binding.edtName.setText(binding.user!!.value!!.data!!.name.trim())
+            } else {
+                Toast.makeText(this, "Please input username !", Toast.LENGTH_SHORT).show()
+            }
         } else {
             binding.user?.value?.data?.id?.let {
                 viewModelFactory.getViewModel().setUpdateUser(it, binding.edtName.text.toString().trim(), avatarImage)
