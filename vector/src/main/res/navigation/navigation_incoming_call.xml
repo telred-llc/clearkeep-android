@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/incomingCallFragment"
         android:name="vmodev.clearkeep.fragments.IncomingCallFragment"
-        tools:layout="@layout/fragment_incoming_call" >
+        tools:layout="@layout/fragment_incoming_call">
         <action
             android:id="@+id/inProgressCall"
             app:destination="@+id/inProgressCallFragment"
@@ -18,9 +18,9 @@
             app:popExitAnim="@anim/fragment_open_exit" />
         <argument
             android:name="roomId"
+            android:defaultValue="@null"
             app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            app:nullable="true" />
         <action
             android:id="@+id/inProgressVoiceCall"
             app:destination="@id/inProgressVoiceCallFragment"
