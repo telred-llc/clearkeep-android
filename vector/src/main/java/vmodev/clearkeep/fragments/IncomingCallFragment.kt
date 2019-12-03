@@ -1,7 +1,6 @@
 package vmodev.clearkeep.fragments
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,10 +24,6 @@ import javax.inject.Inject
  */
 class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
 
-    private var TIMEOUT = 45 * 1000L
-    private var action = false
-    var handler = Handler()
-    var runable: Runnable? = null
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractIncomingCallFragmentViewModel>
 
@@ -39,16 +34,18 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
     private val videoLayoutConfiguration = VideoLayoutConfiguration(5, 66, 25, 25)
     private val callListener = object : MXCallListener() {
 
+        override fun onCallEnd(aReasonId: Int) {
+            super.onCallEnd(aReasonId)
+            activity?.finish()
+        }
 
         override fun onStateDidChange(state: String?) {
             super.onStateDidChange(state)
             when (state) {
                 IMXCall.CALL_STATE_ENDED -> {
-                    action = true
                     this@IncomingCallFragment.activity?.finish()
                 }
                 IMXCall.CALL_STATE_CONNECTED -> {
-                    action = true
                     mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
                     saveCallView()
                     if (mxCall.isVideo) {
@@ -106,12 +103,6 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        runable = Runnable {
-            if (!action) {
-                binding.imageViewDecline.performClick()
-            }
-        }
-        handler.postDelayed(runable, TIMEOUT)
         binding.room = viewModelFactory.getViewModel().getRoomResult()
         binding.imageViewAccept.setOnClickListener {
             mxCall.answer()
@@ -127,11 +118,6 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun getFragment(): Fragment {
         return this
-    }
-
-    override fun onDestroyView() {
-        handler.removeCallbacks(runable)
-        super.onDestroyView()
     }
 
     private fun saveCallView() {

@@ -29,21 +29,22 @@
         android:id="@+id/background_room_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/margin_small"
-        android:paddingBottom="@dimen/margin_small"
-        android:paddingStart="@dimen/margin_left"
-        android:paddingEnd="@dimen/margin_right"
         android:baselineAligned="false"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/margin_left"
+        android:paddingTop="@dimen/margin_small"
+        android:paddingEnd="@dimen/margin_right"
+        android:paddingBottom="@dimen/margin_small">
 
         <FrameLayout
             android:layout_width="@dimen/image_avatar_status_size"
             android:layout_height="@dimen/image_avatar_status_size">
+
             <vmodev.clearkeep.widget.CircleImage
-                app:room="@{room_list_user.room}"
+                android:id="@+id/image_circle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/image_circle" />
+                app:room="@{room_list_user.room}" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="@dimen/status_online_size"
@@ -51,22 +52,22 @@
                 android:layout_gravity="end|bottom"
                 android:layout_marginEnd="@dimen/margin_status_online"
                 android:layout_marginBottom="@dimen/margin_status_online"
+                app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="@dimen/radius_border_online_status"
                 app:cardElevation="0dp"
                 app:contentPadding="@dimen/padding_status_online"
-                app:cardBackgroundColor="#FFFFFF"
-                app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}"
-                >
+                app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}">
+
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/circle_image_view_status"
-                    app:currentUserId="@{current_user_id}"
-                    app:listUser="@{room_list_user.members}"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     app:cardBackgroundColor="@color/main_text_color_hint"
                     app:cardCornerRadius="@dimen/radius_online_status"
                     app:cardElevation="0dp"
-                    app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    app:currentUserId="@{current_user_id}"
+                    app:listUser="@{room_list_user.members}"
+                    app:visibleGone="@{room_list_user.room.type == 1 || room_list_user.room.type == 129}" />
 
 
             </com.google.android.material.card.MaterialCardView>
@@ -82,7 +83,6 @@
             android:orientation="vertical">
 
             <TextView
-                android:textColor="?attr/color_text_app_default"
                 android:id="@+id/text_view_name"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -90,6 +90,7 @@
                 android:layout_weight="1"
                 android:singleLine="true"
                 android:text="@{room_list_user.room.name}"
+                android:textColor="?attr/color_text_app_default"
                 android:textSize="@dimen/text_17_sp" />
 
             <TextView
@@ -99,9 +100,9 @@
                 android:layout_marginHorizontal="@dimen/margin_normal"
                 android:layout_weight="1"
                 android:singleLine="true"
-                app:decryptMessage="@{room_list_user.lastMessage}"
                 android:textColor="?attr/color_text_app_default"
-                android:textSize="@dimen/text_13_sp" />
+                android:textSize="@dimen/text_13_sp"
+                app:decryptMessage="@{room_list_user.lastMessage}" />
         </LinearLayout>
 
         <FrameLayout
@@ -109,16 +110,16 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:gravity="center"
-                android:textSize="@dimen/text_11_sp"
                 android:layout_width="21dp"
                 android:layout_height="21dp"
                 android:layout_gravity="center_vertical|end"
                 android:layout_marginEnd="40dp"
                 android:background="@drawable/circle_background"
+                android:gravity="center"
                 android:text="@{``+room_list_user.room.notifyCount}"
                 android:textAlignment="center"
                 android:textColor="@color/main_text_color"
+                android:textSize="@dimen/text_11_sp"
                 app:visibleGone="@{room_list_user.room.notifyCount > 0}" />
 
             <LinearLayout
@@ -128,13 +129,13 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:textColor="?attr/color_text_app_default"
-                    android:textSize="@dimen/text_11_sp"
                     android:id="@+id/text_view_time"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:textAlignment="textEnd"
+                    android:textColor="?attr/color_text_app_default"
+                    android:textSize="@dimen/text_11_sp"
                     app:timeStamp="@{room_list_user.lastMessage.createdAt}" />
 
                 <de.hdodenhof.circleimageview.CircleImageView

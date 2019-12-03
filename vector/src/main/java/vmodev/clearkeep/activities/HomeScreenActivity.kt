@@ -1,5 +1,6 @@
 package vmodev.clearkeep.activities
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +10,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
@@ -31,6 +34,18 @@ class HomeScreenActivity : DataBindingDaggerActivity(), IActivity {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        TedPermission.with(this)
+                .setPermissionListener(object : PermissionListener {
+                    override fun onPermissionGranted() {
+
+                    }
+
+                    override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+                    }
+                })
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+                .check()
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen, dataBinding.getDataBindingComponent())
         startIncomingCall()
         mxSession = Matrix.getInstance(this.applicationContext).defaultSession
