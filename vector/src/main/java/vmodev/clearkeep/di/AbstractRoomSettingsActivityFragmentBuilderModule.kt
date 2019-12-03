@@ -18,22 +18,23 @@ abstract class AbstractRoomSettingsActivityFragmentBuilderModule {
     abstract fun contributeRoomSettingsFragment(): RoomSettingsFragment;
 
     @ContributesAndroidInjector(modules = [FragmentOtherRoomSettingsBindModule::class])
-    abstract fun contributeOtherRoomSettingsFragment() : OtherRoomSettingsFragment;
+    abstract fun contributeOtherRoomSettingsFragment(): OtherRoomSettingsFragment;
 
     @ContributesAndroidInjector(modules = [FragmentRoomMemberListBindModule::class])
-    abstract fun contributeRoomMemberListFragment() : RoomMemberListFragment;
+    abstract fun contributeRoomMemberListFragment(): RoomMemberListFragment;
 
     @ContributesAndroidInjector(modules = [AbstractNewRoomActivityBuilderFragmentBuilderModule.InviteUsersToRoomFragmentBindModule::class])
-    abstract fun contributeInviteUsersToRoomFragment() : InviteUsersToRoomFragment;
+    abstract fun contributeInviteUsersToRoomFragment(): InviteUsersToRoomFragment;
 
     @ContributesAndroidInjector(modules = [FragmentOtherRoomSettingsAdvancedBindModule::class])
-    abstract fun contributeOtherSettingsAdvanceFragment() : OtherRoomSettingsAdvancedFragment;
+    abstract fun contributeOtherSettingsAdvanceFragment(): OtherRoomSettingsAdvancedFragment;
 
     @ContributesAndroidInjector(modules = [FragmentRolesPermissionBindModule::class])
-    abstract fun contributeRolesPermissionFragment() : RolesPermissionFragment;
+    abstract fun contributeRolesPermissionFragment(): RolesPermissionFragment;
 
     @ContributesAndroidInjector(modules = [FragmentSecurityBindModule::class])
-    abstract fun contributeSecurityFragment() : SecurityFragment;
+    abstract fun contributeSecurityFragment(): SecurityFragment;
+
 
     @Module
     abstract class FragmentRoomSettingsBindModule {
@@ -46,35 +47,38 @@ abstract class AbstractRoomSettingsActivityFragmentBuilderModule {
     }
 
     @Module
-    abstract class FragmentOtherRoomSettingsBindModule{
+    abstract class FragmentOtherRoomSettingsBindModule {
         @Binds
         @Named(IFragment.OTHER_ROOM_SETTINGS_FRAGMENT)
-        abstract fun bindOtherRoomSettingsFragment(fragment : OtherRoomSettingsFragment) : IFragment;
+        abstract fun bindOtherRoomSettingsFragment(fragment: OtherRoomSettingsFragment): IFragment;
     }
 
     @Module
-    abstract class FragmentRoomMemberListBindModule{
+    abstract class FragmentRoomMemberListBindModule {
         @Binds
         @Named(IFragment.ROOM_MEMBER_LIST_FRAGMENT)
-        abstract fun bindRoomMemberListFragment(fragment : RoomMemberListFragment) : IFragment;
-    }
-    @Module
-    abstract class FragmentOtherRoomSettingsAdvancedBindModule{
-        @Binds
-        @Named(IFragment.OTHER_ROOM_SETTINGS_ADVANCE_FRAGMENT)
-        abstract fun bindOtherRoomSettingsAdvancedFragment(fragment : OtherRoomSettingsAdvancedFragment) : IFragment;
-    }
-    @Module
-    abstract class FragmentRolesPermissionBindModule{
-        @Binds
-        @Named(IFragment.ROLES_PERMISSION_FRAGMENT)
-        abstract fun bindRolesPermissionFragment(fragment: RolesPermissionFragment) : IFragment;
+        abstract fun bindRoomMemberListFragment(fragment: RoomMemberListFragment): IFragment;
     }
 
     @Module
-    abstract class FragmentSecurityBindModule{
+    abstract class FragmentOtherRoomSettingsAdvancedBindModule {
+        @Binds
+        @Named(IFragment.OTHER_ROOM_SETTINGS_ADVANCE_FRAGMENT)
+        abstract fun bindOtherRoomSettingsAdvancedFragment(fragment: OtherRoomSettingsAdvancedFragment): IFragment;
+    }
+
+    @Module
+    abstract class FragmentRolesPermissionBindModule {
+        @Binds
+        @Named(IFragment.ROLES_PERMISSION_FRAGMENT)
+        abstract fun bindRolesPermissionFragment(fragment: RolesPermissionFragment): IFragment;
+    }
+
+    @Module
+    abstract class FragmentSecurityBindModule {
         @Binds
         @Named(IFragment.SECURITY_FRAGMENT)
-        abstract fun bindSecurityPermissionFragment(fragment : SecurityFragment) : IFragment;
+        abstract fun bindSecurityPermissionFragment(fragment: SecurityFragment): IFragment;
     }
+
 }

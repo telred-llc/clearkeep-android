@@ -47,5 +47,6 @@ interface IFragment {
         const val OUTGOING_VOICE_CALL_FRAGMENT = "OUTGOING_VOICE_CALL_FRAGMENT";
         const val CALL_HISTORY_FRAGMENT ="CALL_HISTORY_FRAGMENT"
         const val FEED_BACK_FRAGMENT = "FEED_BACK_FRAGMENT"
+        const val SHARE_APP_FRAGMENT = "SHARE_APP_FRAGMENT"
     }
 }
