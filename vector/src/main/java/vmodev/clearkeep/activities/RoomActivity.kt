@@ -12,6 +12,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.os.Vibrator
 import android.preference.PreferenceManager
 import android.text.SpannableStringBuilder
@@ -1287,10 +1288,14 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     }
 
     private fun finishResult() {
-
         val intentResult = Intent()
-        intentResult.putExtra(RESULT_ROOM_ID, currentRoom!!.roomId)
+        intentResult.putExtra(RESULT_ROOM_ID, currentRoom?.roomId)
         setResult(Activity.RESULT_OK, intentResult)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+        outState.putSerializable(Room::class.simpleName, currentEvent)
     }
 
     override fun onScroll(firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
@@ -1529,7 +1534,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
                     }
                 })
-                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setDeniedMessage("Please go to your Setting and turn on Permission")
                 .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
                 .check()
     }
