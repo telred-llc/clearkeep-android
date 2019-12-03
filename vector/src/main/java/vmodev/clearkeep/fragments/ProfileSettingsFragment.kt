@@ -70,6 +70,12 @@ class ProfileSettingsFragment : DataBindingDaggerFragment(), IFragment {
                 findNavController().navigate(ProfileSettingsFragmentDirections.feedBack())
             }
         })
+        binding.shareAppGroup.setOnClickListener(object : OnSingleClickListener() {
+            override fun onSingleClick(v: View) {
+                findNavController().navigate(ProfileSettingsFragmentDirections.shareApp())
+            }
+
+        })
         binding.textViewClearCache.setOnClickListener {
             Matrix.getInstance(application.getApplication()).reloadSessions(application.getApplication(), false)
         }
@@ -82,7 +88,7 @@ class ProfileSettingsFragment : DataBindingDaggerFragment(), IFragment {
         }
         viewModelFactory.getViewModel().getThemeResult().observe(viewLifecycleOwner, Observer {
             it?.data?.let {
-                when(it.theme) {
+                when (it.theme) {
                     R.style.DarkTheme -> {
                         binding.switchCompatChangeTheme.isChecked = true
                         SharedPreferencesUtils.putBoolean(activity, "THEME_DARK", true)
