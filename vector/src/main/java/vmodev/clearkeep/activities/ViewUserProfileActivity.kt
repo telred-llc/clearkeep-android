@@ -19,6 +19,7 @@ import org.matrix.androidsdk.core.callback.ApiCallback
 import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.rest.model.User
 import vmodev.clearkeep.activities.interfaces.IViewUserProfileActivity
+import vmodev.clearkeep.dialogfragments.DialogFragmentChoiceCall
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.ultis.OnSingleClickListener
 import vmodev.clearkeep.viewmodels.interfaces.AbstractViewUserProfileActivityViewModel
@@ -93,7 +94,8 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
         })
         binding.imgCall.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View) {
-                viewModelFactory.getViewModel().setUserIdForCreateNewChat(userId)
+                DialogFragmentChoiceCall.newInstance(binding.user?.value?.data!!).show(supportFragmentManager, DialogFragmentChoiceCall::class.java.simpleName)
+//                viewModelFactory.getViewModel().setUserIdForCreateNewChat(userId)
             }
 
         })
