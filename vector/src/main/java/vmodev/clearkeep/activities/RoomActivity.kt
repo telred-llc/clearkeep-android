@@ -1077,22 +1077,22 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             mScrollToIndex = -1
         }
 
-        if (null != mCallId) {
-            val call = CallsManager.getSharedInstance().activeCall
-
-            // can only manage one call instance.
-            // either there is no active call or resume the active one
-            if ((null == call) || call.callId == mCallId) {
-                val intent = Intent(this, VectorCallViewActivity::class.java)
-                intent.putExtra(VectorCallViewActivity.EXTRA_MATRIX_ID, mxSession!!.credentials.userId)
-                intent.putExtra(VectorCallViewActivity.EXTRA_CALL_ID, mCallId)
-
-                enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
-                runOnUiThread { startActivity(intent) }
-            }
-
-            mCallId = null
-        }
+//        if (null != mCallId) {
+//            val call = CallsManager.getSharedInstance().activeCall
+//
+//            // can only manage one call instance.
+//            // either there is no active call or resume the active one
+//            if ((null == call) || call.callId == mCallId) {
+//                val intent = Intent(this, VectorCallViewActivity::class.java)
+//                intent.putExtra(VectorCallViewActivity.EXTRA_MATRIX_ID, mxSession!!.credentials.userId)
+//                intent.putExtra(VectorCallViewActivity.EXTRA_CALL_ID, mCallId)
+//
+//                enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
+//                runOnUiThread { startActivity(intent) }
+//            }
+//
+//            mCallId = null
+//        }
 
         // the pending call view is only displayed with "active " room
         if ((null == sRoomPreviewData) && (null == mEventId)) {

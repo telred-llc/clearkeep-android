@@ -1,10 +1,13 @@
 package vmodev.clearkeep.fragments
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityCompat.finishAffinity
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -19,6 +22,10 @@ import org.matrix.androidsdk.call.CallSoundsManager
 import org.matrix.androidsdk.call.IMXCall
 import org.matrix.androidsdk.call.MXCallListener
 import org.matrix.androidsdk.call.VideoLayoutConfiguration
+import vmodev.clearkeep.activities.RoomActivity
+import vmodev.clearkeep.activities.RoomActivity.Companion.EXTRA_MATRIX_ID
+import vmodev.clearkeep.activities.RoomActivity.Companion.EXTRA_ROOM_ID
+import vmodev.clearkeep.activities.RoomActivity.Companion.EXTRA_START_CALL_ID
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.ultis.longTimeToString
@@ -147,7 +154,11 @@ class OutgoingVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
             }
         }
         binding.imageViewGoToRoom.setOnClickListener {
-            CallsManager.getSharedInstance().setCallActivity(null)
+            val intent = Intent(activity!!, RoomActivity::class.java)
+                    .putExtra(EXTRA_ROOM_ID, binding.room?.value?.data?.id)
+                    .putExtra(EXTRA_START_CALL_ID, mxCall.callId)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(intent)
             this.activity?.finish()
         }
     }
