@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.gun0912.tedpermission.PermissionListener
@@ -19,6 +18,7 @@ class DialogFragmentChoiceCall : BottomSheetDialogFragment(), View.OnClickListen
 
     var user: User? = null
     private lateinit var binding: DialogFragmentChoiceCallBinding
+    var iAction: IAction? = null
 
     companion object {
         fun newInstance(user: User): DialogFragmentChoiceCall {
@@ -63,14 +63,7 @@ class DialogFragmentChoiceCall : BottomSheetDialogFragment(), View.OnClickListen
                 .setPermissionListener(object : PermissionListener {
                     override fun onPermissionGranted() {
                         //Todo
-                        when (isVideoCall) {
-                            true -> {
-                                Toast.makeText(activity, "Thuc hien cuoc goi video call", Toast.LENGTH_SHORT).show()
-                            }
-                            else -> {
-                                Toast.makeText(activity, "Thuc hien cuoc goi voice call", Toast.LENGTH_SHORT).show()
-                            }
-                        }
+                        iAction?.call(isVideoCall)
                     }
 
                     override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
@@ -80,4 +73,18 @@ class DialogFragmentChoiceCall : BottomSheetDialogFragment(), View.OnClickListen
                 .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
                 .check()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        iAction?.disableDialog()
+    }
+
+    interface IAction {
+
+        fun call(isVideoCall: Boolean)
+
+
+        fun disableDialog()
+    }
+
 }

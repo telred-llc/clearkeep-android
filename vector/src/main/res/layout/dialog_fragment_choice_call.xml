@@ -30,6 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:gravity="center"
             android:padding="10dip"
             android:text="@{user.name}"
             android:textAppearance="@android:style/TextAppearance.Medium"
