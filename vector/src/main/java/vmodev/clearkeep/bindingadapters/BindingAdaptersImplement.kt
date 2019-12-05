@@ -22,14 +22,12 @@ import im.vector.util.VectorUtils
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.core.callback.SimpleApiCallback
 import org.matrix.androidsdk.crypto.MXDecryptionException
-import org.matrix.androidsdk.crypto.model.crypto.EncryptedFileInfo
 import org.matrix.androidsdk.db.MXMediaCache
 import org.matrix.androidsdk.listeners.MXMediaDownloadListener
 import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.message.ImageMessage
-import vmodev.clearkeep.enums.EventTypeEnum
 import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
-import vmodev.clearkeep.jsonmodels.FileContent
+import vmodev.clearkeep.enums.EventTypeEnum
 import vmodev.clearkeep.jsonmodels.MessageContent
 import vmodev.clearkeep.ultis.formatSizeData
 import vmodev.clearkeep.ultis.toDateTime
@@ -43,22 +41,22 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
     override fun bindImage(imageView: ImageView, room: PublicRoom?, listener: RequestListener<Drawable?>?) {
         room?.let {
             if (room.avatarUrl.isNullOrEmpty()) {
-                val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(room.roomId), if (room.name.isNullOrEmpty()) room.roomId else room.name, true);
-                imageView.setImageBitmap(bitmap);
+                val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(room.roomId), if (room.name.isNullOrEmpty()) room.roomId else room.name, true)
+                imageView.setImageBitmap(bitmap)
             } else {
-                Glide.with(imageView.context).load(room.avatarUrl).centerCrop().error(R.drawable.ic_launcher_app).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
+                Glide.with(imageView.context).load(room.avatarUrl).centerCrop().error(R.drawable.ic_launcher_app).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView)
             }
         }
     }
 
     override fun bindImage(imageView: ImageView, imageUrl: String?, listener: RequestListener<Drawable?>?) {
         if (!TextUtils.isEmpty(imageUrl)) {
-            Glide.with(imageView.context).load(imageUrl).centerCrop().into(imageView);
+            Glide.with(imageView.context).load(imageUrl).centerCrop().into(imageView)
         }
     }
 
     override fun bindTime(textView: TextView, timeStamp: Long?) {
-        timeStamp?.let { l -> textView.text = l.toDateTime(textView.context) }
+        textView.text = timeStamp!!.toDateTime(textView.context)
     }
 
     override fun bindStatus(imageView: ImageView, status: Byte?) {
@@ -66,19 +64,19 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
     }
 
     override fun bindRoomsHighlightCount(textView: TextView, rooms: List<Room>?) {
-        var count: Int = 0;
+        var count: Int = 0
         rooms?.forEach { t: Room? ->
             t?.let {
                 count += it.highlightCount
                 if (it.type == 1 or 64 || it.type == 2 or 64)
-                    count++;
+                    count++
                 if (it.notifyCount > 0)
-                    count++;
+                    count++
             }
         }
-        textView.text = count.toString();
+        textView.text = count.toString()
         if (count == 0)
-            textView.visibility = View.INVISIBLE;
+            textView.visibility = View.INVISIBLE
         else
             textView.visibility = View.VISIBLE
     }
@@ -95,27 +93,27 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
 
     override fun bindDecryptMessage(textView: TextView, message: Message?) {
         message?.let {
-            val session = Matrix.getInstance(textView.context.applicationContext).defaultSession;
-            val parser = JsonParser();
-            val gson = Gson();
-            val event = Event(message?.messageType, parser.parse(message.encryptedContent).asJsonObject, message.userId, message.roomId);
+            val session = Matrix.getInstance(textView.context.applicationContext).defaultSession
+            val parser = JsonParser()
+            val gson = Gson()
+            val event = Event(message.messageType, parser.parse(message.encryptedContent).asJsonObject, message.userId, message.roomId)
             Log.d("MessageType", message.encryptedContent + "--" + message.messageType)
             if (message.messageType.compareTo("m.room.encrypted") != 0) {
-                textView.text = message.encryptedContent;
+                textView.text = message.encryptedContent
             } else {
                 try {
-                    val result = session.dataHandler.crypto?.decryptEvent(event, null);
+                    val result = session.dataHandler.crypto?.decryptEvent(event, null)
                     result?.let {
-                        val json = result.mClearEvent.asJsonObject;
-                        val type = json.get("type").asString;
-                        Log.d("LastMsg", type);
+                        val json = result.mClearEvent.asJsonObject
+                        val type = json.get("type").asString
+                        Log.d("LastMsg", type)
                         if (!type.isNullOrEmpty() && type.compareTo("m.room.message") == 0) {
-                            val message = gson.fromJson(result.mClearEvent, MessageContent::class.java);
-                            textView.text = message.getContent().getBody();
+                            val message = gson.fromJson(result.mClearEvent, MessageContent::class.java)
+                            textView.text = message.getContent().getBody()
                         }
                     }
                 } catch (e: MXDecryptionException) {
-                    textView.text = message.encryptedContent;
+                    textView.text = message.encryptedContent
                 }
             }
         }
@@ -128,10 +126,10 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
     override fun bindImage(imageView: ImageView, room: Room?, listener: RequestListener<Drawable?>?) {
         room?.let {
             if (room.avatarUrl.isNullOrEmpty()) {
-                val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(room.id), if (room.name.isNullOrEmpty()) room.id else room.name, true);
-                imageView.setImageBitmap(bitmap);
+                val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(room.id), if (room.name.isNullOrEmpty()) room.id else room.name, true)
+                imageView.setImageBitmap(bitmap)
             } else {
-                Glide.with(imageView.context).load(room.avatarUrl).centerCrop().error(R.drawable.ic_launcher_app).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView);
+                Glide.with(imageView.context).load(room.avatarUrl).centerCrop().error(R.drawable.ic_launcher_app).diskCacheStrategy(DiskCacheStrategy.ALL).into(imageView)
             }
         }
     }
@@ -139,10 +137,10 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
     override fun bindImage(imageView: ImageView, user: User?, listener: RequestListener<Drawable?>?) {
         user?.let {
             if (user.avatarUrl.isEmpty()) {
-                val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(user.id), if (user.name.isEmpty()) user.id else user.name, true);
-                imageView.setImageBitmap(bitmap);
+                val bitmap = VectorUtils.getAvatar(imageView.context, VectorUtils.getAvatarColor(user.id), if (user.name.isEmpty()) user.id else user.name, true)
+                imageView.setImageBitmap(bitmap)
             } else {
-                Glide.with(imageView.context).load(user.avatarUrl).centerCrop().into(imageView);
+                Glide.with(imageView.context).load(user.avatarUrl).centerCrop().into(imageView)
             }
         }
     }
@@ -152,10 +150,10 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
             currentUserId?.let { id ->
                 for (u in us) {
                     if (u.id.compareTo(id) != 0 && u.status.compareTo(0) != 0) {
-                        imageView.setImageResource(R.color.app_green);
-                        break;
+                        imageView.setImageResource(R.color.app_green)
+                        break
                     } else {
-                        imageView.setImageResource(R.color.main_text_color_hint);
+                        imageView.setImageResource(R.color.main_text_color_hint)
                     }
                 }
             }
@@ -167,10 +165,10 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
             currentUserId?.let { id ->
                 for (u in us) {
                     if (u.id.compareTo(id) != 0 && u.status.compareTo(0) != 0) {
-                        cardView.setCardBackgroundColor(ResourcesCompat.getColor(cardView.context.resources, R.color.app_green, null));
-                        break;
+                        cardView.setCardBackgroundColor(ResourcesCompat.getColor(cardView.context.resources, R.color.app_green, null))
+                        break
                     } else {
-                        cardView.setCardBackgroundColor(ResourcesCompat.getColor(cardView.context.resources, R.color.main_text_color_hint, null));
+                        cardView.setCardBackgroundColor(ResourcesCompat.getColor(cardView.context.resources, R.color.main_text_color_hint, null))
                     }
                 }
             }
@@ -207,9 +205,9 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
     }
 
     override fun bindImageFile(imageView: ImageView, fileContent: ImageMessage) {
-        fileContent?.let {
-            val session = Matrix.getInstance(imageView.context.applicationContext).defaultSession;
-            val mediaCache = session.mediaCache;
+        fileContent.let {
+            val session = Matrix.getInstance(imageView.context.applicationContext).defaultSession
+            val mediaCache = session.mediaCache
             val data = it.mimeType?.split("/")
             when (data?.get(0)) {
                 "video", "image" -> {
@@ -227,7 +225,7 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
     }
 
     override fun bindShowImagePlayer(imageView: ImageView, fileContent: ImageMessage) {
-        fileContent?.let {
+        fileContent.let {
             val data = it.mimeType?.split("/")
             if (data?.get(0) == "video") {
                 imageView.visibility = View.VISIBLE
