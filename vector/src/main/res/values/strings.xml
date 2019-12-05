@@ -1900,6 +1900,10 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="str_enter_feedback">Enter Feedback</string>
     <string name="str_did_you_enjoy_clearkeep">Did you enjoy ClearKeep ?</string>
     <string name="str_we_would_love_to_hear_back_from_you">We would love to hear back from you!</string>
+
+    <string name="title_video_call">Video call</string>
+    <string name="title_voice_call">Voice call</string>
+
     <string name="label_share_app">ShareApp</string>
     <string name="label_feed_back">Feedback</string>
     <string name="label_notification">Notifications</string>

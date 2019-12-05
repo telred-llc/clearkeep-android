@@ -1,5 +1,6 @@
 package vmodev.clearkeep.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -15,10 +16,12 @@ import im.vector.activity.VectorRoomActivity
 import im.vector.databinding.ActivityViewUserProfileBinding
 import kotlinx.android.synthetic.main.activity_view_user_profile.*
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.call.IMXCall
 import org.matrix.androidsdk.core.callback.ApiCallback
 import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.rest.model.User
 import vmodev.clearkeep.activities.interfaces.IViewUserProfileActivity
+import vmodev.clearkeep.dialogfragments.DialogFragmentChoiceCall
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.ultis.OnSingleClickListener
 import vmodev.clearkeep.viewmodels.interfaces.AbstractViewUserProfileActivityViewModel
@@ -26,6 +29,8 @@ import javax.inject.Inject
 
 class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileActivity {
 
+    private var dialogCall: DialogFragmentChoiceCall? = null
+    private var isCall: Boolean? = false
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractViewUserProfileActivityViewModel>
 
@@ -93,6 +98,7 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
         })
         binding.imgCall.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View) {
+                isCall = true
                 viewModelFactory.getViewModel().setUserIdForCreateNewChat(userId)
             }
 
@@ -143,11 +149,48 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
         val room = session.dataHandler.store!!.getRoom(roomId)
         session.joinRoom(room!!.roomId, object : ApiCallback<String> {
             override fun onSuccess(roomId: String) {
-                val params = HashMap<String, Any>()
-                params[VectorRoomActivity.EXTRA_MATRIX_ID] = session.myUserId
-                params[VectorRoomActivity.EXTRA_ROOM_ID] = room.roomId
-                CommonActivityUtils.goToRoomPage(this@ViewUserProfileActivity, session, params)
-                finish()
+                val mxSession = Matrix.getInstance(applicationContext).defaultSession
+                when (isCall) {
+                    true -> {
+                        dialogCall = DialogFragmentChoiceCall.newInstance(binding.user?.value?.data!!)
+                        dialogCall?.iAction = object : DialogFragmentChoiceCall.IAction {
+                            override fun call(isVideoCall: Boolean) {
+                                mxSession.mCallsManager.createCallInRoom(roomId, isVideoCall, object : ApiCallback<IMXCall> {
+                                    override fun onSuccess(p0: IMXCall?) {
+                                        val intent = Intent(this@ViewUserProfileActivity, OutgoingCallActivity::class.java)
+                                        startActivity(intent)
+                                    }
+
+                                    override fun onUnexpectedError(p0: java.lang.Exception?) {
+                                        Log.e("Tag", "--- Error 1: ${p0?.message}")
+                                    }
+
+                                    override fun onMatrixError(p0: MatrixError?) {
+                                        Toast.makeText(this@ViewUserProfileActivity, getString(R.string.cannot_start_call), Toast.LENGTH_SHORT).show()
+                                    }
+
+                                    override fun onNetworkError(p0: java.lang.Exception?) {
+                                        Log.e("Tag", "--- Error 3: ${p0?.message}")
+                                    }
+
+                                })
+                            }
+
+                            override fun disableDialog() {
+                                isCall = false
+                            }
+
+                        }
+                        dialogCall?.show(supportFragmentManager, DialogFragmentChoiceCall::class.java.simpleName)
+                    }
+                    else -> {
+                        val params = HashMap<String, Any>()
+                        params[VectorRoomActivity.EXTRA_MATRIX_ID] = session.myUserId
+                        params[VectorRoomActivity.EXTRA_ROOM_ID] = room.roomId
+                        CommonActivityUtils.goToRoomPage(this@ViewUserProfileActivity, session, params)
+                        finish()
+                    }
+                }
             }
 
             private fun onError(errorMessage: String) {

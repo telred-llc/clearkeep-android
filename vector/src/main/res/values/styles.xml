@@ -336,6 +336,8 @@
         <attr name="drawable_file_attachment" format="reference" />
         <attr name="drawable_attachment" format="reference" />
         <attr name="bg_edit_text_feed_back" format="reference" />
+        <attr name="drawable_close_dialog" format="reference" />
+        <attr name="background_dialog_choice_call" format="color" />
 
     </declare-styleable>
 
@@ -415,6 +417,8 @@
         <item name="drawable_file_attachment">@drawable/ic_type_file_attachment_dark</item>
         <item name="drawable_attachment">@drawable/ic_attachment_dark</item>
         <item name="bg_edit_text_feed_back">@drawable/bg_edit_text_feed_back_light_mode</item>
+        <item name="drawable_close_dialog">@drawable/ic_close_dark</item>
+        <item name="background_dialog_choice_call">#242424</item>
 
     </style>
 
@@ -489,6 +493,8 @@
         <item name="drawable_file_attachment">@drawable/ic_type_file_attachment_light</item>
         <item name="drawable_attachment">@drawable/ic_attachment_light</item>
         <item name="bg_edit_text_feed_back">@drawable/bg_edit_text_feed_back_dark_mode</item>
+        <item name="drawable_close_dialog">@drawable/ic_close_light</item>
+        <item name="background_dialog_choice_call">@color/dialogplus_card_shadow</item>
 
     </style>
 

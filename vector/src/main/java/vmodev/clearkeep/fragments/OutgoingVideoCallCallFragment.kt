@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -35,11 +34,6 @@ import java.util.concurrent.TimeUnit
  * A simple [Fragment] subclass.
  */
 class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
-
-    private var TIMEOUT = 60 * 2 * 1000L
-    private var action = false
-    var handler = Handler()
-    var runable: Runnable? = null
 
     private lateinit var binding: FragmentOutgoingCallBinding
 
@@ -100,7 +94,6 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
                     upDateTimeCall()
                 }
                 IMXCall.CALL_STATE_READY -> {
-                    action = true
                     if (mxCall.callElapsedTime > -1)
                         upDateTimeCall()
                 }
@@ -208,23 +201,12 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        runable = Runnable {
-            if (!action) {
-                binding.imageViewHangUp.performClick()
-            }
-        }
-        handler.postDelayed(runable, TIMEOUT)
         setupButtonControl()
         updateStatusControlCall()
     }
 
     override fun getFragment(): Fragment {
         return this
-    }
-
-    override fun onDestroyView() {
-        handler.removeCallbacks(runable)
-        super.onDestroyView()
     }
 
     override fun onResume() {
@@ -237,9 +219,7 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
                     mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration)
                 callView = it.callView
                 CallsManager.getSharedInstance().setCallActivity(this.activity)
-                callView?.let { insertCallView(); }
-
-//
+                callView?.let { insertCallView() }
             }
             mxCall.visibility = View.VISIBLE
             binding.constraintLayoutRoot.visibility = View.VISIBLE
