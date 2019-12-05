@@ -108,7 +108,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_normal"
-                android:src="@drawable/ic_hang_up" />
+                android:src="@drawable/ic_decline_call" />
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
