@@ -1914,5 +1914,6 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="label_settings">Settings</string>
     <string name="str_invite_your_friends_join_with_us">Invite your friends Join with us!</string>
     <string name="str_share_now">Share now!</string>
+    <string name="str_you_re_already_on_a_call">You\'re already on a call</string>
 
 </resources>

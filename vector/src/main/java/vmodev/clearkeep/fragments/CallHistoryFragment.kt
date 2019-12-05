@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,7 @@ import im.vector.widgets.Widget
 import im.vector.widgets.WidgetManagerProvider
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.call.IMXCall
+import org.matrix.androidsdk.call.MXCall
 import org.matrix.androidsdk.core.callback.ApiCallback
 import org.matrix.androidsdk.core.callback.SimpleApiCallback
 import org.matrix.androidsdk.core.model.MatrixError
@@ -51,6 +53,7 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
     lateinit var appExecutors: AppExecutors
     private lateinit var listSearchAdapter: CallHistoryRecyclerViewAdapter
 
+
     /** Handel Call*/
     private val LOG_TAG = CallHistoryFragment::class.java.simpleName
     private val TAKE_IMAGE_REQUEST_CODE = 1
@@ -77,6 +80,7 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun initData() {
+        listSearchAdapter.setLifeCycleOwner(viewLifecycleOwner, application.getUserId())
         viewModelFactory.getViewModel().getListMessageRoomUser().observe(viewLifecycleOwner, Observer {
             it?.data?.let { it1 ->
                 viewModelFactory.getViewModel().getListCallHistory(it1).observe(viewLifecycleOwner, Observer { dataResult ->
@@ -106,13 +110,17 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
         binding.rvCallHistory.adapter = listSearchAdapter
 
         listSearchAdapter.setOnItemClick { messageRoomUser, i ->
-            onCallItemClicked(i, messageRoomUser)
-
+            val imxCall = CallsManager.getSharedInstance().activeCall;
+            if (null != imxCall) {
+                Toast.makeText(activity!!, getString(R.string.str_you_re_already_on_a_call), Toast.LENGTH_LONG).show()
+            } else {
+                onCallItemClicked(i, messageRoomUser)
+            }
         }
 
     }
 
-//    Handel Call
+    //    Handel Call
     private fun onCallItemClicked(typeCallEnum: Int, messageRoomUser: MessageRoomUser) {
         val isVideoCall: Boolean
         val permissions: Int

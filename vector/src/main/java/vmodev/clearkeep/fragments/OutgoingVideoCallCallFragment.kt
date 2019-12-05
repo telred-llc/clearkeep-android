@@ -26,6 +26,7 @@ import org.matrix.androidsdk.call.IMXCall
 import org.matrix.androidsdk.call.MXCallListener
 import org.matrix.androidsdk.call.VideoLayoutConfiguration
 import org.webrtc.RendererCommon
+import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.ultis.longTimeToString
 import java.util.concurrent.TimeUnit
@@ -48,6 +49,7 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
 
         override fun onCallEnd(aReasonId: Int) {
             super.onCallEnd(aReasonId)
+            Log.e("Tag", "--- Demo")
             activity?.finish()
         }
 
@@ -88,6 +90,7 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
 
                 }
                 IMXCall.CALL_STATE_ENDED -> {
+                    Log.e("Tag", "--- Tag endcall 2")
                     this@OutgoingVideoCallCallFragment.activity?.finish()
                 }
                 IMXCall.CALL_STATE_CONNECTING -> {
@@ -116,7 +119,8 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
 
     private fun setupButtonControl() {
         binding.imageViewHangUp.setOnClickListener {
-            callManager?.let { it.onHangUp(null) }
+            mxCall.hangup(null)
+            callManager?.onHangUp(null)
         }
         binding.imageViewSwitchCamera.setOnClickListener {
             mxCall.switchRearFrontCamera()
@@ -141,6 +145,11 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
             mxCall.removeListener(callListener)
             CallsManager.getSharedInstance().setCallActivity(null)
             saveCallView()
+            val intent = Intent(activity!!, RoomActivity::class.java)
+                    .putExtra(RoomActivity.EXTRA_ROOM_ID, mxCall.room.roomId)
+                    .putExtra(RoomActivity.EXTRA_START_CALL_ID, mxCall.callId)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(intent)
             this.activity?.finish()
         }
         binding.imageViewScreenShare.setOnClickListener {
@@ -276,6 +285,10 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
                 .subscribe {
                     binding.tvTimeCall.text = mxCall.callElapsedTime.longTimeToString()
                 }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
 

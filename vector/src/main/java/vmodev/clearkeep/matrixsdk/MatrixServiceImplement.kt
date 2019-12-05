@@ -1890,8 +1890,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                             }
                                         }
 
-                                        Event.EVENT_TYPE_CALL_INVITE, Event.EVENT_TYPE_CALL_ANSWER,
-                                        Event.EVENT_TYPE_CALL_HANGUP, Event.EVENT_TYPE_CALL_CANDIDATES -> {
+                                        Event.EVENT_TYPE_CALL_HANGUP -> {
                                             if (msgType == Event.EVENT_TYPE_CALL_INVITE) {
                                                 val callContent = gson.fromJson(result.mClearEvent, CallContent::class.java);
                                                 var typeCall = ""
