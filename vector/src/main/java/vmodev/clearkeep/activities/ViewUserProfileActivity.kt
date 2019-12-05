@@ -166,7 +166,7 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
                                     }
 
                                     override fun onMatrixError(p0: MatrixError?) {
-                                        Toast.makeText(this@ViewUserProfileActivity, "Vui long cho ${binding.user?.value?.data?.name} chap nhan join room", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(this@ViewUserProfileActivity, getString(R.string.cannot_start_call), Toast.LENGTH_SHORT).show()
                                     }
 
                                     override fun onNetworkError(p0: java.lang.Exception?) {
