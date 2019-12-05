@@ -80,6 +80,7 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun initData() {
+        listSearchAdapter.setLifeCycleOwner(viewLifecycleOwner, application.getUserId())
         viewModelFactory.getViewModel().getListMessageRoomUser().observe(viewLifecycleOwner, Observer {
             it?.data?.let { it1 ->
                 viewModelFactory.getViewModel().getListCallHistory(it1).observe(viewLifecycleOwner, Observer { dataResult ->

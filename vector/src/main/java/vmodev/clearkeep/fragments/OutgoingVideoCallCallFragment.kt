@@ -128,7 +128,6 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
         binding.imageViewHangUp.setOnClickListener {
             mxCall.hangup(null)
             callManager?.onHangUp(null)
-            callSoundsManager.
         }
         binding.imageViewSwitchCamera.setOnClickListener {
             mxCall.switchRearFrontCamera()
