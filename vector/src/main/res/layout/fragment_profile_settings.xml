@@ -271,6 +271,45 @@
                         app:layout_constraintTop_toTopOf="@+id/imgFeedBack" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/shareApp_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imgShareApp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="22dp"
+                        android:src="@drawable/ic_share_app"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="25dp"
+                        android:text="@string/share"
+                        android:textColor="?attr/color_text_setting"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgShareApp"
+                        app:layout_constraintLeft_toRightOf="@+id/imgShareApp"
+                        app:layout_constraintTop_toTopOf="@+id/imgShareApp" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="18dp"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgShareApp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/imgShareApp" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
 
                 <FrameLayout
                     android:layout_width="match_parent"
