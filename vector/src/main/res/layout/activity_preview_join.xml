@@ -118,7 +118,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/msg_invited_you_to_this_room"
+                android:text="@string/would_you_want_to_join_this_room"
                 android:textAlignment="center"
                 android:textColor="?attr/color_text_title"
                 android:textSize="@dimen/text_19_sp" />
@@ -129,22 +129,22 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_xxl"
-                android:background="?attr/background_button_select"
+                android:background="?attr/bg_button_app_default"
                 android:text="@string/join"
                 android:textColor="@color/main_text_color"
                 android:textStyle="bold" />
 
-<!--            <TextView-->
-<!--                android:id="@+id/button_decline"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="@dimen/height_button_size"-->
-<!--                android:layout_margin="@dimen/margin_normal"-->
-<!--                android:text="@string/decline"-->
-<!--                android:gravity="center"-->
-<!--                android:background="?android:attr/selectableItemBackground"-->
-<!--                android:textColor="?attr/text_color_decline"-->
-<!--                android:layout_marginTop="@dimen/margin_small"-->
-<!--                android:textSize="@dimen/text_16_sp" />-->
+            <TextView
+                android:textStyle="bold"
+                android:id="@+id/button_decline"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_button_size"
+                android:layout_margin="@dimen/margin_normal"
+                android:text="@string/cancel"
+                android:gravity="center"
+                android:textColor="?attr/text_color_decline"
+                android:layout_marginTop="@dimen/margin_small"
+                android:textSize="@dimen/text_16_sp" />
         </LinearLayout>
     </FrameLayout>
 </layout>

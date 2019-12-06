@@ -1891,6 +1891,7 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="settings_discovery_disconnect_with_bound_pid">You are currently sharing email addresses or phone numbers on the identity server %s. You will need to reconnect to %s to stop sharing them.</string>
     <string name="settings_agree_to_terms">Agree to the identity server (%s) Terms of Service to allow yourself to be discoverable by email address or phone number.</string>
     <string name="msg_invited_you_to_this_room">invited you to this room</string>
+    <string name="would_you_want_to_join_this_room">Would you want to join this room ?</string>
     <string name="title_room_admin">Room\'s Admin</string>
     <string name="title_group_member_participants">Participants</string>
     <string name="title_group_member_invited">Invited</string>
