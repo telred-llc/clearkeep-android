@@ -1,8 +1,10 @@
 package vmodev.clearkeep.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -37,6 +39,7 @@ class FeedBackFragment : DataBindingDaggerFragment(), IFragment {
         setEvent()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setEvent() {
         binding.btnSubmit.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View) {
@@ -51,16 +54,25 @@ class FeedBackFragment : DataBindingDaggerFragment(), IFragment {
         binding.tvClearAll.setOnClickListener {
             clearAll()
         }
+        binding.edtComment.setOnTouchListener { p0, p1 ->
+            if (p0?.id == R.id.edtComment) {
+                p0.parent?.requestDisallowInterceptTouchEvent(true)
+                when (p1?.action?.and(MotionEvent.ACTION_MASK)) {
+                    MotionEvent.ACTION_UP -> p0.parent.requestDisallowInterceptTouchEvent(false)
+                }
+            }
+            false
+        }
     }
 
     private fun submitFeedback(content: String, stars: Int) {
         feedBackViewModelFactory.getViewModel().submitFeedback(content, stars).observe(viewLifecycleOwner, Observer {
             it?.data?.message?.let {
                 if (it == "success") {
-                    Toast.makeText(this.activity, "Sent feedback success", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this.activity, getString(R.string.msg_feed_back_success), Toast.LENGTH_LONG).show()
                     clearAll()
                 } else {
-                    Toast.makeText(this.activity, "Sent feedback failed", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this.activity, getString(R.string.msg_feed_back_failed), Toast.LENGTH_LONG).show()
                 }
             }
         })

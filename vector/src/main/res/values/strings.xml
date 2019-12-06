@@ -1915,5 +1915,7 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="str_invite_your_friends_join_with_us">Invite your friends Join with us!</string>
     <string name="str_share_now">Share now!</string>
     <string name="str_you_re_already_on_a_call">You\'re already on a call</string>
+    <string name="msg_feed_back_success">Your feedback has been sent successfully</string>
+    <string name="msg_feed_back_failed">Your feedback has been sent failed</string>
 
 </resources>
