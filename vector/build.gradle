@@ -109,8 +109,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "String", "HOME_SERVER", "\"https://dev.clearkeep.me\""
-            buildConfigField "String", "PUSH_GATEWAY", "\"https://push.clearkeep.me/_matrix/push/v1/notify\""
-            buildConfigField "String", "IDENTIFY_SERVER", "\"https://dev.clearkeep.me\""
+            buildConfigField "String", "PUSH_GATEWAY", "\"http://push.clearkeep.xyz/_matrix/push/v1/notifity\""
+            buildConfigField "String", "IDENTIFY_SERVER", "\"https://matrix.org\""
             buildConfigField "String", "CLEAR_KEEP_SERVER", "\"http://op.clearkeep.xyz\""
         }
 
