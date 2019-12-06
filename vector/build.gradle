@@ -448,10 +448,11 @@ dependencies {
 //    implementation project(path: ':matrix-sdk')
 //    implementation project(path: ':matrix-sdk-crypto')
 //    implementation project(path: ':matrix-sdk-core')
+    implementation 'com.github.matrix-org:matrix-android-sdk:v0.9.32'
 
-    implementation project(':matrix-sdk-core-release')
-    implementation project(':matrix-sdk-crypto-release')
-    implementation project('::matrix-sdk-release-0.9.30')
+//    implementation project(':matrix-sdk-core-release')
+//    implementation project(':matrix-sdk-crypto-release')
+//    implementation project('::matrix-sdk-release-0.9.30')
     /*************************************************************************/
 
     /************************** AssistedInject ****************************/
