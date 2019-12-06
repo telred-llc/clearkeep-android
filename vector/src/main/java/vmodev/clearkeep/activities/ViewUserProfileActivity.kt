@@ -36,6 +36,8 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
 
     private lateinit var binding: ActivityViewUserProfileBinding
     private lateinit var session: MXSession
+    private var userID: String? = null
+    private var roomID: String? = null
 
     companion object {
         const val USER_ID = "USER_ID"
@@ -45,15 +47,20 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_view_user_profile, dataBinding.getDataBindingComponent())
-        val userId = intent.getStringExtra(USER_ID)
-        val roomID = intent.getStringExtra(ROOM_ID)
+        if (savedInstanceState != null) {
+            userID = savedInstanceState.getString(USER_ID)
+            roomID = savedInstanceState.getString(ROOM_ID)
+        } else {
+            userID = intent.getStringExtra(USER_ID)
+            roomID = intent.getStringExtra(ROOM_ID)
+        }
         binding.user = viewModelFactory.getViewModel().getUserResult()
         binding.room = viewModelFactory.getViewModel().createNewDirectChatResult()
         binding.imageStatusAdmin.setColorFilter(ContextCompat.getColor(this, R.color.yellow))
         binding.buttonMakeAdmin.isSelected = true
         session = Matrix.getInstance(applicationContext).defaultSession
-        val state = session.dataHandler.getRoom(roomID).state.powerLevels
-        val powerLever = state.getUserPowerLevel(userId)
+        val state = session.dataHandler.getRoom(roomID!!).state.powerLevels
+        val powerLever = state.getUserPowerLevel(userID)
         binding.powerLevel = powerLever
         if (powerLever.toFloat() == CommonActivityUtils.UTILS_POWER_LEVEL_ADMIN) {
             binding.buttonMakeAdmin.visibility = View.INVISIBLE
@@ -65,7 +72,7 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
                 binding.buttonMakeAdmin.visibility = View.INVISIBLE
             }
         }
-        session.presenceApiClient.getPresence(userId, object : ApiCallback<User> {
+        session.presenceApiClient.getPresence(userID, object : ApiCallback<User> {
             override fun onSuccess(it: User?) {
                 if (it?.isActive!!) {
                     binding.circleImageViewStatus.setColorFilter(ContextCompat.getColor(this@ViewUserProfileActivity, R.color.app_green))
@@ -92,14 +99,14 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
         })
         binding.imgChat.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View) {
-                viewModelFactory.getViewModel().setUserIdForCreateNewChat(userId)
+                viewModelFactory.getViewModel().setUserIdForCreateNewChat(userID!!)
             }
 
         })
         binding.imgCall.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View) {
                 isCall = true
-                viewModelFactory.getViewModel().setUserIdForCreateNewChat(userId)
+                viewModelFactory.getViewModel().setUserIdForCreateNewChat(userID!!)
             }
 
         })
@@ -117,7 +124,7 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
         }
 
         binding.lifecycleOwner = this
-        viewModelFactory.getViewModel().setGetUser(userId)
+        viewModelFactory.getViewModel().setGetUser(userID!!)
     }
 
     private fun setAdmin(isAdmin: Boolean) {
@@ -213,6 +220,12 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
                 onError(e.localizedMessage)
             }
         })
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(USER_ID, userID)
+        outState.putString(ROOM_ID, roomID)
     }
 
     override fun getActivity(): FragmentActivity {

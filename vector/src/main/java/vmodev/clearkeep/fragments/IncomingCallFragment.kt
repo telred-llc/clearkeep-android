@@ -77,13 +77,6 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mxCall = CallsManager.getSharedInstance().activeCall
-        mxCall.createCallView()
-        callManager = CallsManager.getSharedInstance()
-    }
-
     override fun onResume() {
         super.onResume()
         mxCall.addListener(callListener)
@@ -103,6 +96,9 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mxCall = CallsManager.getSharedInstance().activeCall
+        mxCall.createCallView()
+        callManager = CallsManager.getSharedInstance()
         binding.room = viewModelFactory.getViewModel().getRoomResult()
         binding.imageViewAccept.setOnClickListener {
             mxCall.answer()

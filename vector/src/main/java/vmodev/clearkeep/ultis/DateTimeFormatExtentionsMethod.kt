@@ -4,11 +4,9 @@ import android.content.Context
 import android.text.format.DateUtils
 import im.vector.R
 import im.vector.util.PreferencesManager
-import java.util.Calendar
-import java.util.Date
-import java.util.GregorianCalendar
+import java.util.*
 
-    fun Long.toDateTime(context: Context, timeOnly: Boolean = false): String {
+fun Long.toDateTime(context: Context, timeOnly: Boolean = false): String {
         val MS_IN_DAY = (1000 * 60 * 60 * 24).toLong()
         val daysDiff = (Date().time - (Date(this)).zeroTimeDate().time) / MS_IN_DAY
 
@@ -39,7 +37,7 @@ import java.util.GregorianCalendar
 
     fun Date.zeroTimeDate(): Date {
         val gregorianCalendar = GregorianCalendar()
-        gregorianCalendar.time = this
+        gregorianCalendar.time = if (this.time == 0L || this.time == 1317427200L) Date(System.currentTimeMillis()) else this
         gregorianCalendar.set(Calendar.HOUR_OF_DAY, 0)
         gregorianCalendar.set(Calendar.MINUTE, 0)
         gregorianCalendar.set(Calendar.SECOND, 0)
