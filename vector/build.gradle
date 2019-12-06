@@ -445,13 +445,13 @@ dependencies {
     implementation 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
     //======================================================================//
     /*********************** Matrix Android SDK *****************************/
-//    implementation project(path: ':matrix-sdk')
-//    implementation project(path: ':matrix-sdk-crypto')
-//    implementation project(path: ':matrix-sdk-core')
+    implementation project(path: ':matrix-sdk')
+    implementation project(path: ':matrix-sdk-crypto')
+    implementation project(path: ':matrix-sdk-core')
 
-    implementation project(':matrix-sdk-core-release')
-    implementation project(':matrix-sdk-crypto-release')
-    implementation project('::matrix-sdk-release-0.9.30')
+//    implementation project(':matrix-sdk-core-release')
+//    implementation project(':matrix-sdk-crypto-release')
+//    implementation project('::matrix-sdk-release-0.9.30')
     /*************************************************************************/
 
     /************************** AssistedInject ****************************/
