@@ -14,7 +14,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.2'
+        classpath 'com.android.tools.build:gradle:3.5.3'
         classpath 'com.google.gms:google-services:4.3.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.2'
@@ -27,8 +27,8 @@ buildscript {
 
 // global properties used in sub modules
 ext {
-    versionCodeProp = 22
-    versionNameProp = "0.9.0"
+    versionCodeProp = 23
+    versionNameProp = "0.9.1"
     versionBuild = 1
     buildNumberProp = "${versionBuild}"
 }

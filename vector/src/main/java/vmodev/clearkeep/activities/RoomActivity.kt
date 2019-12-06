@@ -12,7 +12,6 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.os.Vibrator
 import android.preference.PreferenceManager
 import android.text.SpannableStringBuilder
@@ -321,6 +320,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     private var mScrollToIndex = -1
 
     private var mIgnoreTextUpdate = false
+    var roomId: String? = ""
 
     // https://github.com/vector-im/vector-android/issues/323
     // on some devices, the toolbar background is set to transparent
@@ -539,9 +539,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             return
         }
 
-        mxSession = getSession(intent)
-        val mRoomId = intent.getStringExtra(EXTRA_ROOM_ID)
-        mRoom = mxSession?.dataHandler?.store?.getRoom(mRoomId)
+        mxSession = Matrix.getInstance(this).defaultSession
+        roomId = intent.getStringExtra(EXTRA_ROOM_ID)
+        mRoom = mxSession?.dataHandler?.store?.getRoom(roomId)
 
         if ((mxSession == null) || !mxSession!!.isAlive) {
             Log.e(LOG_TAG, "No MXSession.")
@@ -554,7 +554,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
         })
 
-        val roomId = intent.getStringExtra(EXTRA_ROOM_ID)
         // ensure that the preview mode is really expected
         if (!intent.hasExtra(EXTRA_ROOM_PREVIEW_ID)) {
             sRoomPreviewData = null
@@ -929,12 +928,15 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     public override fun onSaveInstanceState(savedInstanceState: Bundle) {
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState)
+        savedInstanceState.putString(VectorRoomActivity.EXTRA_ROOM_ID, roomId)
         savedInstanceState.putInt(FIRST_VISIBLE_ROW, mVectorMessageListFragment!!.mMessageListView.firstVisiblePosition)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-
+        roomId = savedInstanceState.getString(VectorRoomActivity.EXTRA_ROOM_ID, "")
+//        mxSession = Matrix.getInstance(this).defaultSession
+//        currentRoom = mxSession!!.dataHandler.getRoom(roomId, false)
         // the listView will be refreshed so the offset might be lost.
         mScrollToIndex = savedInstanceState.getInt(FIRST_VISIBLE_ROW, -1)
     }
@@ -1291,11 +1293,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         val intentResult = Intent()
         intentResult.putExtra(RESULT_ROOM_ID, currentRoom?.roomId)
         setResult(Activity.RESULT_OK, intentResult)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
-        super.onSaveInstanceState(outState, outPersistentState)
-        outState.putSerializable(Room::class.simpleName, currentEvent)
     }
 
     override fun onScroll(firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
