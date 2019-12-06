@@ -419,7 +419,7 @@
         <item name="bg_edit_text_feed_back">@drawable/bg_edit_text_feed_back_light_mode</item>
         <item name="drawable_close_dialog">@drawable/ic_close_dark</item>
         <item name="background_dialog_choice_call">#242424</item>
-        <item name="colorControlActivated">#00C0D8</item>
+        <item name="colorControlActivated">#3FC5B9</item>
 
     </style>
 
