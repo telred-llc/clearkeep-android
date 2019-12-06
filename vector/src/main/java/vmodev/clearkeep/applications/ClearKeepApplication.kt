@@ -5,10 +5,14 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.Configuration
 import androidx.work.WorkManager
+import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.core.CrashlyticsCore
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
+import im.vector.BuildConfig
 import im.vector.Matrix
 import im.vector.R
+import io.fabric.sdk.android.Fabric
 import io.reactivex.Observable
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -17,7 +21,6 @@ import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.core.callback.ApiCallback
-import org.matrix.androidsdk.core.callback.SimpleApiCallback
 import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo
 import vmodev.clearkeep.autokeybackups.interfaces.IAutoKeyBackup
@@ -27,14 +30,11 @@ import vmodev.clearkeep.databases.ClearKeepDatabase
 import vmodev.clearkeep.di.AppComponent
 import vmodev.clearkeep.di.DaggerAppComponent
 import vmodev.clearkeep.executors.AppExecutors
-import vmodev.clearkeep.matrixsdk.MatrixEventHandler
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
 import vmodev.clearkeep.repositories.KeyBackupRepository
 import vmodev.clearkeep.repositories.SignatureRepository
 import vmodev.clearkeep.repositories.UserRepository
 import vmodev.clearkeep.viewmodelobjects.User
-import vmodev.clearkeep.workermanager.ClearKeepWorkerFactory
-import java.lang.Exception
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -42,11 +42,11 @@ import javax.inject.Inject
 class ClearKeepApplication : DaggerVectorApp(), IApplication {
 
     @Inject
-    lateinit var matrixEventHandler: IMatrixEventHandler;
+    lateinit var matrixEventHandler: IMatrixEventHandler
     @Inject
-    lateinit var database: ClearKeepDatabase;
+    lateinit var database: ClearKeepDatabase
     @Inject
-    lateinit var autoKeyBackup: IAutoKeyBackup;
+    lateinit var autoKeyBackup: IAutoKeyBackup
 
     @Inject
     lateinit var userRepository: UserRepository
@@ -59,36 +59,38 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
     @Inject
     lateinit var appExecutors: AppExecutors
     @Inject
-    lateinit var userDao: AbstractUserDao;
+    lateinit var userDao: AbstractUserDao
 
-    private var session: MXSession? = null;
+    private var session: MXSession? = null
 
-    private var currentTheme: Int = R.style.LightTheme;
+    private var currentTheme: Int = R.style.LightTheme
 
-    private lateinit var appComponent: AppComponent;
+    private lateinit var appComponent: AppComponent
 
     override fun onCreate() {
-        appComponent = DaggerAppComponent.builder().application(this).build();
-        appComponent.inject(this);
-        val factory = appComponent.workerFactory();
-        WorkManager.initialize(this, Configuration.Builder().setWorkerFactory(factory).build());
+        appComponent = DaggerAppComponent.builder().application(this).build()
+        appComponent.inject(this)
+        val factory = appComponent.workerFactory()
+        WorkManager.initialize(this, Configuration.Builder().setWorkerFactory(factory).build())
         super.onCreate()
         RxJavaPlugins.setErrorHandler { throwable -> Log.d("RX Throw: ", throwable.message) }
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+        val crashlytics = Crashlytics.Builder().core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()).build()
+        Fabric.with(this, crashlytics)
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
 
-        return appComponent as AndroidInjector<out DaggerApplication>;
+        return appComponent as AndroidInjector<out DaggerApplication>
     }
 
     override fun setEventHandler() {
-        session = Matrix.getInstance(this).defaultSession;
+        session = Matrix.getInstance(this).defaultSession
         Observable.timer(5, TimeUnit.SECONDS).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe {
                     session?.let {
-                        it.dataHandler.removeListener(matrixEventHandler.getMXEventListener(it));
+                        it.dataHandler.removeListener(matrixEventHandler.getMXEventListener(it))
                         it.dataHandler.addListener(matrixEventHandler.getMXEventListener(it))
                     }
                 }
@@ -100,15 +102,15 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
     }
 
     override fun getCurrentTheme(): Int {
-        return currentTheme;
+        return currentTheme
     }
 
     override fun setCurrentTheme(theme: Int) {
-        currentTheme = theme;
+        currentTheme = theme
     }
 
     override fun getApplication(): Application {
-        return this;
+        return this
     }
 
     override fun startAutoKeyBackup(password: String?) {
@@ -135,7 +137,7 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
                                     override fun onNetworkError(e: Exception?) {
 
                                     }
-                                });
+                                })
 
                             }
                         }
