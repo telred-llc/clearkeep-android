@@ -643,7 +643,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         })
 
         currentRoom = mxSession!!.dataHandler.getRoom(roomId, false)
-        if (!currentRoom?.roomId.isNullOrEmpty()) {
+        if (!TextUtils.isEmpty(currentRoom?.roomId)) {
             viewModelFactory.getViewModel().setIdForUpdateRoomNotifyCount(currentRoom!!.roomId).subscribeOn(Schedulers.io()).subscribe()
         }
         mEditText.setAddColonOnFirstItem(true)

@@ -51,7 +51,8 @@ class HomeScreenActivity : DataBindingDaggerActivity(), IActivity {
             if (mxSession.myUser.isActive) {
                 binding.circleImageViewStatus.setColorFilter(ContextCompat.getColor(this, R.color.app_green))
             } else {
-                binding.circleImageViewStatus.setColorFilter(ContextCompat.getColor(this, R.color.main_text_color_hint))
+                binding.circleImageViewStatus.setColorFilter(ContextCompat.getColor(this, R.color.app_green))
+//                binding.circleImageViewStatus.setColorFilter(ContextCompat.getColor(this, R.color.main_text_color_hint))
             }
         })
         binding.lifecycleOwner = this
