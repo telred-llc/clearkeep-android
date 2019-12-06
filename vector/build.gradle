@@ -101,6 +101,7 @@ android {
 
     buildTypes {
         debug {
+
             resValue "bool", "debug_mode", "true"
             resValue "string", "git_revision", "\"${gitRevision()}\""
             resValue "string", "git_revision_date", "\"${gitRevisionDate()}\""
@@ -110,8 +111,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "String", "HOME_SERVER", "\"https://dev.clearkeep.me\""
-            buildConfigField "String", "PUSH_GATEWAY", "\"https://push.clearkeep.me/_matrix/push/v1/notify\""
-            buildConfigField "String", "IDENTIFY_SERVER", "\"https://dev.clearkeep.me\""
+            buildConfigField "String", "PUSH_GATEWAY", "\"http://push.clearkeep.xyz/_matrix/push/v1/notify\""
+            buildConfigField "String", "IDENTIFY_SERVER", "\"https://matrix.org\""
             buildConfigField "String", "CLEAR_KEEP_SERVER", "\"http://op.clearkeep.xyz\""
         }
 
@@ -144,6 +145,7 @@ android {
             buildConfigField "String", "SHORT_FLAVOR_DESCRIPTION", "\"G\""
             buildConfigField "String", "FLAVOR_DESCRIPTION", "\"GooglePlay\""
         }
+
         appfdroid {
             applicationId 'com.telred.clearkeep'
             // use the version name
@@ -154,6 +156,7 @@ android {
             buildConfigField "String", "FLAVOR_DESCRIPTION", "\"FDroid\""
         }
     }
+
     lintOptions {
 //        lintConfig file("lint.xml")
         checkReleaseBuilds false
@@ -445,13 +448,13 @@ dependencies {
     implementation 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
     //======================================================================//
     /*********************** Matrix Android SDK *****************************/
-    implementation project(path: ':matrix-sdk')
-    implementation project(path: ':matrix-sdk-crypto')
-    implementation project(path: ':matrix-sdk-core')
+//    implementation project(path: ':matrix-sdk')
+//    implementation project(path: ':matrix-sdk-crypto')
+//    implementation project(path: ':matrix-sdk-core')
 
-//    implementation project(':matrix-sdk-core-release')
-//    implementation project(':matrix-sdk-crypto-release')
-//    implementation project('::matrix-sdk-release-0.9.30')
+    implementation project(':matrix-sdk-core-release')
+    implementation project(':matrix-sdk-crypto-release')
+    implementation project('::matrix-sdk-release-0.9.32')
     /*************************************************************************/
 
     /************************** AssistedInject ****************************/
@@ -461,7 +464,9 @@ dependencies {
     /**********************************************************************/
 
     /********************************* olm *******************************/
-    implementation 'org.matrix.gitlab.matrix-org:olm:3.1.2'
+//    implementation 'org.matrix.gitlab.matrix-org:olm:3.1.2'
+//    implementation project(path:':olm-sdk')
+    implementation project(':olm-sdk-release')
     /*********************************************************************/
     implementation 'gun0912.ted:tedpermission:2.2.2'
 }

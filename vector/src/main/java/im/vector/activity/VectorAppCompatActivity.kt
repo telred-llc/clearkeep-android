@@ -24,18 +24,21 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.annotation.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentManager
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.Unbinder
+import com.airbnb.mvrx.BaseMvRxActivity
 import dagger.android.support.DaggerAppCompatActivity
 import im.vector.BuildConfig
 import im.vector.R
 import im.vector.VectorApp
 import im.vector.activity.interfaces.Restorable
 import im.vector.dialogs.ConsentNotGivenHelper
+import im.vector.fragments.VectorBaseFragment
+import im.vector.fragments.VectorBaseMvRxFragment
 import im.vector.receiver.DebugReceiver
 import im.vector.ui.themes.ActivityOtherThemes
 import im.vector.ui.themes.ThemeUtils
@@ -46,7 +49,7 @@ import org.matrix.androidsdk.core.Log
 /**
  * Parent class for all Activities in Vector application
  */
-abstract class VectorAppCompatActivity : DaggerAppCompatActivity() {
+abstract class VectorAppCompatActivity : BaseMvRxActivity() {
 
     private var LOG_TAG = VectorAppCompatActivity::class.java.simpleName
 
@@ -84,7 +87,7 @@ abstract class VectorAppCompatActivity : DaggerAppCompatActivity() {
         super.attachBaseContext(VectorApp.getLocalisedContext(base))
     }
 
-    final override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         ThemeUtils.setActivityTheme(this, getOtherThemes())
@@ -150,6 +153,27 @@ abstract class VectorAppCompatActivity : DaggerAppCompatActivity() {
         if (hasFocus && displayInFullscreen()) {
             setFullScreen()
         }
+    }
+
+    override fun onBackPressed() {
+        val handled = recursivelyDispatchOnBackPressed(supportFragmentManager)
+        if (!handled) {
+            super.onBackPressed()
+        }
+    }
+
+    private fun recursivelyDispatchOnBackPressed(fm: FragmentManager): Boolean {
+        val reverseOrder = fm.fragments.filter { it is VectorBaseFragment || it is VectorBaseMvRxFragment }.reversed()
+        for (f in reverseOrder) {
+            val handledByChildFragments = recursivelyDispatchOnBackPressed(f.childFragmentManager)
+            if (handledByChildFragments) {
+                return true
+            }
+            if (f is HandleBackParticipant && f.onBackPressed()) {
+                return true
+            }
+        }
+        return false
     }
 
     override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration?) {
