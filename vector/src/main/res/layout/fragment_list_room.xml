@@ -43,9 +43,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.core.widget.NestedScrollView
+        <com.emilsjolander.components.StickyScrollViewItems.StickyScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -58,7 +58,8 @@
                     android:layout_height="46dp"
                     android:layout_marginTop="@dimen/margin_normal"
                     android:background="?attr/color_view_blank_setting"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:tag="sticky">
 
                     <ImageView
                         android:id="@+id/image_view_direction_favourites"
@@ -92,9 +93,7 @@
                         android:textSize="@dimen/text_17_sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toRightOf="@+id/icon_favourites"
-                        app:layout_constraintTop_toTopOf="parent"
-
-                        />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -122,14 +121,14 @@
                         tools:listitem="@layout/room_item" />
                 </net.cachapa.expandablelayout.ExpandableLayout>
 
-
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/linear_layout_group"
                     android:layout_width="match_parent"
                     android:layout_height="46dp"
                     android:layout_marginTop="@dimen/margin_normal"
                     android:background="?attr/color_view_blank_setting"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:tag="sticky-hastransparancy">
 
                     <ImageView
                         android:id="@+id/image_view_direction_group"
@@ -250,7 +249,8 @@
                     android:layout_height="46dp"
                     android:layout_marginTop="@dimen/margin_normal"
                     android:background="?attr/color_view_blank_setting"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:tag="sticky-hastransparancy-nonconstant">
 
                     <ImageView
                         android:id="@+id/image_view_direction_direct"
@@ -364,7 +364,7 @@
                         tools:listitem="@layout/room_item" />
                 </net.cachapa.expandablelayout.ExpandableLayout>
             </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+        </com.emilsjolander.components.StickyScrollViewItems.StickyScrollView>
 
         <ProgressBar
             android:layout_width="wrap_content"
