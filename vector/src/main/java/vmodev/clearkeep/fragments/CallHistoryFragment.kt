@@ -16,6 +16,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
+import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.JitsiCallActivity
 import im.vector.activity.VectorMediaPickerActivity
@@ -346,7 +347,7 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
      * @param aIsVideoCall true if the call is a video one
      */
     private fun startJitsiCall(aIsVideoCall: Boolean) {
-        WidgetManagerProvider.getWidgetManager(activity!!)?.createJitsiWidget(mxSession, currentRoom, aIsVideoCall, object : ApiCallback<Widget> {
+        Matrix.getWidgetManager(activity!!)?.createJitsiWidget(mxSession, currentRoom, aIsVideoCall, object : ApiCallback<Widget> {
             override fun onSuccess(widget: Widget) {
 
                 launchJitsiActivity(widget, aIsVideoCall)

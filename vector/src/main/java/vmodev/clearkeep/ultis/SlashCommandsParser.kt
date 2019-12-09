@@ -4,6 +4,7 @@ import android.text.TextUtils
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import im.vector.Matrix
 import im.vector.R
 import im.vector.VectorApp
 import im.vector.activity.CommonActivityUtils
@@ -295,7 +296,7 @@ class SlashCommandsParser {
                     isIRCCmd = true
                     isIRCCmdValid = true
 
-                    val wm = WidgetManagerProvider.getWidgetManager(activity)
+                    val wm = Matrix.getWidgetManager(activity)
                     if (wm != null) {
                         wm.clearScalarToken(activity, session)
                         Toast.makeText(activity, "Scalar token cleared", Toast.LENGTH_SHORT).show()

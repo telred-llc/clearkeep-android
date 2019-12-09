@@ -33,6 +33,10 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
 import im.vector.Matrix
 import im.vector.R
 import im.vector.VectorApp
@@ -51,7 +55,6 @@ import im.vector.util.ReadMarkerManager.LIVE_MODE
 import im.vector.util.ReadMarkerManager.PREVIEW_MODE
 import im.vector.view.*
 import im.vector.widgets.Widget
-import im.vector.widgets.WidgetManagerProvider
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.call.IMXCall
@@ -93,7 +96,18 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         MatrixMessageListFragment.IEventSendingListener,
         MatrixMessageListFragment.IOnScrollListener,
         MessageListFragment.VectorMessageListFragmentListener,
-        VectorReadReceiptsDialogFragment.VectorReadReceiptsDialogFragmentListener, IActivity {
+        VectorReadReceiptsDialogFragment.VectorReadReceiptsDialogFragmentListener, IActivity, HasAndroidInjector {
+
+    @Inject
+    lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    override fun androidInjector(): AndroidInjector<Any> {
+        return androidInjector;
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun getActivity(): FragmentActivity {
         return this
@@ -748,7 +762,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                         .setPositiveButton(R.string.remove) { dialog, which ->
                             showWaitingView()
 
-                            val wm = WidgetManagerProvider.getWidgetManager(this@RoomActivity)
+                            val wm = Matrix.getWidgetManager(this@RoomActivity)
                             if (wm != null) {
                                 showWaitingView()
 
@@ -842,7 +856,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
 
             override fun onCloseWidgetClick(widget: Widget) {
-                val wm = WidgetManagerProvider.getWidgetManager(this@RoomActivity)
+                val wm = Matrix.getWidgetManager(this@RoomActivity)
                 if (wm != null) {
                     showWaitingView()
 
@@ -1564,7 +1578,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      * @param aIsVideoCall true if the call is a video one
      */
     private fun startJitsiCall(aIsVideoCall: Boolean) {
-        val wm = WidgetManagerProvider.getWidgetManager(this)
+        val wm = Matrix.getWidgetManager(this)
         if (wm != null) {
             enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
             showWaitingView()
