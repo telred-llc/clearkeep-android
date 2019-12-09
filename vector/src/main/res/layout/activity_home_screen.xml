@@ -52,23 +52,26 @@
                 android:layout_height="?attr/actionBarSize"
                 android:orientation="horizontal">
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="12dp"
-                    android:background="@color/blue_app"
-                    android:innerRadius="0dp"
-                    android:shape="ring"
-                    app:cardCornerRadius="25dp">
+                <FrameLayout
+                    android:layout_width="@dimen/image_avatar_status_size"
+                    android:layout_height="@dimen/image_avatar_status_size"
+                    android:padding="5dp">
 
-                    <ImageView
+                    <vmodev.clearkeep.widget.CircleImage
                         android:id="@+id/circle_image_view_avatar"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/app_green"
                         app:user="@{user.data}" />
-                </androidx.cardview.widget.CardView>
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/circle_image_view_status"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="end|bottom"
+                        android:layout_marginEnd="@dimen/margin_status_online"
+                        android:layout_marginBottom="@dimen/margin_status_online"
+                        android:src="@color/app_green" />
+                </FrameLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/frame_layout_search"

@@ -16,7 +16,7 @@
 
         <import type="vmodev.clearkeep.viewmodelobjects.RoomListUser" />
 
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
 
         <variable
             name="room"
@@ -54,8 +54,8 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imgBack"
                     android:layout_width="wrap_content"
-                    android:background="?android:attr/selectableItemBackground"
                     android:layout_height="match_parent"
+                    android:background="?android:attr/selectableItemBackground"
                     android:paddingHorizontal="@dimen/padding_small"
                     app:srcCompat="@drawable/ic_arrow_back_light"
                     app:tint="?attr/color_tint_img_back" />
@@ -76,18 +76,6 @@
                         android:textColor="?attr/color_text_tool_bar"
                         android:textSize="@dimen/text_21_sp"
                         tools:text="PINTEREST" />
-
-<!--                    <TextView-->
-<!--                        android:id="@+id/tvTopic"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginTop="@dimen/margin_small"-->
-<!--                        android:singleLine="true"-->
-<!--                        android:text="@{roomListUser.data.room.topic}"-->
-<!--                        android:textColor="?attr/color_text_title"-->
-<!--                        android:textSize="@dimen/text_13_sp"-->
-<!--                        android:visibility="@{roomListUser.data.room.topic == null ? View.GONE : View.VISIBLE}"-->
-<!--                        tools:text="Room topic here" />-->
 
                 </LinearLayout>
             </RelativeLayout>
@@ -140,11 +128,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height_button_size"
                 android:layout_margin="@dimen/margin_normal"
-                android:text="@string/decline"
-                android:gravity="center"
-                android:background="?android:attr/selectableItemBackground"
-                android:textColor="?attr/text_color_decline"
                 android:layout_marginTop="@dimen/margin_small"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="@string/decline"
+                android:textColor="?attr/text_color_decline"
                 android:textSize="@dimen/text_16_sp" />
         </LinearLayout>
     </FrameLayout>

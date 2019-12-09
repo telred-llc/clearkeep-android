@@ -33,6 +33,10 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
 import im.vector.Matrix
 import im.vector.R
 import im.vector.VectorApp
@@ -51,7 +55,6 @@ import im.vector.util.ReadMarkerManager.LIVE_MODE
 import im.vector.util.ReadMarkerManager.PREVIEW_MODE
 import im.vector.view.*
 import im.vector.widgets.Widget
-import im.vector.widgets.WidgetManagerProvider
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.call.IMXCall
@@ -93,7 +96,18 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         MatrixMessageListFragment.IEventSendingListener,
         MatrixMessageListFragment.IOnScrollListener,
         MessageListFragment.VectorMessageListFragmentListener,
-        VectorReadReceiptsDialogFragment.VectorReadReceiptsDialogFragmentListener, IActivity {
+        VectorReadReceiptsDialogFragment.VectorReadReceiptsDialogFragmentListener, IActivity, HasAndroidInjector {
+
+    @Inject
+    lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    override fun androidInjector(): AndroidInjector<Any> {
+        return androidInjector;
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun getActivity(): FragmentActivity {
         return this
@@ -320,6 +334,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     private var mScrollToIndex = -1
 
     private var mIgnoreTextUpdate = false
+    var roomId: String? = ""
 
     // https://github.com/vector-im/vector-android/issues/323
     // on some devices, the toolbar background is set to transparent
@@ -538,9 +553,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             return
         }
 
-        mxSession = getSession(intent)
-        val mRoomId = intent.getStringExtra(EXTRA_ROOM_ID)
-        mRoom = mxSession?.dataHandler?.store?.getRoom(mRoomId)
+        mxSession = Matrix.getInstance(this).defaultSession
+        roomId = intent.getStringExtra(EXTRA_ROOM_ID)
+        mRoom = mxSession?.dataHandler?.store?.getRoom(roomId)
 
         if ((mxSession == null) || !mxSession!!.isAlive) {
             Log.e(LOG_TAG, "No MXSession.")
@@ -553,7 +568,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
         })
 
-        val roomId = intent.getStringExtra(EXTRA_ROOM_ID)
         // ensure that the preview mode is really expected
         if (!intent.hasExtra(EXTRA_ROOM_PREVIEW_ID)) {
             sRoomPreviewData = null
@@ -643,7 +657,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         })
 
         currentRoom = mxSession!!.dataHandler.getRoom(roomId, false)
-        if (!currentRoom?.roomId.isNullOrEmpty()) {
+        if (!TextUtils.isEmpty(currentRoom?.roomId)) {
             viewModelFactory.getViewModel().setIdForUpdateRoomNotifyCount(currentRoom!!.roomId).subscribeOn(Schedulers.io()).subscribe()
         }
         mEditText.setAddColonOnFirstItem(true)
@@ -748,7 +762,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                         .setPositiveButton(R.string.remove) { dialog, which ->
                             showWaitingView()
 
-                            val wm = WidgetManagerProvider.getWidgetManager(this@RoomActivity)
+                            val wm = Matrix.getWidgetManager(this@RoomActivity)
                             if (wm != null) {
                                 showWaitingView()
 
@@ -842,7 +856,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
 
             override fun onCloseWidgetClick(widget: Widget) {
-                val wm = WidgetManagerProvider.getWidgetManager(this@RoomActivity)
+                val wm = Matrix.getWidgetManager(this@RoomActivity)
                 if (wm != null) {
                     showWaitingView()
 
@@ -928,12 +942,15 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     public override fun onSaveInstanceState(savedInstanceState: Bundle) {
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState)
+        savedInstanceState.putString(VectorRoomActivity.EXTRA_ROOM_ID, roomId)
         savedInstanceState.putInt(FIRST_VISIBLE_ROW, mVectorMessageListFragment!!.mMessageListView.firstVisiblePosition)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-
+        roomId = savedInstanceState.getString(VectorRoomActivity.EXTRA_ROOM_ID, "")
+//        mxSession = Matrix.getInstance(this).defaultSession
+//        currentRoom = mxSession!!.dataHandler.getRoom(roomId, false)
         // the listView will be refreshed so the offset might be lost.
         mScrollToIndex = savedInstanceState.getInt(FIRST_VISIBLE_ROW, -1)
     }
@@ -1076,22 +1093,22 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             mScrollToIndex = -1
         }
 
-        if (null != mCallId) {
-            val call = CallsManager.getSharedInstance().activeCall
-
-            // can only manage one call instance.
-            // either there is no active call or resume the active one
-            if ((null == call) || call.callId == mCallId) {
-                val intent = Intent(this, VectorCallViewActivity::class.java)
-                intent.putExtra(VectorCallViewActivity.EXTRA_MATRIX_ID, mxSession!!.credentials.userId)
-                intent.putExtra(VectorCallViewActivity.EXTRA_CALL_ID, mCallId)
-
-                enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
-                runOnUiThread { startActivity(intent) }
-            }
-
-            mCallId = null
-        }
+//        if (null != mCallId) {
+//            val call = CallsManager.getSharedInstance().activeCall
+//
+//            // can only manage one call instance.
+//            // either there is no active call or resume the active one
+//            if ((null == call) || call.callId == mCallId) {
+//                val intent = Intent(this, VectorCallViewActivity::class.java)
+//                intent.putExtra(VectorCallViewActivity.EXTRA_MATRIX_ID, mxSession!!.credentials.userId)
+//                intent.putExtra(VectorCallViewActivity.EXTRA_CALL_ID, mCallId)
+//
+//                enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
+//                runOnUiThread { startActivity(intent) }
+//            }
+//
+//            mCallId = null
+//        }
 
         // the pending call view is only displayed with "active " room
         if ((null == sRoomPreviewData) && (null == mEventId)) {
@@ -1287,9 +1304,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     }
 
     private fun finishResult() {
-
         val intentResult = Intent()
-        intentResult.putExtra(RESULT_ROOM_ID, currentRoom!!.roomId)
+        intentResult.putExtra(RESULT_ROOM_ID, currentRoom?.roomId)
         setResult(Activity.RESULT_OK, intentResult)
     }
 
@@ -1529,7 +1545,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
                     }
                 })
-                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setDeniedMessage("Please go to your Setting and turn on Permission")
                 .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
                 .check()
     }
@@ -1562,7 +1578,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      * @param aIsVideoCall true if the call is a video one
      */
     private fun startJitsiCall(aIsVideoCall: Boolean) {
-        val wm = WidgetManagerProvider.getWidgetManager(this)
+        val wm = Matrix.getWidgetManager(this)
         if (wm != null) {
             enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
             showWaitingView()

@@ -56,12 +56,12 @@
         </vmodev.clearkeep.widget.RippleBackground>
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp"
-            android:singleLine="true"
             android:id="@+id/text_view_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:singleLine="true"
             android:textAlignment="center"
             android:textSize="@dimen/text_40_sp"
             app:formatName="@{room.data}"
@@ -132,7 +132,7 @@
                     android:id="@+id/image_view_hang_up"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_hang_up" />
+                    android:src="@drawable/ic_decline_call" />
             </LinearLayout>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -34,6 +34,9 @@ abstract class AbstractSettingsActivityFragmentBuilderModule {
     @ContributesAndroidInjector(modules = [FragmentFeedBackBindModule::class])
     abstract fun contributeFragmentFeedBackFragment(): FeedBackFragment;
 
+    @ContributesAndroidInjector(modules = [FragmentShareAppBindModule::class])
+    abstract fun contributeShareAppFragment(): ShareAppFragment
+
     @Module
     abstract class FragmentProfileSettingsFragmentBindModule {
         @Binds
@@ -99,5 +102,12 @@ abstract class AbstractSettingsActivityFragmentBuilderModule {
 
         @Binds
         abstract fun bindFeedBackFragmentViewModelFactory(factory: FeedBackFragmentViewModelFactory): IViewModelFactory<AbstractFeedBackFragmentViewModel>;
+    }
+
+    @Module
+    abstract class FragmentShareAppBindModule {
+        @Binds
+        @Named(IFragment.SHARE_APP_FRAGMENT)
+        abstract fun bindShareAppFragment(fragment: ShareAppFragment): IFragment
     }
 }

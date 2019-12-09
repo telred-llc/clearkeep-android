@@ -81,15 +81,9 @@ class PreviewJoinActivity : DataBindingDaggerActivity(), IActivity {
                 }
             })
         }
-//        binding.buttonDecline.setOnClickListener { v ->
-//            AlertDialog.Builder(this).setTitle(R.string.leave_room)
-//                    .setMessage(R.string.do_you_want_leave_room)
-//                    .setNegativeButton(R.string.no, null)
-//                    .setPositiveButton(R.string.yes) { dialog, v ->
-//                        roomViewModel.setLeaveRoom(roomId)
-//
-//                    }.show();
-//        }
+        binding.buttonDecline.setOnClickListener { v ->
+            finish()
+        }
         binding.roomListUser = roomViewModel.getRoomListUserFindByID(roomId)
         binding.toolbar.imgBack.setOnClickListener {
             onBackPressed()

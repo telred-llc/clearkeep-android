@@ -1,6 +1,7 @@
 package vmodev.clearkeep.activities
 
 import android.os.Bundle
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.Navigation
@@ -23,7 +24,25 @@ class SettingsActivity : DataBindingDaggerActivity(), IActivity {
         }
         Navigation.findNavController(this, R.id.fragment).addOnDestinationChangedListener { controller, destination, arguments ->
             supportActionBar?.title = destination.label
+            showToolBarByLabel(destination.label.toString())
         }
+    }
+
+    /**
+     * show gone toolbar
+     */
+    private fun showToolBarByLabel(label: String) {
+        when (label) {
+            resources.getString(R.string.label_share_app) -> {
+                binding.toolbar.visibility = View.GONE
+            }
+            else -> {
+
+                binding.toolbar.visibility = View.VISIBLE
+            }
+
+        }
+
     }
 
     override fun getActivity(): FragmentActivity {

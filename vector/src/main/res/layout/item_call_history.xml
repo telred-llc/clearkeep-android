@@ -8,6 +8,10 @@
         <variable
             name="result"
             type="vmodev.clearkeep.viewmodelobjects.MessageRoomUser" />
+
+        <variable
+            name="currentID"
+            type="String" />
     </data>
 
     <RelativeLayout
@@ -46,7 +50,7 @@
                     app:cardBackgroundColor="@color/main_text_color_hint"
                     app:cardCornerRadius="@dimen/radius_online_status"
                     app:cardElevation="0dp"
-                    app:currentUserId="@{result.room.get(0).id}"
+                    app:currentUserId="@{result.message.userId}"
                     app:listUser="@{result.user}" />
 
 
@@ -58,30 +62,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_toEndOf="@+id/flAvatar"
             android:layout_toStartOf="@+id/imgCallVideo"
-
-
+            android:layout_toEndOf="@+id/flAvatar"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/text_view_name"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_normal"
-                android:layout_weight="1"
-                android:text="@{result.room.get(0).name}"
                 android:layout_marginBottom="@dimen/margin_small"
-                app:checkMissCall= "@{result.message}"
-                android:textSize="@dimen/text_17_sp" />
+                android:singleLine="true"
+                android:text="@{result.room.get(0).name}"
+                android:textSize="@dimen/text_17_sp"
+                app:checkMissCall="@{result.message}" />
 
             <TextView
                 android:id="@+id/text_view_time"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/margin_normal"
-                android:layout_weight="1"
                 android:textColor="@color/main_text_color_hint"
                 android:textSize="@dimen/text_13_sp"
                 app:timeStamp="@{result.message.createdAt}"
@@ -95,11 +96,10 @@
             android:layout_centerInParent="true"
             android:layout_marginHorizontal="@dimen/margin_normal"
             android:layout_toStartOf="@+id/imgCallVoice"
-            android:padding="@dimen/padding_normal"
-            app:srcCompat="@drawable/ic_svg_video"
             android:background="?actionBarItemBackground"
+            android:padding="@dimen/padding_normal"
             android:tint="?attr/color_icon_app_default"
-            />
+            app:srcCompat="@drawable/ic_svg_video" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgCallVoice"
@@ -107,11 +107,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
-            android:padding="@dimen/padding_normal"
-            app:srcCompat="@drawable/ic_phone"
             android:background="?actionBarItemBackground"
+            android:padding="@dimen/padding_normal"
             android:tint="?attr/color_icon_app_default"
-            />
+            app:srcCompat="@drawable/ic_phone" />
 
     </RelativeLayout>
 </layout>

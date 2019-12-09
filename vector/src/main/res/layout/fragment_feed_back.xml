@@ -54,7 +54,7 @@
                 app:layout_constraintStart_toStartOf="@+id/rating"
                 app:layout_constraintTop_toBottomOf="@+id/rating" />
 
-            <androidx.appcompat.widget.AppCompatEditText
+            <EditText
                 android:id="@+id/edtComment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -64,13 +64,16 @@
                 android:gravity="top"
                 android:hint="@string/str_enter_feedback"
                 android:maxLines="5"
+                android:inputType="textMultiLine"
                 android:minLines="5"
                 android:padding="@dimen/padding_normal"
                 android:textColor="?attr/color_text_app_default"
+                android:overScrollMode="always"
+                android:scrollbarStyle="insideInset"
+                android:scrollbars="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvNote"
-                app:layout_constraintVertical_bias="0.19" />
+                app:layout_constraintTop_toBottomOf="@+id/tvNote" />
 
             <Button
                 android:id="@+id/btnSubmit"

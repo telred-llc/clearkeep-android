@@ -65,6 +65,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -92,24 +93,23 @@ import im.vector.util.PreferencesManager;
  * Contains useful functions which are called in multiple activities.
  */
 public class CommonActivityUtils {
-    public static final boolean UTILS_DISPLAY_PROGRESS_BAR = true;
+    private static final String LOG_TAG = CommonActivityUtils.class.getSimpleName();
 
     // global helper constants:
+
+    public static final boolean UTILS_DISPLAY_PROGRESS_BAR = true;
     public static final boolean UTILS_HIDE_PROGRESS_BAR = false;
+
     // room details members:
     public static final String KEY_GROUPS_EXPANDED_STATE = "KEY_GROUPS_EXPANDED_STATE";
     public static final String KEY_SEARCH_PATTERN = "KEY_SEARCH_PATTERN";
     public static final boolean GROUP_IS_EXPANDED = true;
     public static final boolean GROUP_IS_COLLAPSED = false;
+
     // power levels
     public static final float UTILS_POWER_LEVEL_ADMIN = 100;
     public static final float UTILS_POWER_LEVEL_MODERATOR = 50;
-    private static final String LOG_TAG = CommonActivityUtils.class.getSimpleName();
     private static final int ROOM_SIZE_ONE_TO_ONE = 2;
-    private static final String RESTART_IN_PROGRESS_KEY = "RESTART_IN_PROGRESS_KEY";
-    private static final String LOW_MEMORY_LOG_TAG = "Memory usage";
-    private static final String TAG_FRAGMENT_UNKNOWN_DEVICES_DIALOG_DIALOG = "ActionBarActivity.TAG_FRAGMENT_UNKNOWN_DEVICES_DIALOG_DIALOG";
-    private static boolean isRecoveringFromInvalidatedToken = false;
 
     /**
      * Logout a sessions list
@@ -245,6 +245,8 @@ public class CommonActivityUtils {
         return false;
     }
 
+    private static final String RESTART_IN_PROGRESS_KEY = "RESTART_IN_PROGRESS_KEY";
+
     /**
      * The application has been started
      */
@@ -254,6 +256,7 @@ public class CommonActivityUtils {
                 .putBoolean(RESTART_IN_PROGRESS_KEY, false)
                 .apply();
     }
+
 
     public static void restartApp(Context activity) {
         restartApp(activity, false);
@@ -310,39 +313,36 @@ public class CommonActivityUtils {
         logout(activity, true);
     }
 
+    private static boolean isRecoveringFromInvalidatedToken = false;
+
     public static void recoverInvalidatedToken() {
+        Log.e(LOG_TAG, "## recoverInvalidatedToken: Start Recover ");
 
         if (isRecoveringFromInvalidatedToken) {
             //ignore, we are doing it
+            Log.e(LOG_TAG, "## recoverInvalidatedToken: ignore, we are doing it");
             return;
         }
         isRecoveringFromInvalidatedToken = true;
         Context context = VectorApp.getCurrentActivity() != null ? VectorApp.getCurrentActivity() : VectorApp.getInstance();
 
         try {
+
+            // Clear the credentials
+            Matrix.getInstance(context).getLoginStorage().clear();
+
+
             VectorApp.getInstance().getNotificationDrawerManager().clearAllEvents();
-            EventStreamServiceX.Companion.onLogout(context);
-            // stopEventStream(context);
+            EventStreamServiceX.Companion.onApplicationStopped(context);
 
             BadgeProxy.INSTANCE.updateBadgeCount(context, 0);
 
             MXSession session = Matrix.getInstance(context).getDefaultSession();
-
-            // Publish to the server that we're now offline
-            MyPresenceManager.getInstance(context, session).advertiseOffline();
-            MyPresenceManager.remove(session);
-
             // clear the preferences
             PreferencesManager.clearPreferences(context);
 
-            // reset the FCM
-            Matrix.getInstance(context).getPushManager().resetFCMRegistration();
-
             // clear the preferences
             Matrix.getInstance(context).getPushManager().clearPreferences();
-
-            // Clear the credentials
-            Matrix.getInstance(context).getLoginStorage().clear();
 
             // clear the tmp store list
             Matrix.getInstance(context).clearTmpStoresList();
@@ -353,20 +353,11 @@ public class CommonActivityUtils {
 
             MXMediaCache.clearThumbnailsCache(context);
 
-            Matrix.getInstance(context).clearSessions(context, true, new SimpleApiCallback<Void>() {
-
-                @Override
-                public void onSuccess(Void info) {
-
-                }
-            });
-            session.clear(context);
         } catch (Exception e) {
             Log.e(LOG_TAG, "## recoverInvalidatedToken: Error while cleaning: ", e);
         } finally {
-            // go to login page
-            CommonActivityUtils.restartApp(context, true);
             isRecoveringFromInvalidatedToken = false;
+            CommonActivityUtils.restartApp(context, true);
         }
     }
 
@@ -436,27 +427,17 @@ public class CommonActivityUtils {
 
                     if (goToLoginPage) {
                         Activity activeActivity = VectorApp.getCurrentActivity();
+                        final Context activeContext = (null == activeActivity) ? VectorApp.getInstance().getApplicationContext() : activeActivity;
 
                         // go to login page
-//                    Intent intent = new Intent(activeActivity, LoginActivity.class);
-                        Intent intent = new Intent(activeActivity, vmodev.clearkeep.activities.SplashActivity.class);
+                        Intent intent = new Intent(activeContext, LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-                        if (null != activeActivity) {
-                            activeActivity.startActivity(intent);
-                        } else {
-                            context.startActivity(intent);
-                        }
+                        activeContext.startActivity(intent);
                     }
-
                 }
             });
         }
     }
-
-    //==============================================================================================================
-    // Room preview methods.
-    //==============================================================================================================
 
     /**
      * Clear all local data after a user account deactivation
@@ -523,6 +504,10 @@ public class CommonActivityUtils {
         activity.startActivity(intent);
     }
 
+    //==============================================================================================================
+    // Room preview methods.
+    //==============================================================================================================
+
     /**
      * Start a room activity in preview mode.
      *
@@ -587,9 +572,6 @@ public class CommonActivityUtils {
         }
         return intentRetCode;
     }
-    //==============================================================================================================
-    // Room jump methods.
-    //==============================================================================================================
 
     /**
      * Start a room activity in preview mode.
@@ -608,48 +590,6 @@ public class CommonActivityUtils {
                                    final ApiCallback<Void> callback) {
         previewRoom(fromActivity, session, roomId, new RoomPreviewData(session, roomId, null, roomAlias, null), callback);
     }
-
-    //==============================================================================================================
-    // 1:1 Room  methods.
-    //==============================================================================================================
-
-    /**
-     * Return all the 1:1 rooms joined by the searched user and by the current logged in user.
-     * This method go through all the rooms, and for each room, tests if the searched user
-     * and the logged in user are present.
-     *
-     * @param aSession        session
-     * @param aSearchedUserId the searched user ID
-     * @return an array containing the found rooms
-     */
-    // Commented out as unused
-    /*
-    private static List<Room> findOneToOneRoomList(final MXSession aSession, final String aSearchedUserId) {
-        List<Room> listRetValue = new ArrayList<>();
-        List<RoomMember> roomMembersList;
-        String userId0, userId1;
-
-        if ((null != aSession) && (null != aSearchedUserId)) {
-            Collection<Room> roomsList = aSession.getDataHandler().getStore().getRooms();
-
-            for (Room room : roomsList) {
-                roomMembersList = (List<RoomMember>) room.getJoinedMembers();
-
-                if ((null != roomMembersList) && (ROOM_SIZE_ONE_TO_ONE == roomMembersList.size())) {
-                    userId0 = roomMembersList.get(0).getUserId();
-                    userId1 = roomMembersList.get(1).getUserId();
-
-                    // add the room where the second member is the searched one
-                    if (userId0.equals(aSearchedUserId) || userId1.equals(aSearchedUserId)) {
-                        listRetValue.add(room);
-                    }
-                }
-            }
-        }
-
-        return listRetValue;
-    }
-   */
 
     /**
      * Start a room activity in preview mode.
@@ -721,6 +661,9 @@ public class CommonActivityUtils {
 
 
     }
+    //==============================================================================================================
+    // Room jump methods.
+    //==============================================================================================================
 
     /**
      * Start a room activity with the dedicated parameters.
@@ -805,6 +748,48 @@ public class CommonActivityUtils {
         );
     }
 
+    //==============================================================================================================
+    // 1:1 Room  methods.
+    //==============================================================================================================
+
+    /**
+     * Return all the 1:1 rooms joined by the searched user and by the current logged in user.
+     * This method go through all the rooms, and for each room, tests if the searched user
+     * and the logged in user are present.
+     *
+     * @param aSession        session
+     * @param aSearchedUserId the searched user ID
+     * @return an array containing the found rooms
+     */
+    // Commented out as unused
+    /*
+    private static List<Room> findOneToOneRoomList(final MXSession aSession, final String aSearchedUserId) {
+        List<Room> listRetValue = new ArrayList<>();
+        List<RoomMember> roomMembersList;
+        String userId0, userId1;
+
+        if ((null != aSession) && (null != aSearchedUserId)) {
+            Collection<Room> roomsList = aSession.getDataHandler().getStore().getRooms();
+
+            for (Room room : roomsList) {
+                roomMembersList = (List<RoomMember>) room.getJoinedMembers();
+
+                if ((null != roomMembersList) && (ROOM_SIZE_ONE_TO_ONE == roomMembersList.size())) {
+                    userId0 = roomMembersList.get(0).getUserId();
+                    userId1 = roomMembersList.get(1).getUserId();
+
+                    // add the room where the second member is the searched one
+                    if (userId0.equals(aSearchedUserId) || userId1.equals(aSearchedUserId)) {
+                        listRetValue.add(room);
+                    }
+                }
+            }
+        }
+
+        return listRetValue;
+    }
+   */
+
     /**
      * Set a room as a direct chat room.<br>
      * In case of success the corresponding room is displayed.
@@ -833,15 +818,6 @@ public class CommonActivityUtils {
             });
         }
     }
-
-    //==============================================================================================================
-    // Parameters checkers.
-    //==============================================================================================================
-
-
-    //==============================================================================================================
-    // Media utils
-    //==============================================================================================================
 
     /**
      * Offer to send some dedicated intent data to an existing room
@@ -935,7 +911,12 @@ public class CommonActivityUtils {
     }
 
     //==============================================================================================================
-    // Low memory management
+    // Parameters checkers.
+    //==============================================================================================================
+
+
+    //==============================================================================================================
+    // Media utils
     //==============================================================================================================
 
     /**
@@ -1134,6 +1115,12 @@ public class CommonActivityUtils {
         });
     }
 
+    //==============================================================================================================
+    // Low memory management
+    //==============================================================================================================
+
+    private static final String LOW_MEMORY_LOG_TAG = "Memory usage";
+
     /**
      * Log the memory statuses.
      *
@@ -1208,10 +1195,6 @@ public class CommonActivityUtils {
         displayMemoryInformation(activity, "onLowMemory global");
     }
 
-    //==============================================================================================================
-    // e2e devices management
-    //==============================================================================================================
-
     /**
      * Manage the trim memory.
      *
@@ -1225,6 +1208,10 @@ public class CommonActivityUtils {
 
         displayMemoryInformation(activity, "onTrimMemory");
     }
+
+    //==============================================================================================================
+    // e2e devices management
+    //==============================================================================================================
 
     /**
      * Display the device verification warning
@@ -1354,6 +1341,8 @@ public class CommonActivityUtils {
             }
         });
     }
+
+    private static final String TAG_FRAGMENT_UNKNOWN_DEVICES_DIALOG_DIALOG = "ActionBarActivity.TAG_FRAGMENT_UNKNOWN_DEVICES_DIALOG_DIALOG";
 
     /**
      * Display the unknown e2e devices
