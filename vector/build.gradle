@@ -469,7 +469,7 @@ dependencies {
     implementation project(':olm-sdk-release')
     /*********************************************************************/
     implementation 'gun0912.ted:tedpermission:2.2.2'
-    implementation 'se.emilsjolander:StickyScrollViewItems:1.1.0'
+    implementation project(path: ':stickyscrollviewitems')
 }
 
 //Ensure we never move past okhttp 3.12.x

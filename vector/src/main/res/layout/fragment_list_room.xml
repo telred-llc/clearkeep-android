@@ -110,8 +110,10 @@
                 <net.cachapa.expandablelayout.ExpandableLayout
                     android:id="@+id/expandable_layout_list_favourites"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:el_expanded="true">
+                    android:layout_height="wrap_content"
+                    app:el_duration="1000"
+                    app:el_expanded="true"
+                    app:el_parallax="0.5">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view_list_favourites_chat"
@@ -128,7 +130,7 @@
                     android:layout_marginTop="@dimen/margin_normal"
                     android:background="?attr/color_view_blank_setting"
                     android:orientation="horizontal"
-                    android:tag="sticky-hastransparancy">
+                    android:tag="sticky">
 
                     <ImageView
                         android:id="@+id/image_view_direction_group"
@@ -233,12 +235,14 @@
                     android:id="@+id/expandable_layout_list_group"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:el_expanded="true">
+                    app:el_duration="1000"
+                    app:el_expanded="true"
+                    app:el_parallax="0.5">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view_list_group_chat"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/room_item" />
                 </net.cachapa.expandablelayout.ExpandableLayout>
@@ -250,7 +254,7 @@
                     android:layout_marginTop="@dimen/margin_normal"
                     android:background="?attr/color_view_blank_setting"
                     android:orientation="horizontal"
-                    android:tag="sticky-hastransparancy-nonconstant">
+                    android:tag="sticky">
 
                     <ImageView
                         android:id="@+id/image_view_direction_direct"
@@ -353,8 +357,10 @@
                 <net.cachapa.expandablelayout.ExpandableLayout
                     android:id="@+id/expandable_layout_list_direct"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:el_expanded="true">
+                    android:layout_height="wrap_content"
+                    app:el_duration="1000"
+                    app:el_expanded="true"
+                    app:el_parallax="0.5">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view_list_direct_chat"
