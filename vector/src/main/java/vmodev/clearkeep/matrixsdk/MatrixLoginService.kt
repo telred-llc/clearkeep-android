@@ -109,7 +109,7 @@ class MatrixLoginService constructor(private val application: IApplication) : IM
         return Observable.create { emitter ->
             registrationManager.clearThreePid();
             registrationManager.setHsConfig(homeServerConnectionConfig);
-            registrationManager.addEmailThreePid(ThreePid(email, ThreePid.MEDIUM_EMAIL));
+            registrationManager.addEmailThreePid(ThreePid.fromEmail(email));
             registrationManager.setAccountData(username, password);
             if (email.isNullOrEmpty()) {
                 registrationManager.clearThreePid();
