@@ -60,8 +60,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
     private var currentRoomId: String = ""
     private var alertDialog: AlertDialog? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment     
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list_room, container, false, dataBinding.getDataBindingComponent())
         return binding.root
@@ -167,6 +166,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
         }
         binding.recyclerViewListFavouritesChat.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewListFavouritesChat.isNestedScrollingEnabled = false
+        binding.recyclerViewListFavouritesChat.setHasFixedSize(false)
         binding.recyclerViewListFavouritesChat.adapter = listFavouritesRoomAdapter.getAdapter()
         binding.listFavourites = viewModelFactory.getViewModel().getListFavouritesResult()
         viewModelFactory.getViewModel().getListFavouritesResult().observe(this.viewLifecycleOwner, Observer {
@@ -185,7 +185,6 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
     private fun initListDirectChat() {
         listDirectRoomAdapter.getflag(0)
         listDirectRoomAdapter.setLifeCycleOwner(viewLifecycleOwner, applcation.getUserId())
-
         listDirectRoomAdapter.setOnItemClick { room, i ->
             room.room?.let {
                 when (i) {
@@ -234,7 +233,6 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
                                     changeNotificationState(it.id, it.notificationState)
                                 }
                             }
-
                             dialog?.dismiss()
                         }.setContentBackgroundResource(R.drawable.background_radius_change_with_theme).create()
                 bottomDialog.show()
@@ -242,6 +240,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
         }
         binding.recyclerViewListDirectChat.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewListDirectChat.isNestedScrollingEnabled = false
+        binding.recyclerViewListDirectChat.setHasFixedSize(false)
         binding.recyclerViewListDirectChat.adapter = listDirectRoomAdapter.getAdapter()
         binding.listDirect = viewModelFactory.getViewModel().getListDirectRoomResult()
         viewModelFactory.getViewModel().getListDirectRoomResult().observe(this.viewLifecycleOwner, Observer {
@@ -328,6 +327,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
         }
         binding.recyclerViewListGroupChat.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         binding.recyclerViewListGroupChat.isNestedScrollingEnabled = false
+        binding.recyclerViewListGroupChat.setHasFixedSize(false)
         binding.recyclerViewListGroupChat.adapter = listGroupRoomAdapter.getAdapter()
         binding.listGroup = viewModelFactory.getViewModel().getListGroupRoomResult()
         viewModelFactory.getViewModel().getListGroupRoomResult().observe(this.viewLifecycleOwner, Observer {
