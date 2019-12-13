@@ -414,8 +414,11 @@ public class CallsManager {
 
                             Intent intentStartCall = new Intent(context.getApplicationContext(), IncomingCallActivity.class);
                             intentStartCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                            intentStartCall.putExtra(CallViewActivity.EXTRA_MATRIX_ID, mActiveCall.getSession().getMyUserId());
+                            intentStartCall.putExtra(CallViewActivity.EXTRA_MATRIX_ID, mActiveCall.getSession().getMyUserId());
 //                            intentStartCall.putExtra(CallViewActivity.EXTRA_CALL_ID, mActiveCall.getCallId());
+                            if (null != unknownDevices) {
+                                intentStartCall.putExtra(VectorHomeActivity.EXTRA_CALL_UNKNOWN_DEVICES, unknownDevices);
+                            }
                             context.startActivity(intentStartCall);
 
                         } else {
