@@ -21,6 +21,7 @@ import com.google.gson.JsonParser
 import im.vector.Matrix
 import im.vector.R
 import im.vector.databinding.FragmentSearchFilesBinding
+import im.vector.databinding.FragmentSearchFilesInRoomBinding
 import im.vector.extensions.hideKeyboard
 import im.vector.util.SlidableMediaInfo
 import io.reactivex.Observable
@@ -40,6 +41,7 @@ import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
 import vmodev.clearkeep.jsonmodels.FileContent
 import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchFilesFragmentViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchFilesInRoomFragmentViewModel
 import java.io.File
 import java.util.*
 import javax.inject.Inject
@@ -47,6 +49,7 @@ import kotlin.collections.ArrayList
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+private const val ROOM_ID = "ROOM_ID"
 private const val USER_ID = "USER_ID"
 
 /**
@@ -58,17 +61,17 @@ private const val USER_ID = "USER_ID"
  * create an instance of this fragment.
  *
  */
-class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
+class SearchFilesInRoomFragment : DataBindingDaggerFragment(), ISearchFragment {
     // TODO: Rename and change types of parameters
     private var userId: String? = null
+    private var roomId: String? = null
     private var listener: OnFragmentInteractionListener? = null
-
     @Inject
-    lateinit var viewModelFactory: IViewModelFactory<AbstractSearchFilesFragmentViewModel>
+    lateinit var viewModelFactory: IViewModelFactory<AbstractSearchFilesInRoomFragmentViewModel>
     @Inject
     lateinit var appExecutors: AppExecutors;
 
-    private lateinit var binding: FragmentSearchFilesBinding;
+    private lateinit var binding: FragmentSearchFilesInRoomBinding;
     private var disposable: Disposable? = null;
     private val listMessage = ArrayList<MessageRoomUser>();
     private var listFilter: List<MessageRoomUser>? = null
@@ -82,13 +85,12 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
         super.onCreate(savedInstanceState)
         arguments?.let {
             userId = it.getString(USER_ID, "");
+            roomId = it.getString(USER_ID, "");
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search_files, container, false, dataBinding.getDataBindingComponent());
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search_files_in_room, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
     }
 
@@ -100,6 +102,7 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
     @SuppressLint("CheckResult", "ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModelFactory.getViewModel().getRoomId(roomId!!)
         binding.recyclerView.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
         gson = Gson()
         listSearchAdapter = ListSearchFileRecyclerViewAdapter(appExecutors = appExecutors, gson = gson, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
@@ -125,9 +128,9 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
             startActivity(intentRoom);
         };
         binding.recyclerView.adapter = listSearchAdapter;
-        viewModelFactory.getViewModel().getListMessageRoomUser().observe(this, Observer {
+        viewModelFactory.getViewModel().getListMessageRoomUserInRoom().observe(viewLifecycleOwner, Observer {
             it?.data?.let {
-                viewModelFactory.getViewModel().decryptListMessage(it).observe(this, Observer {
+                viewModelFactory.getViewModel().decryptListMessage(it).observe(viewLifecycleOwner, Observer {
                     listMessage.clear()
                     it?.data?.let {
                         listMessage.addAll(it);
@@ -136,9 +139,9 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
                 })
             }
         })
+        binding.listMessage = 0;
         viewModelFactory.getViewModel().setTimeForRefreshLoadMessage(Calendar.getInstance().timeInMillis);
         getSearchViewTextChange()?.subscribe { s ->
-            currentSearch = s
             filterFile(s)
         }
         binding.lifecycleOwner = viewLifecycleOwner;
@@ -185,10 +188,11 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(userId: String) =
-                SearchFilesFragment().apply {
+        fun newInstance(userId: String,roomId : String) =
+                SearchFilesInRoomFragment().apply {
                     arguments = Bundle().apply {
                         putString(USER_ID, userId)
+                        putString(ROOM_ID, roomId)
                     }
                 }
     }
@@ -206,14 +210,18 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
                 if (imageMessage?.body.isNullOrEmpty())
                     false;
                 else
-                    imageMessage?.body?.contains(query)
+                    imageMessage?.body?.toLowerCase(Locale.US)?.contains(query.toLowerCase(Locale.US))
             } ?: run {
                 false
             }
         }
         listSearchAdapter.submitList(listFilter)
+        binding.listMessage =  listFilter.size
+        listSearchAdapter.notifyDataSetChanged()
+
     } else {
         listSearchAdapter.submitList(null)
+        binding.listMessage = 0
     }
 
     override fun getFragment(): Fragment {

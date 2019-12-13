@@ -8,14 +8,13 @@ import dagger.android.support.AndroidSupportInjectionModule
 import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.di.worker.AbstractWorkerModule
 import vmodev.clearkeep.workermanager.ClearKeepWorkerFactory
-import vmodev.clearkeep.workermanager.interfaces.IWorkerFactory
 import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [AndroidSupportInjectionModule::class, AndroidInjectionModule::class, AbstractWorkerModule::class, AbstractWorkerModule.ClearKeepAssistedInjectModule::class
     , AppModule::class, AbstractSplashActivityModule::class, AbstractHomeScreenActivityModule::class, AbstractProfileActivityModule::class
     , PreviewInviteRoomActivityModule::class
-    ,PreviewJoinActivityModule ::class
+    , PreviewJoinActivityModule::class
     , AbstractSearchActivityModule::class
     , AbstractRoomSettingsActivityModule::class
     , AbstractRoomFilesListActivityModule::class
@@ -37,7 +36,8 @@ import javax.inject.Singleton
     , AbstractShareFileActivityModule::class
     , AbstractOutgoingCallActivityModule::class
     , AbstractRoomDetailActivityModule::class
-    , AbstractIncomingCallActivityModule::class])
+    , AbstractIncomingCallActivityModule::class
+    , AbstractUnifiedSearchActivityModule::class])
 interface AppComponent : AndroidInjector<ClearKeepApplication> {
     override fun inject(instance: ClearKeepApplication?)
 
