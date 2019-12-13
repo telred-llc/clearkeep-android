@@ -43,6 +43,8 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
             super.onStateDidChange(state)
             when (state) {
                 IMXCall.CALL_STATE_ENDED -> {
+
+
                     this@IncomingCallFragment.activity?.finish()
                 }
                 IMXCall.CALL_STATE_CONNECTED -> {
