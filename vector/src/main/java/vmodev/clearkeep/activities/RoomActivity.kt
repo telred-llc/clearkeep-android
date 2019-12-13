@@ -3929,6 +3929,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     internal fun onRoomSearch() {
         val intentSearch = Intent(this, UnifiedSearchActivity::class.java)
         intentSearch.putExtra(UnifiedSearchActivity.EXTRA_ROOM_ID, currentRoom?.roomId)
+        intentSearch.putExtra(UnifiedSearchActivity.USER_ID, mxSession!!.myUserId)
         startActivity(intentSearch)
     }
 

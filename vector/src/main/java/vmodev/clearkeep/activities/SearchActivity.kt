@@ -51,13 +51,6 @@ class SearchActivity : DataBindingDaggerActivity(), IActivity, SearchRoomsFragme
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_search, dataBinding.getDataBindingComponent())
-
-        //setcolor for icon search
-//        val searchIcon : ImageView = binding.searchView.findViewById(androidx.appcompat.R.id.search_button)
-//        val typedValue : TypedValue = TypedValue();
-//        getTheme().resolveAttribute(R.attr.icon_color_setting, typedValue, true);
-//        @ColorInt val color = typedValue.data;
-//        searchIcon.setColorFilter(color)
         userId = intent.getStringExtra(USER_ID)
         arraySearchFragment = arrayOf(SearchRoomsFragment.newInstance(userId), SearchMessagesFragment.newInstance(userId),
                 SearchPeopleFragment.newInstance(), SearchFilesFragment.newInstance(userId))

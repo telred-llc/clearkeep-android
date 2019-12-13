@@ -19,8 +19,8 @@ abstract class AbstractVectorMediaPickerActivityModule {
     @ContributesAndroidInjector
     abstract fun contributeCallViewActivity(): CallViewActivity;
 
-    @ContributesAndroidInjector
-    abstract fun contributeUnifiedSearchActivity(): UnifiedSearchActivity;
+//    @ContributesAndroidInjector
+//    abstract fun contributeUnifiedSearchActivity(): UnifiedSearchActivity;
 
     @ContributesAndroidInjector
     abstract fun contributeSASVerificationActivity() : SASVerificationActivity

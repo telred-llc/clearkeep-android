@@ -4,105 +4,89 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.bumptech.glide.Glide
-import com.google.gson.Gson
-import com.google.gson.JsonElement
-import com.google.gson.JsonParser
-import im.vector.Matrix
+
 import im.vector.R
-import im.vector.databinding.FragmentSearchFilesBinding
+import im.vector.databinding.FragmentSearchMessagesBinding
+import im.vector.databinding.FragmentSearchMessagesInRoomBinding
 import im.vector.extensions.hideKeyboard
-import im.vector.util.SlidableMediaInfo
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import org.matrix.androidsdk.core.JsonUtils
-import org.matrix.androidsdk.core.callback.SimpleApiCallback
-import org.matrix.androidsdk.crypto.model.crypto.EncryptedFileInfo
-import org.matrix.androidsdk.rest.model.Event
-import org.matrix.androidsdk.rest.model.message.ImageMessage
-import org.matrix.androidsdk.rest.model.message.Message
+import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.activities.RoomActivity
-import vmodev.clearkeep.adapters.ListSearchFileRecyclerViewAdapter
+import vmodev.clearkeep.adapters.ListSearchMessageInRoomRecyclerViewAdapter
 import vmodev.clearkeep.adapters.ListSearchMessageRecyclerViewAdapter
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
-import vmodev.clearkeep.jsonmodels.FileContent
 import vmodev.clearkeep.viewmodelobjects.MessageRoomUser
-import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchFilesFragmentViewModel
-import java.io.File
+import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchMessageFragmentViewModel
+import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchMessageInroomFragmentViewModel
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val USER_ID = "USER_ID"
+private const val ROOM_ID = "ROOM_ID"
 
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [SearchFilesFragment.OnFragmentInteractionListener] interface
+ * [SearchMessagesFragment.OnFragmentInteractionListener] interface
  * to handle interaction events.
- * Use the [SearchFilesFragment.newInstance] factory method to
+ * Use the [SearchMessagesFragment.newInstance] factory method to
  * create an instance of this fragment.
  *
  */
-class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
+class SearchMessagesInRoomFragment : DataBindingDaggerFragment(), ISearchFragment {
     // TODO: Rename and change types of parameters
     private var userId: String? = null
+    private var roomId: String? = null
     private var listener: OnFragmentInteractionListener? = null
+    private var queryText : String? = null
 
     @Inject
-    lateinit var viewModelFactory: IViewModelFactory<AbstractSearchFilesFragmentViewModel>
+    lateinit var viewModelFactory: IViewModelFactory<AbstractSearchMessageInroomFragmentViewModel>;
     @Inject
     lateinit var appExecutors: AppExecutors;
 
-    private lateinit var binding: FragmentSearchFilesBinding;
-    private var disposable: Disposable? = null;
+    lateinit var binding: FragmentSearchMessagesInRoomBinding;
+    private var disposableEditText: Disposable? = null;
     private val listMessage = ArrayList<MessageRoomUser>();
-    private var listFilter: List<MessageRoomUser>? = null
-
-    private lateinit var listSearchAdapter: ListSearchFileRecyclerViewAdapter;
-    private lateinit var gson: Gson
-    private var imageMessage: ImageMessage? = null
-    private var currentSearch: String? = null
-
+    private lateinit var listSearchAdapter: ListSearchMessageInRoomRecyclerViewAdapter;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            userId = it.getString(USER_ID, "");
+            userId = it.getString(USER_ID)
+            roomId = it.getString(ROOM_ID)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search_files, container, false, dataBinding.getDataBindingComponent());
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search_messages_in_room, container, false, dataBinding.getDataBindingComponent());
         return binding.root;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    fun getSearchViewTextChange(): Observable<String>? {
-        return listener?.getSearchViewTextChange();
     }
 
     @SuppressLint("CheckResult", "ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerView.addItemDecoration(DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL))
-        gson = Gson()
-        listSearchAdapter = ListSearchFileRecyclerViewAdapter(appExecutors = appExecutors, gson = gson, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
+        viewModelFactory.getViewModel().getRoomId(roomId!!)
+        listSearchAdapter = ListSearchMessageInRoomRecyclerViewAdapter(appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<MessageRoomUser>() {
             override fun areItemsTheSame(p0: MessageRoomUser, p1: MessageRoomUser): Boolean {
                 return p0.message?.id == p1.message?.id
             }
@@ -125,23 +109,43 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
             startActivity(intentRoom);
         };
         binding.recyclerView.adapter = listSearchAdapter;
-        viewModelFactory.getViewModel().getListMessageRoomUser().observe(this, Observer {
+        viewModelFactory.getViewModel().getListMessageRoomUserInRoom().observe(viewLifecycleOwner, Observer {
             it?.data?.let {
-                viewModelFactory.getViewModel().decryptListMessage(it).observe(this, Observer {
-                    listMessage.clear()
+                viewModelFactory.getViewModel().decryptListMessage(it).observe(viewLifecycleOwner, Observer {
                     it?.data?.let {
-                        listMessage.addAll(it);
-                        currentSearch?.let { it1 -> filterFile(it1) }
+                        listMessage.clear()
+                        listMessage.addAll(it)
                     }
                 })
             }
         })
+        binding.listMessage = 0;
         viewModelFactory.getViewModel().setTimeForRefreshLoadMessage(Calendar.getInstance().timeInMillis);
         getSearchViewTextChange()?.subscribe { s ->
-            currentSearch = s
-            filterFile(s)
+            listSearchAdapter.getSearchText(s)
+            val listFilter = listMessage.filter { messageRoomUser ->
+                messageRoomUser.message?.let {
+                    if (s.isNullOrEmpty())
+                        false;
+                    else
+                        it.encryptedContent.toLowerCase(Locale.US).contains(s.toLowerCase(Locale.US))
+                } ?: run {
+                    false
+                }
+            }
+            listSearchAdapter.submitList(listFilter)
+            binding.listMessage =  listFilter.size
+            listSearchAdapter.notifyDataSetChanged()
+        }
+        binding.nestScroll.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
+            hideKeyboard()
         }
         binding.lifecycleOwner = viewLifecycleOwner;
+    }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    fun getSearchViewTextChange(): Observable<String>? {
+        return listener?.getSearchViewTextChange();
     }
 
     override fun onAttach(context: Context) {
@@ -179,41 +183,38 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SearchFilesFragment.
+         * @param param2 Parameter 1.
+         * @return A new instance of fragment SearchMessagesFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(userId: String) =
-                SearchFilesFragment().apply {
+        fun newInstance(userId: String,roomId : String) =
+                SearchMessagesInRoomFragment().apply {
                     arguments = Bundle().apply {
                         putString(USER_ID, userId)
+                        putString(ROOM_ID, roomId)
                     }
                 }
     }
 
     override fun selectedFragment(query: String): ISearchFragment {
-        currentSearch = query
-        filterFile(query)
-        return this;
-    }
-
-    private fun filterFile(query: String) = if (!query.isBlank() && listMessage.isNotEmpty()) {
-        val listFilter = listMessage.filter { messageRoomUser ->
+        queryText = query
+        val listMessageFilter = listMessage.filter { messageRoomUser ->
             messageRoomUser.message?.let {
-                imageMessage = JsonUtils.toImageMessage(gson.fromJson(it.encryptedContent, JsonElement::class.java))
-                if (imageMessage?.body.isNullOrEmpty())
+                if (query.isNullOrEmpty())
                     false;
                 else
-                    imageMessage?.body?.contains(query)
+                    listSearchAdapter.getSearchText(query)
+                it.encryptedContent.toLowerCase(Locale.US).contains(query.toLowerCase(Locale.US))
             } ?: run {
                 false
             }
         }
-        listSearchAdapter.submitList(listFilter)
-    } else {
-        listSearchAdapter.submitList(null)
+        if (query.isNotEmpty()){
+            listSearchAdapter.submitList(listMessageFilter)
+            binding.listMessage = listMessageFilter.size
+        }
+        return this;
     }
 
     override fun getFragment(): Fragment {
@@ -221,6 +222,6 @@ class SearchFilesFragment : DataBindingDaggerFragment(), ISearchFragment {
     }
 
     override fun unSelectedFragment() {
-        disposable?.dispose();
+        disposableEditText?.dispose();
     }
 }
