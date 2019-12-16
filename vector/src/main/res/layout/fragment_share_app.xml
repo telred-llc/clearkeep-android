@@ -68,6 +68,7 @@
             android:background="?attr/bg_button_app_default"
             android:text="@string/str_share_now"
             android:textColor="@color/color_white"
-            app:layout_constraintTop_toBottomOf="@+id/guideBottom" />
+            app:layout_constraintTop_toBottomOf="@+id/guideBottom"
+            app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

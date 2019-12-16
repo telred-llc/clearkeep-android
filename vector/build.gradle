@@ -114,6 +114,7 @@ android {
             buildConfigField "String", "PUSH_GATEWAY", "\"http://push.clearkeep.xyz/_matrix/push/v1/notify\""
             buildConfigField "String", "IDENTIFY_SERVER", "\"https://matrix.org\""
             buildConfigField "String", "CLEAR_KEEP_SERVER", "\"http://op.clearkeep.xyz\""
+            buildConfigField "String", "SHARE_APP", "\"/api/share/get-deep-link?url=app://account\""
         }
 
         release {

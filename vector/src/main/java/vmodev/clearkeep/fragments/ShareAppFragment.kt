@@ -10,6 +10,7 @@ import im.vector.databinding.FragmentShareAppBinding
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
+import im.vector.BuildConfig
 import im.vector.R
 import vmodev.clearkeep.ultis.OnSingleClickListener
 import javax.inject.Inject
@@ -42,7 +43,7 @@ class ShareAppFragment : DataBindingDaggerFragment(), IFragment {
         val sharingIntent = Intent(android.content.Intent.ACTION_SEND)
         sharingIntent.type = "text/plain"
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, resources.getString(R.string.riot_app_name))
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, resources.getString(R.string.url_share_app))
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, BuildConfig.CLEAR_KEEP_SERVER + BuildConfig.SHARE_APP)
         startActivity(Intent.createChooser(sharingIntent, resources.getString(R.string.riot_app_name)))
 
     }
