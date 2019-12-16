@@ -44,15 +44,16 @@ class IncomingCallActivity : DataBindingDaggerActivity(), IActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_incoming_call, dataBinding.getDataBindingComponent())
         navController = findNavController(R.id.fragment)
         mxSession = Matrix.getInstance(applicationContext)!!.getSession(intent.getStringExtra(CallViewActivity.EXTRA_MATRIX_ID))
-        mUnknownDevicesMap = intent.getSerializableExtra(VectorHomeActivity.EXTRA_CALL_UNKNOWN_DEVICES)?.let {
-            it as MXUsersDevicesMap<MXDeviceInfo>
-        }
         mxCall = CallsManager.getSharedInstance().activeCall
-
-        runOnUiThread(Runnable {
-            val lisDevice = getDevicesList()
-            setDevicesKnown(lisDevice)
-        })
+        if (null != intent.getSerializableExtra(VectorHomeActivity.EXTRA_CALL_UNKNOWN_DEVICES)) {
+            mUnknownDevicesMap = intent.getSerializableExtra(VectorHomeActivity.EXTRA_CALL_UNKNOWN_DEVICES)?.let {
+                it as MXUsersDevicesMap<MXDeviceInfo>
+            }
+            runOnUiThread(Runnable {
+                val lisDevice = getDevicesList()
+                setDevicesKnown(lisDevice)
+            })
+        }
 
         TedPermission.with(this)
                 .setPermissionListener(object : PermissionListener {
@@ -81,9 +82,7 @@ class IncomingCallActivity : DataBindingDaggerActivity(), IActivity {
         if (null != mUnknownDevicesMap) {
             // release the static members list
             mUnknownDevicesMap = null
-
             val dis = ArrayList<MXDeviceInfo>()
-
             for (item in devicesList) {
                 dis.addAll(item.second)
             }
@@ -93,25 +92,20 @@ class IncomingCallActivity : DataBindingDaggerActivity(), IActivity {
                     private fun onDone() {
                     }
 
-                    override fun onSuccess(info: Void) {
-                        onDone()
+                    override fun onSuccess(info: Void?) {
                     }
 
                     override fun onNetworkError(e: Exception) {
-                        onDone()
                     }
 
                     override fun onMatrixError(e: MatrixError) {
-                        onDone()
                     }
 
                     override fun onUnexpectedError(e: Exception) {
-                        onDone()
                     }
                 })
             }
         }
-
     }
 
     fun getDevicesList(): List<Pair<String, List<MXDeviceInfo>>> {
@@ -131,50 +125,6 @@ class IncomingCallActivity : DataBindingDaggerActivity(), IActivity {
                 res.add(Pair(userId, deviceInfos))
             }
         }
-
         return res
     }
-
-
-//        val callDevice = intent.getSerializableExtra(VectorHomeActivity.EXTRA_CALL_UNKNOWN_DEVICES)?.let {
-//            it as MXUsersDevicesMap<MXDeviceInfo>
-//        }
-//        UiThreadUtil.runOnUiThread(Runnable {
-//            CommonActivityUtils.displayUnknownDevicesDialog(mxSession,
-//                    this,
-//                    callDevice,
-//                    true,
-//                    null)
-//        })
-
-
-//        mxSession?.let { s ->
-//            s.crypto?.let { crypto ->
-//                crypto.getUserDevices(application.getUserId()).forEach {
-//                    crypto.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, it.deviceId,it.userId, object : ApiCallback<Void> {
-//                        override fun onSuccess(p0: Void?) {
-//                            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//                        }
-//
-//                        override fun onUnexpectedError(p0: Exception?) {
-//                            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//                        }
-//
-//                        override fun onMatrixError(p0: MatrixError?) {
-//                            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//                        }
-//
-//                        override fun onNetworkError(p0: Exception?) {
-//                            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//                        }
-//
-//                    })
-//                }
-//
-//            }
-//
-//        }
-
-    // }
-
 }
