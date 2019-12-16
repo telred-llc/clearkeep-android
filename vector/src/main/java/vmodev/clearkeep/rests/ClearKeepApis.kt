@@ -4,10 +4,8 @@ import io.reactivex.Observable
 import org.matrix.androidsdk.RestClient
 import retrofit2.http.*
 import vmodev.clearkeep.rests.models.requests.EditMessageRequest
-import vmodev.clearkeep.rests.models.responses.EditMessageResponse
-import vmodev.clearkeep.rests.models.responses.FeedbackResponse
-import vmodev.clearkeep.rests.models.responses.PassphraseResponse
-import vmodev.clearkeep.rests.models.responses.UserProfileResponse
+import vmodev.clearkeep.rests.models.responses.*
+import vmodev.clearkeep.viewmodelobjects.Resource
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
 
 interface ClearKeepApis {
@@ -20,11 +18,11 @@ interface ClearKeepApis {
                     , @Body data: EditMessageRequest): Observable<EditMessageResponse>
 
     @GET("/api/user/get-passphrase")
-    fun getPassphrase(@Header("Authorization") token: String): Observable<PassphraseResponse>;
+    fun getPassphrase(@Header("Authorization") token: String): Observable<PassphraseResponse>
 
     @FormUrlEncoded
     @POST("/api/user/create-passphrase")
-    fun createPassphrase(@Header("Authorization") token: String, @Field("passphrase") passphrase: String): Observable<PassphraseResponse>;
+    fun createPassphrase(@Header("Authorization") token: String, @Field("passphrase") passphrase: String): Observable<PassphraseResponse>
 
     @GET("/" + RestClient.URI_API_PREFIX_PATH_R0 + "profile/{userId}")
     fun getUserProfile(@Path("userId") userId: String): Observable<UserProfileResponse>
@@ -35,4 +33,7 @@ interface ClearKeepApis {
     @FormUrlEncoded
     @POST("/api/feedback/email")
     fun feedBackApp(@Header("Authorization") token: String, @Field("content") content: String, @Field("stars") stars: Int): Observable<FeedbackResponse>
+
+    @GET("/api/version/get-current-version")
+    fun getVersionApp(@Query("type") type: String): Observable<Resource<VersionAppInfoResponse>>
 }
