@@ -5,10 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.view.Window
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceManager
@@ -30,7 +27,6 @@ import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.listeners.IMXEventListener
 import org.matrix.androidsdk.listeners.MXEventListener
 import vmodev.clearkeep.activities.interfaces.ISplashActivity
-import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.ISplashActivityViewModelFactory
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
@@ -42,8 +38,6 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
 
     @Inject
     lateinit var viewModelFactory: ISplashActivityViewModelFactory
-    @Inject
-    lateinit var clearKeepApplication: IApplication
 
     private lateinit var binding: ActivitySplashBinding
 
@@ -55,8 +49,8 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_splash);
-        startFromLogin = intent.getStringExtra(START_FROM_LOGIN); 
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_splash)
+        startFromLogin = intent.getStringExtra(START_FROM_LOGIN)
         if (!hasCredentials()) {
             val intent = Intent(this, LoginActivity::class.java)
             intent.putExtra(START_FROM_LOGIN, startFromLogin)

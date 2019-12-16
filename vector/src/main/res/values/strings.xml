@@ -2022,5 +2022,8 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
 
     <string name="no_network_indicator">There is no network connection right now</string>
     <string name="option_choose_from_library">Choose from library</string>
+    <string name="title_dialog_new_version_avaliable">New version available</string>
+    <string name="message_dialog_update_version_application">Please, update the app to the new version to continue using</string>
+    <string name="title_button_confirm">Update</string>
 
 </resources>
