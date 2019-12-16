@@ -36,11 +36,12 @@ abstract class DataBindingDaggerActivity : AppCompatActivity(), HasAndroidInject
     @Inject
     lateinit var dataBinding: IDataBindingComponent
     lateinit var dataBindingDaggerActivityViewModel: AbstractDataBindingDaggerActivityViewModel
-
+    @Inject
+    lateinit var clearKeepApplication: IApplication
     private var session: MXSession? = null
 
     val compositeDisposable = CompositeDisposable()
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
@@ -48,8 +49,9 @@ abstract class DataBindingDaggerActivity : AppCompatActivity(), HasAndroidInject
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         session = Matrix.getInstance(applicationContext).defaultSession
         dataBindingDaggerActivityViewModel = ViewModelProvider(this, _viewModelFactory).get(AbstractDataBindingDaggerActivityViewModel::class.java)
+        if (this is HomeScreenActivity)
+            clearKeepApplication.checkVersion(this)
     }
-
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         if (currentFocus != null) {

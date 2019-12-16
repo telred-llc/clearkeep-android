@@ -8,11 +8,6 @@
     android:orientation="vertical">
 
     <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="?attr/text_color_decline"></View>
-
-    <View
         android:id="@+id/messagesAdapter_message_header_top_margin"
         android:layout_width="match_parent"
         android:layout_height="16dp" />
@@ -23,13 +18,16 @@
         android:layout_height="42dp"
         android:gravity="center_vertical"
         android:paddingStart="18dp"
-        android:paddingLeft="18dp"
         android:paddingEnd="18dp"
-        android:paddingRight="18dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="?attr/text_color_decline"
+        android:textColor="?attr/color_text_note_app_default"
         android:textStyle="bold"
         tools:text="Today" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="?attr/color_text_note_app_default"></View>
 
     <View
         android:id="@+id/messagesAdapter_message_header_bottom_margin"

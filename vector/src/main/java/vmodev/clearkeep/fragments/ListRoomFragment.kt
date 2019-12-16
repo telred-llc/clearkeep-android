@@ -58,7 +58,6 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
     private var roomList: Int? = 0
     private var derectList: Int? = 0
     private var currentRoomId: String = ""
-    private var alertDialog: AlertDialog? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment     

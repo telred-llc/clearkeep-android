@@ -1,7 +1,10 @@
 package vmodev.clearkeep.applications
 
+import android.app.Activity
 import android.app.Application
+import android.content.DialogInterface
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.Configuration
 import androidx.work.WorkManager
@@ -12,6 +15,7 @@ import dagger.android.DaggerApplication
 import im.vector.BuildConfig
 import im.vector.Matrix
 import im.vector.R
+import im.vector.util.openPlayStore
 import io.fabric.sdk.android.Fabric
 import io.reactivex.Observable
 import io.reactivex.SingleObserver
@@ -31,6 +35,7 @@ import vmodev.clearkeep.di.AppComponent
 import vmodev.clearkeep.di.DaggerAppComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
+import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.KeyBackupRepository
 import vmodev.clearkeep.repositories.SignatureRepository
 import vmodev.clearkeep.repositories.UserRepository
@@ -63,6 +68,9 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
 
     private var session: MXSession? = null
 
+    @Inject
+    lateinit var matrixService: MatrixService
+
     private var currentTheme: Int = R.style.LightTheme
 
     private lateinit var appComponent: AppComponent
@@ -80,8 +88,27 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
         Fabric.with(this, crashlytics)
     }
 
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
+    override fun checkVersion(mActivity: Activity) {
+        matrixService.getVersionApp().subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())?.subscribe({
+            if (!it.data?.version.equals(BuildConfig.VERSION_NAME)) {
+                val alertDialog: AlertDialog.Builder? = AlertDialog.Builder(mActivity)
+                alertDialog?.setTitle(R.string.title_dialog_new_version_avaliable)
+                alertDialog?.setMessage(R.string.message_dialog_update_version_application)
+//                alertDialog?.setNegativeButton(R.string.title_button_cancel) { dialog: DialogInterface, which: Int ->
+//                }
+                alertDialog?.setPositiveButton(R.string.title_button_confirm) { dialog: DialogInterface, which: Int ->
+                    openPlayStore(mActivity, packageName)
+                }
+                alertDialog?.setCancelable(false)
+                alertDialog?.show()
+            }
+        }, {
+            Log.e("Tag", "--- Error: ${it.message}")
 
+        })
+    }
+
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
         return appComponent as AndroidInjector<out DaggerApplication>
     }
 

@@ -47,6 +47,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), IActivity {
             startActivity(intent)
         }
         binding.user = viewModelFactory.getViewModel().getUserById()
+
         viewModelFactory.getViewModel().getUserById().observe(this, Observer {
             if (mxSession.myUser.isActive) {
                 binding.circleImageViewStatus.setColorFilter(ContextCompat.getColor(this, R.color.app_green))

@@ -77,8 +77,8 @@ class RoomSummaryAdapter
     private var mForceDirectoryGroupDisplay: Boolean = false
 
     // public room search
-    private var mPublicRoomsCount: Int = 0;
-    private var mMatchedPublicRoomsCount: Int = 0;
+    private var mPublicRoomsCount: Int = 0
+    private var mMatchedPublicRoomsCount: Int = 0
 
     // drag and drop mode
     /**
@@ -277,7 +277,7 @@ class RoomSummaryAdapter
             // here we translate the roomIds (Strings) to their corresponding RoomSummary objects
             for (roomSummary in aRoomSummaryCollection) {
                 roomSummaryId = roomSummary.roomId
-                val room = mMxSession!!.dataHandler.store!!!!.getRoom(roomSummaryId)
+                val room = mMxSession.dataHandler.store!!.getRoom(roomSummaryId)
 
                 // check if the room exists
                 // the user conference rooms are not displayed.
@@ -447,7 +447,7 @@ class RoomSummaryAdapter
             roomRetValue = null
         } else {
             if (roomSummary.userId.isNullOrEmpty()) {
-                roomRetValue = null;
+                roomRetValue = null
             } else {
                 userId = roomSummary.userId
                 session = Matrix.getMXSession(mContext, userId)
@@ -672,7 +672,7 @@ class RoomSummaryAdapter
         showMoreView.visibility = View.GONE
 
         val childRoomSummary = mSummaryListByGroupPosition!![groupPosition][childPosition]
-        val childRoom = mMxSession!!.dataHandler.store!!!!.getRoom(childRoomSummary.roomId)
+        val childRoom = mMxSession.dataHandler.store!!.getRoom(childRoomSummary.roomId)
         val unreadMsgCount = childRoomSummary.unreadEventsCount
         var highlightCount = 0
         var notificationCount = 0
@@ -796,7 +796,7 @@ class RoomSummaryAdapter
      */
     private fun getMemberDisplayNameFromUserId(aMatrixId: String?, aUserId: String?): String? {
         val displayNameRetValue: String?
-        val session: MXSession = Matrix.getMXSession(mContext, aMatrixId);
+        val session: MXSession = Matrix.getMXSession(mContext, aMatrixId)
         if (null == aMatrixId || null == aUserId) {
             displayNameRetValue = null
         } else if (null == session || !session.isAlive) {
@@ -828,9 +828,7 @@ class RoomSummaryAdapter
             if (aChildRoomSummary.latestReceivedEvent != null) {
                 eventDisplay = RiotEventDisplay(mContext)
                 eventDisplay.setPrependMessagesWithAuthor(true)
-                messageToDisplayRetValue = eventDisplay.getTextualDisplay(ThemeUtils.getColor(mContext, android.R.attr.textColorTertiary),
-                        aChildRoomSummary.latestReceivedEvent,
-                        aChildRoomSummary.latestRoomState)
+                messageToDisplayRetValue = eventDisplay.getTextualDisplay(ThemeUtils.getColor(mContext, R.attr.color_text_note_app_default), aChildRoomSummary.latestReceivedEvent, aChildRoomSummary.latestRoomState)
             }
 
             // check if this is an invite
@@ -924,10 +922,10 @@ class RoomSummaryAdapter
      * @param toChildPosition   the child position destination
      */
     fun moveChildView(fromGroupPosition: Int, fromChildPosition: Int, toGroupPosition: Int, toChildPosition: Int) {
-        val fromList : MutableList<RoomSummary> = mSummaryListByGroupPosition!![fromGroupPosition]
-        val toList : MutableList<RoomSummary> = mSummaryListByGroupPosition!![toGroupPosition]
+        val fromList: MutableList<RoomSummary> = mSummaryListByGroupPosition!![fromGroupPosition]
+        val toList: MutableList<RoomSummary> = mSummaryListByGroupPosition!![toGroupPosition]
 
-        val summary : RoomSummary = fromList[fromChildPosition]
+        val summary: RoomSummary = fromList[fromChildPosition]
         fromList.removeAt(fromChildPosition)
 
         if (toChildPosition >= toList.size) {

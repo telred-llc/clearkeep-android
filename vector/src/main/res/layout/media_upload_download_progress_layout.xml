@@ -26,6 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:layout_gravity="center_vertical"
+            android:progressBackgroundTint="?attr/color_text_note_app_default"
             android:max="100"
             android:progress="0"
             tools:progress="30" />

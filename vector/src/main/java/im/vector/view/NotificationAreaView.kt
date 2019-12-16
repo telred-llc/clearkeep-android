@@ -40,6 +40,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.binaryfork.spanny.Spanny
 import im.vector.R
+import im.vector.extensions.getAttributeDrawable
 import im.vector.features.hhs.ResourceLimitErrorFormatter
 import im.vector.listeners.IMessagesAdapterActionsListener
 import im.vector.ui.animation.VectorTransitionSet
@@ -124,7 +125,7 @@ class NotificationAreaView @JvmOverloads constructor(
             Log.d(LOG_TAG, "State unchanged")
             return
         }
-        visibility = View.VISIBLE;
+        visibility = View.VISIBLE
         Log.d(LOG_TAG, "Rendering $newState")
         cleanUp()
         state = newState
@@ -168,7 +169,7 @@ class NotificationAreaView @JvmOverloads constructor(
     }
 
     private fun cleanUp() {
-        visibility = View.GONE;
+        visibility = View.GONE
         messageView.setOnClickListener(null)
         imageView.setOnClickListener(null)
         setBackgroundColor(Color.TRANSPARENT)
@@ -220,7 +221,7 @@ class NotificationAreaView @JvmOverloads constructor(
 
     private fun renderTyping(state: State.Typing) {
         visibility = visibilityForMessages
-        imageView.setImageResource(R.drawable.vector_typing)
+        imageView.setImageDrawable(getAttributeDrawable(context, R.attr.drawable_typing))
         messageView.text = SpannableString(state.message)
         messageView.setTextColor(ThemeUtils.getColor(context, R.attr.vctr_room_notification_text_color))
     }
@@ -235,8 +236,8 @@ class NotificationAreaView @JvmOverloads constructor(
     private fun renderScrollToBottom(state: State.ScrollToBottom) {
         visibility = visibilityForMessages
         if (state.unreadCount > 0) {
-            imageView.setImageResource(R.drawable.ic_new_message_green)
-            messageView.setTextColor(ContextCompat.getColor(context, R.color.text_new_message_notification))
+            imageView.setImageDrawable(getAttributeDrawable(context, R.attr.drawable_new_message))
+            messageView.setTextColor(ThemeUtils.getColor(context, R.attr.color_text_note_app_default))
             messageView.text = SpannableString(resources.getQuantityString(R.plurals.room_new_messages_notification, state.unreadCount, state.unreadCount))
         } else {
             imageView.setImageResource(R.drawable.scrolldown)

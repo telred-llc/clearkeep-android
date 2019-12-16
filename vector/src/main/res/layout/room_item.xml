@@ -143,7 +143,7 @@
                     android:layout_height="0dp"
                     android:layout_gravity="end"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_lock_outline_grey_24dp"
+                    android:src="@drawable/ic_lock_light"
                     app:encrypted="@{room_list_user.room.encrypted}" />
             </LinearLayout>
         </FrameLayout>

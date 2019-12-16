@@ -101,7 +101,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
     override fun androidInjector(): AndroidInjector<Any> {
-        return androidInjector;
+        return androidInjector
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -304,7 +304,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     @BindView(R.id.room_preview_subinvitation_textview)
     lateinit var subInvitationTextView: TextView
     @BindView(R.id.button_send)
-    lateinit var buttonSend: Button
+    lateinit var buttonSend: ImageView
     @BindView(R.id.image_view_video_call)
     lateinit var imageViewVideoCall: ImageView
     @BindView(R.id.image_view_voice_call)
@@ -2288,13 +2288,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      * Display UI buttons according to user input text.
      */
     private fun manageSendMoreButtons() {
-        if (!PreferencesManager.sendMessageWithEnter(this) && mEditText.text.length > 0) {
-            buttonSend.isSelected = true
-            buttonSend.setTextColor(Color.parseColor("#FFFFFF"))
-        } else {
-            buttonSend.isSelected = false
-            buttonSend.setTextColor(Color.parseColor("#000000"))
-        }
+        buttonSend.isSelected = !PreferencesManager.sendMessageWithEnter(this) && mEditText.text.length > 0
     }
 
     /**

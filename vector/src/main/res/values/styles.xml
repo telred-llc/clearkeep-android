@@ -335,9 +335,16 @@
         <attr name="drawable_audio_attachment" format="reference" />
         <attr name="drawable_file_attachment" format="reference" />
         <attr name="drawable_attachment" format="reference" />
+        <attr name="drawable_play" format="reference" />
+        <attr name="drawable_typing" format="reference" />
         <attr name="bg_edit_text_feed_back" format="reference" />
         <attr name="drawable_close_dialog" format="reference" />
         <attr name="background_dialog_choice_call" format="color" />
+        <attr name="drawable_lock" format="reference" />
+        <attr name="drawable_unlock" format="reference" />
+        <attr name="drawable_new_message" format="reference" />
+        <attr name="background_color_calling" format="color" />
+        <attr name="drawable_send" format="reference" />
 
     </declare-styleable>
 
@@ -391,6 +398,7 @@
 
 
         <!--        implement ui dark_mode 11/05/2019    -->
+        <item name="colorAccent">@color/accent_color_dark</item>
         <item name="color_tint_img_back">#F5F5F5</item>
         <item name="color_text_tool_bar">#F5F5F5</item>
         <item name="color_background_app_default">#121212</item>
@@ -406,7 +414,7 @@
         <item name="done_editext">@drawable/ic_done_color_green</item>
         <item name="drawable_call_log">@drawable/ic_call_log_dark</item>
         <item name="background_message_text_emote_notice">
-            @drawable/background_green_to_transparent_gradient
+            @drawable/background_message_text_emote_notice_dark
         </item>
         <item name="background_message_text_emote_notice_own">#707070</item>
         <item name="drawable_back">@drawable/ic_arrow_back_dark</item>
@@ -416,10 +424,17 @@
         <item name="drawable_audio_attachment">@drawable/ic_type_audio_attachment_dark</item>
         <item name="drawable_file_attachment">@drawable/ic_type_file_attachment_dark</item>
         <item name="drawable_attachment">@drawable/ic_attachment_dark</item>
+        <item name="drawable_play">@drawable/ic_play_circle_dark</item>
+        <item name="drawable_typing">@drawable/ic_typing_dark</item>
         <item name="bg_edit_text_feed_back">@drawable/bg_edit_text_feed_back_light_mode</item>
         <item name="drawable_close_dialog">@drawable/ic_close_dark</item>
         <item name="background_dialog_choice_call">#242424</item>
         <item name="colorControlActivated">#00C0D8</item>
+        <item name="drawable_lock">@drawable/ic_lock_dark</item>
+        <item name="drawable_unlock">@drawable/ic_unlock_dark</item>
+        <item name="drawable_new_message">@drawable/ic_new_message_dark</item>
+        <item name="background_color_calling">@drawable/background_color_calling_dark</item>
+        <item name="drawable_send">@drawable/ic_send_dark</item>
 
     </style>
 
@@ -468,6 +483,7 @@
 
 
         <!--        implement ui light_mode 11/05/2019-->
+        <item name="colorAccent">@color/accent_color_light</item>
         <item name="color_tint_img_back">#444444</item>
         <item name="color_text_tool_bar">#242424</item>
         <item name="color_background_app_default">#FFFFFF</item>green
@@ -483,7 +499,7 @@
         <item name="done_editext">@drawable/ic_done_color_blue</item>
         <item name="drawable_call_log">@drawable/ic_call_log_light</item>
         <item name="background_message_text_emote_notice">
-            @drawable/background_purple_to_transparent_gradient
+            @drawable/background_message_text_emote_notice_light
         </item>
         <item name="background_message_text_emote_notice_own">#F5F5F5</item>
         <item name="drawable_back">@drawable/ic_arrow_back_light</item>
@@ -493,10 +509,17 @@
         <item name="drawable_audio_attachment">@drawable/ic_type_audio_attachment_light</item>
         <item name="drawable_file_attachment">@drawable/ic_type_file_attachment_light</item>
         <item name="drawable_attachment">@drawable/ic_attachment_light</item>
+        <item name="drawable_play">@drawable/ic_play_circle_light</item>
+        <item name="drawable_typing">@drawable/ic_typing_light</item>
         <item name="bg_edit_text_feed_back">@drawable/bg_edit_text_feed_back_dark_mode</item>
         <item name="drawable_close_dialog">@drawable/ic_close_light</item>
         <item name="background_dialog_choice_call">@color/dialogplus_card_shadow</item>
         <item name="colorControlActivated">#6093EA</item>
+        <item name="drawable_lock">@drawable/ic_lock_light</item>
+        <item name="drawable_unlock">@drawable/ic_unlock_light</item>
+        <item name="drawable_new_message">@drawable/ic_new_message_dark_light</item>
+        <item name="background_color_calling">@color/background_color_calling_light</item>
+        <item name="drawable_send">@drawable/ic_send_light</item>
     </style>
 
     <style name="checkBoxStyle" parent="Base.Theme.AppCompat">
@@ -537,4 +560,7 @@
     <style name="MyRatingBar" parent="Widget.AppCompat.RatingBar">
         <item name="colorAccent">#F3CC30</item>
     </style>
+
+    <color name="background_color_calling_light">#8393CF</color>
+    <drawable name="background_color_calling_dark">#3FC5B9</drawable>
 </resources>

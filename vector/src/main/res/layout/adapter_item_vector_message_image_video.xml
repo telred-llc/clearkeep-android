@@ -117,7 +117,7 @@
                                 android:layout_height="@dimen/chat_avatar_size"
                                 android:layout_centerInParent="true"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_material_play_circle" />
+                                android:src="?attr/drawable_play" />
 
                             <!-- the upload fails -->
                             <ImageView
