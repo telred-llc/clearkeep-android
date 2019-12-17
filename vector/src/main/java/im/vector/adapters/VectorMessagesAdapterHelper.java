@@ -1044,6 +1044,7 @@ class VectorMessagesAdapterHelper {
             EventDisplay display = new RiotEventDisplay(context);
             return row.getText(null, display) != null;
         } else if (event.isCallEvent()) {
+
             return Event.EVENT_TYPE_CALL_INVITE.equals(eventType)
                     || Event.EVENT_TYPE_CALL_ANSWER.equals(eventType)
                     || Event.EVENT_TYPE_CALL_HANGUP.equals(eventType);

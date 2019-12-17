@@ -66,8 +66,8 @@ public class RiotEventDisplay extends EventDisplay {
      */
     @Override
     public CharSequence getTextualDisplay(Integer displayNameColor, Event event, RoomState roomState) {
-        CharSequence text = null;
 
+        CharSequence text = null;
         try {
             if (TextUtils.equals(event.getType(), WidgetsManager.WIDGET_EVENT_TYPE)) {
                 JsonObject content = event.getContentAsJsonObject();

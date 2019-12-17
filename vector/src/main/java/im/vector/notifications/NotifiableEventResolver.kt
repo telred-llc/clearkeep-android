@@ -72,7 +72,6 @@ class NotifiableEventResolver(val context: Context) {
                 return resolveStateRoomEvent(event, bingRule, session, store)
             }
             else -> {
-
                 //If the event can be displayed, display it as is
                 eventDisplay.getTextualDisplay(event, roomState)?.toString()?.let { body ->
                     return SimpleNotifiableEvent(
@@ -124,7 +123,6 @@ class NotifiableEventResolver(val context: Context) {
 
             return notifiableEvent
         } else {
-
             val body = eventDisplay.getTextualDisplay(event, room.state)?.toString()
                     ?: context.getString(R.string.notification_unknown_new_event)
             val roomName = room.getRoomDisplayName(context)

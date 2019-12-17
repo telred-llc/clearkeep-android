@@ -2042,18 +2042,20 @@ internal constructor(// session
 
         contentView.setOnLongClickListener(View.OnLongClickListener {
             // GA issue
-            if (position < count) {
-                val row = getItem(position)
-                val event = row!!.event
+            if (msgType != ROW_TYPE_ROOM_MEMBER) {
+                Log.e("Tag", "--- longlick: $msgType")
+                if (position < count) {
+                    val row = getItem(position)
+                    val event = row!!.event
 
-                if (!mIsSearchMode) {
-                    onMessageClick(event, getEventText(contentView, event, msgType), convertView.findViewById(R.id.messagesAdapter_action_anchor))
+                    if (!mIsSearchMode) {
+                        onMessageClick(event, getEventText(contentView, event, msgType), convertView.findViewById(R.id.messagesAdapter_action_anchor))
 
-                    onEventTap(event)
-                    return@OnLongClickListener true
+                        onEventTap(event)
+                        return@OnLongClickListener true
+                    }
                 }
             }
-
             true
         })
     }
