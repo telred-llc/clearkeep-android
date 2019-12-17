@@ -58,7 +58,7 @@
     <!--Dark/Base-->
     <color name="primary_color_dark">#FF15171B</color>
     <!--Dark/Accent-->
-    <color name="accent_color_dark">#03b381</color>
+    <color name="accent_color_dark">#00C0D8</color>
 
     <!--Black/Android Status Bar-->
     <color name="primary_color_dark_black">#000</color>

@@ -958,6 +958,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     public override fun onDestroy() {
         if (null != mVectorMessageListFragment) {
             mVectorMessageListFragment!!.onDestroy()
+            mVectorMessageListFragment = null
         }
 
         if (null != mVectorOngoingConferenceCallView) {
@@ -3464,7 +3465,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         val textInput = dialogView.findViewById<EditText>(R.id.edit_text)
         textInput.setText(currentRoom!!.state.name)
-
         // set dialog message
         alertDialogBuilder
                 .setCancelable(false)

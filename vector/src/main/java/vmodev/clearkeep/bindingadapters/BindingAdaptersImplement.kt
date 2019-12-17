@@ -107,23 +107,24 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
             val parser = JsonParser()
             val gson = Gson()
             val event = Event(message.messageType, parser.parse(message.encryptedContent).asJsonObject, message.userId, message.roomId)
-            Log.d("MessageType", message.encryptedContent + "--" + message.messageType)
-            if (message.messageType.compareTo("m.room.encrypted") != 0) {
-                textView.text = message.encryptedContent
+            Log.e("Tag", "--- MessageType: ${message.messageType}$\n--- Content: ${message.encryptedContent}")
+            if (message.messageType.compareTo(Event.EVENT_TYPE_MESSAGE_ENCRYPTED) != 0) {
+                val message = gson.fromJson(message.encryptedContent, MessageContent::class.java)
+                textView.text = message.content?.body
             } else {
                 try {
                     val result = session.dataHandler.crypto?.decryptEvent(event, null)
                     result?.let {
                         val json = result.mClearEvent.asJsonObject
                         val type = json.get("type").asString
-                        Log.d("LastMsg", type)
-                        if (!type.isNullOrEmpty() && type.compareTo("m.room.message") == 0) {
+                        if (!type.isNullOrEmpty() && type.compareTo(Event.EVENT_TYPE_MESSAGE) == 0) {
                             val message = gson.fromJson(result.mClearEvent, MessageContent::class.java)
-                            textView.text = message.getContent().getBody()
+                            textView.text = message.content?.body
                         }
                     }
                 } catch (e: MXDecryptionException) {
-                    textView.text = message.encryptedContent
+                    val message = gson.fromJson(message.encryptedContent, MessageContent::class.java)
+                    textView.text = message.content?.body
                 }
             }
         }

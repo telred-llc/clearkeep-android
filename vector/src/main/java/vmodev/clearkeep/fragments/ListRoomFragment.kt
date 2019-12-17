@@ -45,13 +45,13 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
     lateinit var applcation: IApplication
     @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
+    lateinit var listFavouritesRoomAdapter: IListRoomRecyclerViewAdapter
+    @Inject
+    @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
     lateinit var listGroupRoomAdapter: IListRoomRecyclerViewAdapter
     @Inject
     @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
     lateinit var listDirectRoomAdapter: IListRoomRecyclerViewAdapter
-    @Inject
-    @field:Named(value = IListRoomRecyclerViewAdapter.ROOM)
-    lateinit var listFavouritesRoomAdapter: IListRoomRecyclerViewAdapter
 
     private lateinit var binding: FragmentListRoomBinding
     private var onGoingRoom = false

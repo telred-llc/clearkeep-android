@@ -1867,10 +1867,10 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                 if (!type.isNullOrEmpty()) {
                                     when (type) {
                                         Event.EVENT_TYPE_MESSAGE -> {
-                                            val messageType = message.getContent().getMsgType()
+                                            val messageType = message.content?.msgType
                                             if (msgType == EventTypeEnum.TEXT.value && messageType == EventTypeEnum.TEXT.value) {
                                                 item.message?.let {
-                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = message.getContent().getBody(), createdAt = if (item.message != null) item.message!!.createdAt else 0)
+                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = message?.content?.body!!, createdAt = if (item.message != null) item.message!!.createdAt else 0)
                                                 }
                                                 messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
                                                 messageRooUser.let { it1 -> messagesResult.add(it1) }

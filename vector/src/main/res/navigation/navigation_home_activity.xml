@@ -9,16 +9,17 @@
         android:id="@+id/action_home"
         android:name="vmodev.clearkeep.fragments.ListRoomFragment"
         android:label="ListRoomsFragment"
-        tools:layout="@layout/fragment_list_room"/>
+        tools:layout="@layout/fragment_list_room" />
+
     <fragment
         android:id="@+id/action_contacts"
         android:name="vmodev.clearkeep.fragments.ContactsFragment"
         android:label="ContactsFragment"
-        tools:layout="@layout/fragment_contacts"/>
+        tools:layout="@layout/fragment_contacts" />
 
     <fragment
         android:id="@+id/action_call_history"
         android:name="vmodev.clearkeep.fragments.CallHistoryFragment"
         android:label="Call"
-        tools:layout="@layout/fragment_call_history"/>
+        tools:layout="@layout/fragment_call_history" />
 </navigation>

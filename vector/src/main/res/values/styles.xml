@@ -517,7 +517,7 @@
         <item name="colorControlActivated">#6093EA</item>
         <item name="drawable_lock">@drawable/ic_lock_light</item>
         <item name="drawable_unlock">@drawable/ic_unlock_light</item>
-        <item name="drawable_new_message">@drawable/ic_new_message_dark_light</item>
+        <item name="drawable_new_message">@drawable/ic_new_message_light</item>
         <item name="background_color_calling">@color/background_color_calling_light</item>
         <item name="drawable_send">@drawable/ic_send_light</item>
     </style>
