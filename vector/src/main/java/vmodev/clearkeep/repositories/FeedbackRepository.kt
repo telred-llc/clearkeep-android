@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.LiveDataReactiveStreams
 import io.reactivex.BackpressureStrategy
 import io.reactivex.schedulers.Schedulers
-import vmodev.clearkeep.executors.AppExecutors
-import vmodev.clearkeep.matrixsdk.interfaces.IMatrixLoginService
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.wayloads.AbstractNetworkNonBoundSource
 import vmodev.clearkeep.rests.models.responses.FeedbackResponse

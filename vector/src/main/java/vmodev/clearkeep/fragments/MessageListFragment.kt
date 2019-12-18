@@ -85,9 +85,9 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
         get() = mMessageListView
 
     /**
-     * Get the message adapter
+     * Get the message adapteron
      *
-     * @return message adapter
+     * @return message adapteonDe
      */
     val messageAdapter: AbstractMessagesAdapter
         get() = mAdapter
@@ -1263,4 +1263,5 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
             return f
         }
     }
+
 }

@@ -15,10 +15,10 @@ import vmodev.clearkeep.viewmodels.interfaces.AbstractHomeScreenActivityViewMode
 import javax.inject.Inject
 
 class HomeScreenActivityViewModel @Inject constructor(userRepository: UserRepository, roomRepository: RoomRepository, private val keyBackupRepository: KeyBackupRepository) : AbstractHomeScreenActivityViewModel() {
-    private val _userId = MutableLiveData<String>();
-    private val _filters = MutableLiveData<Array<Int>>();
-    private val _filtersFavourite = MutableLiveData<Array<Int>>();
-    private val _setValueForGetBackupKeyStatus = MutableLiveData<Long>();
+    private val _userId = MutableLiveData<String>()
+    private val _filters = MutableLiveData<Array<Int>>()
+    private val _filtersFavourite = MutableLiveData<Array<Int>>()
+    private val _setValueForGetBackupKeyStatus = MutableLiveData<Long>()
 
     private val userById = Transformations.switchMap(_userId) { input -> userRepository.loadUser(input) }
     private val listRoomByType = Transformations.switchMap(_filters) { input -> roomRepository.loadListRoom(input) }
@@ -26,43 +26,44 @@ class HomeScreenActivityViewModel @Inject constructor(userRepository: UserReposi
     private val _getBackupStatusResult = Transformations.switchMap(_setValueForGetBackupKeyStatus) { input -> keyBackupRepository.getBackupKeyStatusWhenSignIn() }
 
     override fun getUserById(): LiveData<Resource<User>> {
-        return userById;
+        return userById
     }
 
     override fun getListRoomByType(): LiveData<Resource<List<Room>>> {
-        return listRoomByType;
+        return listRoomByType
     }
 
     override fun setValueForUserById(userId: String) {
-        _userId.value = userId;
+        _userId.value = userId
     }
 
     override fun setValueForListRoomType(filters: Array<Int>) {
-        _filters.value = filters;
+        _filters.value = filters
     }
 
     override fun setValueForListRoomTypeFavourite(filters: Array<Int>) {
-        _filtersFavourite.value = filters;
+        _filtersFavourite.value = filters
     }
 
     override fun getListRoomTypeFavouriteResult(): LiveData<Resource<List<Room>>> {
-        return _getListFavouriteResult;
+        return _getListFavouriteResult
     }
 
     override fun setValueForGetBackupStatus(time: Long) {
         if (_setValueForGetBackupKeyStatus.value != time)
-            _setValueForGetBackupKeyStatus.value = time;
+            _setValueForGetBackupKeyStatus.value = time
     }
 
     override fun getBackupKeyStatusResult(): LiveData<Resource<Int>> {
-        return _getBackupStatusResult;
+        return _getBackupStatusResult
     }
 
     override fun getPassphrase(): Observable<PassphraseResponse> {
-        return keyBackupRepository.getPassphrase();
+        return keyBackupRepository.getPassphrase()
     }
 
     override fun createNewPassphrase(passphrase: String): Observable<PassphraseResponse> {
-        return keyBackupRepository.createPassphrase(passphrase);
+        return keyBackupRepository.createPassphrase(passphrase)
     }
+
 }

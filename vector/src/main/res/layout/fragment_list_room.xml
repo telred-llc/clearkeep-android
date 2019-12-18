@@ -111,9 +111,7 @@
                     android:id="@+id/expandable_layout_list_favourites"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:el_duration="1000"
-                    app:el_expanded="true"
-                    app:el_parallax="0.5">
+                    app:el_expanded="true">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view_list_favourites_chat"
@@ -235,9 +233,7 @@
                     android:id="@+id/expandable_layout_list_group"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:el_duration="1000"
-                    app:el_expanded="true"
-                    app:el_parallax="0.5">
+                    app:el_expanded="true">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view_list_group_chat"
@@ -358,9 +354,7 @@
                     android:id="@+id/expandable_layout_list_direct"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:el_duration="1000"
-                    app:el_expanded="true"
-                    app:el_parallax="0.5">
+                    app:el_expanded="true">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view_list_direct_chat"

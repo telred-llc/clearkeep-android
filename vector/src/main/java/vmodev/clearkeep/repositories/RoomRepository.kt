@@ -29,107 +29,107 @@ class RoomRepository @Inject constructor(
     fun loadListRoom(filters: Array<Int>, type: Int = 0): LiveData<Resource<List<Room>>> {
         return object : AbstractNetworkBoundSourceRx<List<Room>, List<Room>>() {
             override fun saveCallResult(item: List<Room>) {
-                abstractRoomDao.insertRooms(item);
+                abstractRoomDao.insertRooms(item)
             }
 
             override fun shouldFetch(data: List<Room>?): Boolean {
-                return data == null || data.isEmpty();
+                return data == null || data.isEmpty()
             }
 
             override fun loadFromDb(): LiveData<List<Room>> {
                 if (type == 0) {
-                    return abstractRoomDao.loadWithType(filters);
+                    return abstractRoomDao.loadWithType(filters)
                 } else {
-                    return abstractRoomDao.loadWithTypeOnlyTime(filters);
+                    return abstractRoomDao.loadWithTypeOnlyTime(filters)
                 }
             }
 
             override fun createCall(): Observable<List<Room>> {
-                return matrixService.getListRoom(filters);
+                return matrixService.getListRoom(filters)
             }
-        }.asLiveData();
+        }.asLiveData()
     }
 
     fun loadRoom(id: String): LiveData<Resource<Room>> {
         return object : AbstractNetworkBoundSource<Room, Room>() {
             override fun saveCallResult(item: Room) {
-                abstractRoomDao.insert(item);
+                abstractRoomDao.insert(item)
             }
 
             override fun shouldFetch(data: Room?): Boolean {
-                return data == null;
+                return data == null
             }
 
             override fun loadFromDb(): LiveData<Room> {
-                return abstractRoomDao.findById(id);
+                return abstractRoomDao.findById(id)
             }
 
             override fun createCall(): LiveData<Room> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.getRoomWithId(id).subscribeOn(Schedulers.newThread())
-                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST));
+                        .observeOn(Schedulers.newThread()).toFlowable(BackpressureStrategy.LATEST))
             }
-        }.asLiveData();
+        }.asLiveData()
     }
 
     @SuppressLint("CheckResult")
     fun updateOrCreateRoomFromRemote(id: String): LiveData<Resource<Room>> {
         return object : AbstractNetworkCreateOrUpdateSourceRx<Room, Room>() {
             override fun loadFromDb(): LiveData<Room> {
-                return abstractRoomDao.findById(id);
+                return abstractRoomDao.findById(id)
             }
 
             override fun createNewItem(item: Room) {
-                abstractRoomDao.insert(item);
+                abstractRoomDao.insert(item)
             }
 
             override fun updateItem(item: Room) {
-                abstractRoomDao.updateRoom(item);
+                abstractRoomDao.updateRoom(item)
             }
 
             override fun createCall(): Observable<Room> {
-                return matrixService.getRoomWithId(id);
+                return matrixService.getRoomWithId(id)
             }
-        }.asLiveData();
+        }.asLiveData()
     }
 
     fun updateOrCreateRoomFromRemoteRx(id: String): Observable<Room> {
         return object : AbstractNetworkCreateOrUpdateSourceReturnRx<Room, Room>() {
             override fun loadFromDb(): Single<Room> {
-                return abstractRoomDao.findByIdRx(id);
+                return abstractRoomDao.findByIdRx(id)
             }
 
             override fun updateOrCreate(item: Room): Boolean {
-                return item == null;
+                return item == null
             }
 
             override fun createNewItem(item: Room) {
-                abstractRoomDao.insert(item);
+                abstractRoomDao.insert(item)
             }
 
             override fun updateItem(item: Room) {
-                abstractRoomDao.updateRoom(item);
+                abstractRoomDao.updateRoom(item)
             }
 
             override fun createCall(): Observable<Room> {
-                return matrixService.getRoomWithId(id);
+                return matrixService.getRoomWithId(id)
             }
-        }.getObject();
+        }.getObject()
     }
 
     fun joinRoom(id: String): LiveData<Resource<Room>> {
         return object : AbstractNetworkBoundSourceWithParamsOneTimeRx<Room, Room>() {
             override fun saveCallResult(item: Room) {
-                abstractRoomDao.updateRoom(item.id, item.type);
+                abstractRoomDao.updateRoom(item.id, item.type)
             }
 
             override fun loadFromDb(param: Room): LiveData<Room> {
-                return abstractRoomDao.findById(param.id);
+                return abstractRoomDao.findById(param.id)
             }
 
             override fun createCall(): Observable<Room> {
-                return matrixService.joinRoom(id);
+                return matrixService.joinRoom(id)
             }
-        }.asLiveData();
+        }.asLiveData()
     }
 
     fun leaveRoom(id: String): LiveData<Resource<String>> {
@@ -139,11 +139,11 @@ class RoomRepository @Inject constructor(
             }
 
             override fun shouldFetch(data: String?): Boolean {
-                return true;
+                return true
             }
 
             override fun loadFromDb(): LiveData<String> {
-                return abstractRoomDao.findNameById(id);
+                return abstractRoomDao.findNameById(id)
             }
 
             override fun createCall(): LiveData<String> {
@@ -156,15 +156,15 @@ class RoomRepository @Inject constructor(
     fun createDirectChatRoom(userId: String): LiveData<Resource<Room>> {
         return object : AbstractNetworkBoundSourceOneTimeWithParams<Room, Room>() {
             override fun saveCallResult(item: Room) {
-                abstractRoomDao.insert(item);
+                abstractRoomDao.insert(item)
             }
 
             override fun loadFromDb(param: Room): LiveData<Room> {
-                return abstractRoomDao.findById(param.id);
+                return abstractRoomDao.findById(param.id)
             }
 
             override fun createCall(): Observable<Room> {
-                return matrixService.createNewDirectMessage(userId);
+                return matrixService.createNewDirectMessage(userId)
             }
         }.asLiveData()
     }
@@ -172,15 +172,15 @@ class RoomRepository @Inject constructor(
     fun createNewRoom(name: String, topic: String, visibility: String): LiveData<Resource<Room>> {
         return object : AbstractNetworkBoundSourceOneTimeWithParams<Room, Room>() {
             override fun saveCallResult(item: Room) {
-                abstractRoomDao.insert(item);
+                abstractRoomDao.insert(item)
             }
 
             override fun loadFromDb(param: Room): LiveData<Room> {
-                return abstractRoomDao.findById(param.id);
+                return abstractRoomDao.findById(param.id)
             }
 
             override fun createCall(): Observable<Room> {
-                return matrixService.createNewRoom(name, topic, visibility);
+                return matrixService.createNewRoom(name, topic, visibility)
             }
         }.asLiveData()
     }
@@ -188,9 +188,9 @@ class RoomRepository @Inject constructor(
     fun inviteUsersToRoom(data: InviteUsersToRoomObject): LiveData<Resource<Room>> {
         return object : AbstractNetworkNonBoundSourceRx<Room>() {
             override fun createCall(): Observable<Room> {
-                return matrixService.inviteUsersToRoom(data.roomId, data.userIds);
+                return matrixService.inviteUsersToRoom(data.roomId, data.userIds)
             }
-        }.asLiveData();
+        }.asLiveData()
     }
 
     fun findListRoomWithText(keyword: String): LiveData<Resource<List<String>>> {
@@ -205,15 +205,15 @@ class RoomRepository @Inject constructor(
     fun addToFavourite(roomId: String): LiveData<Resource<Room>> {
         return object : AbstractNetworkBoundSource<Room, Room>() {
             override fun saveCallResult(item: Room) {
-                abstractRoomDao.updateType(item.id, item.type);
+                abstractRoomDao.updateType(item.id, item.type)
             }
 
             override fun shouldFetch(data: Room?): Boolean {
-                return true;
+                return true
             }
 
             override fun loadFromDb(): LiveData<Room> {
-                return abstractRoomDao.findById(roomId);
+                return abstractRoomDao.findById(roomId)
             }
 
             override fun createCall(): LiveData<Room> {
@@ -222,21 +222,21 @@ class RoomRepository @Inject constructor(
                         .observeOn(Schedulers.io())
                         .toFlowable(BackpressureStrategy.LATEST))
             }
-        }.asLiveData();
+        }.asLiveData()
     }
 
     fun removeFromFavourite(roomId: String): LiveData<Resource<Room>> {
         return object : AbstractNetworkBoundSource<Room, Room>() {
             override fun saveCallResult(item: Room) {
-                abstractRoomDao.updateType(item.id, item.type);
+                abstractRoomDao.updateType(item.id, item.type)
             }
 
             override fun shouldFetch(data: Room?): Boolean {
-                return true;
+                return true
             }
 
             override fun loadFromDb(): LiveData<Room> {
-                return abstractRoomDao.findById(roomId);
+                return abstractRoomDao.findById(roomId)
             }
 
             override fun createCall(): LiveData<Room> {
@@ -251,45 +251,45 @@ class RoomRepository @Inject constructor(
     fun updateAndCreateListRoomRx(filters: Array<Int>): LiveData<Resource<List<Room>>> {
         return object : AbstractNetworkCreateAndUpdateSourceRx<List<Room>, List<Room>>() {
             override fun insertResult(item: List<Room>) {
-                abstractRoomDao.insertRooms(item);
+                abstractRoomDao.insertRooms(item)
             }
 
             override fun updateResult(item: List<Room>) {
-                abstractRoomDao.updateRooms(item);
+                abstractRoomDao.updateRooms(item)
             }
 
             override fun loadFromDb(): LiveData<List<Room>> {
-                return abstractRoomDao.loadWithType(filters);
+                return abstractRoomDao.loadWithType(filters)
             }
 
             override fun createCall(): Observable<List<Room>> {
-                return matrixService.getListRoom(filters);
+                return matrixService.getListRoom(filters)
             }
 
             override fun getItemInsert(localData: List<Room>?, remoteData: List<Room>?): List<Room> {
-                val rooms = ArrayList<Room>();
+                val rooms = ArrayList<Room>()
                 remoteData?.let {
                     rooms.addAll(it)
                 }
-                return rooms;
+                return rooms
             }
 
             override fun getItemUpdate(localData: List<Room>?, remoteData: List<Room>?): List<Room> {
-                val rooms = ArrayList<Room>();
+                val rooms = ArrayList<Room>()
                 remoteData?.let {
-                    rooms.addAll(it);
+                    rooms.addAll(it)
                 }
-                return rooms;
+                return rooms
             }
-        }.asLiveData();
+        }.asLiveData()
     }
 
     fun updateAndCreateListRoomReturnRx(filters: Array<Int>): Observable<List<Room>> {
         return object : AbstractNetworkCreateAndUpdateSourceReturnRx<List<Room>, List<Room>>() {
             override fun insertResult(item: List<Room>) {
-                Log.d("InsertRoomBefore", item.size.toString());
-                val result = abstractRoomDao.insertRooms(item);
-                Log.d("InsertRoomAfter", result.size.toString());
+                Log.d("InsertRoomBefore", item.size.toString())
+                val result = abstractRoomDao.insertRooms(item)
+                Log.d("InsertRoomAfter", result.size.toString())
             }
 
             override fun updateResult(item: List<Room>) {
@@ -298,47 +298,47 @@ class RoomRepository @Inject constructor(
             }
 
             override fun loadFromDb(): Single<List<Room>> {
-                return abstractRoomDao.loadWithTypeRx(filters);
+                return abstractRoomDao.loadWithTypeRx(filters)
             }
 
             override fun createCall(): Observable<List<Room>> {
-                return matrixService.getListRoom(filters);
+                return matrixService.getListRoom(filters)
             }
 
             override fun getInsertItem(remoteItem: List<Room>, localItem: List<Room>?): List<Room> {
-                val rooms = ArrayList<Room>();
+                val rooms = ArrayList<Room>()
                 rooms.addAll(remoteItem)
-                return rooms;
+                return rooms
             }
 
             override fun getUpdateItem(remoteItem: List<Room>, localItem: List<Room>?): List<Room> {
-                val rooms = ArrayList<Room>();
-                rooms.addAll(remoteItem);
-                return rooms;
+                val rooms = ArrayList<Room>()
+                rooms.addAll(remoteItem)
+                return rooms
             }
-        }.getObject();
+        }.getObject()
     }
 
     fun getListRoomWithListId(ids: List<String>): LiveData<Resource<List<Room>>> {
         return object : AbstractLocalBoundSource<List<Room>>() {
             override fun loadFromDb(): LiveData<List<Room>> {
-                return abstractRoomDao.getListRoomWithListId(ids);
+                return abstractRoomDao.getListRoomWithListId(ids)
             }
-        }.asLiveData();
+        }.asLiveData()
     }
 
     fun setRoomNotify(roomId: String): LiveData<Resource<Room>> {
         return object : AbstractNetworkBoundSource<Room, Room>() {
             override fun saveCallResult(item: Room) {
-                abstractRoomDao.updateRoom(item);
+                abstractRoomDao.updateRoom(item)
             }
 
             override fun shouldFetch(data: Room?): Boolean {
-                return true;
+                return true
             }
 
             override fun loadFromDb(): LiveData<Room> {
-                return abstractRoomDao.findById(roomId);
+                return abstractRoomDao.findById(roomId)
             }
 
             override fun createCall(): LiveData<Room> {
@@ -347,15 +347,15 @@ class RoomRepository @Inject constructor(
                         .observeOn(Schedulers.io())
                         .toFlowable(BackpressureStrategy.LATEST))
             }
-        }.asLiveData();
+        }.asLiveData()
     }
 
     fun searchRoomByDisplayName(filters: Array<Int>, query: String): LiveData<Resource<List<RoomListUser>>> {
         return object : AbstractLocalLoadSource<List<RoomListUser>>(executors) {
             override fun loadFromDB(): LiveData<List<RoomListUser>> {
-                return abstractRoomDao.searchWithDisplayNameReturnRoomListUser(filters[0], filters[1], query);
+                return abstractRoomDao.searchWithDisplayNameReturnRoomListUser(filters[0], filters[1], query)
             }
-        }.asLiveData();
+        }.asLiveData()
     }
 
     fun getListFileInRoom(roomId: String): LiveData<Resource<List<String>>> {
@@ -363,53 +363,53 @@ class RoomRepository @Inject constructor(
             override fun createCall(): LiveData<List<String>> {
                 return LiveDataReactiveStreams.fromPublisher(matrixService.getListFileInRoom(roomId)
                         .observeOn(Schedulers.io())
-                        .subscribeOn(Schedulers.io()).toFlowable(BackpressureStrategy.LATEST));
+                        .subscribeOn(Schedulers.io()).toFlowable(BackpressureStrategy.LATEST))
             }
-        }.asLiveData();
+        }.asLiveData()
     }
 
     fun changeNotificationState(roomId: String, state: Byte): LiveData<Resource<Room>> {
         return object : AbstractNetworkBoundSourceRx<Room, Byte>() {
             override fun saveCallResult(item: Byte) {
-                abstractRoomDao.updateNotificationState(roomId, item);
+                abstractRoomDao.updateNotificationState(roomId, item)
             }
 
             override fun shouldFetch(data: Room?): Boolean {
-                return true;
+                return true
             }
 
             override fun loadFromDb(): LiveData<Room> {
-                return abstractRoomDao.findById(roomId);
+                return abstractRoomDao.findById(roomId)
             }
 
             override fun createCall(): Observable<Byte> {
-                return matrixService.changeRoomNotificationState(roomId, state);
+                return matrixService.changeRoomNotificationState(roomId, state)
             }
-        }.asLiveData();
+        }.asLiveData()
     }
 
     fun getDirectChatRoomByUserId(userId: String): LiveData<Resource<List<Room>>> {
         return object : AbstractLocalLoadSource<List<Room>>(executors) {
             override fun loadFromDB(): LiveData<List<Room>> {
-                return abstractRoomDao.getDirectChatRoomWithUserId(userId);
+                return abstractRoomDao.getDirectChatRoomWithUserId(userId)
             }
-        }.asLiveData();
+        }.asLiveData()
     }
 
     fun getRoomChatRoomByUserId(userId: String): LiveData<Resource<List<Room>>> {
         return object : AbstractLocalLoadSource<List<Room>>(executors) {
             override fun loadFromDB(): LiveData<List<Room>> {
-                return abstractRoomDao.getRoomChatRoomWithUserId(userId);
+                return abstractRoomDao.getRoomChatRoomWithUserId(userId)
             }
-        }.asLiveData();
+        }.asLiveData()
     }
 
     fun updateLastMessage(roomId: String, messageId: String): Completable {
-        return Completable.fromAction { abstractRoomDao.updateRoomLastMessage(roomId, messageId) };
+        return Completable.fromAction { abstractRoomDao.updateRoomLastMessage(roomId, messageId) }
     }
 
     fun updateUserCreated(roomId: String, userId: String) {
-        Completable.fromAction { abstractRoomDao.updateRoomCreatedUser(roomId, userId) }.subscribeOn(Schedulers.io()).subscribe();
+        Completable.fromAction { abstractRoomDao.updateRoomCreatedUser(roomId, userId) }.subscribeOn(Schedulers.io()).subscribe()
     }
 
     fun insertRoomInvite(room: Room): Completable {
@@ -444,8 +444,8 @@ class RoomRepository @Inject constructor(
         return Completable.fromAction {
             matrixService.updateRoomName(roomId, roomName).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.io())
                     .subscribe {
-                        abstractRoomDao.updateRoomName(roomId, it);
-                    };
+                        abstractRoomDao.updateRoomName(roomId, it)
+                    }
         }
     }
 
@@ -453,7 +453,7 @@ class RoomRepository @Inject constructor(
         return Completable.fromAction {
             matrixService.updateRoomTopic(roomId, roomTopic).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.io())
                     .subscribe {
-                        abstractRoomDao.updateRoomTopic(roomId, roomTopic);
+                        abstractRoomDao.updateRoomTopic(roomId, roomTopic)
                     }
         }
     }
@@ -465,6 +465,6 @@ class RoomRepository @Inject constructor(
         }
     }
 
-    class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String);
-    class InviteUsersToRoomObject constructor(val roomId: String, val userIds: List<String>);
+    class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String)
+    class InviteUsersToRoomObject constructor(val roomId: String, val userIds: List<String>)
 }

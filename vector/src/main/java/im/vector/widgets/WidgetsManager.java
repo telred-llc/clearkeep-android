@@ -202,7 +202,6 @@ public class WidgetsManager {
 
         return activeWidgets;
     }
-
     /**
      * Provides the list of active widgets for a room
      *
@@ -213,6 +212,7 @@ public class WidgetsManager {
     public static List<Widget> getActiveJitsiWidgets(final MXSession session, final Room room) {
         return getActiveWidgets(session, room, new HashSet<>(Arrays.asList(WidgetsManager.WIDGET_TYPE_JITSI)), null);
     }
+
 
     /**
      * Provides the widgets which can be displayed in a webview.

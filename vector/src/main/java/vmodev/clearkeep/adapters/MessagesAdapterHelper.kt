@@ -739,7 +739,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             if (!TextUtils.isEmpty(pattern) && !TextUtils.isEmpty(text) && text.length >= pattern.length) {
 
                 val lowerText = text.toString().toLowerCase(VectorLocale.applicationLocale)
-                val lowerPattern = pattern?.toLowerCase(VectorLocale.applicationLocale)
+                val lowerPattern = pattern.toLowerCase(VectorLocale.applicationLocale)
 
                 var start = 0
                 var pos = lowerText.indexOf(lowerPattern, start)
@@ -831,7 +831,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             return false
         }
 
-        val event = row.event ?: return false
+        val event = row.event
 
         val eventType = event.getType()
 
@@ -853,10 +853,10 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             return !TextUtils.isEmpty(stickerMessage.body) && !event.isRedacted
         } else if (Event.EVENT_TYPE_STATE_ROOM_TOPIC == eventType || Event.EVENT_TYPE_STATE_ROOM_NAME == eventType) {
             val display = RiotEventDisplay(context)
+            Log.e("Tag", "--- value 3: ${event.getType()} - ${row.getText(null, display)}")
             return row.getText(null, display) != null
         } else if (event.isCallEvent) {
-            return (Event.EVENT_TYPE_CALL_INVITE == eventType
-                    || Event.EVENT_TYPE_CALL_ANSWER == eventType
+            return (Event.EVENT_TYPE_CALL_ANSWER == eventType
                     || Event.EVENT_TYPE_CALL_HANGUP == eventType)
         } else if (Event.EVENT_TYPE_STATE_ROOM_MEMBER == eventType || Event.EVENT_TYPE_STATE_ROOM_THIRD_PARTY_INVITE == eventType) {
             // if we can display text for it, it's valid.
@@ -1240,7 +1240,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
                 return false
             }
 
-            val event = row.event ?: return false
+            val event = row.event
 
             val eventType = event.getType()
 
@@ -1264,13 +1264,14 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
                 val display = RiotEventDisplay(context)
                 return row.getText(null, display) != null
             } else if (event.isCallEvent) {
-                return (Event.EVENT_TYPE_CALL_INVITE == eventType
-                        || Event.EVENT_TYPE_CALL_ANSWER == eventType
+                return (Event.EVENT_TYPE_CALL_ANSWER == eventType
                         || Event.EVENT_TYPE_CALL_HANGUP == eventType)
             } else if (Event.EVENT_TYPE_STATE_ROOM_MEMBER == eventType || Event.EVENT_TYPE_STATE_ROOM_THIRD_PARTY_INVITE == eventType) {
                 // if we can display text for it, it's valid.
-                val display = RiotEventDisplay(context)
-                return row.getText(null, display) != null
+//                val display = RiotEventDisplay(context)
+//                Log.e("Tag", "--- value: ${event.getType()} - ${row.getText(null, display)}")
+//                return row.getText(null, display) != null
+                return false
             } else if (Event.EVENT_TYPE_STATE_HISTORY_VISIBILITY == eventType) {
                 return true
             } else if (Event.EVENT_TYPE_MESSAGE_ENCRYPTED == eventType || Event.EVENT_TYPE_MESSAGE_ENCRYPTION == eventType) {

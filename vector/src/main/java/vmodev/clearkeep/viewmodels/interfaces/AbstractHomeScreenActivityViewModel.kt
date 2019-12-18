@@ -9,14 +9,14 @@ import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.viewmodelobjects.User
 
 abstract class AbstractHomeScreenActivityViewModel : ViewModel() {
-    abstract fun getUserById(): LiveData<Resource<User>>;
-    abstract fun getListRoomByType(): LiveData<Resource<List<Room>>>;
-    abstract fun setValueForUserById(userId: String);
+    abstract fun getUserById(): LiveData<Resource<User>>
+    abstract fun getListRoomByType(): LiveData<Resource<List<Room>>>
+    abstract fun setValueForUserById(userId: String)
     abstract fun setValueForListRoomType(filters: Array<Int>)
-    abstract fun setValueForListRoomTypeFavourite(filters: Array<Int>);
-    abstract fun getListRoomTypeFavouriteResult(): LiveData<Resource<List<Room>>>;
-    abstract fun setValueForGetBackupStatus(time: Long);
-    abstract fun getBackupKeyStatusResult(): LiveData<Resource<Int>>;
-    abstract fun getPassphrase(): Observable<PassphraseResponse>;
-    abstract fun createNewPassphrase(passphrase : String): Observable<PassphraseResponse>;
+    abstract fun setValueForListRoomTypeFavourite(filters: Array<Int>)
+    abstract fun getListRoomTypeFavouriteResult(): LiveData<Resource<List<Room>>>
+    abstract fun setValueForGetBackupStatus(time: Long)
+    abstract fun getBackupKeyStatusResult(): LiveData<Resource<Int>>
+    abstract fun getPassphrase(): Observable<PassphraseResponse>
+    abstract fun createNewPassphrase(passphrase: String): Observable<PassphraseResponse>
 }

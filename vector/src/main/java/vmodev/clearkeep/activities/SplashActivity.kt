@@ -60,6 +60,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
             startApp()
         }
         binding.lifecycleOwner = this
+
     }
 
     private fun startApp() {

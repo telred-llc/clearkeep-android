@@ -348,7 +348,7 @@ internal constructor(// session
         mSendingMessageTextColor = sendingMessageTextColor
         mEncryptingMessageTextColor = encryptingMessageTextColor
         mHighlightMessageTextColor = highlightMessageTextColor
-        mBackgroundColorSpan = BackgroundColorSpan(searchHighlightMessageTextColor)
+        mBackgroundColorSpan = BackgroundColorSpan(defaultMessageTextColor)
 
         val size = Point(0, 0)
         getScreenSize(size)
@@ -1127,35 +1127,23 @@ internal constructor(// session
             //                event = editedMessageMap.get(event.eventId);
             //                row = new MessageRow(event, mSession.getDataHandler().getRoom(event.roomId).getState());
             //            }
-
             val message = JsonUtils.toMessage(event.content)
-
             val shouldHighlighted = null != mVectorMessagesAdapterEventsListener && mVectorMessagesAdapterEventsListener!!.shouldHighlightEvent(event)
-
             val textViews: MutableList<TextView>
 
             if (ROW_TYPE_CODE == viewType) {
                 textViews = populateRowTypeCode(message, convertView!!, shouldHighlighted)
             } else {
                 val bodyTextView = convertView!!.findViewById<TextView>(R.id.messagesAdapter_body)
-
                 // cannot refresh it
                 if (null == bodyTextView) {
                     Log.e(LOG_TAG, "getTextView : invalid layout")
                     return convertView
                 }
-
                 val display = RiotEventDisplay(mContext, mHtmlToolbox)
-
                 val body = row.getText(VectorQuoteSpan(mContext), display)
-
-                val result = mHelper.highlightPattern(body,
-                        mPattern,
-                        mBackgroundColorSpan,
-                        shouldHighlighted)
-
+                val result = mHelper.highlightPattern(body, mPattern, mBackgroundColorSpan, shouldHighlighted)
                 bodyTextView.text = result
-
                 mHelper.applyLinkMovementMethod(bodyTextView)
                 bodyTextView.vectorCustomLinkify(true)
                 textViews = ArrayList()
@@ -1231,10 +1219,7 @@ internal constructor(// session
                 val display = RiotEventDisplay(mContext, mHtmlToolbox)
 
                 val body = row.getText(VectorQuoteSpan(mContext), display)
-                var result = mHelper.highlightPattern(body,
-                        Message.FORMAT_MATRIX_HTML,
-                        mBackgroundColorSpan,
-                        shouldHighlighted)
+                var result = mHelper.highlightPattern(body, Message.FORMAT_MATRIX_HTML, mBackgroundColorSpan, shouldHighlighted)
                 result = "$result ${context.resources.getString(R.string.edited_suffix)}"
                 result = result.subSequence(2, result.length)
                 bodyTextView.text = result
@@ -2057,18 +2042,20 @@ internal constructor(// session
 
         contentView.setOnLongClickListener(View.OnLongClickListener {
             // GA issue
-            if (position < count) {
-                val row = getItem(position)
-                val event = row!!.event
+            if (msgType != ROW_TYPE_ROOM_MEMBER) {
+                Log.e("Tag", "--- longlick: $msgType")
+                if (position < count) {
+                    val row = getItem(position)
+                    val event = row!!.event
 
-                if (!mIsSearchMode) {
-                    onMessageClick(event, getEventText(contentView, event, msgType), convertView.findViewById(R.id.messagesAdapter_action_anchor))
+                    if (!mIsSearchMode) {
+                        onMessageClick(event, getEventText(contentView, event, msgType), convertView.findViewById(R.id.messagesAdapter_action_anchor))
 
-                    onEventTap(event)
-                    return@OnLongClickListener true
+                        onEventTap(event)
+                        return@OnLongClickListener true
+                    }
                 }
             }
-
             true
         })
     }

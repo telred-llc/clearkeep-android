@@ -19,34 +19,34 @@ class SplashActivityViewModel @Inject constructor(private val roomRepository: Ro
                                                   , private val roomUserJoinRepository: RoomUserJoinRepository
                                                   , private val messageRepository: MessageRepository) : AbstractSplashActivityViewModel() {
     override fun getAllRoomResult(filters: Array<Int>): LiveData<Resource<List<Room>>> {
-        return roomRepository.updateAndCreateListRoomRx(filters);
+        return roomRepository.updateAndCreateListRoomRx(filters)
     }
 
     override fun getUpdateUserResult(roomId: String): LiveData<Resource<List<User>>> {
-        return userRepository.getListUserInRoomFromNetwork(roomId);
+        return userRepository.getListUserInRoomFromNetwork(roomId)
     }
 
     override fun getUpdateRoomUserJoinResult(roomId: String, userId: String) {
-        roomUserJoinRepository.insertRoomUserJoin(roomId, userId);
+        roomUserJoinRepository.insertRoomUserJoin(roomId, userId)
     }
 
     override fun getUpdateLastMessageResult(roomId: String): Observable<Message> {
-        return messageRepository.getLastMessageOfRoom(roomId);
+        return messageRepository.getLastMessageOfRoom(roomId)
     }
 
     override fun updateRoomLastMessage(roomId: String, messageId: String) {
-        roomRepository.updateLastMessage(roomId, messageId).subscribeOn(Schedulers.io()).subscribe();
+        roomRepository.updateLastMessage(roomId, messageId).subscribeOn(Schedulers.io()).subscribe()
     }
 
     override fun updateUsersFromRoom(roomId: String): Observable<List<User>> {
-        return userRepository.getListUserInRoomFromNetworkRx(roomId);
+        return userRepository.getListUserInRoomFromNetworkRx(roomId)
     }
 
     override fun getAllRoomResultRx(filters: Array<Int>): Observable<List<Room>> {
-        return roomRepository.updateAndCreateListRoomReturnRx(filters);
+        return roomRepository.updateAndCreateListRoomReturnRx(filters)
     }
 
     override fun updateRoomUserCreated(roomId: String, userId: String) {
-        return roomRepository.updateUserCreated(roomId, userId);
+        return roomRepository.updateUserCreated(roomId, userId)
     }
 }
