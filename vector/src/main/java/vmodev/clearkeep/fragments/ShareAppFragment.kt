@@ -9,7 +9,12 @@ import androidx.fragment.app.Fragment
 import im.vector.databinding.FragmentShareAppBinding
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import android.content.Intent
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavDestination
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import im.vector.R
 import vmodev.clearkeep.ultis.OnSingleClickListener
 import javax.inject.Inject
@@ -36,6 +41,12 @@ class ShareAppFragment : DataBindingDaggerFragment(), IFragment {
                 shareApp()
             }
         })
+        binding.tvInviteYourFriends.setOnClickListener {
+            //            findNavController().navigate(R.id.navigation_settings,null,NavOptions.Builder().setPopUpTo(R.id.next_action,true).build())
+            findNavController()
+                    .navigate(R.id.next_action)
+
+        }
     }
 
     private fun shareApp() {

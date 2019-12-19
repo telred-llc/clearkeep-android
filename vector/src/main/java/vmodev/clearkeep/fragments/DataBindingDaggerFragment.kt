@@ -35,4 +35,5 @@ abstract class DataBindingDaggerFragment : Fragment(), HasAndroidInjector {
         compositeDisposable.clear()
         super.onDestroyView()
     }
+
 }

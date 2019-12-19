@@ -53,7 +53,13 @@
         android:id="@+id/shareAppFragment"
         android:name="vmodev.clearkeep.fragments.ShareAppFragment"
         android:label="@string/label_share_app"
-        tools:layout="@layout/fragment_share_app" />
+        tools:layout="@layout/fragment_share_app">
+        <action
+            android:id="@+id/next_action"
+            app:destination="@id/profileSettingsFragment"
+            app:popUpTo="@id/shareAppFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
     <fragment
         android:id="@+id/profileSettingsFragment"
         android:name="vmodev.clearkeep.fragments.ProfileSettingsFragment"
