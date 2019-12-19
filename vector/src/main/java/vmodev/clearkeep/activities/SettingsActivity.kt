@@ -37,12 +37,14 @@ class SettingsActivity : DataBindingDaggerActivity(), IActivity {
                 binding.toolbar.visibility = View.GONE
             }
             else -> {
-
                 binding.toolbar.visibility = View.VISIBLE
             }
-
         }
+    }
 
+    override fun onBackPressed() {
+        finish()
+        super.onBackPressed()
     }
 
     override fun getActivity(): FragmentActivity {

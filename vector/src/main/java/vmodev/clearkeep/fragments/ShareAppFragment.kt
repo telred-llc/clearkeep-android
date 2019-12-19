@@ -15,6 +15,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import im.vector.BuildConfig
 import im.vector.R
 import vmodev.clearkeep.ultis.OnSingleClickListener
 import javax.inject.Inject
@@ -41,7 +42,7 @@ class ShareAppFragment : DataBindingDaggerFragment(), IFragment {
                 shareApp()
             }
         })
-        binding.tvInviteYourFriends.setOnClickListener {
+        binding.tvBack.setOnClickListener {
             //            findNavController().navigate(R.id.navigation_settings,null,NavOptions.Builder().setPopUpTo(R.id.next_action,true).build())
             findNavController()
                     .navigate(R.id.next_action)
@@ -53,7 +54,7 @@ class ShareAppFragment : DataBindingDaggerFragment(), IFragment {
         val sharingIntent = Intent(android.content.Intent.ACTION_SEND)
         sharingIntent.type = "text/plain"
         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, resources.getString(R.string.riot_app_name))
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, resources.getString(R.string.url_share_app))
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, BuildConfig.CLEAR_KEEP_SERVER + BuildConfig.LINK_SHARE_APP)
         startActivity(Intent.createChooser(sharingIntent, resources.getString(R.string.riot_app_name)))
 
     }
