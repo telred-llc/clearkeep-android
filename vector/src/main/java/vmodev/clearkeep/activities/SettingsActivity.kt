@@ -20,7 +20,7 @@ class SettingsActivity : DataBindingDaggerActivity(), IActivity {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         binding.toolbar.setNavigationOnClickListener {
-            onBackPressed()
+            finish()
         }
         Navigation.findNavController(this, R.id.fragment).addOnDestinationChangedListener { controller, destination, arguments ->
             supportActionBar?.title = destination.label
