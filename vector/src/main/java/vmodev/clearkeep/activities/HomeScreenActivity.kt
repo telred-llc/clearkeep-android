@@ -1,6 +1,7 @@
 package vmodev.clearkeep.activities
 
 import android.app.Activity
+import android.content.ComponentCallbacks2
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -22,7 +23,7 @@ import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.viewmodels.interfaces.AbstractHomeScreenActivityViewModel
 import javax.inject.Inject
 
-class HomeScreenActivity : DataBindingDaggerActivity(), IActivity {
+class HomeScreenActivity : DataBindingDaggerActivity(), IActivity, ComponentCallbacks2 {
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractHomeScreenActivityViewModel>
 
@@ -121,5 +122,10 @@ class HomeScreenActivity : DataBindingDaggerActivity(), IActivity {
     override fun onResume() {
         super.onResume()
         doubleBackPressed = false
+    }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        CommonActivityUtils.onTrimMemory(this, level)
     }
 }

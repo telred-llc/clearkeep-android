@@ -64,6 +64,8 @@ abstract class DataBindingDaggerActivity : AppCompatActivity(), HasAndroidInject
     override fun onDestroy() {
         compositeDisposable.clear()
         super.onDestroy()
+        System.gc()
+        Runtime.getRuntime().gc()
     }
 
     override fun onResume() {

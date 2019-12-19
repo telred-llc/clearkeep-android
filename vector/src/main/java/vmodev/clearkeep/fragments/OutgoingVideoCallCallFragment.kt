@@ -21,10 +21,7 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import org.matrix.androidsdk.call.CallSoundsManager
-import org.matrix.androidsdk.call.IMXCall
-import org.matrix.androidsdk.call.MXCallListener
-import org.matrix.androidsdk.call.VideoLayoutConfiguration
+import org.matrix.androidsdk.call.*
 import org.webrtc.RendererCommon
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.fragments.Interfaces.IFragment
@@ -38,41 +35,44 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
 
     private lateinit var binding: FragmentOutgoingCallBinding
 
-    private lateinit var mxCall: IMXCall
+    private var mxCall: IMXCall? = null
     private var callView: View? = null
     private var callManager: CallsManager? = null
     private var callSoundsManager: CallSoundsManager? = null
-    private val videoLayoutConfiguration = VideoLayoutConfiguration(5, 66, 25, 25)
+    private var videoLayoutConfiguration: VideoLayoutConfiguration? = null
     private var disposableCallElapsedTime: Disposable? = null
     private var isConnecting: Boolean = false
     private var callListener: MXCallListener = object : MXCallListener() {
 
         override fun onCallEnd(aReasonId: Int) {
             super.onCallEnd(aReasonId)
-            Log.e("Tag", "--- Demo")
-            activity?.finish()
+            onDestroyView()
+        }
+
+        private fun removeLister() {
         }
 
         override fun onCallViewCreated(callView: View?) {
             super.onCallViewCreated(callView)
             val params = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT)
             params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
-            if (mxCall.isVideo) {
+            if (mxCall!!.isVideo) {
                 if (this@OutgoingVideoCallCallFragment.callView == null) {
                     this@OutgoingVideoCallCallFragment.callView = callView
                     insertCallView()
                 }
             }
+
         }
 
         override fun onReady() {
             super.onReady()
-            if (mxCall.isIncoming) {
-                mxCall.launchIncomingCall(videoLayoutConfiguration)
-                mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
+            if (mxCall!!.isIncoming) {
+                mxCall?.launchIncomingCall(videoLayoutConfiguration)
+                mxCall?.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
             } else {
-                mxCall.placeCall(videoLayoutConfiguration)
-                mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
+                mxCall?.placeCall(videoLayoutConfiguration)
+                mxCall?.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
             }
         }
 
@@ -84,20 +84,20 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
                     initComponent()
                 }
                 IMXCall.CALL_STATE_CONNECTED -> {
-                    mxCall.visibility = View.VISIBLE
-                    mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration)
-                    mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
+                    mxCall?.visibility = View.VISIBLE
+                    mxCall?.updateLocalVideoRendererPosition(videoLayoutConfiguration)
+                    mxCall?.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
 
                 }
                 IMXCall.CALL_STATE_ENDED -> {
                     Log.e("Tag", "--- Tag endcall 2")
-                    this@OutgoingVideoCallCallFragment.activity?.finish()
+//                    this@OutgoingVideoCallCallFragment.activity?.finish()
                 }
                 IMXCall.CALL_STATE_CONNECTING -> {
                     upDateTimeCall()
                 }
                 IMXCall.CALL_STATE_READY -> {
-                    if (mxCall.callElapsedTime > -1)
+                    if (mxCall!!.callElapsedTime > -1)
                         upDateTimeCall()
                 }
             }
@@ -106,7 +106,7 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun saveCallView() {
-        if (mxCall.callState != IMXCall.CALL_STATE_ENDED) {
+        if (mxCall?.callState != IMXCall.CALL_STATE_ENDED) {
             callView?.let {
                 (it.parent as ViewGroup).removeView(it)
                 callManager?.callView = it
@@ -119,11 +119,12 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
 
     private fun setupButtonControl() {
         binding.imageViewHangUp.setOnClickListener {
-            mxCall.hangup(null)
-            callManager?.onHangUp(null)
+            mxCall?.visibility = View.GONE
+            callManager?.rejectCall()
+            //  callManager?.onHangUp(null)
         }
         binding.imageViewSwitchCamera.setOnClickListener {
-            mxCall.switchRearFrontCamera()
+            mxCall?.switchRearFrontCamera()
         }
         binding.imageViewMicrophone.setOnClickListener {
             callSoundsManager?.let {
@@ -142,19 +143,19 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
             }
         }
         binding.imageViewGoToRoom.setOnClickListener {
-            mxCall.removeListener(callListener)
+            mxCall?.removeListener(callListener)
             CallsManager.getSharedInstance().setCallActivity(null)
             saveCallView()
             val intent = Intent(activity!!, RoomActivity::class.java)
-                    .putExtra(RoomActivity.EXTRA_ROOM_ID, mxCall.room.roomId)
-                    .putExtra(RoomActivity.EXTRA_START_CALL_ID, mxCall.callId)
+                    .putExtra(RoomActivity.EXTRA_ROOM_ID, mxCall?.room?.roomId)
+                    .putExtra(RoomActivity.EXTRA_START_CALL_ID, mxCall?.callId)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
             this.activity?.finish()
         }
         binding.imageViewScreenShare.setOnClickListener {
-            if (mxCall.isScreenCast) {
-                mxCall.cameraVideo()
+            if (mxCall!!.isScreenCast) {
+                mxCall?.cameraVideo()
             } else {
                 val mediaProjectionManager = activity?.application?.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
                 startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), SCREEN_SHARE_CODE)
@@ -162,7 +163,7 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
         }
 
         binding.imageViewMakeCamera.setOnClickListener {
-            mxCall.let {
+            mxCall?.let {
                 toggleVideo()
                 binding.mxCall = mxCall
             }
@@ -174,7 +175,7 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
         when (requestCode) {
             SCREEN_SHARE_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    mxCall.screenVideo(data)
+                    mxCall?.screenVideo(data)
                 }
             }
         }
@@ -186,14 +187,14 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
         binding.constraintLayoutRoot.removeView(callView)
         binding.constraintLayoutRoot.visibility = View.VISIBLE
 
-        if (mxCall.isVideo) {
+        if (mxCall!!.isVideo) {
             callView?.let {
                 if (it.parent != null)
                     (it.parent as ViewGroup).removeView(it)
                 binding.constraintLayoutRoot.addView(it, 0, params)
             }
         }
-        mxCall.visibility = View.GONE
+        mxCall?.visibility = View.GONE
     }
 
 
@@ -201,7 +202,7 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_outgoing_call, container, false, dataBinding.getDataBindingComponent())
         mxCall = CallsManager.getSharedInstance().activeCall
-        mxCall.createCallView()
+        mxCall?.createCallView()
         callManager = CallsManager.getSharedInstance()
         callSoundsManager = CallSoundsManager.getSharedInstance(this.activity)
         callView = callManager?.callView
@@ -220,17 +221,18 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onResume() {
         super.onResume()
-        mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration)
+        videoLayoutConfiguration = VideoLayoutConfiguration(5, 66, 25, 25)
+        mxCall?.updateLocalVideoRendererPosition(videoLayoutConfiguration)
         callManager?.let {
             if (it.activeCall != null) {
-                mxCall.addListener(callListener)
-                if (mxCall.callState == IMXCall.CALL_STATE_CONNECTED && mxCall.isVideo)
-                    mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration)
+                mxCall?.addListener(callListener)
+                if (mxCall!!.callState == IMXCall.CALL_STATE_CONNECTED && mxCall!!.isVideo)
+                    mxCall?.updateLocalVideoRendererPosition(videoLayoutConfiguration)
                 callView = it.callView
                 CallsManager.getSharedInstance().setCallActivity(this.activity)
                 callView?.let { insertCallView() }
             }
-            mxCall.visibility = View.VISIBLE
+            mxCall?.visibility = View.VISIBLE
             binding.constraintLayoutRoot.visibility = View.VISIBLE
         } ?: run {
             this.activity?.finish()
@@ -250,7 +252,7 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
             }
             binding.callSoundsManager = it
         }
-        mxCall.let {
+        mxCall?.let {
             if (it.isVideoRecordingMuted) {
                 toggleVideo()
             }
@@ -265,16 +267,16 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
         callSoundsManager?.let {
             binding.callSoundsManager = it
         }
-        mxCall.let {
+        mxCall?.let {
             binding.mxCall = mxCall
         }
     }
 
     private fun toggleVideo() {
-        mxCall.let {
-            if (mxCall.isVideo) {
-                val isMuted = mxCall.isVideoRecordingMuted
-                mxCall.muteVideoRecording(!isMuted)
+        mxCall?.let {
+            if (mxCall!!.isVideo) {
+                val isMuted = mxCall!!.isVideoRecordingMuted
+                mxCall?.muteVideoRecording(!isMuted)
             }
         }
     }
@@ -283,8 +285,28 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
         disposableCallElapsedTime?.dispose()
         disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    binding.tvTimeCall.text = mxCall.callElapsedTime.longTimeToString()
+                    binding.tvTimeCall.text = mxCall?.callElapsedTime?.longTimeToString()
                 }
+    }
+
+    override fun onDestroyView() {
+        Log.e("Tag", "--- Demo")
+        if (mxCall!!.isVideo) {
+            callView?.let {
+                if (it.parent != null)
+                    (it.parent as ViewGroup).removeView(it)
+            }
+        }
+        val defaultStun = getString(R.string.default_stun_server)
+        MXCallsManager.defaultStunServerUri = defaultStun
+        videoLayoutConfiguration = null
+        callSoundsManager = null
+        binding.linearLayoutControlGroup.removeAllViews()
+        disposableCallElapsedTime?.dispose()
+        mxCall?.removeListener(callListener)
+        callView = null
+        callManager = null
+        super.onDestroyView()
     }
 
     override fun onDestroy() {

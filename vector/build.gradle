@@ -470,6 +470,8 @@ dependencies {
     /*********************************************************************/
     implementation 'gun0912.ted:tedpermission:2.2.2'
     implementation project(path: ':stickyscrollviewitems')
+    /**********************************************************************/
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0'
 }
 
 //Ensure we never move past okhttp 3.12.x
