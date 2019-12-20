@@ -20,7 +20,7 @@ class SettingsActivity : DataBindingDaggerActivity(), IActivity {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         binding.toolbar.setNavigationOnClickListener {
-            onBackPressed()
+            finish()
         }
         Navigation.findNavController(this, R.id.fragment).addOnDestinationChangedListener { controller, destination, arguments ->
             supportActionBar?.title = destination.label
@@ -37,12 +37,14 @@ class SettingsActivity : DataBindingDaggerActivity(), IActivity {
                 binding.toolbar.visibility = View.GONE
             }
             else -> {
-
                 binding.toolbar.visibility = View.VISIBLE
             }
-
         }
+    }
 
+    override fun onBackPressed() {
+        finish()
+        super.onBackPressed()
     }
 
     override fun getActivity(): FragmentActivity {

@@ -5,6 +5,7 @@
     tools:context="vmodev.clearkeep.fragments.ShareAppFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="?attr/bg_share_app"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -36,7 +37,7 @@
             android:layout_marginTop="@dimen/margin_large"
             android:maxLines="2"
             android:text="@string/str_invite_your_friends_join_with_us"
-            android:textColor="@color/text_color_blue"
+            android:textColor="?attr/color_text_note_app_default"
             android:textSize="@dimen/text_17_sp"
             app:layout_constraintEnd_toEndOf="@+id/guideVertical"
             app:layout_constraintHorizontal_bias="0.0"
@@ -69,5 +70,18 @@
             android:text="@string/str_share_now"
             android:textColor="@color/color_white"
             app:layout_constraintTop_toBottomOf="@+id/guideBottom" />
+
+        <TextView
+            android:id="@+id/tv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/color_text_app_default"
+            android:text="@string/str_i_will_do_it_later"
+            android:textSize="@dimen/text_15_sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/btnShare"
+            app:layout_constraintStart_toStartOf="@+id/btnShare"
+            app:layout_constraintTop_toBottomOf="@id/btnShare" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

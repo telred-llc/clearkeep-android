@@ -1,101 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/lb_grey" />
-
-    <RelativeLayout
+<layout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white">
-
-        <ImageView
-            android:id="@+id/search_background_imageview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:background="@android:color/white"
-            android:src="@drawable/vector_search_bg"
-            android:visibility="gone" />
-
-        <!-- fragment container -->
-        <LinearLayout
-            android:id="@+id/search_main_page"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:orientation="vertical">
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/search_filter_tabs"
-                app:tabSelectedTextColor="@color/app_green"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?android:attr/colorBackground" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0px"
-                android:layout_weight="1">
-
-                <im.vector.view.VectorViewPager
-                    android:id="@+id/search_view_pager"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?android:attr/colorBackground" />
-
-                <ProgressBar
-                    android:id="@+id/search_load_oldest_progress"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:indeterminate="true"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/search_no_result_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/search_no_results"
-                    android:textSize="17sp"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-            </RelativeLayout>
-        </LinearLayout>
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical">
 
         <RelativeLayout
-            android:id="@+id/search_in_progress_view"
+            android:id="@+id/rlToolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
+            android:layout_height="wrap_content">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:tint="?attr/icon_color_setting"
+                android:id="@+id/imgBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/padding_normal"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:background="?attr/vctr_waiting_background_color" />
-
-            <ProgressBar
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:indeterminate="true" />
+                android:layout_centerInParent="true"
+                app:srcCompat="@drawable/ic_arrow_back_light" />
+            <androidx.appcompat.widget.SearchView
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:layout_marginEnd="50dp"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@+id/imgBack"
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="?attr/bg_search_view"
+                android:layout_marginStart="10dp"/>
         </RelativeLayout>
 
-    </RelativeLayout>
+        <com.google.android.material.tabs.TabLayout
+            android:layout_marginTop="5dp"
+            style="@style/MyCustomTabLayout"
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-</LinearLayout>
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+</layout>

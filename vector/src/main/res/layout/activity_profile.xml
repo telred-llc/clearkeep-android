@@ -262,10 +262,9 @@
                 android:layout_marginStart="@dimen/margin_large"
                 android:layout_toEndOf="@+id/imgLocation"
                 android:singleLine="true"
-                android:text="仙台市　日本国 - JP"
-                android:textColor="?attr/color_text_app_default"
-                android:textSize="@dimen/text_19_sp"
-                tools:text="仙台市　日本国 - JP" />
+                android:text="@string/your_location"
+                android:textColor="@color/text_color_hint"
+                android:textSize="@dimen/text_19_sp"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -293,10 +292,9 @@
                 android:layout_marginStart="@dimen/margin_large"
                 android:layout_toEndOf="@+id/imgPhone"
                 android:singleLine="true"
-                android:text="+84 222 11 5550"
-                android:textColor="?attr/color_text_app_default"
-                android:textSize="@dimen/text_19_sp"
-                tools:text="+84 222 11 5550" />
+                android:text="@string/your_phone"
+                android:textColor="@color/text_color_hint"
+                android:textSize="@dimen/text_19_sp"/>
         </RelativeLayout>
 
         <Button

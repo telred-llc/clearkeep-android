@@ -21,49 +21,18 @@
         android:baselineAligned="false"
         android:orientation="horizontal">
 
-        <FrameLayout
-            android:id="@+id/flAvatar"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/image_circle"
             android:layout_width="@dimen/image_avatar_status_size"
-            android:layout_height="@dimen/image_avatar_status_size">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/image_circle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:room="@{result.room.get(0)}" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="@dimen/status_online_size"
-                android:layout_height="@dimen/status_online_size"
-                android:layout_gravity="end|bottom"
-                android:layout_marginEnd="@dimen/margin_status_online"
-                android:layout_marginBottom="@dimen/margin_status_online"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="@dimen/radius_border_online_status"
-                app:cardElevation="0dp"
-                app:contentPadding="@dimen/padding_status_online">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/circle_image_view_status"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:cardBackgroundColor="@color/main_text_color_hint"
-                    app:cardCornerRadius="@dimen/radius_online_status"
-                    app:cardElevation="0dp"
-                    app:currentUserId="@{result.message.userId}"
-                    app:listUser="@{result.user}" />
-
-
-            </com.google.android.material.card.MaterialCardView>
-        </FrameLayout>
-
+            android:layout_height="@dimen/image_avatar_status_size"
+            app:room="@{result.room.get(0)}" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_toStartOf="@+id/imgCallVideo"
-            android:layout_toEndOf="@+id/flAvatar"
+            android:layout_toEndOf="@+id/image_circle"
             android:gravity="center_vertical"
             android:orientation="vertical">
 

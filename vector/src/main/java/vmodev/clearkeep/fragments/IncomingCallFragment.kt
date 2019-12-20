@@ -7,16 +7,26 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.facebook.react.bridge.UiThreadUtil.runOnUiThread
+import im.vector.Matrix
 import im.vector.R
+import im.vector.activity.CommonActivityUtils
+import im.vector.activity.VectorCallViewActivity
 import im.vector.databinding.FragmentIncomingCallBinding
 import im.vector.util.CallsManager
+import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.call.IMXCall
 import org.matrix.androidsdk.call.MXCallListener
 import org.matrix.androidsdk.call.VideoLayoutConfiguration
+import org.matrix.androidsdk.core.callback.ApiCallback
+import org.matrix.androidsdk.core.model.MatrixError
+import org.matrix.androidsdk.crypto.data.MXDeviceInfo
+import org.matrix.androidsdk.crypto.data.MXUsersDevicesMap
 import org.webrtc.RendererCommon
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractIncomingCallFragmentViewModel
+import java.lang.Exception
 import javax.inject.Inject
 
 /**
@@ -32,6 +42,7 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
     private var callView: View? = null
     private var callManager: CallsManager? = null
     private val videoLayoutConfiguration = VideoLayoutConfiguration(5, 66, 25, 25)
+    private var mxSession: MXSession? = null
     private val callListener = object : MXCallListener() {
 
         override fun onCallEnd(aReasonId: Int) {
@@ -43,6 +54,8 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
             super.onStateDidChange(state)
             when (state) {
                 IMXCall.CALL_STATE_ENDED -> {
+
+
                     this@IncomingCallFragment.activity?.finish()
                 }
                 IMXCall.CALL_STATE_CONNECTED -> {
@@ -96,6 +109,7 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mxSession = Matrix.getInstance(activity!!).defaultSession
         mxCall = CallsManager.getSharedInstance().activeCall
         mxCall.createCallView()
         callManager = CallsManager.getSharedInstance()

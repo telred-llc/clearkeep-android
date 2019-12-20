@@ -43,8 +43,11 @@ abstract class AbstractMessageDao {
     @Query("SELECT message.*FROM message")
     abstract fun getAllMessageWithRoomAndUser(): LiveData<List<MessageRoomUser>>
 
+    @Query("SELECT message.*FROM message WHERE Message.room_id =:roomId")
+    abstract fun getAllMessageWithRoomId(roomId: String): LiveData<List<MessageRoomUser>>
+
     @Query("SELECT Message.* FROM Message WHERE Message.room_id =:roomId")
-    abstract fun getMessageWithRoomId(roomId: String): List<Message>;
+    abstract fun getMessageWithRoomId(roomId: String): LiveData<List<Message>>
 
     @Query("SELECT Message.* FROM Message")
     abstract fun getAllMessageSync(): List<Message>;

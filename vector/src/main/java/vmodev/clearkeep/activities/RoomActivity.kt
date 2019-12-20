@@ -3854,18 +3854,29 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     @OnClick(R.id.image_view_video_call)
     internal fun onStartVideoCall() {
-        onCallItemClicked(1)
+        val call = CallsManager.getSharedInstance().activeCall
+        if (null != call) {
+            Toast.makeText(this, getString(R.string.str_you_re_already_on_a_call), Toast.LENGTH_LONG).show()
+        } else {
+            onCallItemClicked(1)
+        }
     }
 
     @OnClick(R.id.image_view_voice_call)
     internal fun onStartVoiceCall() {
-        onCallItemClicked(0)
+        val call = CallsManager.getSharedInstance().activeCall
+        if (null != call) {
+            Toast.makeText(this, getString(R.string.str_you_re_already_on_a_call), Toast.LENGTH_LONG).show()
+        } else {
+            onCallItemClicked(0)
+        }
     }
 
     @OnClick(R.id.image_view_search)
     internal fun onRoomSearch() {
         val intentSearch = Intent(this, UnifiedSearchActivity::class.java)
         intentSearch.putExtra(UnifiedSearchActivity.EXTRA_ROOM_ID, currentRoom?.roomId)
+        intentSearch.putExtra(UnifiedSearchActivity.USER_ID, mxSession!!.myUserId)
         startActivity(intentSearch)
     }
 

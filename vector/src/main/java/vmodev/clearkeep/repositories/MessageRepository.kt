@@ -157,6 +157,14 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
         }.asLiveData();
     }
 
+    fun getListMessageInTheRoom(roomId: String): LiveData<Resource<List<Message>>> {
+        return object : AbstractLocalLoadSource<List<Message>>(executors) {
+            override fun loadFromDB(): LiveData<List<Message>> {
+                return messageDao.getMessageWithRoomId(roomId);
+            }
+        }.asLiveData();
+    }
+
     @SuppressLint("CheckResult")
     fun updateListMessage() {
         matrixService.getMessagesToSearch().observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe {
@@ -178,6 +186,14 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
         return object : AbstractLocalLoadSource<List<MessageRoomUser>>(executors) {
             override fun loadFromDB(): LiveData<List<MessageRoomUser>> {
                 return messageDao.getAllMessageWithRoomAndUser();
+            }
+        }.asLiveData();
+    }
+
+    fun getListMessageRoomUserInRoom(roomId: String): LiveData<Resource<List<MessageRoomUser>>> {
+        return object : AbstractLocalLoadSource<List<MessageRoomUser>>(executors) {
+            override fun loadFromDB(): LiveData<List<MessageRoomUser>> {
+                return messageDao.getAllMessageWithRoomId(roomId);
             }
         }.asLiveData();
     }
