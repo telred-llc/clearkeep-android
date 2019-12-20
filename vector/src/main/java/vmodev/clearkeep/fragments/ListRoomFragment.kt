@@ -385,7 +385,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
         if (requestCode == GO_TO_ROOM_CODE && resultCode == -1) {
             data?.let {
                 binding.room = viewModelFactory.getViewModel().getUpdateRoomNotifyResult()
-                viewModelFactory.getViewModel().setIdForUpdateRoomNotify(it.getStringExtra(RoomActivity.RESULT_ROOM_ID))
+                viewModelFactory.getViewModel().setIdForUpdateRoomNotify(it.getStringExtra(RoomActivity.RESULT_ROOM_ID)!!)
             }
         }
     }

@@ -39,6 +39,7 @@ import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.KeyBackupRepository
 import vmodev.clearkeep.repositories.SignatureRepository
 import vmodev.clearkeep.repositories.UserRepository
+import vmodev.clearkeep.ultis.Debug
 import vmodev.clearkeep.viewmodelobjects.User
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -140,44 +141,47 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
         return this
     }
 
-    override fun startAutoKeyBackup(password: String?) {
+    override fun startAutoKeyBackup(password: String?, action: IApplication.IAction?) {
         session?.let { autoKeyBackup.startAutoKeyBackup(it.myUserId, password) }
         session?.let { s ->
             s.crypto?.let { crypto ->
-                userDao.findAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : SingleObserver<List<User>> {
-                    override fun onSuccess(t: List<User>) {
-                        t.forEach { u ->
-                            crypto.getUserDevices(u.id).forEach {
-                                crypto.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, it.deviceId, u.id, object : ApiCallback<Void> {
-                                    override fun onSuccess(info: Void?) {
+                userDao.findAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                        .doFinally {
+                        }.subscribe(object : SingleObserver<List<User>> {
+                            override fun onSuccess(t: List<User>) {
+                                t.forEach { u ->
+                                    crypto.getUserDevices(u.id).forEach {
+                                        crypto.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, it.deviceId, u.id, object : ApiCallback<Void> {
+                                            override fun onSuccess(info: Void?) {
+                                                Debug.e("--- deviceID: ${it.deviceId} - userID: ${u.id}")
+                                            }
+
+                                            override fun onUnexpectedError(e: Exception?) {
+                                                Debug.e("--- Error: ${e?.message}")
+                                            }
+
+                                            override fun onMatrixError(e: MatrixError?) {
+                                                Debug.e("--- Error: ${e?.message}")
+                                            }
+
+                                            override fun onNetworkError(e: Exception?) {
+                                                Debug.e("--- Error: ${e?.message}")
+                                            }
+                                        })
 
                                     }
+                                }
+                                action?.doFinaly()
+                            }
 
-                                    override fun onUnexpectedError(e: Exception?) {
-
-                                    }
-
-                                    override fun onMatrixError(e: MatrixError?) {
-
-                                    }
-
-                                    override fun onNetworkError(e: Exception?) {
-
-                                    }
-                                })
+                            override fun onSubscribe(d: Disposable) {
 
                             }
-                        }
-                    }
 
-                    override fun onSubscribe(d: Disposable) {
-
-                    }
-
-                    override fun onError(e: Throwable) {
-                        Log.d("DeviceId", e.message)
-                    }
-                })
+                            override fun onError(e: Throwable) {
+                                Log.d("DeviceId", e.message)
+                            }
+                        })
             }
         }
     }
@@ -185,4 +189,5 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
     override fun getUserId(): String {
         session?.let { return it.myUserId } ?: run { return "" }
     }
+
 }

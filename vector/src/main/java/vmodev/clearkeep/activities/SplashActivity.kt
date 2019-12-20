@@ -27,7 +27,9 @@ import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.listeners.IMXEventListener
 import org.matrix.androidsdk.listeners.MXEventListener
 import vmodev.clearkeep.activities.interfaces.ISplashActivity
+import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.ISplashActivityViewModelFactory
+import vmodev.clearkeep.ultis.Debug
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.User
@@ -249,11 +251,15 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
     private fun startHomeScreen() {
         android.util.Log.d("StartEvent", "Home")
         application.setEventHandler()
-        val intent = Intent(this, HomeScreenActivity::class.java)
-//            intent.putExtra(HomeScreenActivity.START_FROM_LOGIN, startFromLogin)
-        clearKeepApplication.startAutoKeyBackup(startFromLogin)
-        startActivity(intent)
-        finish()
+        clearKeepApplication.startAutoKeyBackup(startFromLogin, object : IApplication.IAction {
+            override fun doFinaly() {
+                Debug.e("--- StartActivity before backupkey")
+                val intent = Intent(this@SplashActivity, HomeScreenActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+
+        })
     }
 
     private fun checkLazyLoadingStatus(sessions: List<MXSession>) {

@@ -82,6 +82,7 @@ import org.matrix.androidsdk.rest.model.User
 import org.matrix.androidsdk.rest.model.message.Message
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.applications.IApplication
+import vmodev.clearkeep.dialogfragments.DialogFragmentChoiceSendFile
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.MessageListFragment
 import vmodev.clearkeep.repositories.MessageRepository
@@ -200,14 +201,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     @BindView(R.id.room_sending_message_layout)
     lateinit var mSendingMessagesLayout: View
 
-    @BindView(R.id.imgFile)
-    lateinit var mSendImageView: ImageView
-
     @BindView(R.id.editText_messageBox)
     lateinit var mEditText: VectorAutoCompleteTextView
-
-    @BindView(R.id.room_self_avatar)
-    lateinit var mAvatarImageView: ImageView
 
     @BindView(R.id.bottom_separator)
     lateinit var mBottomSeparator: View
@@ -235,8 +230,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     @BindView(R.id.room_action_bar_topic)
     lateinit var mActionBarCustomTopic: TextView
 
-//    @BindView(R.id.open_chat_header_arrow)
-//    lateinit var mActionBarCustomArrowImageView: ImageView
+    @BindView(R.id.btn_plus)
+    lateinit var btn_plus: ImageView
 
     // The room header view is displayed by clicking on the title of the action bar
 //    @BindView(R.id.action_bar_header)
@@ -304,14 +299,12 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     lateinit var invitationTextView: TextView
     @BindView(R.id.room_preview_subinvitation_textview)
     lateinit var subInvitationTextView: TextView
-    @BindView(R.id.button_send)
+    @BindView(R.id.btn_send)
     lateinit var buttonSend: ImageView
     @BindView(R.id.image_view_video_call)
     lateinit var imageViewVideoCall: ImageView
     @BindView(R.id.image_view_voice_call)
     lateinit var imageViewVoiceCall: ImageView
-    @BindView(R.id.image_view_cancel_edit)
-    lateinit var imageViewCancelEdit: ImageView
 
     @Inject
     lateinit var messageRepository: MessageRepository
@@ -2298,9 +2291,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      */
     private fun refreshSelfAvatar() {
         // sanity check
-        if (null != mAvatarImageView) {
-            VectorUtils.loadUserAvatar(this, mxSession, mAvatarImageView, mxSession!!.myUser)
-        }
+//        if (null != mAvatarImageView) {
+//            VectorUtils.loadUserAvatar(this, mxSession, mAvatarImageView, mxSession!!.myUser)
+//        }
     }
 
     /**
@@ -2397,23 +2390,13 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     fun insertSelectedMessageInTextEditor(event: Event, textMsg: String?) {
         currentEvent = event
         isEditedMode = true
-        imageViewCancelEdit.visibility = View.VISIBLE
         mEditText.setText(textMsg)
         textMsg?.let { mEditText.setSelection(it.length) }
-    }
-
-    @OnClick(R.id.image_view_cancel_edit)
-    internal fun onClickCancelEdit() {
-        isEditedMode = false
-        currentEvent = null
-        mEditText.setText("")
-        imageViewCancelEdit.visibility = View.GONE
     }
 
     /* ==========================================================================================
      * Implement VectorMessageListFragmentListener
      * ========================================================================================== */
-
     override fun showPreviousEventsLoadingWheel() {
         mBackProgressView.visibility = View.VISIBLE
     }
@@ -3568,6 +3551,28 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 .show()
     }
 
+    @OnClick(R.id.btn_plus)
+    internal fun onPlusClick() {
+        var dialog = DialogFragmentChoiceSendFile.newInstance()
+        dialog.iAction = object : DialogFragmentChoiceSendFile.IAction {
+            override fun sendFile() {
+                dialog.dismiss()
+                openFileSelection(this@RoomActivity, null, true, REQUEST_FILES_REQUEST_CODE)
+            }
+
+            override fun sendMedia() {
+                dialog.dismiss()
+                launchCamera()
+            }
+
+            override fun disableDialog() {
+                dialog.dismiss()
+            }
+
+        }
+        dialog.show(supportFragmentManager, DialogFragmentChoiceSendFile::class.java.simpleName)
+    }
+
     //    @OnClick(R.id.room_header_avatar)
     internal fun onRoomAvatarClick() {
         if (currentRoom != null && !TextUtils.isEmpty(currentRoom!!.avatarUrl))
@@ -3743,75 +3748,12 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         startActivityForResult(intent, WAITING_INFORMATION_ACTIVITY)
     }
 
-    @OnClick(R.id.button_send)
+    @OnClick(R.id.btn_send)
     internal fun onClickSend() {
-        imageViewCancelEdit.visibility = View.GONE
         if (!isEditedMode)
             sendTextMessage(mEditText.text.toString())
         else
             editTextMessage()
-    }
-
-    @OnClick(R.id.imgFile)
-    internal fun onClickSendFile() {
-
-        val items = ArrayList<DialogListItem>()
-
-        // Send file
-        onSendChoiceClicked(DialogListItem.SendFile)
-
-//        if (!TextUtils.isEmpty(mEditText.text) && !PreferencesManager.sendMessageWithEnter(this)) {
-//            sendTextMessage()
-//        } else {
-//            val useNativeCamera = PreferencesManager.useNativeCamera(this)
-//            val isVoiceFeatureEnabled = PreferencesManager.isSendVoiceFeatureEnabled(this)
-//
-//            when (PreferencesManager.getSelectedDefaultMediaSource(this)) {
-//                MEDIA_SOURCE_FILE -> {
-//                    onSendChoiceClicked(DialogListItem.SendFile)
-//                    return
-//                }
-//                MEDIA_SOURCE_VOICE -> if (isVoiceFeatureEnabled) {
-//                    onSendChoiceClicked(DialogListItem.SendVoice)
-//                    return
-//                }
-//                MEDIA_SOURCE_STICKER -> {
-//                    onSendChoiceClicked(DialogListItem.SendSticker)
-//                    return
-//                }
-//                MEDIA_SOURCE_PHOTO -> if (useNativeCamera) {
-//                    onSendChoiceClicked(DialogListItem.TakePhoto)
-//                    return
-//                } else {
-//                    onSendChoiceClicked(DialogListItem.TakePhotoVideo)
-//                    return
-//                }
-//                MEDIA_SOURCE_VIDEO -> if (useNativeCamera) {
-//                    onSendChoiceClicked(DialogListItem.TakeVideo)
-//                    return
-//                } else {
-//                    onSendChoiceClicked(DialogListItem.TakePhotoVideo)
-//                    return
-//                }
-//            }// show all options if voice feature is disabled
-//
-//            chooseMediaSource(useNativeCamera, isVoiceFeatureEnabled)
-//        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    @OnClick(R.id.button_special_symbol)
-    internal fun onClickSpecialSymbol() {
-        mEditText.setText(mEditText.text.toString() + "@")
-        mEditText.setSelection(mEditText.text.length)
-    }
-
-    @OnClick(R.id.image_view_send_image)
-    internal fun onClickSendImage() {
-        if (checkPermissions(PERMISSIONS_FOR_TAKING_PHOTO,
-                        this@RoomActivity, PERMISSION_REQUEST_CODE_LAUNCH_CAMERA)) {
-            launchCamera()
-        }
     }
 
     //    @OnLongClick(R.id.room_send_image_view)
@@ -3943,18 +3885,4 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         CallsManager.getSharedInstance().onHangUp(null)
     }
 
-    @OnClick(R.id.room_button_margin_right)
-    internal fun onMarginRightClick() {
-        // extend the right side of right button
-        // to avoid clicking in the void
-        if (mStopCallLayout.visibility == View.VISIBLE) {
-            mStopCallLayout.performClick()
-        }
-//        else if (mStartCallLayout!!.visibility == View.VISIBLE) {
-//            mStartCallLayout!!.performClick()
-//        }
-        else if (mSendImageView.visibility == View.VISIBLE) {
-            mSendImageView.performClick()
-        }
-    }
 }

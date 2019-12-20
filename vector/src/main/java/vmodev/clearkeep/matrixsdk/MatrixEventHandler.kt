@@ -23,8 +23,6 @@ import vmodev.clearkeep.ultis.matrixUrlToRealUrl
 import vmodev.clearkeep.ultis.toMessage
 import vmodev.clearkeep.ultis.toRoomCreate
 import vmodev.clearkeep.ultis.toRoomInvite
-import vmodev.clearkeep.viewmodelobjects.Message
-import vmodev.clearkeep.viewmodelobjects.Room
 import vmodev.clearkeep.workermanager.interfaces.IUpdateDatabaseFromMatrixEvent
 import javax.inject.Inject
 
@@ -40,34 +38,30 @@ class MatrixEventHandler @Inject constructor(
         , private val appExecutors: AppExecutors
         , private val updateDatabaseFromMatrixEvent: IUpdateDatabaseFromMatrixEvent)
     : MXEventListener(), IMatrixEventHandler, KeysBackupStateManager.KeysBackupStateListener {
-    private var mxSession: MXSession? = null;
+    private var mxSession: MXSession? = null
     override fun onAccountDataUpdated(accountDataElement: AccountDataElement?) {
         super.onAccountDataUpdated(accountDataElement)
-        val user = mxSession!!.myUser;
-        val userAvatarUrl = mxSession!!.contentManager.getDownloadableUrl(user.avatarUrl, false);
-        userRepository.updateUser(user.user_id, user.displayname, if (userAvatarUrl.isNullOrEmpty()) "" else userAvatarUrl);
+        val user = mxSession!!.myUser
+        val userAvatarUrl = mxSession!!.contentManager.getDownloadableUrl(user.avatarUrl, false)
+        userRepository.updateUser(user.user_id, user.displayname, if (userAvatarUrl.isNullOrEmpty()) "" else userAvatarUrl)
     }
 
     override fun onAccountInfoUpdate(myUser: MyUser?) {
         super.onAccountInfoUpdate(myUser)
         myUser?.let {
-            val avatarUrl = mxSession!!.contentManager.getDownloadableUrl(it.avatarUrl, false);
-            userRepository.updateUser(it.user_id, myUser.displayname, if (avatarUrl.isNullOrEmpty()) "" else avatarUrl);
+            val avatarUrl = mxSession!!.contentManager.getDownloadableUrl(it.avatarUrl, false)
+            userRepository.updateUser(it.user_id, myUser.displayname, if (avatarUrl.isNullOrEmpty()) "" else avatarUrl)
         }
-    }
-
-    override fun onDirectMessageChatRoomsListUpdate() {
-        super.onDirectMessageChatRoomsListUpdate()
     }
 
     override fun onLiveEventsChunkProcessed(fromToken: String?, toToken: String?) {
         super.onLiveEventsChunkProcessed(fromToken, toToken)
-        Log.d("Event Chunk:", fromToken + toToken);
+        Log.d("Event Chunk:", fromToken + toToken)
     }
 
     override fun onLiveEvent(event: Event?, roomState: RoomState?) {
-        Log.d("EventType", event?.type + "--" + event?.roomId);
-        Log.d("EventType", event?.toString());
+        Log.d("EventType", event?.type + "--" + event?.roomId)
+        Log.d("EventType", event?.toString())
         event?.let { e ->
             when (event.type) {
                 IMatrixEventHandler.M_ROOM_CREATE -> {
@@ -81,7 +75,7 @@ class MatrixEventHandler @Inject constructor(
                                                 }
                                         roomUserJoinRepository.updateOrCreateRoomUserJoinRx(event.roomId, mxSession!!.myUserId)
                                                 .subscribeOn(Schedulers.io())
-                                                .observeOn(AndroidSchedulers.mainThread()).subscribe();
+                                                .observeOn(AndroidSchedulers.mainThread()).subscribe()
                                     }
                         }
                     }
@@ -106,27 +100,27 @@ class MatrixEventHandler @Inject constructor(
                     userRepository.updateUser(event.sender).subscribeOn(Schedulers.io()).subscribe {
                         messageRepository.insertMessage(event.toMessage())
                                 .subscribeOn(Schedulers.io()).subscribe {
-                                    roomRepository.updateLastMessage(e.roomId, e.eventId).subscribeOn(Schedulers.io()).subscribe();
-                                    val contentObject = event.contentJson.asJsonObject;
+                                    roomRepository.updateLastMessage(e.roomId, e.eventId).subscribeOn(Schedulers.io()).subscribe()
+                                    val contentObject = event.contentJson.asJsonObject
                                     if (contentObject.has("membership") && TextUtils.equals(contentObject.get("membership").asString, "invite")
                                             && contentObject.has("is_direct") && contentObject.get("is_direct").asBoolean) {
                                         roomState?.let {
-                                            val selfMember = it.getMember(mxSession!!.myUserId);
+                                            val selfMember = it.getMember(mxSession!!.myUserId)
                                             if (selfMember != null) {
-                                                roomRepository.updateRoomType(event.roomId, 1).subscribeOn(Schedulers.io()).subscribe();
-                                                roomRepository.updateRoomName(event.roomId, contentObject.get("displayname").asString).subscribeOn(Schedulers.io()).subscribe();
+                                                roomRepository.updateRoomType(event.roomId, 1).subscribeOn(Schedulers.io()).subscribe()
+                                                roomRepository.updateRoomName(event.roomId, contentObject.get("displayname").asString).subscribeOn(Schedulers.io()).subscribe()
                                                 if (contentObject.has("avatar_url") && !contentObject.get("avatar_url").asString.isNullOrEmpty()) {
                                                     contentObject.get("avatar_url").asString.matrixUrlToRealUrl(mxSession)?.let {
-                                                        roomRepository.updateRoomAvatar(event.roomId, it).subscribeOn(Schedulers.io()).subscribe();
+                                                        roomRepository.updateRoomAvatar(event.roomId, it).subscribeOn(Schedulers.io()).subscribe()
                                                     }
                                                 } else {
 
                                                 }
                                             } else {
-                                                val member = it.getMember(event.sender);
-                                                roomRepository.updateRoomType(event.roomId, 1 or 64).subscribeOn(Schedulers.io()).subscribe();
+                                                val member = it.getMember(event.sender)
+                                                roomRepository.updateRoomType(event.roomId, 1 or 64).subscribeOn(Schedulers.io()).subscribe()
                                                 roomRepository.updateRoomName(event.roomId, String.format(application.resources.getString(R.string.room_displayname_invite_from), member.displayname))
-                                                        .subscribeOn(Schedulers.io()).subscribe();
+                                                        .subscribeOn(Schedulers.io()).subscribe()
                                                 member.avatarUrl.matrixUrlToRealUrl(mxSession)?.let {
                                                     roomRepository.updateRoomAvatar(event.roomId, it)
                                                             .subscribeOn(Schedulers.io()).subscribe()
@@ -134,12 +128,12 @@ class MatrixEventHandler @Inject constructor(
                                             }
                                         }
                                     }
-                                };
+                                }
                     }
                 }
                 IMatrixEventHandler.M_ROOM_NAME -> {
-                    val name = event.contentJson.asJsonObject.get("name").asString;
-                    roomRepository.updateRoomName(event.roomId, name).subscribeOn(Schedulers.io()).subscribe();
+                    val name = event.contentJson.asJsonObject.get("name").asString
+                    roomRepository.updateRoomName(event.roomId, name).subscribeOn(Schedulers.io()).subscribe()
                 }
                 IMatrixEventHandler.M_ROOM_POWER_LEVELS -> {
 
@@ -156,14 +150,13 @@ class MatrixEventHandler @Inject constructor(
                 else -> {
                     messageRepository.insertMessage(event.toMessage())
                             .subscribeOn(Schedulers.io()).subscribe {
-                                roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe();
-                            };
+                                roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe()
+                            }
                     if (!event.sender.equals(mxSession!!.myUserId)) {
-                        roomRepository.updateRoomNotificationCount(e.roomId).subscribeOn(Schedulers.io()).subscribe();
+                        roomRepository.updateRoomNotificationCount(e.roomId).subscribeOn(Schedulers.io()).subscribe()
                     } else {
                         Log.d("", "")
                     }
-
                 }
             }
         }
@@ -172,43 +165,32 @@ class MatrixEventHandler @Inject constructor(
     /**
      * Handle user status
      */
-    override fun onPresenceUpdate(event: Event?
-                                  , user: User
-            ?
-    ) {
+    override fun onPresenceUpdate(event: Event?, user: User?) {
         super.onPresenceUpdate(event, user)
         user?.let {
-
             userRepository.updateUserStatus(it.user_id, if (it.presence.compareTo("online") == 0) 1 else 0)
         }
     }
 
-    override fun onBingEvent(event: Event?
-                             , roomState: RoomState
-            ?
-                             , bingRule: BingRule
-            ?
-    ) {
+    override fun onBingEvent(event: Event?, roomState: RoomState?, bingRule: BingRule?) {
         super.onBingEvent(event, roomState, bingRule)
-        Log.d("hang_call",event?.type + "--" + event?.roomId)
+        Log.d("hang_call", event?.type + "--" + event?.roomId)
     }
 
-    override fun getMXEventListener(mxSession: MXSession)
-            : MXEventListener {
-        this.mxSession = mxSession;
-        mxSession.crypto?.keysBackup?.removeListener(this);
-        mxSession.crypto?.keysBackup?.addListener(this);
-        return this;
+    override fun getMXEventListener(mxSession: MXSession): MXEventListener {
+        this.mxSession = mxSession
+        mxSession.crypto?.keysBackup?.removeListener(this)
+        mxSession.crypto?.keysBackup?.addListener(this)
+        return this
     }
 
     protected fun finalize() {
-        mxSession?.crypto?.keysBackup?.removeListener(this);
+        mxSession?.crypto?.keysBackup?.removeListener(this)
     }
 
-    override fun onStateChange(newState: KeysBackupStateManager.KeysBackupState
-    ) {
-        keyBackupRepository.updateKeyBackup(mxSession!!.myUserId);
-        signatureRepository.updateSignature(mxSession!!.myUserId);
+    override fun onStateChange(newState: KeysBackupStateManager.KeysBackupState) {
+        keyBackupRepository.updateKeyBackup(mxSession!!.myUserId)
+        signatureRepository.updateSignature(mxSession!!.myUserId)
     }
 
 }

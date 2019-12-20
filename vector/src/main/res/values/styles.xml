@@ -345,6 +345,7 @@
         <attr name="drawable_new_message" format="reference" />
         <attr name="background_color_calling" format="color" />
         <attr name="drawable_send" format="reference" />
+        <attr name="drawable_plus" format="reference" />
         <attr name="bg_share_app" format="reference" />
 
     </declare-styleable>
@@ -436,6 +437,7 @@
         <item name="drawable_new_message">@drawable/ic_new_message_dark</item>
         <item name="background_color_calling">@drawable/background_color_calling_dark</item>
         <item name="drawable_send">@drawable/ic_send_dark</item>
+        <item name="drawable_plus">@drawable/ic_plus_dark</item>
         <item name="bg_share_app">@drawable/bg_share_app_dark_model</item>
 
     </style>
@@ -522,6 +524,7 @@
         <item name="drawable_new_message">@drawable/ic_new_message_light</item>
         <item name="background_color_calling">@color/background_color_calling_light</item>
         <item name="drawable_send">@drawable/ic_send_light</item>
+        <item name="drawable_plus">@drawable/ic_plus_light</item>
         <item name="bg_share_app">@drawable/bg_app_light_mode</item>
     </style>
 

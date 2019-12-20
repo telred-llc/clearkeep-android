@@ -2,7 +2,6 @@ package vmodev.clearkeep.bindingadapters
 
 import android.graphics.drawable.Drawable
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -30,6 +29,7 @@ import org.matrix.androidsdk.rest.model.message.ImageMessage
 import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
 import vmodev.clearkeep.enums.EventTypeEnum
 import vmodev.clearkeep.jsonmodels.MessageContent
+import vmodev.clearkeep.ultis.Debug
 import vmodev.clearkeep.ultis.formatSizeData
 import vmodev.clearkeep.ultis.toDateTime
 import vmodev.clearkeep.viewmodelobjects.Message
@@ -104,13 +104,39 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
     override fun bindDecryptMessage(textView: TextView, message: Message?) {
         message?.let {
             val session = Matrix.getInstance(textView.context.applicationContext).defaultSession
+
             val parser = JsonParser()
             val gson = Gson()
             val event = Event(message.messageType, parser.parse(message.encryptedContent).asJsonObject, message.userId, message.roomId)
-            Log.e("Tag", "--- MessageType: ${message.messageType}$\n--- Content: ${message.encryptedContent}")
+            /*when(message.messageType){
+                Event.EVENT_TYPE_MESSAGE_ENCRYPTED -> {
+                    try {
+                        val result = session.dataHandler.crypto?.decryptEvent(event, null)
+                        result?.let {
+                            val json = result.mClearEvent.asJsonObject
+                            val type = json.get("type").asString
+                            if (!type.isNullOrEmpty() && type.compareTo(Event.EVENT_TYPE_MESSAGE) == 0) {
+                                val message = gson.fromJson(result.mClearEvent, MessageContent::class.java)
+                                textView.text = message?.content?.body!!
+                            }
+                        }
+                    } catch (e: MXDecryptionException) {
+                        textView.text = message.encryptedContent
+                        Debug.e("--- Error: ${e.message}")
+                        Debug.e("--- message: ${message.encryptedContent}")
+                    }
+                    Debug.e("--- Encrypt: ${message.messageType}")
+                }
+                else -> {
+                    Debug.e("--- NoEncrypt")
+                    textView.text = message.encryptedContent
+                }
+
+            }
+            return*/
             if (message.messageType.compareTo(Event.EVENT_TYPE_MESSAGE_ENCRYPTED) != 0) {
-                val message = gson.fromJson(message.encryptedContent, MessageContent::class.java)
-                textView.text = message.content?.body
+                textView.text = message.encryptedContent
+                Debug.e("--- message: ${message.encryptedContent}")
             } else {
                 try {
                     val result = session.dataHandler.crypto?.decryptEvent(event, null)
@@ -119,12 +145,16 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
                         val type = json.get("type").asString
                         if (!type.isNullOrEmpty() && type.compareTo(Event.EVENT_TYPE_MESSAGE) == 0) {
                             val message = gson.fromJson(result.mClearEvent, MessageContent::class.java)
-                            textView.text = message.content?.body
+                            textView.text = message?.content?.body!!
+                            Debug.e("--- message: ${message.content?.body!!}")
+                        } else {
+                            Debug.e("--- message: null")
                         }
                     }
                 } catch (e: MXDecryptionException) {
-                    val message = gson.fromJson(message.encryptedContent, MessageContent::class.java)
-                    textView.text = message.content?.body
+                    textView.text = message.encryptedContent
+                    Debug.e("--- Error: ${e.message}")
+                    Debug.e("--- message: ${message.encryptedContent}")
                 }
             }
         }

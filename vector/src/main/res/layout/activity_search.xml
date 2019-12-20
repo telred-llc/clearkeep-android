@@ -20,35 +20,34 @@
             android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:tint="?attr/icon_color_setting"
                 android:id="@+id/imgBack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/padding_normal"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
+                android:padding="@dimen/padding_normal"
+                android:tint="?attr/icon_color_setting"
                 app:srcCompat="@drawable/ic_arrow_back_light" />
+
             <androidx.appcompat.widget.SearchView
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:layout_marginEnd="50dp"
-                android:layout_alignParentEnd="true"
-                android:layout_toEndOf="@+id/imgBack"
                 android:id="@+id/search_view"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="50dp"
+                android:layout_toEndOf="@+id/imgBack"
                 android:background="?attr/bg_search_view"
-                android:layout_marginStart="10dp"/>
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
         </RelativeLayout>
 
-
-
         <com.google.android.material.tabs.TabLayout
-            android:layout_marginTop="5dp"
-            style="@style/MyCustomTabLayout"
             android:id="@+id/tab_layout"
+            style="@style/MyCustomTabLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/view_pager"
