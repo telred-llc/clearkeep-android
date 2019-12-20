@@ -181,6 +181,7 @@ class CreateNewCallFragment : DataBindingDaggerFragment(), IFragment {
         intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, application.getUserId())
         intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, roomId)
         startActivity(intentRoom)
+        this.activity?.finish()
     }
 
     override fun getFragment(): Fragment {

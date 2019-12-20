@@ -1047,6 +1047,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
         if (userId.compareTo(mSession.myUserId) != 0) {
             intent = Intent(this.context, ViewUserProfileActivity::class.java)
             intent.putExtra(ViewUserProfileActivity.USER_ID, userId)
+            intent.putExtra(ViewUserProfileActivity.ROOM_ID, mRoom.roomId)
         } else {
             intent = Intent(this.context, ProfileActivity::class.java)
         }
