@@ -8,10 +8,8 @@ import android.text.format.DateUtils
 import android.view.View
 import android.widget.*
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.google.gson.JsonElement
 import im.vector.R
-import im.vector.adapters.VectorMessagesAdapter
 import im.vector.listeners.IMessagesAdapterActionsListener
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.core.JsonUtils
@@ -25,7 +23,7 @@ import org.matrix.androidsdk.listeners.MXMediaDownloadListener
 import org.matrix.androidsdk.listeners.MXMediaUploadListener
 import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.message.*
-import java.util.HashMap
+import java.util.*
 
 internal class MessagesAdapterMediasHelper constructor(private val mContext: Context,
                                                        private val mSession: MXSession,

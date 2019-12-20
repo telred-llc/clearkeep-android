@@ -1882,6 +1882,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                                 messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
                                                 messageRooUser.let { it1 -> messagesResult.add(it1) }
                                             } else {
+                                                Log.e("Tag", "--- Khong co gi hien ")
                                             }
                                         }
 

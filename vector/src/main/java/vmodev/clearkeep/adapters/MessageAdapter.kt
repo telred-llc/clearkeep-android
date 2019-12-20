@@ -427,7 +427,7 @@ internal constructor(// session
 
     override fun addToFront(row: MessageRow) {
         if (isSupportedRow(row)) {
-            android.util.Log.d("AddItem", row.event.contentJson.toString())
+            Log.d("Tag", row.event.contentJson.toString())
             // ensure that notifyDataSetChanged is not called
             // it seems that setNotifyOnChange is reinitialized to true;
             setNotifyOnChange(false)
@@ -1177,7 +1177,6 @@ internal constructor(// session
         } catch (e: Exception) {
             Log.e(LOG_TAG, "## getTextView() failed : " + e.message, e)
         }
-
         return convertView
     }
 
@@ -1186,7 +1185,6 @@ internal constructor(// session
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(mRowTypeToLayoutId[viewType]!!, parent, false)
         }
-
         try {
             var row = getItem(position)
             var event: Event? = row!!.event

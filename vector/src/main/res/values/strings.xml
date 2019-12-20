@@ -2025,5 +2025,8 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="title_dialog_new_version_avaliable">New version available</string>
     <string name="message_dialog_update_version_application">Please, update the app to the new version to continue using</string>
     <string name="title_button_confirm">Update</string>
+    <string name="title_dialog_choice_send_file">Content and Tools</string>
+    <string name="title_choice_file">Send File</string>
+    <string name="title_choice_media">Send Photo or Video</string>
 
 </resources>
