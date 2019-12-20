@@ -383,7 +383,14 @@ object NotificationUtils {
                                       largeIcon: Bitmap?,
                                       lastMessageTimestamp: Long,
                                       senderDisplayNameForReplyCompat: String?): Notification? {
-
+        var notificationMessage: String = ""
+        val countNotification = messageStyle.messages.size
+        if (countNotification > 0)
+            notificationMessage = if (countNotification == 1) {
+                context.resources.getString(R.string.notification_one_message)
+            } else {
+                messageStyle.messages.size.toString().plus(context.resources.getString(R.string.notification_messages))
+            }
         val accentColor = ContextCompat.getColor(context, R.color.notification_accent_color)
         // Build the pending intent for when the notification is clicked
         val openRoomIntent = buildOpenRoomIntent(context, roomInfo.roomId)
@@ -406,9 +413,7 @@ object NotificationUtils {
                 .setContentText(context.getString(R.string.notification_new_messages))
 
                 // Number of new notifications for API <24 (M and below) devices.
-                .setSubText(context
-                        .resources
-                        .getQuantityString(R.plurals.room_new_messages_notification, messageStyle.messages.size, messageStyle.messages.size)
+                .setSubText(notificationMessage
                 )
 
                 // Auto-bundling is enabled for 4 or more notifications on API 24+ (N+)
@@ -661,11 +666,11 @@ object NotificationUtils {
                 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
-    fun showNotificationMessage(context: Context, tag: String?, id: Int, notification: Notification, body : String?) {
+    fun showNotificationMessage(context: Context, tag: String?, id: Int, notification: Notification, body: String?) {
         with(NotificationManagerCompat.from(context)) {
-            if (body==null){
+            if (body == null) {
                 notify(tag, id, notification)
-            }else if (!body!!.startsWith("*")){
+            } else if (!body!!.startsWith("*")) {
                 notify(tag, id, notification)
             }
         }
