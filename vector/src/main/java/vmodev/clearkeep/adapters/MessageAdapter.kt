@@ -73,6 +73,7 @@ import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.message.Message
 import org.matrix.androidsdk.view.HtmlTagHandler
+import vmodev.clearkeep.ultis.Debug
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -820,6 +821,7 @@ internal constructor(// session
      */
     fun onEventTap(event: Event?) {
         // the tap to select is only enabled when the adapter is not in search mode.
+
         if (!mIsSearchMode) {
             if (null == currentSelectedEvent) {
                 currentSelectedEvent = event
@@ -827,7 +829,6 @@ internal constructor(// session
                 currentSelectedEvent = null
             }
             notifyDataSetChanged()
-
             if (mVectorMessagesAdapterEventsListener != null) {
                 mVectorMessagesAdapterEventsListener!!.onSelectedEventChange(currentSelectedEvent)
             }
@@ -1025,12 +1026,10 @@ internal constructor(// session
         convertView.isClickable = true
 
         // click on the message row select it
-//        convertView.setOnClickListener {
-//            Log.e("TAG", "--- Click tag item 6")
-//            if (null != mVectorMessagesAdapterEventsListener) {
-//                mVectorMessagesAdapterEventsListener!!.onRowClick(position)
-//            }
-//        }
+        convertView.setOnClickListener {
+            Debug.e("--- Click tag item 6")
+            mVectorMessagesAdapterEventsListener?.onRowClick(position)
+        }
 
         // long click on the message row display the message options menu
         convertView.setOnLongClickListener { null != mVectorMessagesAdapterEventsListener && mVectorMessagesAdapterEventsListener!!.onRowLongClick(position) }
@@ -1063,17 +1062,16 @@ internal constructor(// session
         mHelper.setSenderValue(convertView, row, isMergedView)
 
         // message timestamp
-        val tsTextView = MessagesAdapterHelper.setTimestampValue(convertView, getFormattedTimestamp(event))
-
-        if (null != tsTextView) {
-            if (row.event.isUndelivered || row.event.isUnknownDevice) {
-                tsTextView.setTextColor(mNotSentMessageTextColor)
-            } else {
-                tsTextView.setTextColor(ThemeUtils.getColor(mContext, android.R.attr.textColorSecondary))
-            }
-
-            tsTextView.visibility = if (position + 1 == count || mIsSearchMode || mAlwaysShowTimeStamps) View.VISIBLE else View.GONE
-        }
+//        val tsTextView = MessagesAdapterHelper.setTimestampValue(convertView, getFormattedTimestamp(event))
+//        if (null != tsTextView) {
+//            if (row.event.isUndelivered || row.event.isUnknownDevice) {
+//                tsTextView.setTextColor(mNotSentMessageTextColor)
+//            } else {
+//                tsTextView.setTextColor(ThemeUtils.getColor(mContext, android.R.attr.textColorSecondary))
+//            }
+//
+//            tsTextView.visibility = if (position + 1 == count || mIsSearchMode || mAlwaysShowTimeStamps) View.VISIBLE else View.GONE
+//        }
 
         // Sender avatar
         val avatarView = mHelper.setSenderAvatar(convertView, row, isMergedView)
@@ -1927,7 +1925,7 @@ internal constructor(// session
         val isSelected = isInSelectionMode && TextUtils.equals(eventId, currentSelectedEvent!!.eventId)
 
         // display the action icon when selected
-        contentView.findViewById<View>(R.id.messagesAdapter_action_image).visibility = if (isSelected) View.VISIBLE else View.GONE
+//        contentView.findViewById<View>(R.id.messagesAdapter_action_image).visibility = if (isSelected) View.VISIBLE else View.GONE
 
         val alpha = if (!isInSelectionMode || isSelected) 1.0f else 0.2f
 
@@ -2075,14 +2073,14 @@ internal constructor(// session
 
         if (null != e2eIconView) {
             val senderMargin = inflatedView.findViewById<View>(R.id.e2e_sender_margin)
-            val senderNameView = inflatedView.findViewById<View>(R.id.messagesAdapter_sender)
+//            val tvTimerSender = inflatedView.findViewById<View>(R.id.tv_timer_sender)
 
             val row = getItem(position)
             val event = row!!.event
 
             if (mE2eIconByEventId.containsKey(event.eventId)) {
                 if (null != senderMargin) {
-                    senderMargin.visibility = senderNameView.visibility
+//                    senderMargin.visibility = tvTimerSender.visibility
                 }
                 e2eIconView.visibility = View.VISIBLE
 

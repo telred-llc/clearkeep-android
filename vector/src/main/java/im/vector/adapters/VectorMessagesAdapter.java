@@ -2221,7 +2221,7 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
 
         if (null != e2eIconView) {
             View senderMargin = inflatedView.findViewById(R.id.e2e_sender_margin);
-            View senderNameView = inflatedView.findViewById(R.id.messagesAdapter_sender);
+            View senderNameView = inflatedView.findViewById(R.id.messagesAdapter_timestamp);
 
             MessageRow row = getItem(position);
             final Event event = row.getEvent();
