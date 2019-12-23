@@ -26,6 +26,6 @@ data class Message(
         @field:SerializedName("encrypted_content") var encryptedContent: String,
         @field:SerializedName("message_type") val messageType: String,
         @ColumnInfo(name = "room_id") val roomId: String,
-        @ColumnInfo(name = "user_id") val userId: String,
-        @ColumnInfo(name = "created_at") val createdAt : Long
+        @ColumnInfo(name = "user_id") @SerializedName("userId") val userId: String,
+        @ColumnInfo(name = "created_at") @SerializedName("createdAt") val createdAt: Long
 )

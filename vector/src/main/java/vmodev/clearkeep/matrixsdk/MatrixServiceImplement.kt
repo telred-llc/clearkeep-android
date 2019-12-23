@@ -1870,13 +1870,13 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                             val messageType = message.content?.msgType
                                             if (msgType == EventTypeEnum.TEXT.value && messageType == EventTypeEnum.TEXT.value) {
                                                 item.message?.let {
-                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = message?.content?.body!!, createdAt = if (item.message != null) item.message!!.createdAt else 0)
+                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = message?.content?.body!!, createdAt = item.message!!.createdAt)
                                                 }
                                                 messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
                                                 messageRooUser.let { it1 -> messagesResult.add(it1) }
                                             } else if (msgType == EventTypeEnum.IMAGE.value && (messageType == EventTypeEnum.IMAGE.value || messageType == EventTypeEnum.VIDEO.value || messageType == EventTypeEnum.AUDIO.value || messageType == EventTypeEnum.FILE.value)) {
                                                 item.message?.let {
-                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = json.getAsJsonObject("content").toString(), createdAt = if (item.message != null) item.message!!.createdAt else 0)
+                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = json.getAsJsonObject("content").toString(), createdAt = item.message!!.createdAt)
                                                     //                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = message.getContent().getBody(), createdAt = if (item.message != null) item.message!!.createdAt else 0)
                                                 }
                                                 messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
@@ -1899,7 +1899,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                                 }
                                                 //
                                                 item.message?.let {
-                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = typeCall, createdAt = if (item.message != null) item.message!!.createdAt else 0)
+                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = typeCall, createdAt = item.message!!.createdAt)
                                                 }
                                                 messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
                                                 callContent.getContent()?.getCallId()?.let { it1 -> callHistoryFilter.put(it1, messageRooUser) }

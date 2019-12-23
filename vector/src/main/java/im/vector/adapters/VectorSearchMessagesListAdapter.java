@@ -113,9 +113,9 @@ public class VectorSearchMessagesListAdapter extends VectorMessagesAdapter {
             mHelper.loadMemberAvatar(avatarView, row);
 
             // display the sender
-            TextView senderTextView = convertView.findViewById(R.id.messagesAdapter_sender);
-            if (senderTextView != null) {
-                senderTextView.setText(row.getSenderDisplayName());
+            TextView tvTimerSender = convertView.findViewById(R.id.messagesAdapter_timestamp);
+            if (tvTimerSender != null) {
+                tvTimerSender.setText(row.getSenderDisplayName());
             }
 
             // display the body

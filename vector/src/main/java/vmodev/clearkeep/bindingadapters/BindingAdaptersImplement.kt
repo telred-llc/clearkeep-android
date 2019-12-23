@@ -136,7 +136,6 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
             return*/
             if (message.messageType.compareTo(Event.EVENT_TYPE_MESSAGE_ENCRYPTED) != 0) {
                 textView.text = message.encryptedContent
-                Debug.e("--- message: ${message.encryptedContent}")
             } else {
                 try {
                     val result = session.dataHandler.crypto?.decryptEvent(event, null)
