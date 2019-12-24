@@ -241,7 +241,7 @@ class NotificationAreaView @JvmOverloads constructor(
             if (state.unreadCount == 1) {
                 messageView.text = resources.getString(R.string.notification_one_message)
             } else {
-                messageView.text = state.unreadCount.toString().plus(resources.getString(R.string.notification_messages))
+                messageView.text = state.unreadCount.toString().plus(" ").plus(resources.getString(R.string.notification_messages))
             }
 //            messageView.text = SpannableString(resources.getQuantityString(R.plurals.room_new_messages_notification, state.unreadCount, state.unreadCount))
         } else {
