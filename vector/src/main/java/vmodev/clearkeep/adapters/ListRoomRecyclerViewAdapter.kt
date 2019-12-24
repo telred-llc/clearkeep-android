@@ -17,6 +17,7 @@ import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
 import vmodev.clearkeep.bindingadapters.interfaces.IDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.ultis.FormatString
+import vmodev.clearkeep.ultis.OnSingleClickListener
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
 
 class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<RoomListUser>, private val dataBindingComponent: IDataBindingComponent)
@@ -36,12 +37,24 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
         val binding: ViewDataBinding
         if (p1 == 0) {
             binding = DataBindingUtil.inflate<RoomInviteItemBinding>(LayoutInflater.from(p0.context), layouts[p1], p0, false, dataBindingComponent.getDataBindingComponent())
-            binding.root.setOnClickListener { binding.roomListUser?.let { itemClick.invoke(it, 0) } }
-            binding.buttonJoin.setOnClickListener { binding.roomListUser?.let { itemClick.invoke(it, 1) } }
+            binding.root.setOnClickListener(object : OnSingleClickListener() {
+                override fun onSingleClick(v: View) {
+                    binding.roomListUser?.let { itemClick.invoke(it, 0) }
+                }
+            })
+            binding.buttonJoin.setOnClickListener {
+                binding.roomListUser?.let {
+                    itemClick.invoke(it, 1)
+                }
+            }
             binding.buttonDecline.setOnClickListener { binding.roomListUser?.let { itemClick.invoke(it, 2) } }
         } else {
             binding = DataBindingUtil.inflate<RoomItemBinding>(LayoutInflater.from(p0.context), layouts[p1], p0, false, dataBindingComponent.getDataBindingComponent())
-            binding.root.setOnClickListener { binding.roomListUser?.let { itemClick.invoke(it, 3) } }
+            binding.root.setOnClickListener(object : OnSingleClickListener() {
+                override fun onSingleClick(v: View) {
+                    binding.roomListUser?.let { itemClick.invoke(it, 3) }
+                }
+            })
             binding.root.setOnLongClickListener { v: View? ->
                 binding.roomListUser?.let { itemLongClick.invoke(it) }
                 return@setOnLongClickListener true
