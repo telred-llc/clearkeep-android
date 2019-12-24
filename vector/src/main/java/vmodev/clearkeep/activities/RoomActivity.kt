@@ -1031,8 +1031,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             // listen for room name or topic changes
             currentRoom!!.addEventListener(mRoomEventListener)
 
-            setEditTextHint(mVectorMessageListFragment!!.currentSelectedEvent)
-
             mSyncInProgressView.visibility = if (VectorApp.isSessionSyncing(mxSession)) View.VISIBLE else View.GONE
         } else {
             mSyncInProgressView.visibility = View.GONE
@@ -1120,31 +1118,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         }
 
         Log.d(LOG_TAG, "-- Resume the activity")
-    }
-
-    /**
-     * Update the edit text hint. It depends on the encryption and on the currently selected event
-     *
-     * @param selectedEvent the currently selected event or null if no event is selected
-     */
-    private fun setEditTextHint(selectedEvent: Event?) {
-        if (currentRoom == null) {
-            return
-        }
-
-        if (currentRoom!!.canReplyTo(selectedEvent)) {
-            // User can reply to this event
-            mEditText.setHint(if ((currentRoom!!.isEncrypted && mxSession!!.isCryptoEnabled))
-                R.string.room_message_placeholder_reply_to_encrypted
-            else
-                R.string.room_message_placeholder_reply_to_not_encrypted)
-        } else {
-            // default hint
-            mEditText.setHint(if ((currentRoom!!.isEncrypted && mxSession!!.isCryptoEnabled))
-                R.string.room_message_placeholder_encrypted
-            else
-                R.string.room_message_placeholder_not_encrypted)
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -1796,7 +1769,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     jsonObject.addProperty("msgtype", "m.text")
                     val gson = Gson()
                     jsonObject.add("m.new_content", gson.toJsonTree(mapNewContent))
-                    val event = Event("m.room.message", jsonObject, it.sender, it.roomId)
+                    val event = Event(Event.EVENT_TYPE_MESSAGE, jsonObject, it.sender, it.roomId)
                     event.eventId = it.eventId
                     messageRepository.editMessageRx(event).subscribe({
                         Toast.makeText(this@RoomActivity, "Edited", Toast.LENGTH_SHORT).show()
@@ -1823,10 +1796,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     fun sendMessage(body: String, formattedBody: String?, format: String, handleSlashCommand: Boolean) {
         if (!TextUtils.isEmpty(body)) {
             if ((!handleSlashCommand || !vmodev.clearkeep.ultis.SlashCommandsParser.manageSplashCommand(this, mxSession, currentRoom, body, formattedBody, format))) {
-                val currentSelectedEvent = mVectorMessageListFragment!!.currentSelectedEvent
-
+//                val currentSelectedEvent = mVectorMessageListFragment!!.currentSelectedEvent
+                val currentSelectedEvent = null
                 cancelSelectionMode()
-
                 mVectorMessageListFragment!!.sendTextMessage(body, formattedBody, currentSelectedEvent, format)
             }
         }
@@ -2422,8 +2394,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     }
 
     override fun onSelectedEventChange(currentSelectedEvent: Event?) {
-        // Update hint
-        setEditTextHint(currentSelectedEvent)
     }
 
     //================================================================================
@@ -3750,10 +3720,11 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     @OnClick(R.id.btn_send)
     internal fun onClickSend() {
-        if (!isEditedMode)
+        if (!isEditedMode) {
             sendTextMessage(mEditText.text.toString())
-        else
+        } else {
             editTextMessage()
+        }
     }
 
     //    @OnLongClick(R.id.room_send_image_view)

@@ -43,12 +43,14 @@ import org.matrix.androidsdk.rest.model.message.Message
 import org.matrix.androidsdk.rest.model.message.StickerMessage
 import org.matrix.androidsdk.view.HtmlTagHandler
 import java.lang.ref.WeakReference
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
 class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXSession, val mAdapter: MessagesAdapter) {
 
+    val dateFormat = SimpleDateFormat("hh:mm aa")
 
     private var mEventsListener: IMessagesAdapterActionsListener? = null
 
@@ -94,23 +96,18 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
      */
     fun setSenderValue(convertView: View, row: MessageRow, isMergedView: Boolean) {
         // manage sender text
-        val senderTextView = convertView.findViewById<TextView>(R.id.messagesAdapter_sender)
+        val tvTimerSender = convertView.findViewById<TextView>(R.id.messagesAdapter_timestamp)
         val groupFlairView = convertView.findViewById<View>(R.id.messagesAdapter_flair_groups_list)
-
-        if (null != senderTextView) {
+        if (null != tvTimerSender) {
             val event = row.event
-
             // Hide the group flair by default
             groupFlairView.visibility = View.GONE
             groupFlairView.tag = null
-
+            tvTimerSender.text = dateFormat.format(event.getOriginServerTs())
             if (isMergedView) {
-                senderTextView.visibility = View.GONE
+                tvTimerSender.visibility = View.GONE
             } else {
                 val eventType = event.getType()
-
-                // theses events are managed like notice ones
-                // but they are dedicated behaviour i.e the sender must not be displayed
                 if (event.isCallEvent
                         || Event.EVENT_TYPE_STATE_ROOM_TOPIC == eventType
                         || Event.EVENT_TYPE_STATE_ROOM_MEMBER == eventType
@@ -118,24 +115,10 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
                         || Event.EVENT_TYPE_STATE_ROOM_THIRD_PARTY_INVITE == eventType
                         || Event.EVENT_TYPE_STATE_HISTORY_VISIBILITY == eventType
                         || Event.EVENT_TYPE_MESSAGE_ENCRYPTION == eventType) {
-                    senderTextView.visibility = View.GONE
+                    tvTimerSender.visibility = View.GONE
                 } else {
-                    senderTextView.visibility = View.VISIBLE
-                    senderTextView.text = row.senderDisplayName
-
-                    val fSenderId = event.getSender()
-                    val fDisplayName = if (null == senderTextView.text) "" else senderTextView.text.toString()
-
-                    val context = senderTextView.context
-                    val textColor = colorIndexForSender(fSenderId)
-                    senderTextView.setTextColor(context.resources.getColor(textColor))
-
-                    senderTextView.setOnClickListener {
-                        if (null != mEventsListener) {
-                            mEventsListener!!.onSenderNameClick(fSenderId, fDisplayName)
-                        }
-                    }
-
+                    tvTimerSender.visibility = View.VISIBLE
+                    tvTimerSender.text = dateFormat.format(event.originServerTs)
                     refreshGroupFlairView(groupFlairView, event)
                 }
             }
@@ -1133,7 +1116,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
          * @param value       the new value
          * @return the dedicated textView
          */
-        fun setTimestampValue(convertView: View, value: String): TextView? {
+        /*fun setTimestampValue(convertView: View, value: String): TextView? {
             val tsTextView = convertView.findViewById<TextView>(R.id.messagesAdapter_timestamp)
 
             if (null != tsTextView) {
@@ -1146,7 +1129,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             }
 
             return tsTextView
-        }
+        }*/
 
         /**
          * Align the avatar and the message body according to the mergeView flag

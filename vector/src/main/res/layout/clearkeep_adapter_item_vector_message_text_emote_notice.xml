@@ -65,7 +65,7 @@
                     android:id="@+id/message_timestamp_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentStart="true"
                     android:orientation="horizontal">
 
                     <include layout="@layout/vector_message_timestamp" />

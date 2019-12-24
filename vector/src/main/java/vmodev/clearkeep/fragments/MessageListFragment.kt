@@ -967,13 +967,11 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
         try {
             val row = mAdapter.getItem(position)
             val event = row!!.event
-
             // toggle selection mode
             mAdapter.onEventTap(event)
         } catch (e: Exception) {
             Log.e(LOG_TAG, "## onRowClick() failed " + e.message, e)
         }
-
     }
 
     override fun onContentClick(position: Int) {
