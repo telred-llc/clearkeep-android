@@ -104,7 +104,6 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
     override fun bindDecryptMessage(textView: TextView, message: Message?) {
         message?.let {
             val session = Matrix.getInstance(textView.context.applicationContext).defaultSession
-
             val parser = JsonParser()
             val gson = Gson()
             val event = Event(message.messageType, parser.parse(message.encryptedContent).asJsonObject, message.userId, message.roomId)
@@ -145,7 +144,6 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
                         if (!type.isNullOrEmpty() && type.compareTo(Event.EVENT_TYPE_MESSAGE) == 0) {
                             val message = gson.fromJson(result.mClearEvent, MessageContent::class.java)
                             textView.text = message?.content?.body!!
-                            Debug.e("--- message: ${message.content?.body!!}")
                         } else {
                             Debug.e("--- message: null")
                         }
