@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import im.vector.Matrix
 import im.vector.R
@@ -64,10 +65,7 @@ import vmodev.clearkeep.rests.models.responses.EditMessageResponse
 import vmodev.clearkeep.rests.models.responses.FeedbackResponse
 import vmodev.clearkeep.rests.models.responses.PassphraseResponse
 import vmodev.clearkeep.rests.models.responses.VersionAppInfoResponse
-import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
-import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
-import vmodev.clearkeep.ultis.SearchMessageByTextResult
-import vmodev.clearkeep.ultis.getJoinedRoom
+import vmodev.clearkeep.ultis.*
 import vmodev.clearkeep.viewmodelobjects.*
 import java.io.InputStream
 import java.util.*
@@ -1849,7 +1847,8 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         setMXSession()
         return Observable.create { emitter ->
             var messagesResult = ArrayList<MessageRoomUser>()
-            val callHistoryFilter: HashMap<String, MessageRoomUser> = HashMap()
+//            val callHistoryFilter: HashMap<String, MessageRoomUser> = HashMap()
+            val messageFilterHashMap: HashMap<String, MessageRoomUser> = HashMap()
             val parser = JsonParser()
             val gson = Gson()
             session!!.dataHandler.crypto?.let { mxCrypto ->
@@ -1864,87 +1863,57 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                 var messageResult: Message? = null
                                 var messageRooUser: MessageRoomUser? = null
                                 val message = gson.fromJson(result.mClearEvent, MessageContent::class.java)
-                                if (!type.isNullOrEmpty()) {
-                                    when (type) {
-                                        Event.EVENT_TYPE_MESSAGE -> {
-                                            val messageType = message.content?.msgType
-                                            if (msgType == EventTypeEnum.TEXT.value && messageType == EventTypeEnum.TEXT.value) {
-                                                item.message?.let {
-                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = message?.content?.body!!, createdAt = item.message!!.createdAt)
-                                                }
-                                                messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
-                                                messageRooUser.let { it1 -> messagesResult.add(it1) }
-                                            } else if (msgType == EventTypeEnum.IMAGE.value && (messageType == EventTypeEnum.IMAGE.value || messageType == EventTypeEnum.VIDEO.value || messageType == EventTypeEnum.AUDIO.value || messageType == EventTypeEnum.FILE.value)) {
-                                                item.message?.let {
-                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = json.getAsJsonObject("content").toString(), createdAt = item.message!!.createdAt)
-                                                    //                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = message.getContent().getBody(), createdAt = if (item.message != null) item.message!!.createdAt else 0)
-                                                }
-                                                messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
-                                                messageRooUser.let { it1 -> messagesResult.add(it1) }
+                                if (!type.isNullOrEmpty() && type == Event.EVENT_TYPE_MESSAGE) {
+                                    val messageType = message.content?.msgType
+                                    if (msgType == EventTypeEnum.TEXT.value && messageType == EventTypeEnum.TEXT.value) {
+                                        var messagesID: String = ""
+                                        var contentMessage: String = ""
+                                        item.message?.let {
+                                            val data: JsonObject = event.contentJson.getAsJsonObject()
+                                            if (data.getAsJsonObject("m.relates_to") != null) {
+                                                messagesID = data.getAsJsonObject("m.relates_to").get("event_id").asString
+//                                                        contentMessage = String().formatMessageEdit(message?.content?.body)
+                                                contentMessage = String().formatMessageEdit(message?.content?.body.toString())
                                             } else {
-                                                Log.e("Tag", "--- Khong co gi hien ")
+                                                messagesID = it.id
+                                                contentMessage = message?.content?.body.toString()
                                             }
+                                            messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = contentMessage, createdAt = item.message!!.createdAt)
                                         }
-
-                                        Event.EVENT_TYPE_CALL_HANGUP -> {
-                                            if (msgType == Event.EVENT_TYPE_CALL_INVITE) {
-                                                val callContent = gson.fromJson(result.mClearEvent, CallContent::class.java)
-                                                var typeCall = ""
-                                                typeCall = if (!callContent.getContent()?.getReason().isNullOrBlank() && callContent.getContent()?.getReason() == EventTypeEnum.INVITE_TIMEOUT.value) {
-                                                    EventTypeEnum.MISS_CALL.value
-                                                } else if (callHistoryFilter.containsKey(callContent.getContent()?.getCallId()) && callHistoryFilter[callContent.getContent()?.getCallId()]?.message?.encryptedContent == EventTypeEnum.MISS_CALL.value) {
-                                                    EventTypeEnum.MISS_CALL.value
-                                                } else {
-                                                    callContent.getType().toString()
-                                                }
-                                                //
-                                                item.message?.let {
-                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = typeCall, createdAt = item.message!!.createdAt)
-                                                }
-                                                messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
-                                                callContent.getContent()?.getCallId()?.let { it1 -> callHistoryFilter.put(it1, messageRooUser) }
-                                            }
+                                        messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
+                                        messageFilterHashMap.put(messagesID, messageRooUser)
+                                        // messageRooUser.let { it1 -> messagesResult.add(it1) }
+                                    } else if (msgType == EventTypeEnum.IMAGE.value && (messageType == EventTypeEnum.IMAGE.value || messageType == EventTypeEnum.VIDEO.value || messageType == EventTypeEnum.AUDIO.value || messageType == EventTypeEnum.FILE.value)) {
+                                        item.message?.let {
+                                            messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = json.getAsJsonObject("content").toString(), createdAt = item.message!!.createdAt)
+                                            //                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = message.getContent().getBody(), createdAt = if (item.message != null) item.message!!.createdAt else 0)
                                         }
+                                        messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
+                                        messageRooUser.let { it1 -> messagesResult.add(it1) }
+                                    } else {
+                                        Log.e("Tag", "--- Khong co gi hien ")
                                     }
                                 }
 
-                                //
-                                //
-                                //                                if (!type.isNullOrEmpty() && type == Event.EVENT_TYPE_MESSAGE) {
-                                //                                    if (message.getContent().getMsgType().compareTo(msgType) == 0) {
-                                //                                        item.message?.let {
-                                //                                            messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = message.getContent().getBody(), createdAt = if (item.message != null) item.message!!.createdAt else 0)
-                                //                                        }
-                                //                                        messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
-                                //                                    }
-                                //                                }
-                                //                                // Filter Call History
-                                //                                else if (!type.isNullOrEmpty() && (type == Event.EVENT_TYPE_CALL_INVITE || type == Event.EVENT_TYPE_CALL_ANSWER || type == Event.EVENT_TYPE_CALL_HANGUP || type == Event.EVENT_TYPE_CALL_CANDIDATES) && msgType == Event.EVENT_TYPE_CALL_INVITE) {
-                                //                                    Log.d("Json Event", result.mClearEvent.toString())
-                                //                                    val callContent = gson.fromJson(result.mClearEvent, CallContent::class.java);
-                                //                                    var typeCall = ""
-                                //                                    typeCall = if (!callContent.getContent()?.getReason().isNullOrBlank() && callContent.getContent()?.getReason() == EventTypeEnum.INVITE_TIMEOUT.value) {
-                                //                                        EventTypeEnum.MISS_CALL.value
-                                //                                    } else if (callHistoryFilter.containsKey(callContent.getContent()?.getCallId()) && callHistoryFilter[callContent.getContent()?.getCallId()]?.message?.encryptedContent == EventTypeEnum.MISS_CALL.value) {
-                                //                                        EventTypeEnum.MISS_CALL.value
-                                //                                    } else {
-                                //                                        callContent.getType().toString()
-                                //                                    }
-                                ////
-                                //                                    item.message?.let {
-                                //                                        messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = typeCall, createdAt = if (item.message != null) item.message!!.createdAt else 0)
-                                //                                    }
-                                //                                    messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
-                                //                                    callContent.getContent()?.getCallId()?.let { it1 -> callHistoryFilter.put(it1, messageRooUser) }
-                                //                                } else if (!type.isNullOrEmpty() && (type == EventTypeEnum.IMAGE.value || type == EventTypeEnum.VIDEO.value ||
-                                //                                                type == EventTypeEnum.AUDIO.value || type == EventTypeEnum.FILE.value
-                                //                                                )) {
-                                //
-                                //                                    Log.d("File", result.mClearEvent.toString())
-                                //
-                                //                                } else {
-                                //                                    //not working
-                                //                                }
+//                                        Event.EVENT_TYPE_CALL_HANGUP -> {
+//                                            if (msgType == Event.EVENT_TYPE_CALL_INVITE) {
+//                                                val callContent = gson.fromJson(result.mClearEvent, CallContent::class.java)
+//                                                var typeCall = ""
+//                                                typeCall = if (!callContent.getContent()?.getReason().isNullOrBlank() && callContent.getContent()?.getReason() == EventTypeEnum.INVITE_TIMEOUT.value) {
+//                                                    EventTypeEnum.MISS_CALL.value
+//                                                } else if (callHistoryFilter.containsKey(callContent.getContent()?.getCallId()) && callHistoryFilter[callContent.getContent()?.getCallId()]?.message?.encryptedContent == EventTypeEnum.MISS_CALL.value) {
+//                                                    EventTypeEnum.MISS_CALL.value
+//                                                } else {
+//                                                    callContent.getType().toString()
+//                                                }
+//                                                //
+//                                                item.message?.let {
+//                                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = typeCall, createdAt = item.message!!.createdAt)
+//                                                }
+//                                                messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
+//                                                callContent.getContent()?.getCallId()?.let { it1 -> callHistoryFilter.put(it1, messageRooUser) }
+//                                            }
+//                                        }
 
                             }
                         }
@@ -1952,8 +1921,8 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                         Log.d("DecryptError", e.message)
                     }
                 }
-                if (msgType == Event.EVENT_TYPE_CALL_INVITE) {
-                    messagesResult = ArrayList<MessageRoomUser>(callHistoryFilter.values)
+                if (msgType == EventTypeEnum.TEXT.value) {
+                    messagesResult = ArrayList<MessageRoomUser>(messageFilterHashMap.values)
                 }
                 emitter.onNext(messagesResult)
                 emitter.onComplete()
@@ -1963,6 +1932,59 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             }
         }
     }
+
+    override fun decryptEventCallHistory(messages: List<MessageRoomUser>): Observable<List<MessageRoomUser>> {
+        setMXSession()
+        return Observable.create { emitter ->
+            var messagesResult = ArrayList<MessageRoomUser>()
+            val callHistoryFilter: HashMap<String, MessageRoomUser> = HashMap()
+            val parser = JsonParser()
+            val gson = Gson()
+            session!!.dataHandler.crypto?.let { mxCrypto ->
+                messages.forEach { item ->
+                    val event = Event(item.message?.messageType, parser.parse(item.message?.encryptedContent).asJsonObject, item.message?.userId, item.message?.roomId)
+                    try {
+                        if (event.type == Event.EVENT_TYPE_MESSAGE_ENCRYPTED) {
+                            val result = mxCrypto.decryptEvent(event, null)
+                            val json = result.mClearEvent.asJsonObject
+                            val type = json.get("type").asString
+                            var messageResult: Message? = null
+                            var messageRooUser: MessageRoomUser? = null
+                            val message = gson.fromJson(result.mClearEvent, MessageContent::class.java)
+                            if (!type.isNullOrEmpty() && type == Event.EVENT_TYPE_CALL_HANGUP) {
+                                val callContent = gson.fromJson(result.mClearEvent, CallContent::class.java)
+                                var typeCall = ""
+                                typeCall = if (!callContent.getContent()?.getReason().isNullOrBlank() && callContent.getContent()?.getReason() == EventTypeEnum.INVITE_TIMEOUT.value) {
+                                    EventTypeEnum.MISS_CALL.value
+                                } else if (callHistoryFilter.containsKey(callContent.getContent()?.getCallId()) && callHistoryFilter[callContent.getContent()?.getCallId()]?.message?.encryptedContent == EventTypeEnum.MISS_CALL.value) {
+                                    EventTypeEnum.MISS_CALL.value
+                                } else {
+                                    callContent.getType().toString()
+                                }
+                                //
+                                item.message?.let {
+                                    messageResult = Message(id = it.id, roomId = it.roomId, userId = it.userId, messageType = Event.EVENT_TYPE_MESSAGE, encryptedContent = typeCall, createdAt = item.message!!.createdAt)
+                                }
+                                messageRooUser = MessageRoomUser(message = messageResult, room = item.room, user = item.user)
+                                callContent.getContent()?.getCallId()?.let { it1 -> callHistoryFilter.put(it1, messageRooUser) }
+                            }
+                        }
+
+                    } catch (e: MXDecryptionException) {
+                        Log.d("DecryptError", e.message)
+                    }
+                }
+                messagesResult = ArrayList<MessageRoomUser>(callHistoryFilter.values)
+                emitter.onNext(messagesResult)
+                emitter.onComplete()
+            } ?: run {
+                emitter.onError(Throwable("Crypto is null"))
+                emitter.onComplete()
+            }
+        }
+
+    }
+
 
     override fun editMessage(event: Event): Observable<EditMessageResponse> {
         setMXSession()

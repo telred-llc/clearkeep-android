@@ -13,7 +13,6 @@ import vmodev.clearkeep.workermanager.interfaces.IWorkerFactory
 
 sealed class UpdateDatabaseFromMatrixEventWorker {
     class UpdateRoomNameWorker @AssistedInject constructor(@Assisted appContext: Context, @Assisted params: WorkerParameters, private val roomDao: AbstractRoomDao) : RxWorker(appContext, params) {
-
         override fun createWork(): Single<Result> {
             return Single.create { emitter ->
                 val roomId = inputData.getString(ROOM_ID)

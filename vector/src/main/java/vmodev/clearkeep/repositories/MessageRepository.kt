@@ -182,6 +182,14 @@ class MessageRepository @Inject constructor(private val messageDao: AbstractMess
         }.asLiveData();
     }
 
+    fun decryptCallHistory(messages: List<MessageRoomUser>): LiveData<Resource<List<MessageRoomUser>>> {
+        return object : AbstractNetworkNonBoundSourceRx<List<MessageRoomUser>>() {
+            override fun createCall(): Observable<List<MessageRoomUser>> {
+                return matrixService.decryptEventCallHistory(messages);
+            }
+        }.asLiveData();
+    }
+
     fun getListMessageRoomUser(): LiveData<Resource<List<MessageRoomUser>>> {
         return object : AbstractLocalLoadSource<List<MessageRoomUser>>(executors) {
             override fun loadFromDB(): LiveData<List<MessageRoomUser>> {
