@@ -68,4 +68,6 @@ interface MatrixService {
     fun updateRoomAvatar(roomId: String, inputStream: InputStream): Observable<String>
     fun feedBackApp(contents: String, start: Int): Observable<FeedbackResponse>
     fun getVersionApp(): Observable<Resource<VersionAppInfoResponse>>
+    fun decryptEventCallHistory(messages: List<MessageRoomUser>): Observable<List<MessageRoomUser>>
+
 }
