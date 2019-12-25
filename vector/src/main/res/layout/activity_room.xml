@@ -294,7 +294,7 @@
                     android:layout_marginEnd="6dip"
                     android:background="?attr/bg_search_view"
                     android:dropDownAnchor="@+id/room_sending_message_layout"
-                    android:hint="@string/room_message_placeholder_not_encrypted"
+                    android:hint="@string/room_message_placeholder_encrypted"
                     android:inputType="textCapSentences|textMultiLine"
                     android:maxHeight="160dp"
                     android:paddingHorizontal="8dip"

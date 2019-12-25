@@ -48,6 +48,15 @@ android {
         jvmTarget = "1.8"
     }
 
+    signingConfigs {
+        release {
+            storeFile file("../clearkeep_password_Telred@1009.jks")
+            storePassword 'Telred@1009'
+            keyAlias 'clearkeep'
+            keyPassword 'Telred@1009'
+        }
+    }
+
     defaultConfig {
         applicationId 'com.telred.clearkeep'
         minSdkVersion 21
@@ -64,6 +73,7 @@ android {
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.release
     }
 
     // Ref: https://developer.android.com/studio/build/configure-apk-splits.html

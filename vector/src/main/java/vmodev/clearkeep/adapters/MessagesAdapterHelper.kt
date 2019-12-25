@@ -42,6 +42,7 @@ import org.matrix.androidsdk.rest.model.group.GroupProfile
 import org.matrix.androidsdk.rest.model.message.Message
 import org.matrix.androidsdk.rest.model.message.StickerMessage
 import org.matrix.androidsdk.view.HtmlTagHandler
+import vmodev.clearkeep.ultis.Debug
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
@@ -101,8 +102,8 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
         if (null != tvTimerSender) {
             val event = row.event
             // Hide the group flair by default
-            groupFlairView.visibility = View.GONE
-            groupFlairView.tag = null
+            groupFlairView?.visibility = View.GONE
+            groupFlairView?.tag = null
             tvTimerSender.text = dateFormat.format(event.getOriginServerTs())
             if (isMergedView) {
                 tvTimerSender.visibility = View.GONE
@@ -989,7 +990,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
         return list
     }
 
-    fun manageURLPreviews(message: Message, convertView: View, id: String) {
+    fun manageURLPreviews(message: Message, convertView: View, eventID: String) {
         val urlsPreviewLayout = convertView.findViewById<LinearLayout>(R.id.messagesAdapter_urls_preview_list)
                 ?: return
 
@@ -1007,16 +1008,17 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             urlsPreviewLayout.visibility = View.GONE
             return
         }
-
+        Debug.e("--- click item tag: ${urlsPreviewLayout.tag} ? $eventID")
+        return
         // avoid removing items if they are displayed
-        if (TextUtils.equals(urlsPreviewLayout.tag as String, id)) {
+        if (TextUtils.equals(urlsPreviewLayout.tag as String, eventID)) {
             // all the urls have been displayed
             if (urlsPreviewLayout.childCount == urls.size) {
                 return
             }
         }
 
-        urlsPreviewLayout.tag = id
+        urlsPreviewLayout.tag = eventID
 
         // remove url previews
         while (urlsPreviewLayout.childCount > 0) {
@@ -1027,7 +1029,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
 
         for (url in urls) {
             val downloadKey = url.hashCode().toString() + "---"
-            val displayKey = "$url<----->$id"
+            val displayKey = "$url<----->$eventID"
 
             if (!mSession.isURLPreviewEnabled) {
                 if (!mUrlsPreviews.containsKey(downloadKey)) {
@@ -1138,13 +1140,18 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
          * @param bodyLayoutView   the body layout
          * @param avatarLayoutView the avatar layout
          * @param isMergedView     true if the view is merged
+         * @param isMySender     true if user login is sender
          */
-        fun alignSubviewToAvatarView(subView: View, bodyLayoutView: View, avatarLayoutView: View, isMergedView: Boolean) {
+        fun alignSubviewToAvatarView(subView: View, bodyLayoutView: View, avatarLayoutView: View, isMergedView: Boolean, isMySender: Boolean) {
             val bodyLayout = bodyLayoutView.layoutParams as ViewGroup.MarginLayoutParams
             val subViewLinearLayout = subView.layoutParams as FrameLayout.LayoutParams
 
             val avatarLayout = avatarLayoutView.layoutParams
-            subViewLinearLayout.gravity = Gravity.START or Gravity.CENTER_VERTICAL
+            if (isMySender) {
+                subViewLinearLayout.gravity = Gravity.END
+            } else {
+                subViewLinearLayout.gravity = Gravity.START
+            }
 
             if (isMergedView) {
                 bodyLayout.setMargins(avatarLayout.width, bodyLayout.topMargin, bodyLayout.rightMargin, bodyLayout.bottomMargin)

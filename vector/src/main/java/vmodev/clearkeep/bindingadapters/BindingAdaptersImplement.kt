@@ -107,32 +107,6 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
             val parser = JsonParser()
             val gson = Gson()
             val event = Event(message.messageType, parser.parse(message.encryptedContent).asJsonObject, message.userId, message.roomId)
-            /*when(message.messageType){
-                Event.EVENT_TYPE_MESSAGE_ENCRYPTED -> {
-                    try {
-                        val result = session.dataHandler.crypto?.decryptEvent(event, null)
-                        result?.let {
-                            val json = result.mClearEvent.asJsonObject
-                            val type = json.get("type").asString
-                            if (!type.isNullOrEmpty() && type.compareTo(Event.EVENT_TYPE_MESSAGE) == 0) {
-                                val message = gson.fromJson(result.mClearEvent, MessageContent::class.java)
-                                textView.text = message?.content?.body!!
-                            }
-                        }
-                    } catch (e: MXDecryptionException) {
-                        textView.text = message.encryptedContent
-                        Debug.e("--- Error: ${e.message}")
-                        Debug.e("--- message: ${message.encryptedContent}")
-                    }
-                    Debug.e("--- Encrypt: ${message.messageType}")
-                }
-                else -> {
-                    Debug.e("--- NoEncrypt")
-                    textView.text = message.encryptedContent
-                }
-
-            }
-            return*/
             if (message.messageType.compareTo(Event.EVENT_TYPE_MESSAGE_ENCRYPTED) != 0) {
                 textView.text = message.encryptedContent
             } else {
@@ -149,9 +123,7 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
                         }
                     }
                 } catch (e: MXDecryptionException) {
-                    textView.text = message.encryptedContent
-                    Debug.e("--- Error: ${e.message}")
-                    Debug.e("--- message: ${message.encryptedContent}")
+                    Debug.e("--- Error: ${e.message}\n--- message: ${message.encryptedContent}")
                 }
             }
         }
