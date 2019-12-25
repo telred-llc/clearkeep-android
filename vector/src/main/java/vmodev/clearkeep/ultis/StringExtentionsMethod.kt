@@ -2,6 +2,7 @@ package vmodev.clearkeep.ultis
 
 import android.content.Context
 import android.os.Environment
+import android.text.TextUtils
 import org.matrix.androidsdk.MXSession
 import java.io.File
 import java.io.FileWriter
@@ -72,3 +73,5 @@ fun String.formatSizeData(size: Long):String?{
     result = DecimalFormat("#,##0.#").format(size / 1024.0.pow(digitGroups.toDouble())) + " " + units[digitGroups]
     return result
 }
+
+fun String.formatMessageEdit(message: String) = if (!TextUtils.isEmpty(message)) message.replaceFirst("*", "") else message

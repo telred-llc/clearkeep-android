@@ -65,10 +65,7 @@ import vmodev.clearkeep.rests.models.responses.EditMessageResponse
 import vmodev.clearkeep.rests.models.responses.FeedbackResponse
 import vmodev.clearkeep.rests.models.responses.PassphraseResponse
 import vmodev.clearkeep.rests.models.responses.VersionAppInfoResponse
-import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
-import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
-import vmodev.clearkeep.ultis.SearchMessageByTextResult
-import vmodev.clearkeep.ultis.getJoinedRoom
+import vmodev.clearkeep.ultis.*
 import vmodev.clearkeep.viewmodelobjects.*
 import java.io.InputStream
 import java.util.*
@@ -1876,7 +1873,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                             if (data.getAsJsonObject("m.relates_to") != null) {
                                                 messagesID = data.getAsJsonObject("m.relates_to").get("event_id").asString
 //                                                        contentMessage = String().formatMessageEdit(message?.content?.body)
-                                                contentMessage = message?.content?.body.toString().plus("+")
+                                                contentMessage = String().formatMessageEdit(message?.content?.body.toString())
                                             } else {
                                                 messagesID = it.id
                                                 contentMessage = message?.content?.body.toString()
