@@ -15,6 +15,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.aes.interfaces.ICrypto
 import vmodev.clearkeep.applications.ClearKeepApplication
+import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.autokeybackups.interfaces.IAutoKeyBackup
 import vmodev.clearkeep.databases.*
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
@@ -43,7 +44,7 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
     lateinit var keyBackupDao: AbstractKeyBackupDao
 
     @SuppressLint("CheckResult")
-    override fun startAutoKeyBackup(userId: String, password: String?) {
+    override fun startAutoKeyBackup(userId: String, password: String?, action: IApplication.IAction) {
         val passwordForGenerateKey = userId + "COLIAKIP"
         matrixService.getPassphrase().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ passphrase ->
             Toast.makeText(application, R.string.get_passphrase_successfully, Toast.LENGTH_SHORT).show()
@@ -55,6 +56,7 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
                         matrixService.restoreBackupFromPassphrase(decryptedData).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({
                                     Toast.makeText(application, "Restore success: " + it.successfullyNumberOfImportedKeys + "/" + it.totalNumberOfKeys + " keys", Toast.LENGTH_SHORT).show()
+                                    action.doFinaly()
                                 }, {
                                     if (password.isNullOrEmpty()) {
                                         logout()
@@ -71,6 +73,7 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
                                         matrixService.restoreBackupFromPassphrase(decryptedData).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                                                 .subscribe({
                                                     Toast.makeText(application, "Restore success: " + it.successfullyNumberOfImportedKeys + "/" + it.totalNumberOfKeys + " keys", Toast.LENGTH_SHORT).show()
+                                                    action.doFinaly()
                                                 }, {
                                                     if (password.isNullOrEmpty()) {
                                                         logout()
@@ -83,7 +86,6 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
                                             logout()
                                             return@subscribe
                                         }
-
                                         exportNewKey(passphrase, password)
                                     }
                                 }, {

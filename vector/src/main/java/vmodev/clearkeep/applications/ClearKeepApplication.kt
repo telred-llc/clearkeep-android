@@ -141,48 +141,49 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
         return this
     }
 
-    override fun startAutoKeyBackup(password: String?, action: IApplication.IAction?) {
-        session?.let { autoKeyBackup.startAutoKeyBackup(it.myUserId, password) }
-        session?.let { s ->
-            s.crypto?.let { crypto ->
-                userDao.findAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                        .doFinally {
-                        }.subscribe(object : SingleObserver<List<User>> {
-                            override fun onSuccess(t: List<User>) {
-                                t.forEach { u ->
-                                    crypto.getUserDevices(u.id).forEach {
-                                        crypto.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, it.deviceId, u.id, object : ApiCallback<Void> {
-                                            override fun onSuccess(info: Void?) {
-                                                Debug.e("--- deviceID: ${it.deviceId} - userID: ${u.id}")
-                                            }
+    fun saveStore() {
+        session?.crypto?.let { crypto ->
+            userDao.findAll().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                    .doFinally {
+                    }.subscribe(object : SingleObserver<List<User>> {
+                        override fun onSuccess(lstUser: List<User>) {
+                            lstUser.forEach { user ->
+                                crypto.getUserDevices(user.id).forEach { mxDeviceInfo ->
+                                    crypto.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, mxDeviceInfo.deviceId, user.id, object : ApiCallback<Void> {
+                                        override fun onSuccess(info: Void?) {
+                                        }
 
-                                            override fun onUnexpectedError(e: Exception?) {
-                                                Debug.e("--- Error: ${e?.message}")
-                                            }
+                                        override fun onUnexpectedError(e: Exception?) {
+                                            Debug.e("--- Error: ${e?.message}")
+                                        }
 
-                                            override fun onMatrixError(e: MatrixError?) {
-                                                Debug.e("--- Error: ${e?.message}")
-                                            }
+                                        override fun onMatrixError(e: MatrixError?) {
+                                            Debug.e("--- Error: ${e?.message}")
+                                        }
 
-                                            override fun onNetworkError(e: Exception?) {
-                                                Debug.e("--- Error: ${e?.message}")
-                                            }
-                                        })
+                                        override fun onNetworkError(e: Exception?) {
+                                            Debug.e("--- Error: ${e?.message}")
+                                        }
+                                    })
 
-                                    }
                                 }
-                                action?.doFinaly()
                             }
+                        }
 
-                            override fun onSubscribe(d: Disposable) {
+                        override fun onSubscribe(d: Disposable) {
+                            Debug.e("--- onSubscribe")
+                        }
 
-                            }
+                        override fun onError(e: Throwable) {
+                            Log.d("DeviceId", e.message)
+                        }
+                    })
+        }
+    }
 
-                            override fun onError(e: Throwable) {
-                                Log.d("DeviceId", e.message)
-                            }
-                        })
-            }
+    override fun startAutoKeyBackup(password: String?, action: IApplication.IAction?) {
+        session?.let { mxSession ->
+            autoKeyBackup.startAutoKeyBackup(mxSession.myUserId, password, action!!)
         }
     }
 
