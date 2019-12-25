@@ -20,7 +20,6 @@ import javax.inject.Inject
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val USER_ID = "USER_ID"
 
 /**
  * A simple [Fragment] subclass.
@@ -37,10 +36,11 @@ class PassphraseRestoreBackupKeyFragment : DataBindingDaggerFragment(), IFragmen
     lateinit var viewModelFactory: IViewModelFactory<AbstractPassphraseRestoreBackupKeyFragmentViewModel>
 
     // TODO: Rename and change types of parameters
-    private lateinit var userId: String;
+    private lateinit var userId: String
     private var listener: OnFragmentInteractionListener? = null
-    private lateinit var binding: FragmentPassphraseRestoreBackupKeyBinding;
-    private var restoreStatus = false;
+    private lateinit var binding: FragmentPassphraseRestoreBackupKeyBinding
+    private var restoreStatus = false
+    private val USER_ID = "USER_ID"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,48 +49,47 @@ class PassphraseRestoreBackupKeyFragment : DataBindingDaggerFragment(), IFragmen
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_passphrase_restore_backup_key, container, false, dataBinding.getDataBindingComponent());
-        return binding.root;
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_passphrase_restore_backup_key, container, false, dataBinding.getDataBindingComponent())
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.result = viewModelFactory.getViewModel().getPassphraseRestoreResult();
+        binding.result = viewModelFactory.getViewModel().getPassphraseRestoreResult()
 //        binding.buttonUseBackupFile.setOnClickListener {
 //            onSwitchToUseFileBackup();
 //        }
         binding.buttonRestore.setOnClickListener {
             if (restoreStatus)
-                return@setOnClickListener;
-            restoreStatus = true;
-            binding.buttonRestore.setText(R.string.resotring);
-            viewModelFactory.getViewModel().setPassphraseForRestore(binding.editTextPassphrase.text.toString());
+                return@setOnClickListener
+            restoreStatus = true
+            binding.buttonRestore.setText(R.string.resotring)
+            viewModelFactory.getViewModel().setPassphraseForRestore(binding.editTextPassphrase.text.toString())
         }
         viewModelFactory.getViewModel().getPassphraseRestoreResult().observe(viewLifecycleOwner, Observer {
             it?.let {
                 if (it.status == Status.SUCCESS) {
                     it.data?.let {
-                        restoreStatus = false;
-                        binding.buttonRestore.setText(R.string.restore);
-                        Toast.makeText(this.context, "Success restore " + it.successfullyNumberOfImportedKeys + "/" + it.totalNumberOfKeys + " total number keys", Toast.LENGTH_LONG).show();
-                        activity?.setResult(-1);
-                        activity?.finish();
+                        restoreStatus = false
+                        binding.buttonRestore.setText(R.string.restore)
+                        Toast.makeText(this.context, "Success restore " + it.successfullyNumberOfImportedKeys + "/" + it.totalNumberOfKeys + " total number keys", Toast.LENGTH_LONG).show()
+                        activity?.setResult(-1)
+                        activity?.finish()
                     }
                 }
                 if (it.status == Status.ERROR) {
                     it.message?.let {
-                        Toast.makeText(this.context, it, Toast.LENGTH_LONG).show();
-                        restoreStatus = false;
-                        binding.buttonRestore.setText(R.string.restore);
-                        binding.editTextPassphrase.setText("");
+                        Toast.makeText(this.context, it, Toast.LENGTH_LONG).show()
+                        restoreStatus = false
+                        binding.buttonRestore.setText(R.string.restore)
+                        binding.editTextPassphrase.setText("")
                     }
                 }
             }
         })
-        binding.lifecycleOwner = viewLifecycleOwner;
+        binding.lifecycleOwner = viewLifecycleOwner
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -113,7 +112,7 @@ class PassphraseRestoreBackupKeyFragment : DataBindingDaggerFragment(), IFragmen
     }
 
     override fun getFragment(): Fragment {
-        return this;
+        return this
     }
 
     /**
@@ -129,7 +128,7 @@ class PassphraseRestoreBackupKeyFragment : DataBindingDaggerFragment(), IFragmen
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onSwitchToUseFileBackup();
+        fun onSwitchToUseFileBackup()
     }
 
     companion object {

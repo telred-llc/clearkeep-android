@@ -19,10 +19,7 @@ import vmodev.clearkeep.databases.AbstractRoomDao
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
 import vmodev.clearkeep.repositories.*
-import vmodev.clearkeep.ultis.matrixUrlToRealUrl
-import vmodev.clearkeep.ultis.toMessage
-import vmodev.clearkeep.ultis.toRoomCreate
-import vmodev.clearkeep.ultis.toRoomInvite
+import vmodev.clearkeep.ultis.*
 import vmodev.clearkeep.workermanager.interfaces.IUpdateDatabaseFromMatrixEvent
 import javax.inject.Inject
 
@@ -60,8 +57,7 @@ class MatrixEventHandler @Inject constructor(
     }
 
     override fun onLiveEvent(event: Event?, roomState: RoomState?) {
-        Log.d("EventType", event?.type + "--" + event?.roomId)
-        Log.d("EventType", event?.toString())
+        Debug.e("--- event: ${event?.type} \n--- roomID: ${event?.roomId}\n--- content: ${event?.toString()}")
         event?.let { e ->
             when (event.type) {
                 IMatrixEventHandler.M_ROOM_CREATE -> {
@@ -100,7 +96,8 @@ class MatrixEventHandler @Inject constructor(
                     userRepository.updateUser(event.sender).subscribeOn(Schedulers.io()).subscribe {
                         messageRepository.insertMessage(event.toMessage())
                                 .subscribeOn(Schedulers.io()).subscribe {
-                                    roomRepository.updateLastMessage(e.roomId, e.eventId).subscribeOn(Schedulers.io()).subscribe()
+
+                                    //                                    roomRepository.updateLastMessage(e.roomId, e.eventId).subscribeOn(Schedulers.io()).subscribe()
                                     val contentObject = event.contentJson.asJsonObject
                                     if (contentObject.has("membership") && TextUtils.equals(contentObject.get("membership").asString, "invite")
                                             && contentObject.has("is_direct") && contentObject.get("is_direct").asBoolean) {

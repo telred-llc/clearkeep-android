@@ -86,6 +86,7 @@ import vmodev.clearkeep.dialogfragments.DialogFragmentChoiceSendFile
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.MessageListFragment
 import vmodev.clearkeep.repositories.MessageRepository
+import vmodev.clearkeep.ultis.Debug
 import vmodev.clearkeep.ultis.ReadMarkerManager
 import vmodev.clearkeep.ultis.RoomMediasSender
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomActivityViewModel
@@ -3043,6 +3044,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                             params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession!!.myUserId
                             params[VectorRoomActivity.EXTRA_ROOM_ID] = currentRoom!!.roomId
                             // clear the activity stack to home activity
+
+                            Debug.e("--- return stop")
+                            return
                             val intent = Intent(this@RoomActivity, VectorHomeActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                             intent.putExtra(VectorHomeActivity.EXTRA_JUMP_TO_ROOM_PARAMS, params as HashMap<*, *>)
@@ -3309,6 +3313,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 params[VectorRoomActivity.EXTRA_EVENT_ID] = sRoomPreviewData!!.eventId
             }
 
+            Debug.e("--- return stop")
+            return
             // clear the activity stack to home activity
             val intent = Intent(this, VectorHomeActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK

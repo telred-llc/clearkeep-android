@@ -56,6 +56,7 @@ import vmodev.clearkeep.activities.UserInformationActivity
 import vmodev.clearkeep.activities.ViewUserProfileActivity
 import vmodev.clearkeep.adapters.MessagesAdapter
 import vmodev.clearkeep.fragments.BaseMessageListFragment.Companion.VERIF_REQ_CODE
+import vmodev.clearkeep.ultis.Debug
 import vmodev.clearkeep.ultis.SharedPreferencesUtils
 import java.io.File
 import java.util.*
@@ -1131,6 +1132,8 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
                         activity!!.startActivityForResult(roomDetailsIntent, VectorRoomActivity.GET_MENTION_REQUEST_CODE)
                     } else {
                         // pop to the home activity
+                        Debug.e("--- return stop: $uri")
+                        return
                         val intent = Intent(activity, VectorHomeActivity::class.java)
                         intent.flags = android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP or android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
                         intent.putExtra(VectorHomeActivity.EXTRA_JUMP_TO_UNIVERSAL_LINK, uri)

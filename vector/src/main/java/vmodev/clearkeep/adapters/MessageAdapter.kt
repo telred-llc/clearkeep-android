@@ -1080,8 +1080,8 @@ internal constructor(// session
         // the thumbnail is hidden
         // and the subview must be moved to be aligned with the previous body
         val bodyLayoutView = convertView.findViewById<View>(R.id.messagesAdapter_body_layout)
-        MessagesAdapterHelper.alignSubviewToAvatarView(subView, bodyLayoutView, avatarView!!, isMergedView)
-
+        val isMySender = event.sender == mSession.myUserId
+        MessagesAdapterHelper.alignSubviewToAvatarView(subView, bodyLayoutView, avatarView!!, isMergedView, isMySender)
         // messages separator
         val messageSeparatorView = convertView.findViewById<View>(R.id.messagesAdapter_message_separator)
 
