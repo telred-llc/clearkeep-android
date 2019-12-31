@@ -85,7 +85,6 @@ class ListRoomRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCa
                 p0.binding.backgroundRoomItem.setBackgroundColor(ResourcesCompat.getColor(p0.itemView.resources, android.R.color.transparent, null))
             } else {
                 p0.binding.backgroundRoomItem.setBackgroundColor(ResourcesCompat.getColor(p0.itemView.resources, R.color.color_background_notification, null))
-
             }
             p0.binding.executePendingBindings()
             p0.binding.currentUserId = currentUserId

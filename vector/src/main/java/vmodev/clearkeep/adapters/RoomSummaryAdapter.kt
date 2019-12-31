@@ -29,6 +29,7 @@ import org.matrix.androidsdk.data.Room
 import org.matrix.androidsdk.data.RoomSummary
 import org.matrix.androidsdk.data.RoomTag
 import org.matrix.androidsdk.rest.model.Event
+import vmodev.clearkeep.ultis.Debug
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -848,8 +849,10 @@ class RoomSummaryAdapter
 
                 if (TextUtils.equals(mMxSession!!.myUserId, aChildRoomSummary.userId)) {
                     messageToDisplayRetValue = mContext.getString(org.matrix.androidsdk.R.string.notice_room_invite_you, inviterUserId)
+                    Debug.e("--- message show: $messageToDisplayRetValue")
                 } else {
                     messageToDisplayRetValue = mContext.getString(org.matrix.androidsdk.R.string.notice_room_invite, inviterUserId, myName)
+                    Debug.e("--- message show: $messageToDisplayRetValue")
                 }
             }
         }

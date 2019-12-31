@@ -440,8 +440,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         override fun onLiveEvent(event: Event?, roomState: RoomState?) {
             runOnUiThread {
                 val eventType = event!!.getType()
-                Log.d(LOG_TAG, "Received event type: $eventType")
-
+                Debug.e("--- Received event type: $eventType")
                 when (eventType) {
                     Event.EVENT_TYPE_STATE_ROOM_NAME, Event.EVENT_TYPE_STATE_ROOM_ALIASES, Event.EVENT_TYPE_STATE_ROOM_MEMBER -> {
                         setTitle()
@@ -461,7 +460,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                         mVectorMessageListFragment!!.setIsRoomEncrypted(currentRoom!!.isEncrypted)
                     }
                     Event.EVENT_TYPE_STATE_ROOM_TOMBSTONE -> checkSendEventStatus()
-                    else -> Log.d(LOG_TAG, "Ignored event type: $eventType")
+                    else -> Debug.e("--- Ignored event type: $eventType")
                 }
                 if (!VectorApp.isAppInBackground()) {
                     // do not send read receipt for the typing events
@@ -1602,7 +1601,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         // create the call object
         mxSession!!.mCallsManager.createCallInRoom(currentRoom!!.roomId, aIsVideoCall, object : ApiCallback<IMXCall> {
             override fun onSuccess(call: IMXCall) {
-                Log.d(LOG_TAG, "## startIpCall(): onSuccess")
+                Debug.e("--- startIpCall(): onSuccess")
                 runOnUiThread(object : Runnable {
                     override fun run() {
                         hideWaitingView()
@@ -1631,19 +1630,19 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
 
             override fun onNetworkError(e: Exception) {
-                Log.e(LOG_TAG, "## startIpCall(): onNetworkError Msg=" + e.message, e)
+                Debug.e("--- startIpCall(): onNetworkError Msg=" + e.message, e)
                 onError(e.localizedMessage)
             }
 
             override fun onMatrixError(e: MatrixError) {
-                Log.e(LOG_TAG, "## startIpCall(): onMatrixError Msg=" + e.localizedMessage)
+                Debug.e("--- startIpCall(): onMatrixError Msg=" + e.localizedMessage)
 
                 if (e is MXCryptoError) {
                     val cryptoError = e
                     if (MXCryptoError.UNKNOWN_DEVICES_CODE == cryptoError.errcode) {
                         hideWaitingView()
 //                        CommonActivityUtils.displayUnknownDevicesDialog(mxSession,
-//                                this@RoomActivity,
+//                                this@RoomActivi
 //                                cryptoError.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>,
 //                                true,
 //                                object : VectorUnknownDevicesFragment.IUnknownDevicesSendAnywayListener {
@@ -1773,9 +1772,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     val event = Event(Event.EVENT_TYPE_MESSAGE, jsonObject, it.sender, it.roomId)
                     event.eventId = it.eventId
                     messageRepository.editMessageRx(event).subscribe({
-                        Toast.makeText(this@RoomActivity, "Edited", Toast.LENGTH_SHORT).show()
+                        Debug.showAlert(this@RoomActivity, "Edited")
                     }, {
-                        Toast.makeText(this@RoomActivity, it.message, Toast.LENGTH_SHORT).show()
+                        Debug.showAlert(this@RoomActivity, it.message)
                     })
                 }
                 mEditText.setText("")
@@ -2363,8 +2362,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     fun insertSelectedMessageInTextEditor(event: Event, textMsg: String?) {
         currentEvent = event
         isEditedMode = true
-        mEditText.setText(textMsg)
-        textMsg?.let { mEditText.setSelection(it.length) }
+        val text = textMsg?.replace(getString(R.string.edited_suffix), "")
+        mEditText.setText(text)
+        text?.let { mEditText.setSelection(it.length) }
     }
 
     /* ==========================================================================================
@@ -3634,13 +3634,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     /* ==========================================================================================
      * UI Event
      * ========================================================================================== */
-
-    //    @OnClick(R.id.editText_messageBox)
-    internal fun onEditTextClick() {
-        // hide the header room as soon as the message input text area is touched
-        enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
-    }
-
     private fun chooseMediaSource(useNativeCamera: Boolean, isVoiceFeatureEnabled: Boolean) {
         // hide the header room
         enableActionBarHeader(HIDE_ACTION_BAR_HEADER)

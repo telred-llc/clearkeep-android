@@ -836,27 +836,31 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             val stickerMessage = JsonUtils.toStickerMessage(event.content)
             return !TextUtils.isEmpty(stickerMessage.body) && !event.isRedacted
         } else if (Event.EVENT_TYPE_STATE_ROOM_TOPIC == eventType || Event.EVENT_TYPE_STATE_ROOM_NAME == eventType) {
-            val display = RiotEventDisplay(context)
-            Log.e("Tag", "--- value 3: ${event.getType()} - ${row.getText(null, display)}")
-            return row.getText(null, display) != null
+            return false
+//            val display = RiotEventDisplay(context)
+//            Log.e("Tag", "--- value 3: ${event.getType()} - ${row.getText(null, display)}")
+//            return row.getText(null, display) != null
         } else if (event.isCallEvent) {
             return (Event.EVENT_TYPE_CALL_ANSWER == eventType
                     || Event.EVENT_TYPE_CALL_HANGUP == eventType)
         } else if (Event.EVENT_TYPE_STATE_ROOM_MEMBER == eventType || Event.EVENT_TYPE_STATE_ROOM_THIRD_PARTY_INVITE == eventType) {
             // if we can display text for it, it's valid.
+            Debug.e("--- event: $event")
             val display = RiotEventDisplay(context)
             return row.getText(null, display) != null
         } else if (Event.EVENT_TYPE_STATE_HISTORY_VISIBILITY == eventType) {
-            return true
+            return false
         } else if (Event.EVENT_TYPE_MESSAGE_ENCRYPTED == eventType || Event.EVENT_TYPE_MESSAGE_ENCRYPTION == eventType) {
             // if we can display text for it, it's valid.
-            val display = RiotEventDisplay(context)
-            return event.hasContentFields() && row.getText(null, display) != null
+//            val display = RiotEventDisplay(context)
+//            return event.hasContentFields() && row.getText(null, display) != null
+            return false
         } else if (TextUtils.equals(WidgetsManager.WIDGET_EVENT_TYPE, event.getType())) {
             // Matrix apps are enabled
             return true
         } else if (Event.EVENT_TYPE_STATE_ROOM_CREATE == eventType) {
             val roomCreateContent = JsonUtils.toRoomCreateContent(event.content)
+            Debug.e("--- content: ${roomCreateContent}")
             return roomCreateContent != null && roomCreateContent.predecessor != null
         }
         return false
@@ -1251,23 +1255,54 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
                 val stickerMessage = JsonUtils.toStickerMessage(event.content)
                 return !TextUtils.isEmpty(stickerMessage.body) && !event.isRedacted
             } else if (Event.EVENT_TYPE_STATE_ROOM_TOPIC == eventType || Event.EVENT_TYPE_STATE_ROOM_NAME == eventType) {
-                val display = RiotEventDisplay(context)
-                return row.getText(null, display) != null
+                return false
+//                val display = RiotEventDisplay(context)
+//                return row.getText(null, display) != null
             } else if (event.isCallEvent) {
                 return (Event.EVENT_TYPE_CALL_ANSWER == eventType
                         || Event.EVENT_TYPE_CALL_HANGUP == eventType)
             } else if (Event.EVENT_TYPE_STATE_ROOM_MEMBER == eventType || Event.EVENT_TYPE_STATE_ROOM_THIRD_PARTY_INVITE == eventType) {
                 // if we can display text for it, it's valid.
-//                val display = RiotEventDisplay(context)
-//                Log.e("Tag", "--- value: ${event.getType()} - ${row.getText(null, display)}")
-//                return row.getText(null, display) != null
-                return false
+                val prevEventContent = event.prevContent
+                var prevDisplayName: String? = null
+                var prevAvatar: String? = null
+                val displayName = JsonUtils.toEventContent(event.contentAsJsonObject).displayname
+                val avatar = JsonUtils.toEventContent(event.contentAsJsonObject).avatar_url
+                val memberShip = JsonUtils.toEventContent(event.contentAsJsonObject).membership
+                when (memberShip) {
+                    RoomMember.MEMBERSHIP_JOIN -> {
+                        if (prevEventContent != null && prevEventContent.membership?.equals(RoomMember.MEMBERSHIP_JOIN)!!) {
+                            if (prevEventContent != null) {
+                                prevDisplayName = prevEventContent.displayname
+                                prevAvatar = prevEventContent.avatar_url
+                                if (prevDisplayName.equals(displayName) || prevAvatar.equals(avatar)) {
+                                    Debug.e("--- User đã join thực hiện update ")
+                                    return false
+                                }
+                            } else {
+                                Debug.e("--- User invite vừa thực hiện join")
+                            }
+                        }
+                    }
+                    RoomMember.MEMBERSHIP_INVITE -> {
+                        Debug.e("--- User đã gửi lời mời trong danh sach comment ")
+                    }
+                }
+
+//                if(!displayName.equals(prevDisplayName) || !avatar.equals(prevAvatar)){
+//                    return false
+//                }
+
+                val display = RiotEventDisplay(context)
+                val text = row.getText(null, display)
+                return text != null
             } else if (Event.EVENT_TYPE_STATE_HISTORY_VISIBILITY == eventType) {
-                return true
+                return false
             } else if (Event.EVENT_TYPE_MESSAGE_ENCRYPTED == eventType || Event.EVENT_TYPE_MESSAGE_ENCRYPTION == eventType) {
                 // if we can display text for it, it's valid.
-                val display = RiotEventDisplay(context)
-                return event.hasContentFields() && row.getText(null, display) != null
+//                val display = RiotEventDisplay(context)
+//                return event.hasContentFields() && row.getText(null, display) != null
+                return false
             } else if (TextUtils.equals(WidgetsManager.WIDGET_EVENT_TYPE, event.getType())) {
                 // Matrix apps are enabled
                 return true

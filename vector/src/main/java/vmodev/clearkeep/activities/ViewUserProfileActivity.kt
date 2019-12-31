@@ -38,10 +38,12 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
     private lateinit var session: MXSession
     private var userID: String? = null
     private var roomID: String? = null
+    private var isJoined: Boolean? = false
 
     companion object {
         const val USER_ID = "USER_ID"
         const val ROOM_ID = "ROOM_ID"
+        const val JOINED = "joined"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,9 +52,11 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
         if (savedInstanceState != null) {
             userID = savedInstanceState.getString(USER_ID)
             roomID = savedInstanceState.getString(ROOM_ID)
+            isJoined = savedInstanceState.getBoolean(JOINED, false)
         } else {
             userID = intent.getStringExtra(USER_ID)
             roomID = intent.getStringExtra(ROOM_ID)
+            isJoined = intent.getBooleanExtra(JOINED, false)
         }
         binding.user = viewModelFactory.getViewModel().getUserResult()
         binding.room = viewModelFactory.getViewModel().createNewDirectChatResult()
@@ -66,7 +70,7 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
             binding.buttonMakeAdmin.visibility = View.INVISIBLE
         } else {
             val powerLeverDevice = state.getUserPowerLevel(session.myUserId)
-            if (powerLeverDevice.toFloat() == CommonActivityUtils.UTILS_POWER_LEVEL_ADMIN) {
+            if (isJoined!! && powerLeverDevice.toFloat() == CommonActivityUtils.UTILS_POWER_LEVEL_ADMIN) {
                 binding.buttonMakeAdmin.visibility = View.VISIBLE
             } else {
                 binding.buttonMakeAdmin.visibility = View.INVISIBLE
@@ -226,6 +230,7 @@ class ViewUserProfileActivity : DataBindingDaggerActivity(), IViewUserProfileAct
         super.onSaveInstanceState(outState)
         outState.putString(USER_ID, userID)
         outState.putString(ROOM_ID, roomID)
+        outState.putBoolean(JOINED, isJoined!!)
     }
 
     override fun getActivity(): FragmentActivity {
