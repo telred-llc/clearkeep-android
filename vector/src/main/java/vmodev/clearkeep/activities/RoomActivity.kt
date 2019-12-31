@@ -1763,7 +1763,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     val mapNewContent = HashMap<String, String>()
                     mapNewContent.put("msgtype", Message.MSGTYPE_TEXT)
                     mapNewContent.put("body", textToSend)
-                    textToSend = "$textToSend"
+                    textToSend = "* $textToSend"
                     val jsonObject = JsonObject()
                     jsonObject.addProperty("body", textToSend)
                     jsonObject.addProperty("msgtype", "m.text")
