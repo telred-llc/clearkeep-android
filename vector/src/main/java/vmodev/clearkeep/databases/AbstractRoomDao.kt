@@ -57,6 +57,9 @@ abstract class AbstractRoomDao {
     @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int, filterThree: Int): Single<List<Room>>;
 
+    @Query("SELECT Room.* FROM Room WHERE Room.user_id_created =:userID  AND Room.type = 65 ")
+    abstract fun getRoomByID(userID: String): LiveData<Room>
+
     @Query("SELECT Room.* FROM Room LEFT JOIN Message ON Message.message_id = Room.last_message_id WHERE type =:filterOne OR type =:filterTwo OR type =:filterThree OR type =:filterFour ORDER BY type DESC, Message.created_at DESC")
     abstract fun loadWithTypeRx(filterOne: Int, filterTwo: Int, filterThree: Int, filterFour: Int): Single<List<Room>>;
 
@@ -115,16 +118,16 @@ abstract class AbstractRoomDao {
     abstract fun getRoomWithMessageId(messageId: String): List<Room>;
 
     @Query("UPDATE Room SET name =:roomName WHERE id =:roomId")
-    abstract fun updateRoomName(roomId : String, roomName : String)
+    abstract fun updateRoomName(roomId: String, roomName: String)
 
     @Query("UPDATE Room SET last_message_id=:lastMessage WHERE id=:roomId")
-    abstract fun updateLastMessage(roomId: String, lastMessage : String);
+    abstract fun updateLastMessage(roomId: String, lastMessage: String);
 
     @Query("UPDATE Room SET type =:type WHERE id =:roomId")
-    abstract fun updateRoomType(roomId: String, type: Int) : Int
+    abstract fun updateRoomType(roomId: String, type: Int): Int
 
     @Query("UPDATE Room SET avatarUrl =:url WHERE id=:roomId")
-    abstract fun updateRoomAvatar(roomId: String, url : String);
+    abstract fun updateRoomAvatar(roomId: String, url: String);
 
 
     @Query("UPDATE Room SET notifyCount = notifyCount + 1 WHERE Room.id =:roomId")
@@ -134,7 +137,7 @@ abstract class AbstractRoomDao {
     abstract fun clearnNotificationCount(roomId: String)
 
     @Query("UPDATE Room SET topic =:roomTopic WHERE Room.id =:roomId")
-    abstract fun updateRoomTopic(roomId: String, roomTopic : String) : Int;
+    abstract fun updateRoomTopic(roomId: String, roomTopic: String): Int;
 
     fun loadWithType(filters: Array<Int>): LiveData<List<Room>> {
         when (filters.size) {
