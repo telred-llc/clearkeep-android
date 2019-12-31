@@ -126,6 +126,7 @@ class MatrixEventHandler @Inject constructor(
                                         }
                                     }
                                 }
+                        roomRepository.updateUserCreated(event.roomId, event.sender)
                     }
                 }
                 IMatrixEventHandler.M_ROOM_NAME -> {

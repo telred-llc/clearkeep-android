@@ -58,4 +58,9 @@ class FindAndCreateNewConversationActivityViewModel @Inject constructor(private 
         return roomUserJoinRepository.getListUserSuggested(type, userID)
     }
 
+    override fun getRoomByID(roomId: String): LiveData<Resource<Room>> {
+        return roomRepository.getRoomByUserId(roomId)
+    }
+
+
 }

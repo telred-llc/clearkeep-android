@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,12 +24,16 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import vmodev.clearkeep.activities.PreviewInviteRoomActivity
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapter
+import vmodev.clearkeep.databases.AbstractRoomDao
 import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.viewmodelobjects.Room
+import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodelobjects.User
 import vmodev.clearkeep.viewmodels.interfaces.AbstractFindAndCreateNewConversationActivityViewModel
@@ -43,6 +48,8 @@ class FindAndCreateNewConversationFragment : DataBindingDaggerFragment(), IFragm
     lateinit var appExecutors: AppExecutors
     @Inject
     lateinit var roomUserJoinDao: AbstractRoomUserJoinDao
+    @Inject
+    lateinit var abstractRoomDao: AbstractRoomDao
 
     private lateinit var binding: ActivityFindAndCreateNewConversationBinding
     private var listUserSuggested: List<User>? = null
@@ -69,7 +76,7 @@ class FindAndCreateNewConversationFragment : DataBindingDaggerFragment(), IFragm
                 return p0.id == p1.id
             }
         }, dataBinding = dataBinding) { user ->
-            viewModelFactory.getViewModel().setInviteUserToDirectChat(user.id)
+            navigationScreenByUserID(user.id)
         }
         binding.users = viewModelFactory.getViewModel().getUsers()
         binding.inviteUser = viewModelFactory.getViewModel().getInviteUserToDirectChat()
@@ -145,6 +152,21 @@ class FindAndCreateNewConversationFragment : DataBindingDaggerFragment(), IFragm
             }
             return@setOnEditorActionListener false
         }
+    }
+
+    private fun navigationScreenByUserID(userID: String) {
+        viewModelFactory.getViewModel().getRoomByID(userID).observe(viewLifecycleOwner, Observer {
+            if (it.status != Status.LOADING) {
+                if (it.data != null) {
+                    val intent = Intent(this.context, PreviewInviteRoomActivity::class.java)
+                    intent.putExtra("ROOM_ID", it.data.id)
+                    startActivity(intent)
+                    this.activity?.finish()
+                } else {
+                    viewModelFactory.getViewModel().setInviteUserToDirectChat(userID)
+                }
+            }
+        })
     }
 
     override fun getFragment(): Fragment {
