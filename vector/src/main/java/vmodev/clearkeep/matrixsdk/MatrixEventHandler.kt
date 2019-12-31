@@ -11,6 +11,7 @@ import org.matrix.androidsdk.data.MyUser
 import org.matrix.androidsdk.data.RoomState
 import org.matrix.androidsdk.listeners.MXEventListener
 import org.matrix.androidsdk.rest.model.Event
+import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.User
 import org.matrix.androidsdk.rest.model.bingrules.BingRule
 import org.matrix.androidsdk.rest.model.sync.AccountDataElement
@@ -36,6 +37,7 @@ class MatrixEventHandler @Inject constructor(
         , private val updateDatabaseFromMatrixEvent: IUpdateDatabaseFromMatrixEvent)
     : MXEventListener(), IMatrixEventHandler, KeysBackupStateManager.KeysBackupStateListener {
     private var mxSession: MXSession? = null
+    private val KEY_MEMBERSHIP = "membership"
     override fun onAccountDataUpdated(accountDataElement: AccountDataElement?) {
         super.onAccountDataUpdated(accountDataElement)
         val user = mxSession!!.myUser
@@ -57,10 +59,10 @@ class MatrixEventHandler @Inject constructor(
     }
 
     override fun onLiveEvent(event: Event?, roomState: RoomState?) {
-        Debug.e("--- event: ${event?.type} \n--- roomID: ${event?.roomId}\n--- content: ${event?.toString()}")
+        Debug.e("--- event: ${event?.type}\n--- Content ---: ${event?.toString()}")
         event?.let { e ->
             when (event.type) {
-                IMatrixEventHandler.M_ROOM_CREATE -> {
+                Event.EVENT_TYPE_STATE_ROOM_CREATE -> {
                     roomState?.let { rs ->
                         rs.toRoomCreate(mxSession)?.let {
                             roomRepository.insertRoomInvite(it).subscribeOn(Schedulers.io())
@@ -76,7 +78,7 @@ class MatrixEventHandler @Inject constructor(
                         }
                     }
                 }
-                IMatrixEventHandler.M_ROOM_JOIN_RULES -> {
+                Event.EVENT_TYPE_STATE_ROOM_JOIN_RULES -> {
                     roomState?.let { rs ->
                         rs.toRoomInvite(mxSession)?.let {
                             roomRepository.insertRoomInvite(it).subscribeOn(Schedulers.io())
@@ -92,14 +94,14 @@ class MatrixEventHandler @Inject constructor(
                         }
                     }
                 }
-                IMatrixEventHandler.M_ROOM_MEMBER -> {
+                Event.EVENT_TYPE_STATE_ROOM_MEMBER -> {
+                    Debug.e("--- event: m.room.member")
                     userRepository.updateUser(event.sender).subscribeOn(Schedulers.io()).subscribe {
                         messageRepository.insertMessage(event.toMessage())
                                 .subscribeOn(Schedulers.io()).subscribe {
-
-                                    //                                    roomRepository.updateLastMessage(e.roomId, e.eventId).subscribeOn(Schedulers.io()).subscribe()
                                     val contentObject = event.contentJson.asJsonObject
-                                    if (contentObject.has("membership") && TextUtils.equals(contentObject.get("membership").asString, "invite")
+                                    roomRepository.updateLastMessage(e.roomId, e.eventId).subscribeOn(Schedulers.io()).subscribe()
+                                    if (contentObject.has(KEY_MEMBERSHIP) && TextUtils.equals(contentObject.get(KEY_MEMBERSHIP).asString, RoomMember.MEMBERSHIP_INVITE)
                                             && contentObject.has("is_direct") && contentObject.get("is_direct").asBoolean) {
                                         roomState?.let {
                                             val selfMember = it.getMember(mxSession!!.myUserId)
@@ -128,23 +130,27 @@ class MatrixEventHandler @Inject constructor(
                                 }
                     }
                 }
-                IMatrixEventHandler.M_ROOM_NAME -> {
+                Event.EVENT_TYPE_STATE_ROOM_NAME -> {
                     val name = event.contentJson.asJsonObject.get("name").asString
-                    roomRepository.updateRoomName(event.roomId, name).subscribeOn(Schedulers.io()).subscribe()
+                    roomRepository.updateRoomName(event.roomId, name).subscribeOn(Schedulers.io()).subscribe({
+                        Debug.e("--- Update room name success")
+                    }, {
+                        Debug.e("--- Error: ${it.message}")
+                    })
                 }
                 IMatrixEventHandler.M_ROOM_POWER_LEVELS -> {
 
                 }
-                IMatrixEventHandler.M_ROOM_ENCRYPTION -> {
+                Event.EVENT_TYPE_STATE_HISTORY_VISIBILITY -> {
 
                 }
-                IMatrixEventHandler.M_ROOM_HISTORY_VISIBILITY -> {
+                Event.EVENT_TYPE_STATE_ROOM_GUEST_ACCESS -> {
 
                 }
-                IMatrixEventHandler.M_ROOM_GUEST_ACCESS -> {
+                Event.EVENT_TYPE_TYPING -> {
 
                 }
-                else -> {
+                Event.EVENT_TYPE_MESSAGE, Event.EVENT_TYPE_MESSAGE_ENCRYPTED -> {
                     messageRepository.insertMessage(event.toMessage())
                             .subscribeOn(Schedulers.io()).subscribe {
                                 roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe()
@@ -152,8 +158,11 @@ class MatrixEventHandler @Inject constructor(
                     if (!event.sender.equals(mxSession!!.myUserId)) {
                         roomRepository.updateRoomNotificationCount(e.roomId).subscribeOn(Schedulers.io()).subscribe()
                     } else {
-                        Log.d("", "")
+                        Debug.e("--- even owner")
                     }
+                }
+                else -> {
+                    Debug.e("--- event khong ro: $event")
                 }
             }
         }

@@ -37,6 +37,7 @@ import vmodev.clearkeep.activities.ViewUserProfileActivity
 import vmodev.clearkeep.adapters.ListUserRecyclerViewAdapterCustom
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.ultis.Debug
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomViewModel
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -80,9 +81,13 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment, IMXEventL
             binding.lifecycleOwner = viewLifecycleOwner
             callBackMembersAsync = object : ApiCallback<List<RoomMember>> {
                 override fun onSuccess(mDataRoomMember: List<RoomMember>?) {
-                    listUserSuggested = mDataRoomMember
-                    initJoins(roomID, listUserSuggested?.filterIndexed { index, roomMember -> RoomMember.MEMBERSHIP_JOIN.equals(roomMember.membership) })
-                    initInvites(roomID, listUserSuggested?.filterIndexed { index, roomMember -> RoomMember.MEMBERSHIP_INVITE.equals(roomMember.membership) })
+                    try {
+                        listUserSuggested = mDataRoomMember
+                        initJoins(roomID, listUserSuggested?.filterIndexed { index, roomMember -> RoomMember.MEMBERSHIP_JOIN.equals(roomMember.membership) })
+                        initInvites(roomID, listUserSuggested?.filterIndexed { index, roomMember -> RoomMember.MEMBERSHIP_INVITE.equals(roomMember.membership) })
+                    } catch (e: Exception) {
+
+                    }
                 }
 
                 override fun onUnexpectedError(p0: Exception?) {
@@ -117,8 +122,8 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment, IMXEventL
         }
     }
 
-    private fun initJoins(roomID: String, mDataJoin: List<RoomMember>?) {
-        listUserJoinAdapter = ListUserRecyclerViewAdapterCustom(activity!!, roomID, appExecutors, object : DiffUtil.ItemCallback<RoomMember>() {
+    private fun initJoins(roomID: String?, mDataJoin: List<RoomMember>?) {
+        listUserJoinAdapter = ListUserRecyclerViewAdapterCustom(activity!!, roomID!!, appExecutors, object : DiffUtil.ItemCallback<RoomMember>() {
             override fun areItemsTheSame(firstUser: RoomMember, secondUser: RoomMember): Boolean {
                 return firstUser.userId == secondUser.userId
             }
@@ -130,11 +135,13 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment, IMXEventL
             if (application.getUserId().compareTo(user.userId) == 0) {
                 val userIntent = Intent(activity, ProfileActivity::class.java)
                 userIntent.putExtra(ViewUserProfileActivity.ROOM_ID, roomID)
+                userIntent.putExtra(ViewUserProfileActivity.JOINED, true)
                 startActivity(userIntent)
             } else {
                 val otherUserIntent = Intent(activity, ViewUserProfileActivity::class.java)
                 otherUserIntent.putExtra(ViewUserProfileActivity.USER_ID, user.userId)
                 otherUserIntent.putExtra(ViewUserProfileActivity.ROOM_ID, roomID)
+                otherUserIntent.putExtra(ViewUserProfileActivity.JOINED, true)
                 startActivity(otherUserIntent)
             }
         }
@@ -154,6 +161,8 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment, IMXEventL
                 return firstUser.avatarUrl == secondUser.avatarUrl && firstUser.name == secondUser.name
             }
         }, dataBinding) { user ->
+
+            Debug.e("--- RoomID: ${roomID}")
             if (application.getUserId().compareTo(user.userId) == 0) {
                 val userIntent = Intent(activity, ProfileActivity::class.java)
                 userIntent.putExtra(ViewUserProfileActivity.ROOM_ID, roomID)
@@ -178,7 +187,7 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment, IMXEventL
     override fun onPresenceUpdate(p0: Event?, p1: User?) {
         when (p0?.type) {
             Event.EVENT_TYPE_PRESENCE -> {
-                Log.e("Tag", "--- onPresenceUpdate: ${p1?.displayname} \naction: ${p0.type}")
+                Debug.e("--- onPresenceUpdate: ${p1?.displayname} \naction: ${p0.type}")
                 mRoom?.getActiveMembersAsync(callBackMembersAsync!!)
             }
         }
@@ -187,8 +196,11 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment, IMXEventL
     override fun onLiveEvent(p0: Event?, p1: RoomState?) {
         when (p0?.type) {
             Event.EVENT_TYPE_STATE_ROOM_MEMBER -> {
-                Log.e("Tag", "--- onLiveEvent: event: ${p0.type}")
-                mRoom?.getActiveMembersAsync(callBackMembersAsync!!)
+                try {
+                    Debug.e("--- onLiveEvent: event: ${p0.type}")
+                    mRoom?.getActiveMembersAsync(callBackMembersAsync!!)
+                } catch (e: Exception) {
+                }
             }
         }
     }
@@ -210,16 +222,20 @@ class RoomMemberListFragment : DataBindingDaggerFragment(), IFragment, IMXEventL
     }
 
     override fun onRoomTagEvent(p0: String?) {
-        Log.e("Tag", "--- onRoomTagEvent: $p0")
+        Debug.e("--- onRoomTagEvent: $p0")
     }
 
     override fun onLeaveRoom(p0: String?) {
-        Log.e("Tag", "--- onLeaveRoom: $p0")
+        Debug.e("--- onLeaveRoom: $p0")
     }
 
     override fun onLiveEventsChunkProcessed(p0: String?, p1: String?) {
-        Log.e("Tag", "--- onLiveEventsChunkProcessed: type: ${p0}, ${p1}")
-        mRoom?.getActiveMembersAsync(callBackMembersAsync!!)
+        Debug.e("--- onLiveEventsChunkProcessed: type: ${p0}, ${p1}")
+        try {
+            mRoom?.getActiveMembersAsync(callBackMembersAsync!!)
+        } catch (e: Exception) {
+            Debug.e("--- Error: ${e.message}")
+        }
     }
 
     override fun onBingEvent(p0: Event?, p1: RoomState?, p2: BingRule?) {

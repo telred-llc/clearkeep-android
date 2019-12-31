@@ -59,24 +59,24 @@ class DirectMessageRecyclerViewAdapter(rooms: List<Room>, invitation: List<Room>
         listItem.addAll(rooms)
     }
 
-    override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
+    override fun onBindViewHolder(viewHolder: ViewHolder, p1: Int) {
         if (listItem[p1].isDirect) {
-            p0.imageViewStatus.visibility = View.VISIBLE
+            viewHolder.imageViewStatus.visibility = View.VISIBLE
         } else {
-            p0.imageViewStatus.visibility = View.GONE
+            viewHolder.imageViewStatus.visibility = View.GONE
         }
 
-        VectorUtils.loadRoomAvatar(context, mxSession, p0.imageViewAvatar, listItem[p1])
-        p0.name.text = listItem[p1].getRoomDisplayName(context)
-        p0.room = listItem[p1]
+        VectorUtils.loadRoomAvatar(context, mxSession, viewHolder.imageViewAvatar, listItem[p1])
+        viewHolder.name.text = listItem[p1].getRoomDisplayName(context)
+        viewHolder.room = listItem[p1]
         if (listItem[p1].notificationCount > 0) {
-            p0.notify.visibility = View.VISIBLE
-            p0.notify.text = listItem[p1].notificationCount.toString()
+            viewHolder.notify.visibility = View.VISIBLE
+            viewHolder.notify.text = listItem[p1].notificationCount.toString()
         } else {
-            p0.notify.visibility = View.GONE
+            viewHolder.notify.visibility = View.GONE
         }
-        getRoomMember(listItem[p1], p0.imageViewStatus)
-        p0.textViewTime.text = RoomUtils.getRoomTimestamp(context, listItem[p1].roomSummary!!.latestReceivedEvent)
+        getRoomMember(listItem[p1], viewHolder.imageViewStatus)
+        viewHolder.textViewTime.text = RoomUtils.getRoomTimestamp(context, listItem[p1].roomSummary!!.latestReceivedEvent)
     }
 
     open class ViewHolder(view: View, publishSubject: PublishSubject<OnClickObject>) : RecyclerView.ViewHolder(view) {

@@ -175,7 +175,6 @@ class VectorMessagesAdapterHelper {
                 // but they are dedicated behaviour i.e the sender must not be displayed
                 if (event.isCallEvent()
                         || Event.EVENT_TYPE_STATE_ROOM_TOPIC.equals(eventType)
-                        || Event.EVENT_TYPE_STATE_ROOM_MEMBER.equals(eventType)
                         || Event.EVENT_TYPE_STATE_ROOM_NAME.equals(eventType)
                         || Event.EVENT_TYPE_STATE_ROOM_THIRD_PARTY_INVITE.equals(eventType)
                         || Event.EVENT_TYPE_STATE_HISTORY_VISIBILITY.equals(eventType)

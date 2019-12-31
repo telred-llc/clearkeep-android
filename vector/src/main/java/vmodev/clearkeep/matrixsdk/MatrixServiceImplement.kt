@@ -1070,10 +1070,9 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         setMXSession()
         return Observable.create<RoomAndRoomUserJoin> { emitter ->
             val room = session!!.dataHandler.getRoom(roomId)
-//            Log.d("UpdateRoom", room.avatarUrl)
             val users = ArrayList<User>()
             val roomUserJoin = ArrayList<RoomUserJoin>()
-            Log.d("UpdateUser", room.toString())
+            Debug.e("--- user join room: ${room.avatarUrl}")
             room.getMembersAsync(object : ApiCallback<List<RoomMember>> {
                 override fun onSuccess(p0: List<RoomMember>?) {
                     p0?.forEach { t: RoomMember? ->
@@ -1806,7 +1805,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                         val messages = ArrayList<Message>()
                         roomSync.timeline.events.forEach {
                             it?.let {
-                                if (it.type.compareTo("m.room.encrypted") == 0) {
+                                if (it.type.compareTo(Event.EVENT_TYPE_MESSAGE_ENCRYPTED) == 0) {
                                     val message = Message(id = it.eventId, roomId = it.roomId, userId = it.sender, messageType = it.type, encryptedContent = it.content.toString(), createdAt = it.originServerTs)
                                     messages.add(message)
                                 }
@@ -1843,17 +1842,20 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
         }
     }
 
+    /**
+     * Decrypt message content
+     */
     override fun decryptListMessage(messages: List<MessageRoomUser>, msgType: String): Observable<List<MessageRoomUser>> {
         setMXSession()
         return Observable.create { emitter ->
             var messagesResult = ArrayList<MessageRoomUser>()
-//            val callHistoryFilter: HashMap<String, MessageRoomUser> = HashMap()
             val messageFilterHashMap: HashMap<String, MessageRoomUser> = HashMap()
             val parser = JsonParser()
             val gson = Gson()
             session!!.dataHandler.crypto?.let { mxCrypto ->
                 messages.forEach { item ->
                     val event = Event(item.message?.messageType, parser.parse(item.message?.encryptedContent).asJsonObject, item.message?.userId, item.message?.roomId)
+
                     try {
                         if (event.type == Event.EVENT_TYPE_MESSAGE_ENCRYPTED) {
                             val result = mxCrypto.decryptEvent(event, null)
@@ -1869,7 +1871,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                                         var messagesID: String = ""
                                         var contentMessage: String = ""
                                         item.message?.let {
-                                            val data: JsonObject = event.contentJson.getAsJsonObject()
+                                            val data: JsonObject = event.contentJson.asJsonObject
                                             if (data.getAsJsonObject("m.relates_to") != null) {
                                                 messagesID = data.getAsJsonObject("m.relates_to").get("event_id").asString
 //                                                        contentMessage = String().formatMessageEdit(message?.content?.body)
@@ -2005,7 +2007,7 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
                         val editMessageRequest = EditMessageRequest(sessionId, ciphertext, deviceId, algorithm
                                 , sender, relatesTo)
                         val locaId = "local." + UUID.randomUUID()
-                        apis.editMessage("Bearer " + session!!.credentials.accessToken, event.roomId, "m.room.encrypted", locaId, editMessageRequest)
+                        apis.editMessage("Bearer " + session!!.credentials.accessToken, event.roomId, Event.EVENT_TYPE_MESSAGE_ENCRYPTED, locaId, editMessageRequest)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.io()).subscribe({
                                     emitter.onNext(it)
