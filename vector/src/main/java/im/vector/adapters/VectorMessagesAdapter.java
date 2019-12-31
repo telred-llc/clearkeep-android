@@ -1636,7 +1636,7 @@ public class VectorMessagesAdapter extends AbstractMessagesAdapter {
                 if (null != htmlString) {
                     CharSequence sequence = mHelper.convertToHtml(htmlString);
 
-                    body = TextUtils.concat("", row.getSenderDisplayName(), " ", sequence);
+                    body = TextUtils.concat("* ", row.getSenderDisplayName(), " ", sequence);
                 }
             }
 
