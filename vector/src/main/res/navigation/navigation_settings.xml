@@ -50,6 +50,11 @@
         android:label="@string/label_feed_back"
         tools:layout="@layout/fragment_feed_back" />
     <fragment
+        android:id="@+id/settingDoNotDisturbFragment"
+        android:name="vmodev.clearkeep.fragments.FeedBackFragment"
+        android:label="@string/do_not_disturb"
+        tools:layout="@layout/fragment_setting_do_not_disturd" />
+    <fragment
         android:id="@+id/shareAppFragment"
         android:name="vmodev.clearkeep.fragments.ShareAppFragment"
         android:label="@string/label_share_app"
@@ -113,6 +118,14 @@
             app:destination="@id/shareAppFragment"
             app:enterAnim="@anim/slide_in_up"
             app:exitAnim="@anim/no_anim" />
+
+        <action
+            android:id="@+id/settingDoNotDisturb"
+            app:destination="@id/settingDoNotDisturbFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
 
     </fragment>
 </navigation>

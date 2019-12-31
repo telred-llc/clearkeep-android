@@ -75,6 +75,7 @@
     <string name="view_decrypted_source">View Decrypted Source</string>
     <string name="delete">Delete</string>
     <string name="rename">Rename</string>
+    <string name="do_not_disturb">Do Not Disturb</string>
 
     <!-- actions -->
     <string name="none">None</string>

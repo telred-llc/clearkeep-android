@@ -311,6 +311,46 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/do_not_disturb"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imgDoNotDisturb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="22dp"
+                        android:src="@drawable/ic_share_app"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="25dp"
+                        android:text="@string/do_not_disturb"
+                        android:textColor="?attr/color_text_setting"
+                        android:textSize="@dimen/text_17_sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgDoNotDisturb"
+                        app:layout_constraintLeft_toRightOf="@+id/imgDoNotDisturb"
+                        app:layout_constraintTop_toTopOf="@+id/imgDoNotDisturb" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="18dp"
+                        android:src="@drawable/ic_keyboard_arrow_right_gray_24dp"
+                        android:tint="?attr/icon_color_setting"
+                        app:layout_constraintBottom_toBottomOf="@+id/imgDoNotDisturb"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/imgDoNotDisturb" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="20dp"

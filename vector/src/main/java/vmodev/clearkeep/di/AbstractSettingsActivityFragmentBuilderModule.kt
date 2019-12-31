@@ -37,6 +37,10 @@ abstract class AbstractSettingsActivityFragmentBuilderModule {
     @ContributesAndroidInjector(modules = [FragmentShareAppBindModule::class])
     abstract fun contributeShareAppFragment(): ShareAppFragment
 
+    @ContributesAndroidInjector(modules = [SettingDoNotDisturbModule::class])
+    abstract fun contributeSettingDoNotDisturbFragment(): SettingDoNotDisturbFragment
+
+
     @Module
     abstract class FragmentProfileSettingsFragmentBindModule {
         @Binds
@@ -109,5 +113,12 @@ abstract class AbstractSettingsActivityFragmentBuilderModule {
         @Binds
         @Named(IFragment.SHARE_APP_FRAGMENT)
         abstract fun bindShareAppFragment(fragment: ShareAppFragment): IFragment
+    }
+
+    @Module
+    abstract class SettingDoNotDisturbModule {
+        @Binds
+        @Named(IFragment.SETTING_DO_NOT_DISTURB_FRAGMENT)
+        abstract fun bindSettingDoNotDisturb(fragment: SettingDoNotDisturbFragment): IFragment
     }
 }

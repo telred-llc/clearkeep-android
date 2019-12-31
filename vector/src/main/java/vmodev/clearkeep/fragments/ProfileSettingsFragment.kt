@@ -62,6 +62,11 @@ class ProfileSettingsFragment : DataBindingDaggerFragment(), IFragment {
         binding.copyrightGroup.setOnClickListener {
             findNavController().navigate(ProfileSettingsFragmentDirections.privacyPolicy().setUrl("https://riot.im/copyright"))
         }
+        binding.doNotDisturb.setOnClickListener(object : OnSingleClickListener() {
+            override fun onSingleClick(v: View) {
+                findNavController().navigate(ProfileSettingsFragmentDirections.settingDoNotDisturb())
+            }
+        })
         binding.reportGroup.setOnClickListener {
             findNavController().navigate(ProfileSettingsFragmentDirections.report())
         }
