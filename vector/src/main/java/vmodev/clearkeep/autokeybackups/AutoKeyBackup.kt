@@ -86,7 +86,7 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
                                             logout()
                                             return@subscribe
                                         }
-                                        exportNewKey(passphrase, password)
+                                        exportNewKey(passphrase, password, action)
                                     }
                                 }, {
                                     Toast.makeText(application, it.message, Toast.LENGTH_SHORT).show()
@@ -106,29 +106,31 @@ class AutoKeyBackup @Inject constructor() : IAutoKeyBackup {
                                 return@subscribe
                             }
 
-                            createNewKey(password, userId)
+                            createNewKey(password, userId, action)
                         }
                     }
         })
     }
 
     @SuppressLint("CheckResult")
-    private fun createNewKey(password: String, userId: String) {
+    private fun createNewKey(password: String, userId: String, action: IApplication.IAction) {
         val passwordForGenerateKey = userId + "COLIAKIP"
         val encryptedPassphrase = crypto.encrypt(passwordForGenerateKey, password + "COLIAKIP")
         matrixService.createPassphrase(encryptedPassphrase).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({ passphrase ->
             Toast.makeText(application, R.string.create_new_passphrase_successfully, Toast.LENGTH_SHORT).show()
-            exportNewKey(passphrase, password)
+            exportNewKey(passphrase, password, action)
         }, {
             Toast.makeText(application, it.message, Toast.LENGTH_SHORT).show()
         })
     }
 
     @SuppressLint("CheckResult")
-    private fun exportNewKey(passphrase: PassphraseResponse, password: String?) {
+    private fun exportNewKey(passphrase: PassphraseResponse, password: String?, action: IApplication.IAction) {
         val passwordForGenerateKey = passphrase.data.id + "COLIAKIP"
         val decryptedData = crypto.decrypt(passwordForGenerateKey, passphrase.data.passphrase)
-        matrixService.getKeyBackUpData(passphrase.data.id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+        matrixService.getKeyBackUpData(passphrase.data.id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doFinally {
+            action.doFinaly()
+        }.subscribe({
             when (it.state) {
                 6, 7, 4 -> {
                     matrixService.restoreBackupFromPassphrase(decryptedData).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
