@@ -11,6 +11,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
+import com.thelittlefireman.appkillermanager.managers.KillerManager
+import com.thelittlefireman.appkillermanager.ui.DialogKillerManagerBuilder
 import im.vector.Matrix
 import im.vector.R
 import im.vector.activity.CommonActivityUtils
@@ -34,6 +36,7 @@ class HomeScreenActivity : DataBindingDaggerActivity(), IActivity {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home_screen, dataBinding.getDataBindingComponent())
+        DialogKillerManagerBuilder().setContext(this).setAction(KillerManager.Actions.ACTION_AUTOSTART).show()
         startIncomingCall()
         mxSession = Matrix.getInstance(this.applicationContext).defaultSession
         binding.circleImageViewAvatar.setOnClickListener {

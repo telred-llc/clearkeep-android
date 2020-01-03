@@ -545,6 +545,23 @@
         <service
             android:name=".services.CallService"
             android:exported="false" />
+
+        <service
+            android:name="vmodev.clearkeep.features.jobschedule.ApplicationJobService"
+            android:exported="false"
+            android:label="Service ViCall"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <receiver android:name="vmodev.clearkeep.features.jobschedule.BootAutoStartServiceReciver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="android.intent.action.PHONE_STATE" />
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
