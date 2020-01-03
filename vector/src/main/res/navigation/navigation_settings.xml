@@ -51,7 +51,7 @@
         tools:layout="@layout/fragment_feed_back" />
     <fragment
         android:id="@+id/settingDoNotDisturbFragment"
-        android:name="vmodev.clearkeep.fragments.FeedBackFragment"
+        android:name="vmodev.clearkeep.fragments.SettingDoNotDisturbFragment"
         android:label="@string/do_not_disturb"
         tools:layout="@layout/fragment_setting_do_not_disturd" />
     <fragment

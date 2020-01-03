@@ -53,6 +53,7 @@ import im.vector.services.CallService;
 import vmodev.clearkeep.activities.CallViewActivity;
 import vmodev.clearkeep.activities.IncomingCallActivity;
 import vmodev.clearkeep.activities.OutgoingCallActivity;
+import vmodev.clearkeep.ultis.DateUtil;
 
 /**
  * This class contains the call toolbox.
@@ -555,20 +556,22 @@ public class CallsManager {
      * Start the ringing tone, if the phone is not in "do not disturb" mode
      */
     private void startRinging() {
-        if (NotificationUtils.INSTANCE.isDoNotDisturbModeOn(mContext)) {
-            Log.w(LOG_TAG, "Do not ring because DO NOT DISTURB MODE is on");
-            mCallSoundsManager.startRingingSilently();
-            return;
-        }
+        if (DateUtil.Companion.isNotificationActive(mContext)) {
+            if (NotificationUtils.INSTANCE.isDoNotDisturbModeOn(mContext)) {
+                Log.w(LOG_TAG, "Do not ring because DO NOT DISTURB MODE is on");
+                mCallSoundsManager.startRingingSilently();
+                return;
+            }
 
-        requestAudioFocus();
+            requestAudioFocus();
 
-        if (RingtoneUtilsKt.useRiotDefaultRingtone(mContext)) {
-            // Riot default
-            mCallSoundsManager.startRinging(R.raw.ring, RING_TONE_START_RINGING);
-        } else {
-            // Use provided ringtone
-            mCallSoundsManager.startRinging(RingtoneUtilsKt.getCallRingtone(mContext));
+            if (RingtoneUtilsKt.useRiotDefaultRingtone(mContext)) {
+                // Riot default
+                mCallSoundsManager.startRinging(R.raw.ring, RING_TONE_START_RINGING);
+            } else {
+                // Use provided ringtone
+                mCallSoundsManager.startRinging(RingtoneUtilsKt.getCallRingtone(mContext));
+            }
         }
     }
 
