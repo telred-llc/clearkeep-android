@@ -64,10 +64,7 @@ import vmodev.clearkeep.rests.models.responses.EditMessageResponse
 import vmodev.clearkeep.rests.models.responses.FeedbackResponse
 import vmodev.clearkeep.rests.models.responses.PassphraseResponse
 import vmodev.clearkeep.rests.models.responses.VersionAppInfoResponse
-import vmodev.clearkeep.ultis.ListRoomAndRoomUserJoinReturn
-import vmodev.clearkeep.ultis.RoomAndRoomUserJoin
-import vmodev.clearkeep.ultis.SearchMessageByTextResult
-import vmodev.clearkeep.ultis.getJoinedRoom
+import vmodev.clearkeep.ultis.*
 import vmodev.clearkeep.viewmodelobjects.*
 import java.io.InputStream
 import java.util.*
@@ -981,12 +978,12 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             val room = session!!.dataHandler.getRoom(roomId)
             room.getActiveMembersAsync(object : ApiCallback<List<RoomMember>> {
                 override fun onSuccess(p0: List<RoomMember>?) {
-
-                    p0?.forEach { t: RoomMember? ->
-                        t?.let { roomMember ->
-                            users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0))
-                        }
+                    users.clear()
+                    val joinRoomMember = p0?.filterIndexed { index, roomMember -> RoomMember.MEMBERSHIP_JOIN.equals(roomMember.membership) }
+                    joinRoomMember?.forEach { roomMember ->
+                        users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0))
                     }
+                    Debug.e(" size: ${users.size} - roomID: ${roomId}")
                     emitter.onNext(users)
                     emitter.onComplete()
                 }

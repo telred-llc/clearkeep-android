@@ -24,6 +24,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.adapters.ListUserToInviteRecyclerViewAdapter
+import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
@@ -36,6 +37,10 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 
 class InviteUsersToRoomFragment : DataBindingDaggerFragment(), IFragment {
+
+
+    @Inject
+    lateinit var applcation: IApplication
 
     @Inject
     lateinit var viewModelFactory: IViewModelFactory<AbstractInviteUsersToRoomActivityViewModel>
@@ -103,6 +108,7 @@ class InviteUsersToRoomFragment : DataBindingDaggerFragment(), IFragment {
                             val roomIntent = Intent(this.activity, RoomActivity::class.java)
                             roomIntent.putExtra(RoomActivity.EXTRA_MATRIX_ID, application.getUserId())
                             roomIntent.putExtra(RoomActivity.EXTRA_ROOM_ID, it.id)
+                            roomIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                             startActivity(roomIntent)
                             this.activity?.finish()
                         }
@@ -150,9 +156,27 @@ class InviteUsersToRoomFragment : DataBindingDaggerFragment(), IFragment {
             for ((key, value) in listSelected) {
                 userIds.add(key)
             }
-            args.roomId?.let {
+            args.roomId?.let { rooId ->
                 binding.room = viewModelFactory.getViewModel().getInviteUsersToRoomResult()
-                viewModelFactory.getViewModel().setInviteUsersToRoom(it, userIds)
+                viewModelFactory.getViewModel().setInviteUsersToRoom(rooId, userIds)
+
+//                viewModelFactory.getViewModel().getInviteUsersToRoomResult().observe(viewLifecycleOwner, Observer
+//                { t ->
+//                    t?.let {
+//                        when (it.status) {
+//                            Status.SUCCESS -> {
+//                                val intentRoom = Intent(this.context, RoomActivity::class.java)
+//                                intentRoom.putExtra(MXCActionBarActivity.EXTRA_MATRIX_ID, applcation.getUserId())
+//                                intentRoom.putExtra(RoomActivity.EXTRA_ROOM_ID, rooId)
+//                                intentRoom.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+//                                startActivity(intentRoom)
+//                                activity?.finish()
+//                            }
+//                            else -> {
+//                            }
+//                        }
+//                    }
+//                })
             }
 
         }

@@ -215,6 +215,13 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
         }
     }
 
+    override fun bindUserNumber(textView: TextView, userNumber: Int?) {
+        if (userNumber==1 ||userNumber==0) {
+            textView.text = (userNumber.toString() + " user")
+        } else {
+            textView.text = (userNumber.toString() + " users")
+        }
+    }
     override fun bindImageFile(imageView: ImageView, fileContent: ImageMessage) {
         fileContent.let {
             val session = Matrix.getInstance(imageView.context.applicationContext).defaultSession
