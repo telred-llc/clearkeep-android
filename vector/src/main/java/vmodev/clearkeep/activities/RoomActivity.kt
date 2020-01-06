@@ -82,9 +82,11 @@ import org.matrix.androidsdk.rest.model.User
 import org.matrix.androidsdk.rest.model.message.Message
 import vmodev.clearkeep.activities.interfaces.IActivity
 import vmodev.clearkeep.applications.IApplication
+import vmodev.clearkeep.dialogfragments.DialogFragmentChoiceSendFile
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.MessageListFragment
 import vmodev.clearkeep.repositories.MessageRepository
+import vmodev.clearkeep.ultis.Debug
 import vmodev.clearkeep.ultis.ReadMarkerManager
 import vmodev.clearkeep.ultis.RoomMediasSender
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomActivityViewModel
@@ -200,14 +202,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     @BindView(R.id.room_sending_message_layout)
     lateinit var mSendingMessagesLayout: View
 
-    @BindView(R.id.imgFile)
-    lateinit var mSendImageView: ImageView
-
     @BindView(R.id.editText_messageBox)
     lateinit var mEditText: VectorAutoCompleteTextView
-
-    @BindView(R.id.room_self_avatar)
-    lateinit var mAvatarImageView: ImageView
 
     @BindView(R.id.bottom_separator)
     lateinit var mBottomSeparator: View
@@ -235,8 +231,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     @BindView(R.id.room_action_bar_topic)
     lateinit var mActionBarCustomTopic: TextView
 
-//    @BindView(R.id.open_chat_header_arrow)
-//    lateinit var mActionBarCustomArrowImageView: ImageView
+    @BindView(R.id.btn_plus)
+    lateinit var btn_plus: ImageView
 
     // The room header view is displayed by clicking on the title of the action bar
 //    @BindView(R.id.action_bar_header)
@@ -304,14 +300,12 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     lateinit var invitationTextView: TextView
     @BindView(R.id.room_preview_subinvitation_textview)
     lateinit var subInvitationTextView: TextView
-    @BindView(R.id.button_send)
+    @BindView(R.id.btn_send)
     lateinit var buttonSend: ImageView
     @BindView(R.id.image_view_video_call)
     lateinit var imageViewVideoCall: ImageView
     @BindView(R.id.image_view_voice_call)
     lateinit var imageViewVoiceCall: ImageView
-    @BindView(R.id.image_view_cancel_edit)
-    lateinit var imageViewCancelEdit: ImageView
 
     @Inject
     lateinit var messageRepository: MessageRepository
@@ -446,8 +440,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         override fun onLiveEvent(event: Event?, roomState: RoomState?) {
             runOnUiThread {
                 val eventType = event!!.getType()
-                Log.d(LOG_TAG, "Received event type: $eventType")
-
+                Debug.e("--- Received event type: $eventType")
                 when (eventType) {
                     Event.EVENT_TYPE_STATE_ROOM_NAME, Event.EVENT_TYPE_STATE_ROOM_ALIASES, Event.EVENT_TYPE_STATE_ROOM_MEMBER -> {
                         setTitle()
@@ -467,7 +460,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                         mVectorMessageListFragment!!.setIsRoomEncrypted(currentRoom!!.isEncrypted)
                     }
                     Event.EVENT_TYPE_STATE_ROOM_TOMBSTONE -> checkSendEventStatus()
-                    else -> Log.d(LOG_TAG, "Ignored event type: $eventType")
+                    else -> Debug.e("--- Ignored event type: $eventType")
                 }
                 if (!VectorApp.isAppInBackground()) {
                     // do not send read receipt for the typing events
@@ -1038,8 +1031,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             // listen for room name or topic changes
             currentRoom!!.addEventListener(mRoomEventListener)
 
-            setEditTextHint(mVectorMessageListFragment!!.currentSelectedEvent)
-
             mSyncInProgressView.visibility = if (VectorApp.isSessionSyncing(mxSession)) View.VISIBLE else View.GONE
         } else {
             mSyncInProgressView.visibility = View.GONE
@@ -1127,31 +1118,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         }
 
         Log.d(LOG_TAG, "-- Resume the activity")
-    }
-
-    /**
-     * Update the edit text hint. It depends on the encryption and on the currently selected event
-     *
-     * @param selectedEvent the currently selected event or null if no event is selected
-     */
-    private fun setEditTextHint(selectedEvent: Event?) {
-        if (currentRoom == null) {
-            return
-        }
-
-        if (currentRoom!!.canReplyTo(selectedEvent)) {
-            // User can reply to this event
-            mEditText.setHint(if ((currentRoom!!.isEncrypted && mxSession!!.isCryptoEnabled))
-                R.string.room_message_placeholder_reply_to_encrypted
-            else
-                R.string.room_message_placeholder_reply_to_not_encrypted)
-        } else {
-            // default hint
-            mEditText.setHint(if ((currentRoom!!.isEncrypted && mxSession!!.isCryptoEnabled))
-                R.string.room_message_placeholder_encrypted
-            else
-                R.string.room_message_placeholder_not_encrypted)
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -1635,7 +1601,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         // create the call object
         mxSession!!.mCallsManager.createCallInRoom(currentRoom!!.roomId, aIsVideoCall, object : ApiCallback<IMXCall> {
             override fun onSuccess(call: IMXCall) {
-                Log.d(LOG_TAG, "## startIpCall(): onSuccess")
+                Debug.e("--- startIpCall(): onSuccess")
                 runOnUiThread(object : Runnable {
                     override fun run() {
                         hideWaitingView()
@@ -1664,19 +1630,19 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
 
             override fun onNetworkError(e: Exception) {
-                Log.e(LOG_TAG, "## startIpCall(): onNetworkError Msg=" + e.message, e)
+                Debug.e("--- startIpCall(): onNetworkError Msg=" + e.message, e)
                 onError(e.localizedMessage)
             }
 
             override fun onMatrixError(e: MatrixError) {
-                Log.e(LOG_TAG, "## startIpCall(): onMatrixError Msg=" + e.localizedMessage)
+                Debug.e("--- startIpCall(): onMatrixError Msg=" + e.localizedMessage)
 
                 if (e is MXCryptoError) {
                     val cryptoError = e
                     if (MXCryptoError.UNKNOWN_DEVICES_CODE == cryptoError.errcode) {
                         hideWaitingView()
 //                        CommonActivityUtils.displayUnknownDevicesDialog(mxSession,
-//                                this@RoomActivity,
+//                                this@RoomActivi
 //                                cryptoError.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>,
 //                                true,
 //                                object : VectorUnknownDevicesFragment.IUnknownDevicesSendAnywayListener {
@@ -1803,12 +1769,12 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     jsonObject.addProperty("msgtype", "m.text")
                     val gson = Gson()
                     jsonObject.add("m.new_content", gson.toJsonTree(mapNewContent))
-                    val event = Event("m.room.message", jsonObject, it.sender, it.roomId)
+                    val event = Event(Event.EVENT_TYPE_MESSAGE, jsonObject, it.sender, it.roomId)
                     event.eventId = it.eventId
                     messageRepository.editMessageRx(event).subscribe({
-                        Toast.makeText(this@RoomActivity, "Edited", Toast.LENGTH_SHORT).show()
+                        Debug.showAlert(this@RoomActivity, "Edited")
                     }, {
-                        Toast.makeText(this@RoomActivity, it.message, Toast.LENGTH_SHORT).show()
+                        Debug.showAlert(this@RoomActivity, it.message)
                     })
                 }
                 mEditText.setText("")
@@ -1830,10 +1796,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     fun sendMessage(body: String, formattedBody: String?, format: String, handleSlashCommand: Boolean) {
         if (!TextUtils.isEmpty(body)) {
             if ((!handleSlashCommand || !vmodev.clearkeep.ultis.SlashCommandsParser.manageSplashCommand(this, mxSession, currentRoom, body, formattedBody, format))) {
-                val currentSelectedEvent = mVectorMessageListFragment!!.currentSelectedEvent
-
+//                val currentSelectedEvent = mVectorMessageListFragment!!.currentSelectedEvent
+                val currentSelectedEvent = null
                 cancelSelectionMode()
-
                 mVectorMessageListFragment!!.sendTextMessage(body, formattedBody, currentSelectedEvent, format)
             }
         }
@@ -2298,9 +2263,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      */
     private fun refreshSelfAvatar() {
         // sanity check
-        if (null != mAvatarImageView) {
-            VectorUtils.loadUserAvatar(this, mxSession, mAvatarImageView, mxSession!!.myUser)
-        }
+//        if (null != mAvatarImageView) {
+//            VectorUtils.loadUserAvatar(this, mxSession, mAvatarImageView, mxSession!!.myUser)
+//        }
     }
 
     /**
@@ -2397,23 +2362,14 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     fun insertSelectedMessageInTextEditor(event: Event, textMsg: String?) {
         currentEvent = event
         isEditedMode = true
-        imageViewCancelEdit.visibility = View.VISIBLE
-        mEditText.setText(textMsg)
-        textMsg?.let { mEditText.setSelection(it.length) }
-    }
-
-    @OnClick(R.id.image_view_cancel_edit)
-    internal fun onClickCancelEdit() {
-        isEditedMode = false
-        currentEvent = null
-        mEditText.setText("")
-        imageViewCancelEdit.visibility = View.GONE
+        val text = textMsg?.replace(getString(R.string.edited_suffix), "")
+        mEditText.setText(text)
+        text?.let { mEditText.setSelection(it.length) }
     }
 
     /* ==========================================================================================
      * Implement VectorMessageListFragmentListener
      * ========================================================================================== */
-
     override fun showPreviousEventsLoadingWheel() {
         mBackProgressView.visibility = View.VISIBLE
     }
@@ -2439,8 +2395,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     }
 
     override fun onSelectedEventChange(currentSelectedEvent: Event?) {
-        // Update hint
-        setEditTextHint(currentSelectedEvent)
     }
 
     //================================================================================
@@ -3090,6 +3044,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                             params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession!!.myUserId
                             params[VectorRoomActivity.EXTRA_ROOM_ID] = currentRoom!!.roomId
                             // clear the activity stack to home activity
+
+                            Debug.e("--- return stop")
+                            return
                             val intent = Intent(this@RoomActivity, VectorHomeActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                             intent.putExtra(VectorHomeActivity.EXTRA_JUMP_TO_ROOM_PARAMS, params as HashMap<*, *>)
@@ -3356,6 +3313,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 params[VectorRoomActivity.EXTRA_EVENT_ID] = sRoomPreviewData!!.eventId
             }
 
+            Debug.e("--- return stop")
+            return
             // clear the activity stack to home activity
             val intent = Intent(this, VectorHomeActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -3568,6 +3527,28 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 .show()
     }
 
+    @OnClick(R.id.btn_plus)
+    internal fun onPlusClick() {
+        var dialog = DialogFragmentChoiceSendFile.newInstance()
+        dialog.iAction = object : DialogFragmentChoiceSendFile.IAction {
+            override fun sendFile() {
+                dialog.dismiss()
+                openFileSelection(this@RoomActivity, null, true, REQUEST_FILES_REQUEST_CODE)
+            }
+
+            override fun sendMedia() {
+                dialog.dismiss()
+                launchCamera()
+            }
+
+            override fun disableDialog() {
+                dialog.dismiss()
+            }
+
+        }
+        dialog.show(supportFragmentManager, DialogFragmentChoiceSendFile::class.java.simpleName)
+    }
+
     //    @OnClick(R.id.room_header_avatar)
     internal fun onRoomAvatarClick() {
         if (currentRoom != null && !TextUtils.isEmpty(currentRoom!!.avatarUrl))
@@ -3653,13 +3634,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     /* ==========================================================================================
      * UI Event
      * ========================================================================================== */
-
-    //    @OnClick(R.id.editText_messageBox)
-    internal fun onEditTextClick() {
-        // hide the header room as soon as the message input text area is touched
-        enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
-    }
-
     private fun chooseMediaSource(useNativeCamera: Boolean, isVoiceFeatureEnabled: Boolean) {
         // hide the header room
         enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
@@ -3743,74 +3717,12 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         startActivityForResult(intent, WAITING_INFORMATION_ACTIVITY)
     }
 
-    @OnClick(R.id.button_send)
+    @OnClick(R.id.btn_send)
     internal fun onClickSend() {
-        imageViewCancelEdit.visibility = View.GONE
-        if (!isEditedMode)
+        if (!isEditedMode) {
             sendTextMessage(mEditText.text.toString())
-        else
+        } else {
             editTextMessage()
-    }
-
-    @OnClick(R.id.imgFile)
-    internal fun onClickSendFile() {
-
-        val items = ArrayList<DialogListItem>()
-
-        // Send file
-        onSendChoiceClicked(DialogListItem.SendFile)
-
-//        if (!TextUtils.isEmpty(mEditText.text) && !PreferencesManager.sendMessageWithEnter(this)) {
-//            sendTextMessage()
-//        } else {
-//            val useNativeCamera = PreferencesManager.useNativeCamera(this)
-//            val isVoiceFeatureEnabled = PreferencesManager.isSendVoiceFeatureEnabled(this)
-//
-//            when (PreferencesManager.getSelectedDefaultMediaSource(this)) {
-//                MEDIA_SOURCE_FILE -> {
-//                    onSendChoiceClicked(DialogListItem.SendFile)
-//                    return
-//                }
-//                MEDIA_SOURCE_VOICE -> if (isVoiceFeatureEnabled) {
-//                    onSendChoiceClicked(DialogListItem.SendVoice)
-//                    return
-//                }
-//                MEDIA_SOURCE_STICKER -> {
-//                    onSendChoiceClicked(DialogListItem.SendSticker)
-//                    return
-//                }
-//                MEDIA_SOURCE_PHOTO -> if (useNativeCamera) {
-//                    onSendChoiceClicked(DialogListItem.TakePhoto)
-//                    return
-//                } else {
-//                    onSendChoiceClicked(DialogListItem.TakePhotoVideo)
-//                    return
-//                }
-//                MEDIA_SOURCE_VIDEO -> if (useNativeCamera) {
-//                    onSendChoiceClicked(DialogListItem.TakeVideo)
-//                    return
-//                } else {
-//                    onSendChoiceClicked(DialogListItem.TakePhotoVideo)
-//                    return
-//                }
-//            }// show all options if voice feature is disabled
-//
-//            chooseMediaSource(useNativeCamera, isVoiceFeatureEnabled)
-//        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    @OnClick(R.id.button_special_symbol)
-    internal fun onClickSpecialSymbol() {
-        mEditText.setText(mEditText.text.toString() + "@")
-        mEditText.setSelection(mEditText.text.length)
-    }
-
-    @OnClick(R.id.image_view_send_image)
-    internal fun onClickSendImage() {
-        if (checkPermissions(PERMISSIONS_FOR_TAKING_PHOTO,
-                        this@RoomActivity, PERMISSION_REQUEST_CODE_LAUNCH_CAMERA)) {
-            launchCamera()
         }
     }
 
@@ -3943,18 +3855,4 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         CallsManager.getSharedInstance().onHangUp(null)
     }
 
-    @OnClick(R.id.room_button_margin_right)
-    internal fun onMarginRightClick() {
-        // extend the right side of right button
-        // to avoid clicking in the void
-        if (mStopCallLayout.visibility == View.VISIBLE) {
-            mStopCallLayout.performClick()
-        }
-//        else if (mStartCallLayout!!.visibility == View.VISIBLE) {
-//            mStartCallLayout!!.performClick()
-//        }
-        else if (mSendImageView.visibility == View.VISIBLE) {
-            mSendImageView.performClick()
-        }
-    }
 }

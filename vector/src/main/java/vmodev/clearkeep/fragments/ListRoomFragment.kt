@@ -26,7 +26,6 @@ import vmodev.clearkeep.viewmodels.interfaces.AbstractListRoomFragmentViewModel
 import javax.inject.Inject
 import javax.inject.Named
 
-private const val GO_TO_ROOM_CODE = 12432
 
 /**
  * A simple [Fragment] subclass.
@@ -58,6 +57,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
     private var roomList: Int? = 0
     private var derectList: Int? = 0
     private var currentRoomId: String = ""
+    private val GO_TO_ROOM_CODE = 12432
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment     
@@ -385,7 +385,7 @@ class ListRoomFragment : DataBindingDaggerFragment(), IFragment {
         if (requestCode == GO_TO_ROOM_CODE && resultCode == -1) {
             data?.let {
                 binding.room = viewModelFactory.getViewModel().getUpdateRoomNotifyResult()
-                viewModelFactory.getViewModel().setIdForUpdateRoomNotify(it.getStringExtra(RoomActivity.RESULT_ROOM_ID))
+                viewModelFactory.getViewModel().setIdForUpdateRoomNotify(it.getStringExtra(RoomActivity.RESULT_ROOM_ID)!!)
             }
         }
     }

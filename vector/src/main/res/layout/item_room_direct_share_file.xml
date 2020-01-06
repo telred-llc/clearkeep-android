@@ -18,10 +18,11 @@
         android:baselineAligned="false"
         android:orientation="horizontal">
 
-        <vmodev.clearkeep.widget.CircleImage
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/rcBorderCircle"
             android:layout_width="@dimen/image_avatar_status_size"
-            android:layout_height="@dimen/image_avatar_status_size"/>
+            android:layout_height="@dimen/image_avatar_status_size"
+            app:room="@{room_list_user.room}" />
 
         <TextView
             android:id="@+id/text_view_name"
@@ -33,8 +34,7 @@
             android:layout_toEndOf="@+id/rcBorderCircle"
             android:singleLine="true"
             android:text="@{room_list_user.room.name}"
-            android:textSize="@dimen/text_20_sp"
-            android:textStyle="bold" />
+            android:textSize="@dimen/text_18_sp" />
 
     </RelativeLayout>
 </layout>

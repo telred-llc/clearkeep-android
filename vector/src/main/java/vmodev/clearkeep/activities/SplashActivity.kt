@@ -27,6 +27,8 @@ import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.listeners.IMXEventListener
 import org.matrix.androidsdk.listeners.MXEventListener
 import vmodev.clearkeep.activities.interfaces.ISplashActivity
+import vmodev.clearkeep.applications.ClearKeepApplication
+import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.factories.viewmodels.interfaces.ISplashActivityViewModelFactory
 import vmodev.clearkeep.viewmodelobjects.Message
 import vmodev.clearkeep.viewmodelobjects.RoomUserJoin
@@ -247,13 +249,16 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
     }
 
     private fun startHomeScreen() {
-        android.util.Log.d("StartEvent", "Home")
         application.setEventHandler()
-        val intent = Intent(this, HomeScreenActivity::class.java)
-//            intent.putExtra(HomeScreenActivity.START_FROM_LOGIN, startFromLogin)
-        clearKeepApplication.startAutoKeyBackup(startFromLogin)
-        startActivity(intent)
-        finish()
+        clearKeepApplication.startAutoKeyBackup(startFromLogin, object : IApplication.IAction {
+            override fun doFinaly() {
+                (applicationContext as ClearKeepApplication).saveStore()
+                val intent = Intent(this@SplashActivity, HomeScreenActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+
+        })
     }
 
     private fun checkLazyLoadingStatus(sessions: List<MXSession>) {
@@ -271,6 +276,7 @@ class SplashActivity : DataBindingDaggerActivity(), ISplashActivity {
             // Check that user has not explicitly disabled the lazy loading
             if (PreferencesManager.hasUserRefusedLazyLoading(this)) {
                 // Go to next step
+
                 startEventStreamService(sessions)
             } else {
                 // Try to enable LL

@@ -49,7 +49,7 @@ abstract class DataBindingDaggerActivity : AppCompatActivity(), HasAndroidInject
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         session = Matrix.getInstance(applicationContext).defaultSession
         dataBindingDaggerActivityViewModel = ViewModelProvider(this, _viewModelFactory).get(AbstractDataBindingDaggerActivityViewModel::class.java)
-        if (this is HomeScreenActivity)
+        if (this is HomeScreenActivity || this is LoginActivity)
             clearKeepApplication.checkVersion(this)
     }
 

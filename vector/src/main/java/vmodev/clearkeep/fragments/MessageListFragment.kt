@@ -1,10 +1,12 @@
 package vmodev.clearkeep.fragments
 
 import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -56,9 +58,11 @@ import vmodev.clearkeep.activities.UserInformationActivity
 import vmodev.clearkeep.activities.ViewUserProfileActivity
 import vmodev.clearkeep.adapters.MessagesAdapter
 import vmodev.clearkeep.fragments.BaseMessageListFragment.Companion.VERIF_REQ_CODE
+import vmodev.clearkeep.ultis.Debug
 import vmodev.clearkeep.ultis.SharedPreferencesUtils
 import java.io.File
 import java.util.*
+import java.util.regex.Pattern
 
 class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessagesAdapterActionsListener {
 
@@ -967,13 +971,11 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
         try {
             val row = mAdapter.getItem(position)
             val event = row!!.event
-
             // toggle selection mode
             mAdapter.onEventTap(event)
         } catch (e: Exception) {
             Log.e(LOG_TAG, "## onRowClick() failed " + e.message, e)
         }
-
     }
 
     override fun onContentClick(position: Int) {
@@ -1047,6 +1049,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
         if (userId.compareTo(mSession.myUserId) != 0) {
             intent = Intent(this.context, ViewUserProfileActivity::class.java)
             intent.putExtra(ViewUserProfileActivity.USER_ID, userId)
+            intent.putExtra(ViewUserProfileActivity.ROOM_ID, mRoom.roomId)
         } else {
             intent = Intent(this.context, ProfileActivity::class.java)
         }
@@ -1117,6 +1120,7 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
 
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
     override fun onURLClick(uri: Uri?) {
         try {
             if (null != uri) {
@@ -1130,8 +1134,17 @@ class MessageListFragment : MatrixMessageListFragment<MessagesAdapter>(), IMessa
                                 universalParams[PermalinkUtils.ULINK_MATRIX_USER_ID_KEY])
                         roomDetailsIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MATRIX_ID, mSession.credentials.userId)
                         activity!!.startActivityForResult(roomDetailsIntent, VectorRoomActivity.GET_MENTION_REQUEST_CODE)
+                    } else if (universalParams.containsKey(PermalinkUtils.ULINK_ROOM_ID_OR_ALIAS_KEY)) {
+                        val param = universalParams[PermalinkUtils.ULINK_ROOM_ID_OR_ALIAS_KEY]
+                        val patterns = Pattern.compile("^#((\\w)*):((\\w)*.(\\w)*)")
+                        val matcher = patterns.matcher(param)
+                        if (matcher.matches()) {
+                            val roomID = matcher.group(1)
+                            val serverName = matcher.group(3)
+                            Debug.e("--- roomID: $roomID\nserverName: $serverName")
+
+                        }
                     } else {
-                        // pop to the home activity
                         val intent = Intent(activity, VectorHomeActivity::class.java)
                         intent.flags = android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP or android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
                         intent.putExtra(VectorHomeActivity.EXTRA_JUMP_TO_UNIVERSAL_LINK, uri)

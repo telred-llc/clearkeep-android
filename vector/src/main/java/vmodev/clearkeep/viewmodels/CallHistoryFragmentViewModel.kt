@@ -29,7 +29,7 @@ class CallHistoryFragmentViewModel @Inject constructor(private val messageReposi
     }
 
     override fun getListCallHistory(decryptListMessage: List<MessageRoomUser>): LiveData<Resource<List<MessageRoomUser>>> {
-        return messageRepository.decryptMessage(decryptListMessage, Event.EVENT_TYPE_CALL_INVITE)
+        return messageRepository.decryptCallHistory(decryptListMessage)
     }
     override fun setTimeForRefreshLoadMessage(time: Long) {
         if (_setTimeForRefreshLoadMessage.value != time)

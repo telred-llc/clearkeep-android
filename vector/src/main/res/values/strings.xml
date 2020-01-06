@@ -540,7 +540,8 @@
         <item quantity="one">1 new message</item>
         <item quantity="other">%d new messages</item>
     </plurals>
-
+    <string name="notification_one_message">1 new message</string>
+    <string name="notification_messages">new messages</string>
     <!-- unrecognized SSL certificate -->
     <string name="ssl_trust">Trust</string>
     <string name="ssl_do_not_trust">Do not trust</string>
@@ -2027,5 +2028,9 @@ Not all features in Riot are implemented in RiotX yet. Main missing (and coming 
     <string name="title_dialog_new_version_avaliable">New version available</string>
     <string name="message_dialog_update_version_application">Please, update the app to the new version to continue using</string>
     <string name="title_button_confirm">Update</string>
+    <string name="title_dialog_choice_send_file">Content and Tools</string>
+    <string name="title_choice_file">Send File</string>
+    <string name="title_choice_media">Send Photo or Video</string>
+    <string name="str_i_will_do_it_later">I will do it later</string>
 
 </resources>

@@ -238,7 +238,12 @@ class NotificationAreaView @JvmOverloads constructor(
         if (state.unreadCount > 0) {
             imageView.setImageDrawable(getAttributeDrawable(context, R.attr.drawable_new_message))
             messageView.setTextColor(ThemeUtils.getColor(context, R.attr.color_text_note_app_default))
-            messageView.text = SpannableString(resources.getQuantityString(R.plurals.room_new_messages_notification, state.unreadCount, state.unreadCount))
+            if (state.unreadCount == 1) {
+                messageView.text = resources.getString(R.string.notification_one_message)
+            } else {
+                messageView.text = state.unreadCount.toString().plus(" ").plus(resources.getString(R.string.notification_messages))
+            }
+//            messageView.text = SpannableString(resources.getQuantityString(R.plurals.room_new_messages_notification, state.unreadCount, state.unreadCount))
         } else {
             imageView.setImageResource(R.drawable.scrolldown)
             messageView.setTextColor(ThemeUtils.getColor(context, R.attr.vctr_room_notification_text_color))

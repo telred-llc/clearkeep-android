@@ -43,6 +43,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.binaryfork.spanny.Spanny
 import im.vector.R
@@ -73,12 +74,14 @@ import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.message.Message
 import org.matrix.androidsdk.view.HtmlTagHandler
+import vmodev.clearkeep.ultis.Debug
 import java.text.SimpleDateFormat
 import java.util.*
 
 /**
  * An adapter which can display room information.
  */
+@RequiresApi(Build.VERSION_CODES.N)
 open class MessagesAdapter
 /**
  * Expanded constructor.
@@ -116,7 +119,9 @@ internal constructor(// session
         stickerResLayoutId: Int,
         hiddenResLayoutId: Int,
         roomVersionedResLayoutId: Int,
+        textEditedResLayoutOwnerId: Int,
         textEditedResLayoutId: Int,
+        textEditedResLayout: Int,
         textResLayoutOwnerId: Int,
         // media cache
         private val mMediasCache: MXMediaCache) : AbstractMessagesAdapter(mContext, 0) {
@@ -138,7 +143,7 @@ internal constructor(// session
 
     // day date of each message
     // the hours, minutes and seconds are removed
-    private var mMessagesDateList: List<Date> = ArrayList()
+    private var mMessagesDateList: List<Date> = ArrayList<Date>()
 
     // when the adapter is used in search mode
     // the searched message should be highlighted
@@ -186,19 +191,12 @@ internal constructor(// session
     private var mIsUnreadViewMode = false
     private var mPattern: String? = null
     private var mLiveMessagesRowList: MutableList<MessageRow>? = null
-
-    // id of the read markers event
     private var mReadReceiptEventId: String? = null
-
     private var mLinkMovementMethod: MatrixLinkMovementMethod? = null
-
     private lateinit var mMediasHelper: MessagesAdapterMediasHelper
     protected lateinit var mHelper: MessagesAdapterHelper
-
     private val mHiddenEventIds = HashSet<String>()
-
     private val mLocale: Locale
-
     // custom settings
     private val mAlwaysShowTimeStamps: Boolean
     private val mShowReadReceipts: Boolean
@@ -319,6 +317,8 @@ internal constructor(// session
             R.layout.adapter_item_vector_message_redact,
             R.layout.adapter_item_vector_message_room_versioned,
             R.layout.adapter_item_vector_message_text_edited_emote_notice,
+            R.layout.adapter_item_vector_message_text_edited_by_member,
+            R.layout.adapter_item_vector_message_text_emote_notice_own,
             R.layout.adapter_item_vector_message_text_emote_notice_own,
             mediasCache)
 
@@ -336,8 +336,10 @@ internal constructor(// session
         mRowTypeToLayoutId[ROW_TYPE_STICKER] = stickerResLayoutId
         mRowTypeToLayoutId[ROW_TYPE_HIDDEN] = hiddenResLayoutId
         mRowTypeToLayoutId[ROW_TYPE_VERSIONED_ROOM] = roomVersionedResLayoutId
-        mRowTypeToLayoutId[ROW_TYPE_TEXT_EDITED] = textEditedResLayoutId
+        mRowTypeToLayoutId[ROW_TYPE_TEXT_EDITED_OWNER] = textEditedResLayoutOwnerId
         mRowTypeToLayoutId[ROW_TYPE_TEXT_OWNER] = textResLayoutOwnerId
+        mRowTypeToLayoutId[ROW_TYPE_TEXT_EDITED_MEMBER] = textEditedResLayoutId
+
         mLayoutInflater = LayoutInflater.from(mContext)
         // the refresh will be triggered only when it is required
         // for example, retrieve the historical messages triggers a refresh for each message
@@ -364,18 +366,13 @@ internal constructor(// session
             mMaxImageWidth = Math.round(screenWidth * 0.4f)
             mMaxImageHeight = Math.round(screenHeight * 0.6f)
         }
-
         // helpers
         mMediasHelper = MessagesAdapterMediasHelper(mContext, mSession, mMaxImageWidth, mMaxImageHeight, mNotSentMessageTextColor, mDefaultMessageTextColor)
         mHelper = MessagesAdapterHelper(mContext, mSession, this)
-
         mLocale = VectorLocale.applicationLocale
-
         mAlwaysShowTimeStamps = PreferencesManager.alwaysShowTimeStamps(VectorApp.getInstance())
         mShowReadReceipts = PreferencesManager.showReadReceipts(VectorApp.getInstance())
-
         mPadlockDrawable = ThemeUtils.tintDrawable(mContext, ContextCompat.getDrawable(mContext, R.drawable.ic_lock_open_black_24dp)!!, R.attr.color_text_app_default)
-
     }
 
     /*
@@ -427,7 +424,7 @@ internal constructor(// session
 
     override fun addToFront(row: MessageRow) {
         if (isSupportedRow(row)) {
-            android.util.Log.d("AddItem", row.event.contentJson.toString())
+            Log.d("Tag", row.event.contentJson.toString())
             // ensure that notifyDataSetChanged is not called
             // it seems that setNotifyOnChange is reinitialized to true;
             setNotifyOnChange(false)
@@ -651,7 +648,7 @@ internal constructor(// session
      */
 
     override fun getViewTypeCount(): Int {
-        return NUM_ROW_TYPES
+        return mRowTypeToLayoutId.size
     }
 
     override fun clear() {
@@ -678,35 +675,22 @@ internal constructor(// session
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convertView = convertView
-        // GA Crash : it seems that some invalid indexes are required
         if (position >= count) {
-            Log.e(LOG_TAG, "## getView() : invalid index $position >= $count")
-
-            // create dummy one is required
             if (null == convertView) {
                 convertView = mLayoutInflater.inflate(mRowTypeToLayoutId[ROW_TYPE_TEXT]!!, parent, false)
             }
-
             if (null != mVectorMessagesAdapterEventsListener) {
                 mVectorMessagesAdapterEventsListener!!.onInvalidIndexes()
             }
-
             return convertView!!
         }
-
         val inflatedView: View?
         val viewType = getItemViewType(position)
-
-        // when the user scrolls quickly
-        // it seems that the recycled view does not have the right layout.
-        // check it
         if (null != convertView) {
             if (viewType != convertView.tag as Int) {
-                Log.e(LOG_TAG, "## getView() : invalid view type : got " + convertView.tag + " instead of " + viewType)
                 convertView = null
             }
         }
-
         when (viewType) {
             ROW_TYPE_EMOJI, ROW_TYPE_CODE, ROW_TYPE_TEXT -> inflatedView = getTextView(viewType, position, convertView, parent)
             ROW_TYPE_IMAGE, ROW_TYPE_VIDEO, ROW_TYPE_STICKER -> inflatedView = getImageVideoView(viewType, position, convertView, parent)
@@ -716,24 +700,19 @@ internal constructor(// session
             ROW_TYPE_HIDDEN -> inflatedView = getHiddenView(position, convertView, parent)
             ROW_TYPE_MERGE -> inflatedView = getMergeView(position, convertView, parent)
             ROW_TYPE_VERSIONED_ROOM -> inflatedView = getVersionedRoomView(position, convertView, parent)
-            ROW_TYPE_TEXT_EDITED -> inflatedView = getTextEditedView(viewType, position, convertView, parent)
+            ROW_TYPE_TEXT_EDITED_MEMBER, ROW_TYPE_TEXT_EDITED_OWNER -> inflatedView = getTextEditedView(viewType, position, convertView, parent)
             ROW_TYPE_TEXT_OWNER -> inflatedView = getTextView(viewType, position, convertView, parent)
             else -> throw RuntimeException("Unknown item view type for position $position")
         }
-
         if (mReadMarkerListener != null) {
             handleReadMarker(inflatedView!!, position)
         }
-
         if (null != inflatedView) {
             inflatedView.setBackgroundColor(Color.TRANSPARENT)
             inflatedView.tag = viewType
         }
-
         displayE2eIcon(inflatedView!!, position)
-
         displayE2eReRequest(inflatedView, position)
-
         return inflatedView
     }
 
@@ -773,7 +752,7 @@ internal constructor(// session
         // build event -> date list
         refreshRefreshDateList()
 
-        manageCryptoEvents()
+//        manageCryptoEvents()
 
         //  do not refresh the room when the application is in background
         // on large rooms, it drains a lot of battery
@@ -820,6 +799,14 @@ internal constructor(// session
      */
     fun onEventTap(event: Event?) {
         // the tap to select is only enabled when the adapter is not in search mode.
+        when (event?.type) {
+            Event.EVENT_TYPE_MESSAGE_ENCRYPTED -> {
+            }
+            else -> {
+                Debug.e("--- not action highlight event: ${event?.type}")
+                return
+            }
+        }
         if (!mIsSearchMode) {
             if (null == currentSelectedEvent) {
                 currentSelectedEvent = event
@@ -827,7 +814,6 @@ internal constructor(// session
                 currentSelectedEvent = null
             }
             notifyDataSetChanged()
-
             if (mVectorMessagesAdapterEventsListener != null) {
                 mVectorMessagesAdapterEventsListener!!.onSelectedEventChange(currentSelectedEvent)
             }
@@ -938,13 +924,16 @@ internal constructor(// session
         }
 
         if (editedMessageMap.containsKey(eventId)) {
-            return ROW_TYPE_TEXT_EDITED
+            if (event.sender.equals(mSession.myUserId)) {
+                return ROW_TYPE_TEXT_EDITED_OWNER
+            } else {
+                return ROW_TYPE_TEXT_EDITED_MEMBER
+            }
         }
 
         // never cache the view type of encrypted events
         if (null != eventId) {
             val type = mEventType[eventId]
-
             if (null != type) {
                 return type
             }
@@ -979,7 +968,6 @@ internal constructor(// session
             } else if (Message.MSGTYPE_VIDEO == msgType) {
                 viewType = ROW_TYPE_VIDEO
             } else {
-                // Default is to display the body as text
                 if (TextUtils.equals(event.sender, mSession.myUserId)) {
                     viewType = ROW_TYPE_TEXT_OWNER
                 } else {
@@ -996,7 +984,6 @@ internal constructor(// session
                 || Event.EVENT_TYPE_STATE_ROOM_THIRD_PARTY_INVITE == eventType
                 || Event.EVENT_TYPE_MESSAGE_ENCRYPTION == eventType) {
             viewType = ROW_TYPE_ROOM_MEMBER
-
         } else if (WidgetsManager.WIDGET_EVENT_TYPE == eventType) {
             return ROW_TYPE_ROOM_MEMBER
         } else if (Event.EVENT_TYPE_STATE_ROOM_CREATE == eventType) {
@@ -1025,15 +1012,16 @@ internal constructor(// session
         convertView.isClickable = true
 
         // click on the message row select it
-//        convertView.setOnClickListener {
-//            Log.e("TAG", "--- Click tag item 6")
-//            if (null != mVectorMessagesAdapterEventsListener) {
-//                mVectorMessagesAdapterEventsListener!!.onRowClick(position)
-//            }
-//        }
+        convertView.setOnClickListener {
+            Debug.e("--- Click tag item 6")
+            mVectorMessagesAdapterEventsListener?.onRowClick(position)
+        }
 
         // long click on the message row display the message options menu
-        convertView.setOnLongClickListener { null != mVectorMessagesAdapterEventsListener && mVectorMessagesAdapterEventsListener!!.onRowLongClick(position) }
+        convertView.setOnLongClickListener {
+            Debug.e("--- long click tag item 6")
+            null != mVectorMessagesAdapterEventsListener && mVectorMessagesAdapterEventsListener!!.onRowLongClick(position)
+        }
 
         val event = row!!.event
 
@@ -1063,17 +1051,16 @@ internal constructor(// session
         mHelper.setSenderValue(convertView, row, isMergedView)
 
         // message timestamp
-        val tsTextView = MessagesAdapterHelper.setTimestampValue(convertView, getFormattedTimestamp(event))
-
-        if (null != tsTextView) {
-            if (row.event.isUndelivered || row.event.isUnknownDevice) {
-                tsTextView.setTextColor(mNotSentMessageTextColor)
-            } else {
-                tsTextView.setTextColor(ThemeUtils.getColor(mContext, android.R.attr.textColorSecondary))
-            }
-
-            tsTextView.visibility = if (position + 1 == count || mIsSearchMode || mAlwaysShowTimeStamps) View.VISIBLE else View.GONE
-        }
+//        val tsTextView = MessagesAdapterHelper.setTimestampValue(convertView, getFormattedTimestamp(event))
+//        if (null != tsTextView) {
+//            if (row.event.isUndelivered || row.event.isUnknownDevice) {
+//                tsTextView.setTextColor(mNotSentMessageTextColor)
+//            } else {
+//                tsTextView.setTextColor(ThemeUtils.getColor(mContext, android.R.attr.textColorSecondary))
+//            }
+//
+//            tsTextView.visibility = if (position + 1 == count || mIsSearchMode || mAlwaysShowTimeStamps) View.VISIBLE else View.GONE
+//        }
 
         // Sender avatar
         val avatarView = mHelper.setSenderAvatar(convertView, row, isMergedView)
@@ -1082,11 +1069,9 @@ internal constructor(// session
         // the thumbnail is hidden
         // and the subview must be moved to be aligned with the previous body
         val bodyLayoutView = convertView.findViewById<View>(R.id.messagesAdapter_body_layout)
-        MessagesAdapterHelper.alignSubviewToAvatarView(subView, bodyLayoutView, avatarView!!, isMergedView)
-
+        MessagesAdapterHelper.alignSubviewToAvatarView(subView, bodyLayoutView, avatarView!!, isMergedView, event.sender == mSession.myUserId)
         // messages separator
         val messageSeparatorView = convertView.findViewById<View>(R.id.messagesAdapter_message_separator)
-
         if (null != messageSeparatorView) {
             messageSeparatorView.visibility = if (willBeMerged || position + 1 == count) View.GONE else View.VISIBLE
         }
@@ -1177,16 +1162,17 @@ internal constructor(// session
         } catch (e: Exception) {
             Log.e(LOG_TAG, "## getTextView() failed : " + e.message, e)
         }
-
         return convertView
     }
 
+    /**
+     * fun show content edit message
+     */
     private fun getTextEditedView(viewType: Int, position: Int, convertView: View?, parent: ViewGroup): View? {
         var convertView = convertView
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(mRowTypeToLayoutId[viewType]!!, parent, false)
         }
-
         try {
             var row = getItem(position)
             var event: Event? = row!!.event
@@ -1195,43 +1181,33 @@ internal constructor(// session
                 event = editedMessageMap[event.eventId]
                 row = MessageRow(event!!, mSession.dataHandler.getRoom(event.roomId).state)
                 message = JsonUtils.toMessage(event.content)
-                message.body = event.content.asJsonObject.get("m.new_content").asJsonObject.get("body").asString + "<i>(edited)</i>"
+                message.body = event.content.asJsonObject.get("m.new_content").asJsonObject.get("body").asString + "<i>${mContext.getString(R.string.edited_suffix)}</i>"
             } else {
                 message = JsonUtils.toMessage(event.content)
             }
-
-
             val shouldHighlighted = null != mVectorMessagesAdapterEventsListener && mVectorMessagesAdapterEventsListener!!.shouldHighlightEvent(event)
-
             val textViews: MutableList<TextView>
 
             if (ROW_TYPE_CODE == viewType) {
                 textViews = populateRowTypeCode(message, convertView!!, shouldHighlighted)
             } else {
                 val bodyTextView = convertView!!.findViewById<TextView>(R.id.messagesAdapter_body)
-
                 // cannot refresh it
                 if (null == bodyTextView) {
                     Log.e(LOG_TAG, "getTextView : invalid layout")
                     return convertView
                 }
-
                 val display = RiotEventDisplay(mContext, mHtmlToolbox)
-
                 val body = row.getText(VectorQuoteSpan(mContext), display)
                 var result = mHelper.highlightPattern(body, Message.FORMAT_MATRIX_HTML, mBackgroundColorSpan, shouldHighlighted)
                 result = "$result ${context.resources.getString(R.string.edited_suffix)}"
-                result = result.subSequence(2, result.length)
                 bodyTextView.text = result
-
                 mHelper.applyLinkMovementMethod(bodyTextView)
                 bodyTextView.vectorCustomLinkify(true)
                 textViews = ArrayList()
                 textViews.add(bodyTextView)
             }
-
             val textColor: Int
-
             if (row.event.isEncrypting) {
                 textColor = mEncryptingMessageTextColor
             } else if (row.event.isSending || row.event.isUnsent) {
@@ -1257,7 +1233,6 @@ internal constructor(// session
         } catch (e: Exception) {
             Log.e(LOG_TAG, "## getTextView() failed : " + e.message, e)
         }
-
         return convertView
     }
 
@@ -1408,23 +1383,16 @@ internal constructor(// session
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(mRowTypeToLayoutId[viewType]!!, parent, false)
         }
-
         try {
             val row = getItem(position)
             val msg = row!!.event
-
             val notice: CharSequence
-
             val display = RiotEventDisplay(mContext)
             notice = row.getText(null, display)
-
             val noticeTextView = convertView!!.findViewById<TextView>(R.id.messagesAdapter_body)
-
             if (null == noticeTextView) {
-                Log.e(LOG_TAG, "getNoticeRoomMemberView : invalid layout")
                 return convertView
             }
-
             if (TextUtils.isEmpty(notice)) {
                 noticeTextView.text = ""
             } else {
@@ -1432,33 +1400,20 @@ internal constructor(// session
                 MatrixURLSpan.refreshMatrixSpans(strBuilder, mVectorMessagesAdapterEventsListener)
                 mHelper.applyLinkMovementMethod(noticeTextView)
                 noticeTextView.text = strBuilder
-                //In room member we don't want autolink, but do it for m.notice
                 if (viewType == ROW_TYPE_NOTICE) {
                     noticeTextView.vectorCustomLinkify(true)
                 }
             }
-
             val textLayout = convertView.findViewById<View>(R.id.messagesAdapter_text_layout)
             manageSubView(position, convertView, textLayout, viewType)
-
             addContentViewListeners(convertView, noticeTextView, position, viewType)
-
-            // android seems having a big issue when the text is too long and an alpha !=1 is applied:
-            // ---> the text is not displayed.
-            // It is sometimes partially displayed and/or flickers while scrolling.
-            // Apply an alpha != 1, trigger the same issue.
-            // It is related to the number of characters not to the number of lines.
-            // I don't understand why the render graph fails to do it.
-            // the patch apply the alpha to the text color but it does not work for the hyperlinks.
             noticeTextView.alpha = 1.0f
             noticeTextView.setTextColor(noticeTextColor)
-
             val message = JsonUtils.toMessage(msg.content)
             mHelper.manageURLPreviews(message, convertView, msg.eventId)
         } catch (e: Exception) {
-            Log.e(LOG_TAG, "## getNoticeRoomMemberView() failed : " + e.message, e)
+            Debug.e("--- Error: ${e.message}")
         }
-
         return convertView
     }
 
@@ -1489,7 +1444,7 @@ internal constructor(// session
 
             val message = JsonUtils.toMessage(event.content)
 
-            var body: CharSequence = "* " + row.senderDisplayName + " " + message.body
+            var body: CharSequence = row.senderDisplayName + " " + message.body
 
             val isCustomHtml = TextUtils.equals(Message.FORMAT_MATRIX_HTML, message.format)
             if (isCustomHtml) {
@@ -1498,7 +1453,7 @@ internal constructor(// session
                 if (null != htmlString) {
                     val sequence = mHelper.convertToHtml(htmlString)
 
-                    body = TextUtils.concat("* ", row.senderDisplayName, " ", sequence)
+                    body = TextUtils.concat("", row.senderDisplayName, " ", sequence)
                 }
             }
 
@@ -1929,7 +1884,7 @@ internal constructor(// session
         val isSelected = isInSelectionMode && TextUtils.equals(eventId, currentSelectedEvent!!.eventId)
 
         // display the action icon when selected
-        contentView.findViewById<View>(R.id.messagesAdapter_action_image).visibility = if (isSelected) View.VISIBLE else View.GONE
+//        contentView.findViewById<View>(R.id.messagesAdapter_action_image).visibility = if (isSelected) View.VISIBLE else View.GONE
 
         val alpha = if (!isInSelectionMode || isSelected) 1.0f else 0.2f
 
@@ -2043,7 +1998,7 @@ internal constructor(// session
         contentView.setOnLongClickListener(View.OnLongClickListener {
             // GA issue
             if (msgType != ROW_TYPE_ROOM_MEMBER) {
-                Log.e("Tag", "--- longlick: $msgType")
+                Debug.e("--- longlick: $msgType")
                 if (position < count) {
                     val row = getItem(position)
                     val event = row!!.event
@@ -2077,14 +2032,14 @@ internal constructor(// session
 
         if (null != e2eIconView) {
             val senderMargin = inflatedView.findViewById<View>(R.id.e2e_sender_margin)
-            val senderNameView = inflatedView.findViewById<View>(R.id.messagesAdapter_sender)
+//            val tvTimerSender = inflatedView.findViewById<View>(R.id.tv_timer_sender)
 
             val row = getItem(position)
             val event = row!!.event
 
             if (mE2eIconByEventId.containsKey(event.eventId)) {
                 if (null != senderMargin) {
-                    senderMargin.visibility = senderNameView.visibility
+//                    senderMargin.visibility = tvTimerSender.visibility
                 }
                 e2eIconView.visibility = View.VISIBLE
 
@@ -2216,7 +2171,7 @@ internal constructor(// session
                                 //                                e2eIconByEventId.put(event.eventId, R.drawable.e2e_warning);
                                 mSession.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, deviceInfo.deviceId, event.sender, object : SimpleApiCallback<Void>() {
                                     override fun onSuccess(aVoid: Void?) {
-                                        //                                        e2eIconByEventId.put(event.eventId, R.drawable.e2e_verified);
+                                        e2eIconByEventId.put(event.eventId, R.drawable.e2e_verified)
                                     }
                                 })
                             }
@@ -2439,11 +2394,14 @@ internal constructor(// session
             val fields = popup.javaClass.declaredFields
             for (field in fields) {
                 if ("mPopup" == field.name) {
-                    field.isAccessible = true
-                    val menuPopupHelper = field.get(popup)
-                    val classPopupHelper = Class.forName(menuPopupHelper::javaClass.name)
-                    val setForceIcons = classPopupHelper.getMethod("setForceShowIcon", Boolean::class.javaPrimitiveType)
-                    setForceIcons.invoke(menuPopupHelper, true)
+                    try {
+                        field.isAccessible = true
+                        val menuPopupHelper = field.get(popup)
+                        val classPopupHelper = Class.forName(menuPopupHelper::javaClass.name)
+                        val setForceIcons = classPopupHelper.getMethod("setForceShowIcon", Boolean::class.javaPrimitiveType)
+                        setForceIcons.invoke(menuPopupHelper, true)
+                    } catch (e: Exception) {
+                    }
                     break
                 }
             }
@@ -2701,7 +2659,7 @@ internal constructor(// session
     companion object {
         private val LOG_TAG = MessagesAdapter::class.java.simpleName
 
-        internal val ROW_TYPE_TEXT = 0
+        internal val ROW_TYPE_TEXT = 0 // Phần tử chỉ toàn text
         internal val ROW_TYPE_IMAGE = 1
         internal val ROW_TYPE_NOTICE = 2
         internal val ROW_TYPE_EMOTE = 3
@@ -2714,9 +2672,9 @@ internal constructor(// session
         internal val ROW_TYPE_CODE = 10
         internal val ROW_TYPE_STICKER = 11
         internal val ROW_TYPE_VERSIONED_ROOM = 12
-        internal val ROW_TYPE_TEXT_EDITED = 13
-        internal val ROW_TYPE_TEXT_OWNER = 14
-        internal val NUM_ROW_TYPES = 15
+        internal val ROW_TYPE_TEXT_EDITED_OWNER = 13// edit by owner
+        internal val ROW_TYPE_TEXT_OWNER = 14 // create by owner
+        internal val ROW_TYPE_TEXT_EDITED_MEMBER = 15// edit by member
 
         /**
          * Tells if the event of type 'eventType' can be merged.

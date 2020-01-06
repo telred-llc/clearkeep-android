@@ -2,7 +2,6 @@ package vmodev.clearkeep.bindingadapters
 
 import android.graphics.drawable.Drawable
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -21,15 +20,19 @@ import im.vector.extensions.getAttributeDrawable
 import im.vector.ui.themes.ThemeUtils
 import im.vector.util.VectorUtils
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.EventDisplay
 import org.matrix.androidsdk.core.callback.SimpleApiCallback
 import org.matrix.androidsdk.crypto.MXDecryptionException
 import org.matrix.androidsdk.db.MXMediaCache
 import org.matrix.androidsdk.listeners.MXMediaDownloadListener
 import org.matrix.androidsdk.rest.model.Event
+import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.message.ImageMessage
 import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
 import vmodev.clearkeep.enums.EventTypeEnum
 import vmodev.clearkeep.jsonmodels.MessageContent
+import vmodev.clearkeep.ultis.ClearKeepEventDisplay
+import vmodev.clearkeep.ultis.Debug
 import vmodev.clearkeep.ultis.formatSizeData
 import vmodev.clearkeep.ultis.toDateTime
 import vmodev.clearkeep.viewmodelobjects.Message
@@ -107,24 +110,48 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
             val parser = JsonParser()
             val gson = Gson()
             val event = Event(message.messageType, parser.parse(message.encryptedContent).asJsonObject, message.userId, message.roomId)
-            Log.e("Tag", "--- MessageType: ${message.messageType}$\n--- Content: ${message.encryptedContent}")
-            if (message.messageType.compareTo(Event.EVENT_TYPE_MESSAGE_ENCRYPTED) != 0) {
-                val message = gson.fromJson(message.encryptedContent, MessageContent::class.java)
-                textView.text = message.content?.body
-            } else {
-                try {
-                    val result = session.dataHandler.crypto?.decryptEvent(event, null)
-                    result?.let {
-                        val json = result.mClearEvent.asJsonObject
-                        val type = json.get("type").asString
-                        if (!type.isNullOrEmpty() && type.compareTo(Event.EVENT_TYPE_MESSAGE) == 0) {
-                            val message = gson.fromJson(result.mClearEvent, MessageContent::class.java)
-                            textView.text = message.content?.body
+            val room = session.dataHandler.getRoom(message.roomId)
+            when (message.messageType) {
+                Event.EVENT_TYPE_STATE_ROOM_CREATE -> {
+
+                }
+                Event.EVENT_TYPE_STATE_ROOM_MEMBER -> {
+                    try {
+                        Debug.e("--- Xu ly hien thi room member")
+                        Debug.e("--- json: $event")
+                        val content = event.content.asJsonObject
+                        val memberShip = content.get("membership").asString
+                        if (memberShip.equals(RoomMember.MEMBERSHIP_INVITE)) {
+                            val message = ClearKeepEventDisplay.getMembershipNotice(textView.context, event, room.state)
+                            textView.text = message
+                        } else {
+
                         }
+                    } catch (e: MXDecryptionException) {
+                        Debug.e("--- Error: ${e.message}\n--- message: ${message.encryptedContent}")
                     }
-                } catch (e: MXDecryptionException) {
-                    val message = gson.fromJson(message.encryptedContent, MessageContent::class.java)
-                    textView.text = message.content?.body
+                }
+                Event.EVENT_TYPE_MESSAGE_ENCRYPTED -> {
+                    try {
+                        val result = session.dataHandler.crypto?.decryptEvent(event, null)
+                        result?.let {
+                            val json = result.mClearEvent.asJsonObject
+                            val type = json.get("type").asString
+                            if (!type.isNullOrEmpty() && type.compareTo(Event.EVENT_TYPE_MESSAGE) == 0) {
+                                val message = gson.fromJson(result.mClearEvent, MessageContent::class.java)
+                                textView.text = message?.content?.body
+                            } else {
+                                Debug.e("--- message: null")
+                            }
+                        }
+                    } catch (e: MXDecryptionException) {
+                        Debug.e("--- Error: ${e.message}\n--- message: ${message.encryptedContent}")
+                    }
+                }
+                else -> {
+                    val display = EventDisplay(textView.context)
+                    textView.text = display.getTextualDisplay(event, room.state)
+                    Debug.e("--- can not action todo")
                 }
             }
         }

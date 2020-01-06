@@ -42,13 +42,16 @@ import org.matrix.androidsdk.rest.model.group.GroupProfile
 import org.matrix.androidsdk.rest.model.message.Message
 import org.matrix.androidsdk.rest.model.message.StickerMessage
 import org.matrix.androidsdk.view.HtmlTagHandler
+import vmodev.clearkeep.ultis.Debug
 import java.lang.ref.WeakReference
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
 class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXSession, val mAdapter: MessagesAdapter) {
 
+    val dateFormat = SimpleDateFormat("hh:mm aa")
 
     private var mEventsListener: IMessagesAdapterActionsListener? = null
 
@@ -94,23 +97,18 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
      */
     fun setSenderValue(convertView: View, row: MessageRow, isMergedView: Boolean) {
         // manage sender text
-        val senderTextView = convertView.findViewById<TextView>(R.id.messagesAdapter_sender)
+        val tvTimerSender = convertView.findViewById<TextView>(R.id.messagesAdapter_timestamp)
         val groupFlairView = convertView.findViewById<View>(R.id.messagesAdapter_flair_groups_list)
-
-        if (null != senderTextView) {
+        if (null != tvTimerSender) {
             val event = row.event
-
             // Hide the group flair by default
-            groupFlairView.visibility = View.GONE
-            groupFlairView.tag = null
-
+            groupFlairView?.visibility = View.GONE
+            groupFlairView?.tag = null
+            tvTimerSender.text = dateFormat.format(event.getOriginServerTs())
             if (isMergedView) {
-                senderTextView.visibility = View.GONE
+                tvTimerSender.visibility = View.GONE
             } else {
                 val eventType = event.getType()
-
-                // theses events are managed like notice ones
-                // but they are dedicated behaviour i.e the sender must not be displayed
                 if (event.isCallEvent
                         || Event.EVENT_TYPE_STATE_ROOM_TOPIC == eventType
                         || Event.EVENT_TYPE_STATE_ROOM_MEMBER == eventType
@@ -118,24 +116,10 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
                         || Event.EVENT_TYPE_STATE_ROOM_THIRD_PARTY_INVITE == eventType
                         || Event.EVENT_TYPE_STATE_HISTORY_VISIBILITY == eventType
                         || Event.EVENT_TYPE_MESSAGE_ENCRYPTION == eventType) {
-                    senderTextView.visibility = View.GONE
+                    tvTimerSender.visibility = View.GONE
                 } else {
-                    senderTextView.visibility = View.VISIBLE
-                    senderTextView.text = row.senderDisplayName
-
-                    val fSenderId = event.getSender()
-                    val fDisplayName = if (null == senderTextView.text) "" else senderTextView.text.toString()
-
-                    val context = senderTextView.context
-                    val textColor = colorIndexForSender(fSenderId)
-                    senderTextView.setTextColor(context.resources.getColor(textColor))
-
-                    senderTextView.setOnClickListener {
-                        if (null != mEventsListener) {
-                            mEventsListener!!.onSenderNameClick(fSenderId, fDisplayName)
-                        }
-                    }
-
+                    tvTimerSender.visibility = View.VISIBLE
+                    tvTimerSender.text = dateFormat.format(event.originServerTs)
                     refreshGroupFlairView(groupFlairView, event)
                 }
             }
@@ -852,27 +836,31 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             val stickerMessage = JsonUtils.toStickerMessage(event.content)
             return !TextUtils.isEmpty(stickerMessage.body) && !event.isRedacted
         } else if (Event.EVENT_TYPE_STATE_ROOM_TOPIC == eventType || Event.EVENT_TYPE_STATE_ROOM_NAME == eventType) {
-            val display = RiotEventDisplay(context)
-            Log.e("Tag", "--- value 3: ${event.getType()} - ${row.getText(null, display)}")
-            return row.getText(null, display) != null
+            return false
+//            val display = RiotEventDisplay(context)
+//            Log.e("Tag", "--- value 3: ${event.getType()} - ${row.getText(null, display)}")
+//            return row.getText(null, display) != null
         } else if (event.isCallEvent) {
             return (Event.EVENT_TYPE_CALL_ANSWER == eventType
                     || Event.EVENT_TYPE_CALL_HANGUP == eventType)
         } else if (Event.EVENT_TYPE_STATE_ROOM_MEMBER == eventType || Event.EVENT_TYPE_STATE_ROOM_THIRD_PARTY_INVITE == eventType) {
             // if we can display text for it, it's valid.
+            Debug.e("--- event: $event")
             val display = RiotEventDisplay(context)
             return row.getText(null, display) != null
         } else if (Event.EVENT_TYPE_STATE_HISTORY_VISIBILITY == eventType) {
-            return true
+            return false
         } else if (Event.EVENT_TYPE_MESSAGE_ENCRYPTED == eventType || Event.EVENT_TYPE_MESSAGE_ENCRYPTION == eventType) {
             // if we can display text for it, it's valid.
-            val display = RiotEventDisplay(context)
-            return event.hasContentFields() && row.getText(null, display) != null
+//            val display = RiotEventDisplay(context)
+//            return event.hasContentFields() && row.getText(null, display) != null
+            return false
         } else if (TextUtils.equals(WidgetsManager.WIDGET_EVENT_TYPE, event.getType())) {
             // Matrix apps are enabled
             return true
         } else if (Event.EVENT_TYPE_STATE_ROOM_CREATE == eventType) {
             val roomCreateContent = JsonUtils.toRoomCreateContent(event.content)
+            Debug.e("--- content: ${roomCreateContent}")
             return roomCreateContent != null && roomCreateContent.predecessor != null
         }
         return false
@@ -1006,7 +994,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
         return list
     }
 
-    fun manageURLPreviews(message: Message, convertView: View, id: String) {
+    fun manageURLPreviews(message: Message, convertView: View, eventID: String) {
         val urlsPreviewLayout = convertView.findViewById<LinearLayout>(R.id.messagesAdapter_urls_preview_list)
                 ?: return
 
@@ -1024,16 +1012,17 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             urlsPreviewLayout.visibility = View.GONE
             return
         }
-
+        Debug.e("--- click item tag: ${urlsPreviewLayout.tag} ? $eventID")
+        return
         // avoid removing items if they are displayed
-        if (TextUtils.equals(urlsPreviewLayout.tag as String, id)) {
+        if (TextUtils.equals(urlsPreviewLayout.tag as String, eventID)) {
             // all the urls have been displayed
             if (urlsPreviewLayout.childCount == urls.size) {
                 return
             }
         }
 
-        urlsPreviewLayout.tag = id
+        urlsPreviewLayout.tag = eventID
 
         // remove url previews
         while (urlsPreviewLayout.childCount > 0) {
@@ -1044,7 +1033,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
 
         for (url in urls) {
             val downloadKey = url.hashCode().toString() + "---"
-            val displayKey = "$url<----->$id"
+            val displayKey = "$url<----->$eventID"
 
             if (!mSession.isURLPreviewEnabled) {
                 if (!mUrlsPreviews.containsKey(downloadKey)) {
@@ -1133,7 +1122,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
          * @param value       the new value
          * @return the dedicated textView
          */
-        fun setTimestampValue(convertView: View, value: String): TextView? {
+        /*fun setTimestampValue(convertView: View, value: String): TextView? {
             val tsTextView = convertView.findViewById<TextView>(R.id.messagesAdapter_timestamp)
 
             if (null != tsTextView) {
@@ -1146,7 +1135,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             }
 
             return tsTextView
-        }
+        }*/
 
         /**
          * Align the avatar and the message body according to the mergeView flag
@@ -1155,13 +1144,18 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
          * @param bodyLayoutView   the body layout
          * @param avatarLayoutView the avatar layout
          * @param isMergedView     true if the view is merged
+         * @param isMySender     true if user login is sender
          */
-        fun alignSubviewToAvatarView(subView: View, bodyLayoutView: View, avatarLayoutView: View, isMergedView: Boolean) {
+        fun alignSubviewToAvatarView(subView: View, bodyLayoutView: View, avatarLayoutView: View, isMergedView: Boolean, isMySender: Boolean) {
             val bodyLayout = bodyLayoutView.layoutParams as ViewGroup.MarginLayoutParams
             val subViewLinearLayout = subView.layoutParams as FrameLayout.LayoutParams
 
             val avatarLayout = avatarLayoutView.layoutParams
-            subViewLinearLayout.gravity = Gravity.START or Gravity.CENTER_VERTICAL
+            if (isMySender) {
+                subViewLinearLayout.gravity = Gravity.END
+            } else {
+                subViewLinearLayout.gravity = Gravity.START
+            }
 
             if (isMergedView) {
                 bodyLayout.setMargins(avatarLayout.width, bodyLayout.topMargin, bodyLayout.rightMargin, bodyLayout.bottomMargin)
@@ -1261,23 +1255,54 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
                 val stickerMessage = JsonUtils.toStickerMessage(event.content)
                 return !TextUtils.isEmpty(stickerMessage.body) && !event.isRedacted
             } else if (Event.EVENT_TYPE_STATE_ROOM_TOPIC == eventType || Event.EVENT_TYPE_STATE_ROOM_NAME == eventType) {
-                val display = RiotEventDisplay(context)
-                return row.getText(null, display) != null
+                return false
+//                val display = RiotEventDisplay(context)
+//                return row.getText(null, display) != null
             } else if (event.isCallEvent) {
                 return (Event.EVENT_TYPE_CALL_ANSWER == eventType
                         || Event.EVENT_TYPE_CALL_HANGUP == eventType)
             } else if (Event.EVENT_TYPE_STATE_ROOM_MEMBER == eventType || Event.EVENT_TYPE_STATE_ROOM_THIRD_PARTY_INVITE == eventType) {
                 // if we can display text for it, it's valid.
-//                val display = RiotEventDisplay(context)
-//                Log.e("Tag", "--- value: ${event.getType()} - ${row.getText(null, display)}")
-//                return row.getText(null, display) != null
-                return false
+                val prevEventContent = event.prevContent
+                var prevDisplayName: String? = null
+                var prevAvatar: String? = null
+                val displayName = JsonUtils.toEventContent(event.contentAsJsonObject).displayname
+                val avatar = JsonUtils.toEventContent(event.contentAsJsonObject).avatar_url
+                val memberShip = JsonUtils.toEventContent(event.contentAsJsonObject).membership
+                when (memberShip) {
+                    RoomMember.MEMBERSHIP_JOIN -> {
+                        if (prevEventContent != null && prevEventContent.membership?.equals(RoomMember.MEMBERSHIP_JOIN)!!) {
+                            if (prevEventContent != null) {
+                                prevDisplayName = prevEventContent.displayname
+                                prevAvatar = prevEventContent.avatar_url
+                                if (prevDisplayName.equals(displayName) || prevAvatar.equals(avatar)) {
+                                    Debug.e("--- User đã join thực hiện update ")
+                                    return false
+                                }
+                            } else {
+                                Debug.e("--- User invite vừa thực hiện join")
+                            }
+                        }
+                    }
+                    RoomMember.MEMBERSHIP_INVITE -> {
+                        Debug.e("--- User đã gửi lời mời trong danh sach comment ")
+                    }
+                }
+
+//                if(!displayName.equals(prevDisplayName) || !avatar.equals(prevAvatar)){
+//                    return false
+//                }
+
+                val display = RiotEventDisplay(context)
+                val text = row.getText(null, display)
+                return text != null
             } else if (Event.EVENT_TYPE_STATE_HISTORY_VISIBILITY == eventType) {
-                return true
+                return false
             } else if (Event.EVENT_TYPE_MESSAGE_ENCRYPTED == eventType || Event.EVENT_TYPE_MESSAGE_ENCRYPTION == eventType) {
                 // if we can display text for it, it's valid.
-                val display = RiotEventDisplay(context)
-                return event.hasContentFields() && row.getText(null, display) != null
+//                val display = RiotEventDisplay(context)
+//                return event.hasContentFields() && row.getText(null, display) != null
+                return false
             } else if (TextUtils.equals(WidgetsManager.WIDGET_EVENT_TYPE, event.getType())) {
                 // Matrix apps are enabled
                 return true

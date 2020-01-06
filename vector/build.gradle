@@ -48,6 +48,15 @@ android {
         jvmTarget = "1.8"
     }
 
+    signingConfigs {
+        release {
+            storeFile file("../clearkeep_password_Telred@1009.jks")
+            storePassword 'Telred@1009'
+            keyAlias 'clearkeep'
+            keyPassword 'Telred@1009'
+        }
+    }
+
     defaultConfig {
         applicationId 'com.telred.clearkeep'
         minSdkVersion 21
@@ -64,6 +73,7 @@ android {
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.release
     }
 
     // Ref: https://developer.android.com/studio/build/configure-apk-splits.html
@@ -114,6 +124,7 @@ android {
             buildConfigField "String", "PUSH_GATEWAY", "\"http://push.clearkeep.xyz/_matrix/push/v1/notify\""
             buildConfigField "String", "IDENTIFY_SERVER", "\"https://matrix.org\""
             buildConfigField "String", "CLEAR_KEEP_SERVER", "\"http://op.clearkeep.xyz\""
+            buildConfigField "String", "LINK_SHARE_APP", "\"/api/share/get-deep-link?url=app://account\""
         }
 
         release {
@@ -129,6 +140,7 @@ android {
             buildConfigField "String", "PUSH_GATEWAY", "\"https://push.clearkeep.me/_matrix/push/v1/notify\""
             buildConfigField "String", "IDENTIFY_SERVER", "\"https://id.clearkeep.me\""
             buildConfigField "String", "CLEAR_KEEP_SERVER", "\"https://op.clearkeep.me\""
+            buildConfigField "String", "LINK_SHARE_APP", "\"/api/share/get-deep-link?url=app://account\""
         }
     }
 

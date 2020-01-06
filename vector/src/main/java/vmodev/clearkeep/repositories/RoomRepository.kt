@@ -483,6 +483,14 @@ class RoomRepository @Inject constructor(
         }
     }
 
+    fun getRoomByUserId(userID: String): LiveData<Resource<Room>> {
+        return object : AbstractLocalBoundSource<Room>() {
+            override fun loadFromDb(): LiveData<Room> {
+                return abstractRoomDao.getRoomByID(userID)
+            }
+        }.asLiveData()
+    }
+
     class CreateNewRoomObject constructor(val name: String, val topic: String, val visibility: String)
     class InviteUsersToRoomObject constructor(val roomId: String, val userIds: List<String>)
 }

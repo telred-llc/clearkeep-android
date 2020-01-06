@@ -94,7 +94,7 @@ class InviteUsersToRoomFragment : DataBindingDaggerFragment(), IFragment {
         { t ->
             if (!TextUtils.isEmpty(binding.editTextQuery.text.toString())) {
                 listUserAdapter.submitList(t?.data)
-                listSelected.clear()
+//                listSelected.clear()
             }
         })
         viewModelFactory.getViewModel().joinRoomResult().observe(viewLifecycleOwner, Observer {
