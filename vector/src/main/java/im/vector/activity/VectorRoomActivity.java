@@ -860,7 +860,6 @@ public class VectorRoomActivity extends MXCActionBarActivity implements
         mActiveWidgetsBanner.setOnUpdateListener(new ActiveWidgetsBanner.onUpdateListener() {
             @Override
             public void onCloseWidgetClick(final Widget widget) {
-
                 new AlertDialog.Builder(VectorRoomActivity.this)
                         .setMessage(R.string.widget_delete_message_confirmation)
                         .setPositiveButton(R.string.remove, new DialogInterface.OnClickListener() {

@@ -31,7 +31,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.jetbrains.annotations.Nullable;
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.call.IMXCall;
 import org.matrix.androidsdk.call.IMXCallsManagerListener;
@@ -48,8 +47,8 @@ import butterknife.OnClick;
 import im.vector.Matrix;
 import im.vector.R;
 import im.vector.widgets.Widget;
-import im.vector.widgets.WidgetManagerProvider;
 import im.vector.widgets.WidgetsManager;
+import vmodev.clearkeep.ultis.Debug;
 
 /**
  * This class displays if there is an ongoing conference call.
@@ -218,7 +217,7 @@ public class VectorOngoingConferenceCallView extends RelativeLayout {
             try {
                 mCallClickListener.onCloseWidgetClick(mActiveWidget);
             } catch (Exception e) {
-                Log.e(LOG_TAG, "## initView() : onRemoveWidgetClick failed " + e.getMessage(), e);
+                Debug.e("--- onRemoveWidgetClick failed " + e.getMessage(), e);
             }
         }
     }

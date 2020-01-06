@@ -56,7 +56,6 @@ import im.vector.util.ReadMarkerManager.PREVIEW_MODE
 import im.vector.view.*
 import im.vector.widgets.Widget
 import io.reactivex.schedulers.Schedulers
-import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.call.IMXCall
 import org.matrix.androidsdk.call.MXCallListener
 import org.matrix.androidsdk.core.JsonUtils
@@ -178,7 +177,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     val CONFIRM_MEDIA_REQUEST_CODE = 7
 
     private var mVectorMessageListFragment: MessageListFragment? = null
-    private var mxSession: MXSession? = null
 
     private var currentRoom: Room? = null
 
@@ -418,7 +416,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             runOnUiThread {
                 updateActionBarTitleAndTopic()
                 updateRoomHeaderMembersStatus()
-                updateRoomHeaderAvatar()
             }
         }
 
@@ -428,7 +425,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         override fun onRoomKick(roomId: String?) {
             val params = HashMap<String, Any>()
-            params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession!!.myUserId
+            params[VectorRoomActivity.EXTRA_MATRIX_ID] = mSession!!.myUserId
             params[VectorRoomActivity.EXTRA_ROOM_ID] = currentRoom!!.roomId
             // clear the activity stack to home activity
             val intent = Intent(this@RoomActivity, VectorHomeActivity::class.java)
@@ -445,7 +442,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     Event.EVENT_TYPE_STATE_ROOM_NAME, Event.EVENT_TYPE_STATE_ROOM_ALIASES, Event.EVENT_TYPE_STATE_ROOM_MEMBER -> {
                         setTitle()
                         updateRoomHeaderMembersStatus()
-                        updateRoomHeaderAvatar()
                     }
                     Event.EVENT_TYPE_STATE_ROOM_TOPIC -> {
                         val stateEvent = JsonUtils.toStateEvent(event.content)
@@ -453,9 +449,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     }
                     Event.EVENT_TYPE_STATE_ROOM_POWER_LEVELS -> checkSendEventStatus()
                     Event.EVENT_TYPE_TYPING -> onRoomTyping()
-                    Event.EVENT_TYPE_STATE_ROOM_AVATAR -> updateRoomHeaderAvatar()
                     Event.EVENT_TYPE_MESSAGE_ENCRYPTION -> {
-                        val canSendEncryptedEvent = currentRoom!!.isEncrypted && mxSession!!.isCryptoEnabled
+                        val canSendEncryptedEvent = currentRoom!!.isEncrypted && mSession!!.isCryptoEnabled
                         mE2eImageView.setImageResource(if (canSendEncryptedEvent) R.drawable.e2e_verified else R.drawable.e2e_unencrypted)
                         mVectorMessageListFragment!!.setIsRoomEncrypted(currentRoom!!.isEncrypted)
                     }
@@ -547,16 +542,16 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             return
         }
 
-        mxSession = Matrix.getInstance(this).defaultSession
+        mSession = Matrix.getInstance(this).defaultSession
         roomId = intent.getStringExtra(EXTRA_ROOM_ID)
-        mRoom = mxSession?.dataHandler?.store?.getRoom(roomId)
+        mRoom = mSession?.dataHandler?.store?.getRoom(roomId)
 
-        if ((mxSession == null) || !mxSession!!.isAlive) {
-            Log.e(LOG_TAG, "No MXSession.")
+        if ((mSession == null) || !mSession!!.isAlive) {
+            Log.e(LOG_TAG, "No mSession.")
             finish()
             return
         }
-        mResourceLimitEventListener = ResourceLimitEventListener(mxSession!!.dataHandler, object : ResourceLimitEventListener.Callback {
+        mResourceLimitEventListener = ResourceLimitEventListener(mSession!!.dataHandler, object : ResourceLimitEventListener.Callback {
             override fun onResourceLimitStateChanged() {
                 refreshNotificationsArea()
             }
@@ -568,7 +563,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             Matrix.getInstance(this)!!.clearTmpStoresList()
         }
 
-        if (CommonActivityUtils.isGoingToSplash(this, mxSession!!.myUserId, roomId)) {
+        if (CommonActivityUtils.isGoingToSplash(this, mSession!!.myUserId, roomId)) {
             Log.d(LOG_TAG, "onCreate : Going to splash screen")
             return
         }
@@ -650,7 +645,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             false
         })
 
-        currentRoom = mxSession!!.dataHandler.getRoom(roomId, false)
+        currentRoom = mSession!!.dataHandler.getRoom(roomId, false)
         if (!TextUtils.isEmpty(currentRoom?.roomId)) {
             viewModelFactory.getViewModel().setIdForUpdateRoomNotifyCount(currentRoom!!.roomId).subscribeOn(Schedulers.io()).subscribe()
         }
@@ -682,7 +677,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
         })
 
-        mMyUserId = mxSession!!.credentials.userId
+        mMyUserId = mSession!!.credentials.userId
 
         val fm = supportFragmentManager
         mVectorMessageListFragment = fm.findFragmentByTag(TAG_FRAGMENT_MATRIX_MESSAGE_LIST) as MessageListFragment?
@@ -746,11 +741,10 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
         }
 
-        mActiveWidgetsBanner.initRoomInfo(mxSession, currentRoom)
+        mActiveWidgetsBanner.initRoomInfo(mSession, currentRoom)
 
         mActiveWidgetsBanner.setOnUpdateListener(object : ActiveWidgetsBanner.onUpdateListener {
             override fun onCloseWidgetClick(widget: Widget) {
-
                 AlertDialog.Builder(this@RoomActivity)
                         .setMessage(R.string.widget_delete_message_confirmation)
                         .setPositiveButton(R.string.remove) { dialog, which ->
@@ -820,13 +814,10 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
         })
 
-        mVectorOngoingConferenceCallView.initRoomInfo(mxSession, currentRoom)
+        mVectorOngoingConferenceCallView.initRoomInfo(mSession, currentRoom)
         mVectorOngoingConferenceCallView.setCallClickListener(object : VectorOngoingConferenceCallView.ICallClickListener {
             private fun startCall(isVideo: Boolean) {
-                if (checkPermissions(if (isVideo)
-                            PERMISSIONS_FOR_VIDEO_IP_CALL
-                        else
-                            PERMISSIONS_FOR_AUDIO_IP_CALL,
+                if (checkPermissions(if (isVideo) PERMISSIONS_FOR_VIDEO_IP_CALL else PERMISSIONS_FOR_AUDIO_IP_CALL,
                                 this@RoomActivity,
                                 if (isVideo) PERMISSION_REQUEST_CODE_VIDEO_CALL else PERMISSION_REQUEST_CODE_AUDIO_CALL)) {
                     startIpCall(false, isVideo)
@@ -854,14 +845,15 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 if (wm != null) {
                     showWaitingView()
 
-                    wm.closeWidget(mSession, mRoom, widget.widgetId, object : ApiCallback<Void> {
+                    wm.closeWidget(mSession, mRoom, widget.widgetId!!, object : ApiCallback<Void> {
                         override fun onSuccess(info: Void) {
                             hideWaitingView()
                         }
 
                         private fun onError(errorMessage: String?) {
                             hideWaitingView()
-                            Toast.makeText(this@RoomActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                            Debug.e("--- onError: ${errorMessage}")
+//                            Debug.showAlert(this@RoomActivity, errorMessage)
                         }
 
                         override fun onNetworkError(e: Exception) {
@@ -899,10 +891,10 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         if ((mIsUnreadPreviewMode || (currentRoom != null && currentRoom!!.timeline != null && currentRoom!!.timeline.isLiveTimeline && TextUtils.isEmpty(mEventId)))) {
             if (null == currentRoom) {
                 Log.e(LOG_TAG, "## onCreate() : null room")
-            } else if (null == mxSession!!.dataHandler.store!!.getSummary(currentRoom!!.roomId)) {
+            } else if (null == mSession!!.dataHandler.store!!.getSummary(currentRoom!!.roomId)) {
                 Log.e(LOG_TAG, "## onCreate() : there is no summary for this room")
             } else {
-                mReadMarkerManager = ReadMarkerManager(this, mVectorMessageListFragment!!, mxSession!!, currentRoom,
+                mReadMarkerManager = ReadMarkerManager(this, mVectorMessageListFragment!!, mSession!!, currentRoom,
                         if (mIsUnreadPreviewMode) PREVIEW_MODE else LIVE_MODE,
                         findViewById(R.id.jump_to_first_unread))
             }
@@ -943,13 +935,13 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         roomId = savedInstanceState.getString(VectorRoomActivity.EXTRA_ROOM_ID, "")
-//        mxSession = Matrix.getInstance(this).defaultSession
-//        currentRoom = mxSession!!.dataHandler.getRoom(roomId, false)
+//        mSession = Matrix.getInstance(this).defaultSession
+//        currentRoom = mSession!!.dataHandler.getRoom(roomId, false)
         // the listView will be refreshed so the offset might be lost.
         mScrollToIndex = savedInstanceState.getInt(FIRST_VISIBLE_ROW, -1)
     }
 
-    public override fun onDestroy() {
+    override fun onDestroy() {
         if (null != mVectorMessageListFragment) {
             mVectorMessageListFragment!!.onDestroy()
             mVectorMessageListFragment = null
@@ -983,11 +975,11 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         Matrix.getInstance(this)!!.removeNetworkEventListener(mNetworkEventListener)
 
-        if (mxSession!!.isAlive) {
+        if (mSession!!.isAlive) {
             // GA reports a null dataHandler instance event if it seems impossible
-            if (null != mxSession!!.dataHandler) {
-                mxSession!!.dataHandler.removeListener(mGlobalEventListener)
-                mxSession!!.dataHandler.removeListener(mResourceLimitEventListener)
+            if (null != mSession!!.dataHandler) {
+                mSession!!.dataHandler.removeListener(mGlobalEventListener)
+                mSession!!.dataHandler.removeListener(mResourceLimitEventListener)
             }
         }
 
@@ -1011,7 +1003,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     return
                 }
 
-                if (!mxSession!!.dataHandler.doesRoomExist(currentRoom!!.roomId)) {
+                if (!mSession!!.dataHandler.doesRoomExist(currentRoom!!.roomId)) {
                     Log.e(LOG_TAG, "## onResume() : the user is not anymore a member of the room.")
                     finish()
                     return
@@ -1031,13 +1023,13 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             // listen for room name or topic changes
             currentRoom!!.addEventListener(mRoomEventListener)
 
-            mSyncInProgressView.visibility = if (VectorApp.isSessionSyncing(mxSession)) View.VISIBLE else View.GONE
+            mSyncInProgressView.visibility = if (VectorApp.isSessionSyncing(mSession)) View.VISIBLE else View.GONE
         } else {
             mSyncInProgressView.visibility = View.GONE
         }
 
-        mxSession!!.dataHandler.addListener(mGlobalEventListener)
-        mxSession!!.dataHandler.addListener(mResourceLimitEventListener)
+        mSession!!.dataHandler.addListener(mGlobalEventListener)
+        mSession!!.dataHandler.addListener(mResourceLimitEventListener)
 
         Matrix.getInstance(this)!!.addNetworkEventListener(mNetworkEventListener)
 
@@ -1052,7 +1044,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 mIgnoreTextUpdate = false
             }
 
-            val canSendEncryptedEvent = currentRoom!!.isEncrypted && mxSession!!.isCryptoEnabled
+            val canSendEncryptedEvent = currentRoom!!.isEncrypted && mSession!!.isCryptoEnabled
             mE2eImageView.setImageResource(if (canSendEncryptedEvent) R.drawable.e2e_verified else R.drawable.e2e_unencrypted)
             mVectorMessageListFragment!!.setIsRoomEncrypted(currentRoom!!.isEncrypted)
         }
@@ -1093,7 +1085,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //            // either there is no active call or resume the active one
 //            if ((null == call) || call.callId == mCallId) {
 //                val intent = Intent(this, VectorCallViewActivity::class.java)
-//                intent.putExtra(VectorCallViewActivity.EXTRA_MATRIX_ID, mxSession!!.credentials.userId)
+//                intent.putExtra(VectorCallViewActivity.EXTRA_MATRIX_ID, mSession!!.credentials.userId)
 //                intent.putExtra(VectorCallViewActivity.EXTRA_CALL_ID, mCallId)
 //
 //                enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
@@ -1111,7 +1103,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         }
 
         // init the auto-completion list from the room members
-        mEditText.initAutoCompletions(mxSession!!, currentRoom)
+        mEditText.initAutoCompletions(mSession!!, currentRoom)
 
         if (mReadMarkerManager != null) {
             mReadMarkerManager!!.onResume()
@@ -1160,7 +1152,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     override fun onUnknownDevices(event: Event, error: MXCryptoError) {
         refreshNotificationsArea()
-//        CommonActivityUtils.displayUnknownDevicesDialog(mxSession,
+//        CommonActivityUtils.displayUnknownDevicesDialog(mSession,
 //                this,
 //                error.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>,
 //                false
@@ -1175,7 +1167,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 t?.second?.forEach { d: MXDeviceInfo? ->
                     d?.let { mxDeviceInfo ->
                         if (mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNVERIFIED || mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNKNOWN) {
-                            mxSession!!.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, mxDeviceInfo.deviceId, mxDeviceInfo.userId, object : SimpleApiCallback<Void>() {
+                            mSession!!.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, mxDeviceInfo.deviceId, mxDeviceInfo.userId, object : SimpleApiCallback<Void>() {
                                 override fun onSuccess(p0: Void?) {
                                     android.util.Log.d("Verify device success", mxDeviceInfo.deviceId.toString())
                                 }
@@ -1345,9 +1337,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //        val leaveRoomMenuItem = menu.findItem(R.id.ic_action_room_leave)
 //
 //        // the application is in a weird state
-//        // GA : mxSession is null, currentRoom is null
+//        // GA : mSession is null, currentRoom is null
 //        // This is the case in the room preview for public rooms
-//        if (CommonActivityUtils.shouldRestartApp(this) || null == mxSession || null == currentRoom) {
+//        if (CommonActivityUtils.shouldRestartApp(this) || null == mSession || null == currentRoom) {
 //            // Hide all items
 //            if (searchInRoomMenuItem != null) {
 //                searchInRoomMenuItem!!.isVisible = false
@@ -1373,7 +1365,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //
 //        // the menu is only displayed when the current activity does not display a timeline search
 //        if (TextUtils.isEmpty(mEventId) && (null == sRoomPreviewData)) {
-//            val member = currentRoom!!.getMember(mxSession!!.myUserId)
+//            val member = currentRoom!!.getMember(mSession!!.myUserId)
 //
 //            // the server search does not work on encrypted rooms.
 //            if (searchInRoomMenuItem != null) {
@@ -1454,7 +1446,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
             if (null != powerLevels) {
                 // to start a conf call, the user MUST have the power to invite someone (CFU)
-                isAllowed = powerLevels.getUserPowerLevel(mxSession!!.myUserId) >= powerLevels.invite
+                isAllowed = powerLevels.getUserPowerLevel(mSession!!.myUserId) >= powerLevels.invite
             }
         } else {
             // 1:1 call
@@ -1551,7 +1543,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
             showWaitingView()
 
-            wm.createJitsiWidget(mxSession, mRoom, aIsVideoCall, object : ApiCallback<Widget> {
+            wm.createJitsiWidget(mSession, mRoom, aIsVideoCall, object : ApiCallback<Widget> {
                 override fun onSuccess(widget: Widget) {
                     hideWaitingView()
 
@@ -1599,7 +1591,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         showWaitingView()
 
         // create the call object
-        mxSession!!.mCallsManager.createCallInRoom(currentRoom!!.roomId, aIsVideoCall, object : ApiCallback<IMXCall> {
+        mSession!!.mCallsManager.createCallInRoom(currentRoom!!.roomId, aIsVideoCall, object : ApiCallback<IMXCall> {
             override fun onSuccess(call: IMXCall) {
                 Debug.e("--- startIpCall(): onSuccess")
                 runOnUiThread(object : Runnable {
@@ -1608,7 +1600,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
 //                        val intent = Intent(this@RoomActivity, CallViewActivity::class.java)
 //
-//                        intent.putExtra(CallViewActivity.EXTRA_MATRIX_ID, mxSession!!.getCredentials().userId)
+//                        intent.putExtra(CallViewActivity.EXTRA_MATRIX_ID, mSession!!.getCredentials().userId)
 //                        intent.putExtra(CallViewActivity.EXTRA_CALL_ID, call.callId)
 //
 //                        startActivity(intent)
@@ -1641,7 +1633,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                     val cryptoError = e
                     if (MXCryptoError.UNKNOWN_DEVICES_CODE == cryptoError.errcode) {
                         hideWaitingView()
-//                        CommonActivityUtils.displayUnknownDevicesDialog(mxSession,
+//                        CommonActivityUtils.displayUnknownDevicesDialog(mSession,
 //                                this@RoomActivi
 //                                cryptoError.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>,
 //                                true,
@@ -1657,7 +1649,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                                 t?.second?.forEach { d: MXDeviceInfo? ->
                                     d?.let { mxDeviceInfo ->
                                         if (mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNVERIFIED || mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNKNOWN) {
-                                            mxSession!!.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, mxDeviceInfo.deviceId, mxDeviceInfo.userId, object : SimpleApiCallback<Void>() {
+                                            mSession!!.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, mxDeviceInfo.deviceId, mxDeviceInfo.userId, object : SimpleApiCallback<Void>() {
                                                 override fun onSuccess(p0: Void?) {
                                                     android.util.Log.d("Verify device success", mxDeviceInfo.deviceId.toString())
                                                 }
@@ -1795,7 +1787,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      */
     fun sendMessage(body: String, formattedBody: String?, format: String, handleSlashCommand: Boolean) {
         if (!TextUtils.isEmpty(body)) {
-            if ((!handleSlashCommand || !vmodev.clearkeep.ultis.SlashCommandsParser.manageSplashCommand(this, mxSession, currentRoom, body, formattedBody, format))) {
+            if ((!handleSlashCommand || !vmodev.clearkeep.ultis.SlashCommandsParser.manageSplashCommand(this, mSession, currentRoom, body, formattedBody, format))) {
 //                val currentSelectedEvent = mVectorMessageListFragment!!.currentSelectedEvent
                 val currentSelectedEvent = null
                 cancelSelectionMode()
@@ -1893,7 +1885,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         val event = Event(Event.EVENT_TYPE_STICKER,
                 JsonParser().parse(contentStr).asJsonObject,
-                mxSession!!.credentials.userId,
+                mSession!!.credentials.userId,
                 currentRoom!!.roomId)
 
         mVectorMessageListFragment!!.sendStickerMessage(event)
@@ -2064,13 +2056,13 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      * @param selectedTab the selected tab index.
      */
     private fun launchRoomDetails(selectedTab: Int) {
-        if (mxSession != null && currentRoom != null) {
+        if (mSession != null && currentRoom != null) {
             enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
 
             // pop to the home activity
             val intent = Intent(this, VectorRoomDetailsActivity::class.java)
             intent.putExtra(VectorRoomDetailsActivity.EXTRA_ROOM_ID, currentRoom!!.roomId)
-            intent.putExtra(VectorRoomDetailsActivity.EXTRA_MATRIX_ID, mxSession!!.credentials.userId)
+            intent.putExtra(VectorRoomDetailsActivity.EXTRA_MATRIX_ID, mSession!!.credentials.userId)
             intent.putExtra(VectorRoomDetailsActivity.EXTRA_SELECTED_TAB_ID, selectedTab)
             startActivityForResult(intent, GET_MENTION_REQUEST_CODE)
         }
@@ -2080,9 +2072,9 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      * Launch the invite people activity
      */
     private fun launchInvitePeople() {
-        if ((null != mxSession) && (null != currentRoom)) {
+        if ((null != mSession) && (null != currentRoom)) {
             val intent = Intent(this, VectorRoomInviteMembersActivity::class.java)
-            intent.putExtra(VectorRoomInviteMembersActivity.EXTRA_MATRIX_ID, mxSession!!.myUserId)
+            intent.putExtra(VectorRoomInviteMembersActivity.EXTRA_MATRIX_ID, mSession!!.myUserId)
             intent.putExtra(VectorRoomInviteMembersActivity.EXTRA_ROOM_ID, currentRoom!!.roomId)
             intent.putExtra(VectorRoomInviteMembersActivity.EXTRA_ADD_CONFIRMATION_DIALOG, true)
             startActivityForResult(intent, INVITE_USER_REQUEST_CODE)
@@ -2109,7 +2101,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     private fun startStickerPickerActivity() {
         // Search for the sticker picker widget in the user account
-        val userWidgets = mxSession!!.userWidgets
+        val userWidgets = mSession!!.userWidgets
 
         var stickerWidgetUrl: String? = null
         var stickerWidgetId: String? = null
@@ -2264,7 +2256,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     private fun refreshSelfAvatar() {
         // sanity check
 //        if (null != mAvatarImageView) {
-//            VectorUtils.loadUserAvatar(this, mxSession, mAvatarImageView, mxSession!!.myUser)
+//            VectorUtils.loadUserAvatar(this, mSession, mAvatarImageView, mSession!!.myUser)
 //        }
     }
 
@@ -2312,7 +2304,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         if (null != text) {
             var vibrate = false
 
-            if (TextUtils.equals(mxSession!!.myUser.displayname, text)) {
+            if (TextUtils.equals(mSession!!.myUser.displayname, text)) {
                 // current user
                 if (TextUtils.isEmpty(mEditText.text)) {
                     mEditText.append(SlashCommandsParser.SlashCommand.EMOTE.command + " ")
@@ -2407,11 +2399,11 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     private fun refreshNotificationsArea() {
         // sanity check
         // might happen when the application is logged out
-        if ((null == mxSession!!.dataHandler) || (null == currentRoom) || (null != sRoomPreviewData)) {
+        if ((null == mSession!!.dataHandler) || (null == currentRoom) || (null != sRoomPreviewData)) {
             return
         }
         val limitResourceState = mResourceLimitEventListener!!.limitResourceState
-        val hardResourceLimitExceededError = mxSession!!.dataHandler.resourceLimitExceededError
+        val hardResourceLimitExceededError = mSession!!.dataHandler.resourceLimitExceededError
         val softResourceLimitExceededError = limitResourceState.softErrorOrNull()
 
         var state: NotificationAreaView.State = NotificationAreaView.State.Default
@@ -2427,8 +2419,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         } else if (mIsUnreadPreviewMode) {
             state = NotificationAreaView.State.UnreadPreview
         } else {
-            val undeliveredEvents = mxSession!!.dataHandler.store!!.getUndeliveredEvents(currentRoom!!.roomId)
-            val unknownDeviceEvents = mxSession!!.dataHandler.store!!.getUnknownDeviceEvents(currentRoom!!.roomId)
+            val undeliveredEvents = mSession!!.dataHandler.store!!.getUndeliveredEvents(currentRoom!!.roomId)
+            val unknownDeviceEvents = mSession!!.dataHandler.store!!.getUnknownDeviceEvents(currentRoom!!.roomId)
             val hasUndeliverableEvents = (undeliveredEvents != null) && (undeliveredEvents.size > 0)
             val hasUnknownDeviceEvents = (unknownDeviceEvents != null) && (unknownDeviceEvents.size > 0)
             if (hasUndeliverableEvents || hasUnknownDeviceEvents) {
@@ -2469,7 +2461,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         }
 
         if ((null == sRoomPreviewData) && (null == mEventId) && canSendMessages(currentRoom!!.state)) {
-            val isCallSupported = currentRoom!!.canPerformCall() && mxSession!!.isVoipCallSupported
+            val isCallSupported = currentRoom!!.canPerformCall() && mSession!!.isVoipCallSupported
             val call = CallsManager.getSharedInstance().activeCall
             val activeWidget = mVectorOngoingConferenceCallView.activeWidget
 
@@ -2487,7 +2479,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 imageViewVideoCall.visibility = View.VISIBLE
                 imageViewVoiceCall.visibility = View.VISIBLE
             } else {
-                val roomCall = mxSession!!.mCallsManager.getCallWithRoomId(currentRoom!!.roomId)
+                val roomCall = mSession!!.mCallsManager.getCallWithRoomId(currentRoom!!.roomId)
 
                 // ensure that the listener is defined once
                 call!!.removeListener(mCallListener)
@@ -2524,7 +2516,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         val typingUsers = currentRoom!!.typingUsers
 
         if (!typingUsers.isEmpty()) {
-            val myUserId = mxSession!!.myUserId
+            val myUserId = mSession!!.myUserId
 
             // get the room member names
             val names = ArrayList<String>()
@@ -2612,23 +2604,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     }
 
     /**
-     * Refresh the room avatar.
-     */
-    private fun updateRoomHeaderAvatar() {
-//        if (null != currentRoom) {
-//            VectorUtils.loadRoomAvatar(this, mxSession, mActionBarHeaderRoomAvatar, currentRoom)
-//        } else if (null != sRoomPreviewData) {
-//            var roomName = sRoomPreviewData!!.roomName
-//            if (TextUtils.isEmpty(roomName)) {
-//                roomName = " "
-//            }
-//            VectorUtils.loadUserAvatar(this,
-//                    sRoomPreviewData!!.session, mActionBarHeaderRoomAvatar, sRoomPreviewData!!.roomAvatarUrl, sRoomPreviewData!!.roomId, roomName)
-//        }
-    }
-
-
-    /**
      * Create a custom action bar layout to process the room header view.
      *
      *
@@ -2689,7 +2664,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      */
     private fun setTitle() {
         var titleToApply = mDefaultRoomName
-        if ((null != mxSession) && (null != currentRoom)) {
+        if ((null != mSession) && (null != currentRoom)) {
             titleToApply = currentRoom!!.getRoomDisplayName(this)
 
             if (TextUtils.isEmpty(titleToApply)) {
@@ -2721,9 +2696,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
      * Update the UI content of the action bar header view
      */
     private fun updateActionBarHeaderView() {
-        // update room avatar content
-        updateRoomHeaderAvatar()
-
 //        // update the room name
 //        if (null != sRoomPreviewData) {
 //            mActionBarHeaderRoomName!!.text = sRoomPreviewData!!.roomName
@@ -2810,7 +2782,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             canSendMessage = (powerLevels != null && powerLevels.maySendMessage(mMyUserId))
         }
         if (canSendMessage) {
-            canSendMessage = mxSession!!.dataHandler.resourceLimitExceededError == null
+            canSendMessage = mSession!!.dataHandler.resourceLimitExceededError == null
         }
         return canSendMessage
     }
@@ -2827,7 +2799,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 mBottomSeparator.visibility = View.VISIBLE
                 mSendingMessagesLayout.visibility = View.VISIBLE
                 mCanNotPostTextView.visibility = View.GONE
-            } else if (state.isVersioned || mxSession!!.dataHandler.resourceLimitExceededError != null) {
+            } else if (state.isVersioned || mSession!!.dataHandler.resourceLimitExceededError != null) {
                 mBottomSeparator.visibility = View.GONE
                 mBottomLayout.layoutParams.height = 0
             } else {
@@ -2871,7 +2843,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //                                        if (TextUtils.equals(member.membership, RoomMember.MEMBERSHIP_JOIN)) {
 //                                            joinedMembersCount++
 //
-//                                            val user = mxSession!!.dataHandler.store!!.getUser(member.userId)
+//                                            val user = mSession!!.dataHandler.store!!.getUser(member.userId)
 //
 //                                            if ((null != user) && user!!.isActive()) {
 //                                                activeMembersCount++
@@ -3035,13 +3007,13 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             joinButton.setOnClickListener(object : View.OnClickListener {
                 override fun onClick(v: View) {
                     showWaitingView()
-                    mxSession!!.joinRoom(currentRoom!!.roomId, object : ApiCallback<String> {
+                    mSession!!.joinRoom(currentRoom!!.roomId, object : ApiCallback<String> {
                         override fun onSuccess(roomId: String) {
                             hideWaitingView()
 
                             val params = HashMap<String, Any>()
 
-                            params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession!!.myUserId
+                            params[VectorRoomActivity.EXTRA_MATRIX_ID] = mSession!!.myUserId
                             params[VectorRoomActivity.EXTRA_ROOM_ID] = currentRoom!!.roomId
                             // clear the activity stack to home activity
 
@@ -3306,7 +3278,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
             processDirectMessageRoom()
 
-            params[VectorRoomActivity.EXTRA_MATRIX_ID] = mxSession!!.myUserId
+            params[VectorRoomActivity.EXTRA_MATRIX_ID] = mSession!!.myUserId
             params[VectorRoomActivity.EXTRA_ROOM_ID] = sRoomPreviewData!!.roomId
 
             if (null != sRoomPreviewData!!.eventId) {
@@ -3339,17 +3311,17 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
             if (currentRoom!!.numberOfMembers == 2) {
                 // test if room is already seen as "direct message"
-                if (!RoomUtils.isDirectChat(mxSession, sRoomPreviewData!!.roomId)) {
+                if (!RoomUtils.isDirectChat(mSession, sRoomPreviewData!!.roomId)) {
                     currentRoom!!.getMembersAsync(object : SimpleApiCallback<List<RoomMember>>(this) {
                         override fun onSuccess(members: List<RoomMember>) {
-                            val myUserId = mxSession!!.myUserId
+                            val myUserId = mSession!!.myUserId
                             val participantUserId: String
 
                             for (member in members) {
                                 // search for the second participant
                                 if (member.userId != myUserId) {
                                     participantUserId = member.userId
-                                    CommonActivityUtils.setToggleDirectMessageRoom(mxSession,
+                                    CommonActivityUtils.setToggleDirectMessageRoom(mSession,
                                             sRoomPreviewData!!.roomId, participantUserId, this@RoomActivity, mDirectMessageListener)
                                     break
                                 }
@@ -3378,7 +3350,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         if (currentRoom != null && (null != userIds) && (userIds.size > 0)) {
             showWaitingView()
 
-            currentRoom!!.invite(mxSession, userIds, object : ApiCallback<Void?> {
+            currentRoom!!.invite(mSession, userIds, object : ApiCallback<Void?> {
 
                 private fun onDone(errorMessage: String?) {
                     if (!TextUtils.isEmpty(errorMessage)) {
@@ -3555,10 +3527,10 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         // Display the avatar in fullscreen with animation
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                val options = ActivityOptions.makeSceneTransitionAnimation(this, mActionBarHeaderRoomAvatar, "vector_transition_avatar")
-//                startActivity(VectorAvatarViewerActivity.getIntent(this, mxSession!!.myUserId, currentRoom!!.getAvatarUrl()!!), options.toBundle())
+//                startActivity(VectorAvatarViewerActivity.getIntent(this, mSession!!.myUserId, currentRoom!!.getAvatarUrl()!!), options.toBundle())
             } else {
                 // No transition
-                startActivity(VectorAvatarViewerActivity.getIntent(this, mxSession!!.myUserId, currentRoom!!.avatarUrl!!))
+                startActivity(VectorAvatarViewerActivity.getIntent(this, mSession!!.myUserId, currentRoom!!.avatarUrl!!))
             }
     }
 
@@ -3570,7 +3542,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             val powerLevels = currentRoom!!.state.powerLevels
 
             if (null != powerLevels) {
-                val powerLevel = powerLevels.getUserPowerLevel(mxSession!!.myUserId)
+                val powerLevel = powerLevels.getUserPowerLevel(mSession!!.myUserId)
                 canUpdateTitle = powerLevel >= powerLevels.minimumPowerLevelForSendingEventAsStateEvent(Event.EVENT_TYPE_STATE_ROOM_NAME)
             }
 
@@ -3590,7 +3562,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             val powerLevels = currentRoom!!.state.powerLevels
 
             if (null != powerLevels) {
-                val powerLevel = powerLevels.getUserPowerLevel(mxSession!!.myUserId)
+                val powerLevel = powerLevels.getUserPowerLevel(mSession!!.myUserId)
                 canUpdateTopic = powerLevel >= powerLevels.minimumPowerLevelForSendingEventAsStateEvent(Event.EVENT_TYPE_STATE_ROOM_NAME)
             }
 
@@ -3626,7 +3598,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             val vectorMemberDetailIntent = Intent(this, VectorMemberDetailsActivity::class.java)
             vectorMemberDetailIntent.putExtra(VectorMemberDetailsActivity.EXTRA_ROOM_ID, currentRoom!!.roomId)
             vectorMemberDetailIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MEMBER_ID, userId)
-            vectorMemberDetailIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MATRIX_ID, mxSession!!.credentials.userId)
+            vectorMemberDetailIntent.putExtra(VectorMemberDetailsActivity.EXTRA_MATRIX_ID, mSession!!.credentials.userId)
             startActivityForResult(vectorMemberDetailIntent, VectorRoomActivity.GET_MENTION_REQUEST_CODE)
         }
     }
@@ -3846,7 +3818,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     internal fun onRoomSearch() {
         val intentSearch = Intent(this, UnifiedSearchActivity::class.java)
         intentSearch.putExtra(UnifiedSearchActivity.EXTRA_ROOM_ID, currentRoom?.roomId)
-        intentSearch.putExtra(UnifiedSearchActivity.USER_ID, mxSession!!.myUserId)
+        intentSearch.putExtra(UnifiedSearchActivity.USER_ID, mSession!!.myUserId)
         startActivity(intentSearch)
     }
 

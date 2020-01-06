@@ -102,10 +102,10 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
             return mScrollEventListener
         }
 
-    internal val isDragAndDropSupported: Boolean = false;
+    internal val isDragAndDropSupported: Boolean = false
 
     protected open fun isDragAndDropSupported(): Boolean {
-        return isDragAndDropSupported;
+        return isDragAndDropSupported
     }
 
     /**
@@ -147,7 +147,7 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
         }
 
         // the chevron is managed in the header view
-        mRecentsListView!!.setGroupIndicator(null)
+        mRecentsListView.setGroupIndicator(null)
         // create the adapter
         mAdapter = RoomSummaryAdapter(this.context!!,
                 mSession,
@@ -158,14 +158,14 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
                 this,
                 this)
 
-        mRecentsListView!!.setAdapter(mAdapter)
+        mRecentsListView.setAdapter(mAdapter)
 
-        mRecentsListView!!.mDragAndDropEventsListener = this
+        mRecentsListView.mDragAndDropEventsListener = this
 
         // Set rooms click listener:
         // - reset the unread count
         // - start the corresponding room activity
-        mRecentsListView!!.setOnChildClickListener(ExpandableListView.OnChildClickListener { parent, v, groupPosition, childPosition, id ->
+        mRecentsListView.setOnChildClickListener(ExpandableListView.OnChildClickListener { parent, v, groupPosition, childPosition, id ->
             if (mAdapter.isDirectoryGroupPosition(groupPosition)) {
                 val intent = Intent(activity, VectorPublicRoomsActivity::class.java)
                 intent.putExtra(VectorPublicRoomsActivity.EXTRA_MATRIX_ID, mSession!!.myUserId)
@@ -182,24 +182,24 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
 
                 // sanity check : should never happen
                 // but it happened.
-                if ((null == session) || (null == session!!.dataHandler)) {
+                if ((null == session) || (null == session.dataHandler)) {
                     return@OnChildClickListener true
                 }
 
-                var roomId: String = "";
+                var roomId: String = ""
                 roomSummary?.roomId?.let {
-                    roomId = it;
+                    roomId = it
                 }
-                val room = session!!.dataHandler.getRoom(roomId)
+                val room = session.dataHandler.getRoom(roomId)
 
                 // cannot join a leaving room
-                if ((null == room) || room!!.isLeaving) {
-                    roomId = "";
+                if ((null == room) || room.isLeaving) {
+                    roomId = ""
                 }
 
                 // update the unread messages count
                 if (mAdapter.resetUnreadCount(groupPosition, childPosition)) {
-                    session!!.dataHandler.store!!.flushSummary(roomSummary)
+                    session.dataHandler.store!!.flushSummary(roomSummary)
                 }
                 // update badge unread count in case device is offline
                 BadgeProxy.specificUpdateBadgeUnreadCount(mSession, context)
@@ -207,8 +207,8 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
                 // launch corresponding room activity
                 if (null != roomId) {
                     val params = HashMap<String, Any>()
-                    params[VectorRoomActivity.EXTRA_MATRIX_ID] = session!!.myUserId
-                    params[VectorRoomActivity.EXTRA_ROOM_ID] = roomId!!
+                    params[VectorRoomActivity.EXTRA_MATRIX_ID] = session.myUserId
+                    params[VectorRoomActivity.EXTRA_ROOM_ID] = roomId
 
                     CommonActivityUtils.goToRoomPage(activity!!, session, params)
                 } else {
@@ -224,14 +224,14 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
             true
         })
 
-        mRecentsListView!!.onItemLongClickListener = object : AdapterView.OnItemLongClickListener {
+        mRecentsListView.onItemLongClickListener = object : AdapterView.OnItemLongClickListener {
             override fun onItemLongClick(parent: AdapterView<*>, view: View, position: Int, id: Long): Boolean {
                 startDragAndDrop()
                 return true
             }
         }
 
-        mRecentsListView!!.setOnScrollListener(object : AbsListView.OnScrollListener {
+        mRecentsListView.setOnScrollListener(object : AbsListView.OnScrollListener {
 
             // latest cell offset Y
             private var mPrevOffset = 0
@@ -269,10 +269,10 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
                     onScrollDown()
                 } else {
                     // detect the cell has moved
-                    val visibleCell = mRecentsListView!!.getChildAt(firstVisibleItem)
+                    val visibleCell = mRecentsListView.getChildAt(firstVisibleItem)
 
                     if (null != visibleCell) {
-                        val off = visibleCell!!.top
+                        val off = visibleCell.top
 
                         if (off > mPrevOffset) {
                             onScrollDown()
@@ -307,14 +307,14 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
         //mAdapter.sortSummaries();
         notifyDataSetChanged()
 
-        mRecentsListView!!.post {
+        mRecentsListView.post {
             // trigger a public room refresh if the list was not initialized or too old (5 mins)
             if (((((null == PublicRoomsManager.getInstance().publicRoomsCount) || ((System.currentTimeMillis() - mLatestPublicRoomsRefresh) < (5 * 60000)))) && (!mIsLoadingPublicRooms))) {
                 PublicRoomsManager.getInstance().refreshPublicRoomsCount(mPublicRoomsListener)
             }
 
             if (-1 != mScrollToIndex) {
-                mRecentsListView!!.setSelection(mScrollToIndex)
+                mRecentsListView.setSelection(mScrollToIndex)
                 mScrollToIndex = -1
             }
         }
@@ -344,7 +344,7 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
         findWaitingView()
 
         if (null != mWaitingView) {
-            mWaitingView!!.visibility = View.VISIBLE
+            mWaitingView.visibility = View.VISIBLE
         }
     }
 
@@ -352,7 +352,7 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
         findWaitingView()
 
         if (null != mWaitingView) {
-            mWaitingView!!.visibility = View.GONE
+            mWaitingView.visibility = View.GONE
         }
     }
 
@@ -369,7 +369,7 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
 
         mAdapter.setSearchPattern(pattern)
 
-        mRecentsListView!!.post { expandsAllSections() }
+        mRecentsListView.post { expandsAllSections() }
     }
 
     /**
@@ -379,7 +379,7 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
         val groupCount = mAdapter.groupCount
 
         for (groupIndex in 0 until groupCount) {
-            mRecentsListView!!.expandGroup(groupIndex)
+            mRecentsListView.expandGroup(groupIndex)
         }
     }
 
@@ -390,9 +390,9 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
     internal open fun notifyDataSetChanged() {
         mAdapter.notifyDataSetChanged()
 
-        mRecentsListView!!.post {
+        mRecentsListView.post {
             if (null != activity) {
-                val groupCount = mRecentsListView!!.expandableListAdapter.groupCount
+                val groupCount = mRecentsListView.expandableListAdapter.groupCount
                 var isExpanded: Boolean
                 val preferences = PreferenceManager.getDefaultSharedPreferences(activity!!.applicationContext)
 
@@ -414,9 +414,9 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
                     }
 
                     if (CommonActivityUtils.GROUP_IS_EXPANDED == isExpanded) {
-                        mRecentsListView!!.expandGroup(groupIndex)
+                        mRecentsListView.expandGroup(groupIndex)
                     } else {
-                        mRecentsListView!!.collapseGroup(groupIndex)
+                        mRecentsListView.collapseGroup(groupIndex)
                     }
                 }
             }
@@ -451,7 +451,7 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
             }
 
             if (null != (activity!!.applicationContext)) {
-                context = activity!!.applicationContext;
+                context = activity!!.applicationContext
                 PreferenceManager.getDefaultSharedPreferences(context)
                         .edit()
                         .putBoolean(groupKey, aValue)
@@ -492,12 +492,12 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
                     val eventType = event!!.getType()
 
                     // refresh the UI at the end of the next events chunk
-                    refreshOnChunkEnd = refreshOnChunkEnd or (((event!!.roomId != null) && RoomSummary.isSupportedEvent(event!!))
+                    refreshOnChunkEnd = refreshOnChunkEnd or (((event.roomId != null) && RoomSummary.isSupportedEvent(event))
                             || Event.EVENT_TYPE_STATE_ROOM_MEMBER == eventType
                             || Event.EVENT_TYPE_TAGS == eventType
                             || Event.EVENT_TYPE_REDACTION == eventType
                             || Event.EVENT_TYPE_RECEIPT == eventType
-                            || Event.EVENT_TYPE_STATE_ROOM_AVATAR == eventType
+//                            || Event.EVENT_TYPE_STATE_ROOM_AVATAR == eventType
                             || Event.EVENT_TYPE_STATE_ROOM_THIRD_PARTY_INVITE == eventType)
                 }
             }
@@ -551,8 +551,8 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
 
                 if (null != summary) {
                     // test if the latest event is refreshed
-                    val latestReceivedEvent = summary!!.getLatestReceivedEvent()
-                    if (null != latestReceivedEvent && TextUtils.equals(latestReceivedEvent!!.eventId, eventId)) {
+                    val latestReceivedEvent = summary.latestReceivedEvent
+                    if (null != latestReceivedEvent && TextUtils.equals(latestReceivedEvent.eventId, eventId)) {
                         activity!!.runOnUiThread { notifyDataSetChanged() }
                     }
                 }
@@ -644,7 +644,7 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
 
 //        val roomPreviewData = RoomPreviewData(mSession, roomId, null, roomAlias, null)
 //        CommonActivityUtils.previewRoom(activity, roomPreviewData)
-        val intent = Intent(this.activity, PreviewInviteRoomActivity::class.java);
+        val intent = Intent(this.activity, PreviewInviteRoomActivity::class.java)
         intent.putExtra(PreviewInviteRoomActivity.ROOM_ID, roomId)
         startActivity(intent)
     }
@@ -655,7 +655,7 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
         if (null != room) {
             showWaitingView()
 
-            room!!.leave(object : ApiCallback<Void> {
+            room.leave(object : ApiCallback<Void> {
                 override fun onSuccess(info: Void?) {
                     if (null != activity) {
                         activity!!.runOnUiThread {
@@ -700,7 +700,7 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
         if (null != room) {
             showWaitingView()
 
-            room!!.forget(object : ApiCallback<Void> {
+            room.forget(object : ApiCallback<Void> {
                 override fun onSuccess(info: Void) {
                     if (null != activity) {
                         activity!!.runOnUiThread {
@@ -823,9 +823,9 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
         mIsWaitingTagOrderEcho = false
         mIsWaitingDirectChatEcho = false
 
-        if (isDragAndDropSupported && groupIsMovable(mRecentsListView!!.touchedGroupPosition)) {
-            val groupPos = mRecentsListView!!.touchedGroupPosition
-            val childPos = mRecentsListView!!.touchedChildPosition
+        if (isDragAndDropSupported && groupIsMovable(mRecentsListView.touchedGroupPosition)) {
+            val groupPos = mRecentsListView.touchedGroupPosition
+            val childPos = mRecentsListView.touchedChildPosition
 
             try {
                 mDraggedView = mAdapter.getChildView(groupPos, childPos, false, null, null)
@@ -844,14 +844,14 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
             val params = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
             params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE)
             params.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE)
-            mSelectedCellLayout!!.addView(mDraggedView, params)
+            mSelectedCellLayout.addView(mDraggedView, params)
 
             mOriginGroupPosition = groupPos
             mDestGroupPosition = mOriginGroupPosition
             mOriginChildPosition = childPos
             mDestChildPosition = mOriginChildPosition
 
-            onTouchMove(mRecentsListView!!.touchedY, groupPos, childPos)
+            onTouchMove(mRecentsListView.touchedY, groupPos, childPos)
         }
     }
 
@@ -868,8 +868,8 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
         if ((null != mDraggedView) && (!mIgnoreScrollEvent)) {
 
             // display the cell if it is not yet visible
-            if (mSelectedCellLayout!!.visibility != View.VISIBLE) {
-                mSelectedCellLayout!!.visibility = View.VISIBLE
+            if (mSelectedCellLayout.visibility != View.VISIBLE) {
+                mSelectedCellLayout.visibility = View.VISIBLE
             }
 
             // compute the next first cell postion
@@ -878,28 +878,28 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
             // scroll over the screen top
             if (y < 0) {
                 // scroll up
-                if ((mRecentsListView!!.firstVisiblePosition > 0)) {
-                    nextFirstVisiblePosition = mRecentsListView!!.firstVisiblePosition - 1
+                if ((mRecentsListView.firstVisiblePosition > 0)) {
+                    nextFirstVisiblePosition = mRecentsListView.firstVisiblePosition - 1
                 }
 
                 y = 0
             }
 
             // scroll over the screen bottom
-            if ((y + mSelectedCellLayout!!.height) > mRecentsListView!!.height) {
+            if ((y + mSelectedCellLayout.height) > mRecentsListView.height) {
 
                 // scroll down
-                if (mRecentsListView!!.lastVisiblePosition < mRecentsListView!!.count) {
-                    nextFirstVisiblePosition = mRecentsListView!!.firstVisiblePosition + 2
+                if (mRecentsListView.lastVisiblePosition < mRecentsListView.count) {
+                    nextFirstVisiblePosition = mRecentsListView.firstVisiblePosition + 2
                 }
 
-                y = mRecentsListView!!.height - mSelectedCellLayout!!.height
+                y = mRecentsListView.height - mSelectedCellLayout.height
             }
 
             // move the overlay child view with the y position
-            val layoutParams = RelativeLayout.LayoutParams(mSelectedCellLayout!!.layoutParams)
+            val layoutParams = RelativeLayout.LayoutParams(mSelectedCellLayout.layoutParams)
             layoutParams.topMargin = y
-            mSelectedCellLayout!!.layoutParams = layoutParams
+            mSelectedCellLayout.layoutParams = layoutParams
 
             // virtually insert the moving cell in the recents list
             if ((groupPosition != mDestGroupPosition) || (childPosition != mDestChildPosition)) {
@@ -918,10 +918,10 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
             if (-1 != nextFirstVisiblePosition) {
                 mIgnoreScrollEvent = true
 
-                mRecentsListView!!.setSelection(nextFirstVisiblePosition)
+                mRecentsListView.setSelection(nextFirstVisiblePosition)
 
                 // avoid moving to quickly i.e moving only each 100ms
-                mRecentsListView!!.postDelayed(object : Runnable {
+                mRecentsListView.postDelayed(object : Runnable {
                     override fun run() {
                         mIgnoreScrollEvent = false
                     }
@@ -982,7 +982,7 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
             mDraggedView = null
 
             // hide the overlay layout
-            mSelectedCellLayout!!.visibility = View.GONE
+            mSelectedCellLayout.visibility = View.GONE
 
             // same place, nothing to do
             if ((mOriginGroupPosition == mDestGroupPosition) && (mOriginChildPosition == mDestChildPosition)) {
@@ -1039,10 +1039,10 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
             var oldTag: String? = null
 
             // retrieve the tag from the room info
-            val accountData = room!!.accountData
+            val accountData = room.accountData
 
-            if ((null != accountData) && accountData!!.hasTags()) {
-                oldTag = accountData!!.keys!!.iterator().next()
+            if ((null != accountData) && accountData.hasTags()) {
+                oldTag = accountData.keys!!.iterator().next()
             }
 
             // if the tag order is not provided, compute it
@@ -1062,7 +1062,7 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
             mSession!!.dataHandler.addListener(mEventsListener)
 
             // and work
-            room!!.replaceTag(oldTag, newtag, tagOrder, object : ApiCallback<Void> {
+            room.replaceTag(oldTag, newtag, tagOrder, object : ApiCallback<Void> {
 
                 override fun onSuccess(info: Void) {
                     if (null != activity) {
@@ -1125,7 +1125,7 @@ open class RecentsListFragment : VectorBaseFragment(), RoomSummaryAdapter.RoomEv
         private val KEY_EXPAND_STATE_LOW_PRIORITY_GROUP = "KEY_EXPAND_STATE_LOW_PRIORITY_GROUP"
         private val KEY_EXPAND_STATE_FAVOURITE_GROUP = "KEY_EXPAND_STATE_FAVOURITE_GROUP"
 
-        private val LOG_TAG = RecentsListFragment::class.java!!.simpleName
+        private val LOG_TAG = RecentsListFragment::class.java.simpleName
 
         internal val ARG_LAYOUT_ID = "VectorRecentsListFragment.ARG_LAYOUT_ID"
         internal val ARG_MATRIX_ID = "VectorRecentsListFragment.ARG_MATRIX_ID"

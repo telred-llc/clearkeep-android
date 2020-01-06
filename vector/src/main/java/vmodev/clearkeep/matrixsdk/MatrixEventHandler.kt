@@ -2,7 +2,9 @@ package vmodev.clearkeep.matrixsdk
 
 import android.text.TextUtils
 import android.util.Log
+import com.google.gson.Gson
 import im.vector.R
+import im.vector.widgets.WidgetsManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
@@ -38,6 +40,8 @@ class MatrixEventHandler @Inject constructor(
     : MXEventListener(), IMatrixEventHandler, KeysBackupStateManager.KeysBackupStateListener {
     private var mxSession: MXSession? = null
     private val KEY_MEMBERSHIP = "membership"
+    val gson = Gson()
+
     override fun onAccountDataUpdated(accountDataElement: AccountDataElement?) {
         super.onAccountDataUpdated(accountDataElement)
         val user = mxSession!!.myUser
@@ -62,6 +66,9 @@ class MatrixEventHandler @Inject constructor(
         Debug.e("--- event: ${event?.type}\n--- Content ---: ${event?.toString()}")
         event?.let { e ->
             when (event.type) {
+                WidgetsManager.WIDGET_EVENT_TYPE -> {
+
+                }
                 Event.EVENT_TYPE_STATE_ROOM_CREATE -> {
                     roomState?.let { rs ->
                         rs.toRoomCreate(mxSession)?.let {
@@ -79,6 +86,7 @@ class MatrixEventHandler @Inject constructor(
                     }
                 }
                 Event.EVENT_TYPE_STATE_ROOM_JOIN_RULES -> {
+                    Debug.e("--- event: m.room.join_rules")
                     roomState?.let { rs ->
                         rs.toRoomInvite(mxSession)?.let {
                             roomRepository.insertRoomInvite(it).subscribeOn(Schedulers.io())
@@ -133,11 +141,19 @@ class MatrixEventHandler @Inject constructor(
                 }
                 Event.EVENT_TYPE_STATE_ROOM_NAME -> {
                     val name = event.contentJson.asJsonObject.get("name").asString
-                    roomRepository.updateRoomName(event.roomId, name).subscribeOn(Schedulers.io()).subscribe({
-                        Debug.e("--- Update room name success")
-                    }, {
-                        Debug.e("--- Error: ${it.message}")
-                    })
+                    roomRepository.updateRoomName(event.roomId, name).subscribeOn(Schedulers.io()).subscribe()
+                    messageRepository.insertMessage(event.toMessage())
+                            .subscribeOn(Schedulers.io()).subscribe {
+                                roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe()
+                            }
+                }
+                Event.EVENT_TYPE_STATE_ROOM_TOPIC -> {
+                    val name = event.contentJson.asJsonObject.get("topic").asString
+                    roomRepository.updateRoomTopicToNetwork(event.roomId, name).subscribeOn(Schedulers.io()).subscribe()
+                    messageRepository.insertMessage(event.toMessage())
+                            .subscribeOn(Schedulers.io()).subscribe {
+                                roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe()
+                            }
                 }
                 IMatrixEventHandler.M_ROOM_POWER_LEVELS -> {
 
@@ -162,8 +178,19 @@ class MatrixEventHandler @Inject constructor(
                         Debug.e("--- even owner")
                     }
                 }
+                Event.EVENT_TYPE_STATE_ROOM_AVATAR -> {
+                    Debug.e("--- event: m.room.avatar - $event")
+                    messageRepository.insertMessage(event.toMessage())
+                            .subscribeOn(Schedulers.io()).subscribe {
+                                roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe()
+                            }
+                }
                 else -> {
-                    Debug.e("--- event khong ro: $event")
+                    Debug.e("--- event khong ro: ${event.type} - $event")
+                    messageRepository.insertMessage(event.toMessage())
+                            .subscribeOn(Schedulers.io()).subscribe {
+                                roomRepository.updateLastMessage(e.roomId, e.eventId).subscribe()
+                            }
                 }
             }
         }

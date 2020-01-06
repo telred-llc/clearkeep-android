@@ -121,7 +121,6 @@ internal constructor(// session
         roomVersionedResLayoutId: Int,
         textEditedResLayoutOwnerId: Int,
         textEditedResLayoutId: Int,
-        textEditedResLayout: Int,
         textResLayoutOwnerId: Int,
         // media cache
         private val mMediasCache: MXMediaCache) : AbstractMessagesAdapter(mContext, 0) {
@@ -318,7 +317,6 @@ internal constructor(// session
             R.layout.adapter_item_vector_message_room_versioned,
             R.layout.adapter_item_vector_message_text_edited_emote_notice,
             R.layout.adapter_item_vector_message_text_edited_by_member,
-            R.layout.adapter_item_vector_message_text_emote_notice_own,
             R.layout.adapter_item_vector_message_text_emote_notice_own,
             mediasCache)
 
@@ -1108,10 +1106,6 @@ internal constructor(// session
         try {
             val row = getItem(position)
             val event = row!!.event
-            //            if (editedMessageMap.containsKey(event.eventId)) {
-            //                event = editedMessageMap.get(event.eventId);
-            //                row = new MessageRow(event, mSession.getDataHandler().getRoom(event.roomId).getState());
-            //            }
             val message = JsonUtils.toMessage(event.content)
             val shouldHighlighted = null != mVectorMessagesAdapterEventsListener && mVectorMessagesAdapterEventsListener!!.shouldHighlightEvent(event)
             val textViews: MutableList<TextView>
@@ -1157,10 +1151,9 @@ internal constructor(// session
             for (tv in textViews) {
                 addContentViewListeners(convertView, tv, position, viewType)
             }
-
             mHelper.manageURLPreviews(message, convertView, event.eventId)
         } catch (e: Exception) {
-            Log.e(LOG_TAG, "## getTextView() failed : " + e.message, e)
+            Debug.e("--- failed type[${viewType}]: ${e.message}")
         }
         return convertView
     }
@@ -1201,7 +1194,7 @@ internal constructor(// session
                 val body = row.getText(VectorQuoteSpan(mContext), display)
                 var result = mHelper.highlightPattern(body, Message.FORMAT_MATRIX_HTML, mBackgroundColorSpan, shouldHighlighted)
                 result = "$result ${context.resources.getString(R.string.edited_suffix)}"
-                bodyTextView.text = result
+                bodyTextView.text = result.replaceFirst("* ", "")
                 mHelper.applyLinkMovementMethod(bodyTextView)
                 bodyTextView.vectorCustomLinkify(true)
                 textViews = ArrayList()
@@ -1982,7 +1975,7 @@ internal constructor(// session
      */
     private fun addContentViewListeners(convertView: View, contentView: View, position: Int, msgType: Int) {
         when (msgType) {
-            ROW_TYPE_FILE, ROW_TYPE_IMAGE -> {
+            ROW_TYPE_FILE, ROW_TYPE_VIDEO, ROW_TYPE_IMAGE -> {
                 contentView.setOnClickListener {
                     Log.e("TAG", "--- Click tag item 3")
                     if (null != mVectorMessagesAdapterEventsListener) {

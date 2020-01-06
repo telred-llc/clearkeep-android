@@ -13,6 +13,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestListener
 import com.google.android.material.card.MaterialCardView
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import im.vector.Matrix
 import im.vector.R
@@ -26,13 +27,12 @@ import org.matrix.androidsdk.crypto.MXDecryptionException
 import org.matrix.androidsdk.db.MXMediaCache
 import org.matrix.androidsdk.listeners.MXMediaDownloadListener
 import org.matrix.androidsdk.rest.model.Event
-import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.message.ImageMessage
 import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
 import vmodev.clearkeep.enums.EventTypeEnum
 import vmodev.clearkeep.jsonmodels.MessageContent
-import vmodev.clearkeep.ultis.ClearKeepEventDisplay
 import vmodev.clearkeep.ultis.Debug
+import vmodev.clearkeep.ultis.formatMessageEdit
 import vmodev.clearkeep.ultis.formatSizeData
 import vmodev.clearkeep.ultis.toDateTime
 import vmodev.clearkeep.viewmodelobjects.Message
@@ -112,36 +112,56 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
             val event = Event(message.messageType, parser.parse(message.encryptedContent).asJsonObject, message.userId, message.roomId)
             val room = session.dataHandler.getRoom(message.roomId)
             when (message.messageType) {
+                Event.EVENT_TYPE_STATE_ROOM_JOIN_RULES -> {
+
+                }
+                Event.EVENT_TYPE_STATE_ROOM_TOPIC, Event.EVENT_TYPE_STATE_ROOM_NAME -> {
+                    val display = EventDisplay(textView.context)
+                    textView.text = display.getTextualDisplay(event, room.state)
+                }
                 Event.EVENT_TYPE_STATE_ROOM_CREATE -> {
 
                 }
                 Event.EVENT_TYPE_STATE_ROOM_MEMBER -> {
                     try {
-                        Debug.e("--- Xu ly hien thi room member")
-                        Debug.e("--- json: $event")
+                        Debug.e("--- m.room.member")
                         val content = event.content.asJsonObject
                         val memberShip = content.get("membership").asString
-                        if (memberShip.equals(RoomMember.MEMBERSHIP_INVITE)) {
-                            val message = ClearKeepEventDisplay.getMembershipNotice(textView.context, event, room.state)
-                            textView.text = message
-                        } else {
-
-                        }
+                        Debug.e("--- event memberShip: $memberShip")
+//                        when(memberShip){
+//                            RoomMember.MEMBERSHIP_INVITE -> {
+//                                Debug.e("--- trạng thái member: invite")
+//                                val message = ClearKeepEventDisplay.getMembershipNotice(textView.context, event, room.state)
+//                                textView.text = message
+//                            }
+//                            RoomMember.MEMBERSHIP_JOIN -> {
+//                                Debug.e("--- trạng thái member: join")
+//                                val message = ClearKeepEventDisplay.getMembershipNotice(textView.context, event, room.state)
+//                                textView.text = message
+//                            }
+//                            RoomMember.MEMBERSHIP_LEAVE -> {
+//                                Debug.e("--- trạng thái member: leave")
+//                                val message = ClearKeepEventDisplay.getMembershipNotice(textView.context, event, room.state)
+//                                textView.text = message
+//                            }
+//                            else -> {
+//                                Debug.e("--- Khong ro trang thai: ${event}")
+//                            }
+//                        }
                     } catch (e: MXDecryptionException) {
                         Debug.e("--- Error: ${e.message}\n--- message: ${message.encryptedContent}")
                     }
                 }
                 Event.EVENT_TYPE_MESSAGE_ENCRYPTED -> {
                     try {
-                        val result = session.dataHandler.crypto?.decryptEvent(event, null)
-                        result?.let {
-                            val json = result.mClearEvent.asJsonObject
-                            val type = json.get("type").asString
-                            if (!type.isNullOrEmpty() && type.compareTo(Event.EVENT_TYPE_MESSAGE) == 0) {
-                                val message = gson.fromJson(result.mClearEvent, MessageContent::class.java)
-                                textView.text = message?.content?.body
+                        session!!.dataHandler.crypto?.let { mxCrypto ->
+                            val result = mxCrypto.decryptEvent(event, null)
+                            val message = gson.fromJson(result.mClearEvent, MessageContent::class.java)
+                            val data: JsonObject = event.contentJson.asJsonObject
+                            if (data.getAsJsonObject("m.relates_to") != null) {
+                                textView.text = String().formatMessageEdit(message?.content?.body.toString())
                             } else {
-                                Debug.e("--- message: null")
+                                textView.text = message?.content?.body.toString()
                             }
                         }
                     } catch (e: MXDecryptionException) {
@@ -151,7 +171,8 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
                 else -> {
                     val display = EventDisplay(textView.context)
                     textView.text = display.getTextualDisplay(event, room.state)
-                    Debug.e("--- can not action todo")
+                    textView.text = message.encryptedContent
+                    Debug.e("--- can not action todo: ${event.type}")
                 }
             }
         }

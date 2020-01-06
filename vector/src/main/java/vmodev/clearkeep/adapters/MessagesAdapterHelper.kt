@@ -996,11 +996,8 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
 
     fun manageURLPreviews(message: Message, convertView: View, eventID: String) {
         val urlsPreviewLayout = convertView.findViewById<LinearLayout>(R.id.messagesAdapter_urls_preview_list)
-                ?: return
-
-        // sanity checks
-
-        //
+        if (null == urlsPreviewLayout)
+            return
         if (TextUtils.isEmpty(message.body)) {
             urlsPreviewLayout.visibility = View.GONE
             return
@@ -1012,11 +1009,8 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             urlsPreviewLayout.visibility = View.GONE
             return
         }
-        Debug.e("--- click item tag: ${urlsPreviewLayout.tag} ? $eventID")
-        return
         // avoid removing items if they are displayed
-        if (TextUtils.equals(urlsPreviewLayout.tag as String, eventID)) {
-            // all the urls have been displayed
+        if (eventID.equals(urlsPreviewLayout.tag)) { // all the urls have been displayed
             if (urlsPreviewLayout.childCount == urls.size) {
                 return
             }
@@ -1030,17 +1024,16 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
         }
 
         urlsPreviewLayout.visibility = View.VISIBLE
-
         for (url in urls) {
             val downloadKey = url.hashCode().toString() + "---"
             val displayKey = "$url<----->$eventID"
 
             if (!mSession.isURLPreviewEnabled) {
                 if (!mUrlsPreviews.containsKey(downloadKey)) {
-                    mUrlsPreviews[downloadKey] = null!!
+                    mUrlsPreviews.put(downloadKey, null!!)
                     mAdapter.notifyDataSetChanged()
                 }
-            } else if (UrlPreviewView.didUrlPreviewDismiss(displayKey)) {
+            } else if (UrlPreviewView.Companion.didUrlPreviewDismiss(displayKey)) {
                 Log.d(LOG_TAG, "## manageURLPreviews() : $displayKey has been dismissed")
             } else if (mPendingUrls.contains(url)) {
                 // please wait
@@ -1255,9 +1248,8 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
                 val stickerMessage = JsonUtils.toStickerMessage(event.content)
                 return !TextUtils.isEmpty(stickerMessage.body) && !event.isRedacted
             } else if (Event.EVENT_TYPE_STATE_ROOM_TOPIC == eventType || Event.EVENT_TYPE_STATE_ROOM_NAME == eventType) {
-                return false
-//                val display = RiotEventDisplay(context)
-//                return row.getText(null, display) != null
+                val display = RiotEventDisplay(context)
+                return row.getText(null, display) != null
             } else if (event.isCallEvent) {
                 return (Event.EVENT_TYPE_CALL_ANSWER == eventType
                         || Event.EVENT_TYPE_CALL_HANGUP == eventType)
@@ -1309,6 +1301,14 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             } else if (Event.EVENT_TYPE_STATE_ROOM_CREATE == eventType) {
                 val roomCreateContent = JsonUtils.toRoomCreateContent(event.content)
                 return roomCreateContent != null && roomCreateContent.predecessor != null
+//            } else if (Event.EVENT_TYPE_STATE_ROOM_AVATAR == eventType) {
+//                val display = RiotEventDisplay(context)
+//                val text = "Xin chao"
+//                return text != null
+            } else if (WidgetsManager.WIDGET_EVENT_TYPE == eventType) {
+
+            } else {
+                Debug.e("--- event: ${eventType}")
             }
             return false
         }

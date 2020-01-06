@@ -18,7 +18,6 @@
 
 package im.vector.view;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -38,6 +37,7 @@ import im.vector.R;
 import im.vector.widgets.Widget;
 import im.vector.widgets.WidgetManagerProvider;
 import im.vector.widgets.WidgetsManager;
+import vmodev.clearkeep.ultis.Debug;
 
 /**
  * This class displays the active widgets
@@ -127,7 +127,7 @@ public class ActiveWidgetsBanner extends FrameLayout {
                     try {
                         mUpdateListener.onCloseWidgetClick(mActiveWidgets.get(0));
                     } catch (Exception e) {
-                        Log.e(LOG_TAG, "## initView() : onCloseWidgetClick failed " + e.getMessage(), e);
+                        Debug.e("--- onCloseWidgetClick failed " + e.getMessage(), e);
                     }
                 }
             }

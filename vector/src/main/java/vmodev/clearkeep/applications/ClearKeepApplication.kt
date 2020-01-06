@@ -105,7 +105,6 @@ class ClearKeepApplication : DaggerVectorApp(), IApplication {
             }
         }, {
             Log.e("Tag", "--- Error: ${it.message}")
-
         })
     }
 
