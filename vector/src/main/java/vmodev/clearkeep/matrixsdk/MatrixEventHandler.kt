@@ -17,14 +17,22 @@ import org.matrix.androidsdk.rest.model.bingrules.BingRule
 import org.matrix.androidsdk.rest.model.sync.AccountDataElement
 import vmodev.clearkeep.applications.ClearKeepApplication
 import vmodev.clearkeep.databases.AbstractRoomDao
+import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
+import vmodev.clearkeep.databases.AbstractUserDao
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.interfaces.IMatrixEventHandler
 import vmodev.clearkeep.repositories.*
+import vmodev.clearkeep.ultis.matrixUrlToRealUrl
+import vmodev.clearkeep.ultis.toMessage
+import vmodev.clearkeep.ultis.toRoomCreate
+import vmodev.clearkeep.ultis.toRoomInvite
 import vmodev.clearkeep.ultis.*
 import vmodev.clearkeep.workermanager.interfaces.IUpdateDatabaseFromMatrixEvent
 import javax.inject.Inject
 
 class MatrixEventHandler @Inject constructor(
+        private val abstractRoomUserJoinDao: AbstractRoomUserJoinDao,
+        private val abstractUserDao: AbstractUserDao,
         private val application: ClearKeepApplication,
         private val userRepository: UserRepository
         , private val roomRepository: RoomRepository
@@ -37,7 +45,6 @@ class MatrixEventHandler @Inject constructor(
         , private val updateDatabaseFromMatrixEvent: IUpdateDatabaseFromMatrixEvent)
     : MXEventListener(), IMatrixEventHandler, KeysBackupStateManager.KeysBackupStateListener {
     private var mxSession: MXSession? = null
-    private val KEY_MEMBERSHIP = "membership"
     override fun onAccountDataUpdated(accountDataElement: AccountDataElement?) {
         super.onAccountDataUpdated(accountDataElement)
         val user = mxSession!!.myUser
@@ -99,9 +106,15 @@ class MatrixEventHandler @Inject constructor(
                     userRepository.updateUser(event.sender).subscribeOn(Schedulers.io()).subscribe {
                         messageRepository.insertMessage(event.toMessage())
                                 .subscribeOn(Schedulers.io()).subscribe {
-                                    val contentObject = event.contentJson.asJsonObject
                                     roomRepository.updateLastMessage(e.roomId, e.eventId).subscribeOn(Schedulers.io()).subscribe()
-                                    if (contentObject.has(KEY_MEMBERSHIP) && TextUtils.equals(contentObject.get(KEY_MEMBERSHIP).asString, RoomMember.MEMBERSHIP_INVITE)
+                                    val contentObject = event.contentJson.asJsonObject
+                                    if (contentObject.has("membership") && TextUtils.equals(contentObject.get("membership").asString, "leave")) {
+                                        roomRepository.updateLeaveRoom(event.stateKey, event.roomId).subscribeOn(Schedulers.io()).subscribe()
+                                    }
+                                    if (contentObject.has("membership") && TextUtils.equals(contentObject.get("membership").asString, "join")) {
+                                        roomRepository.updateRoomInvites(event.stateKey, event.roomId).subscribeOn(Schedulers.io()).subscribe()
+                                    }
+                                    if (contentObject.has("membership") && TextUtils.equals(contentObject.get("membership").asString, "invite")
                                             && contentObject.has("is_direct") && contentObject.get("is_direct").asBoolean) {
                                         roomState?.let {
                                             val selfMember = it.getMember(mxSession!!.myUserId)
@@ -128,7 +141,6 @@ class MatrixEventHandler @Inject constructor(
                                         }
                                     }
                                 }
-                        roomRepository.updateUserCreated(event.roomId, event.sender)
                     }
                 }
                 Event.EVENT_TYPE_STATE_ROOM_NAME -> {

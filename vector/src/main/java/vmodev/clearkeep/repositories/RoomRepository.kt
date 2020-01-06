@@ -10,12 +10,12 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import vmodev.clearkeep.databases.AbstractRoomDao
+import vmodev.clearkeep.databases.AbstractRoomUserJoinDao
+import vmodev.clearkeep.databases.AbstractUserDao
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.wayloads.*
-import vmodev.clearkeep.viewmodelobjects.Resource
-import vmodev.clearkeep.viewmodelobjects.Room
-import vmodev.clearkeep.viewmodelobjects.RoomListUser
+import vmodev.clearkeep.viewmodelobjects.*
 import java.io.InputStream
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,7 +23,9 @@ import javax.inject.Singleton
 @Singleton
 class RoomRepository @Inject constructor(
         private val abstractRoomDao: AbstractRoomDao,
+        private val abstractUserDao: AbstractUserDao,
         private val matrixService: MatrixService,
+        private val abstractRoomUserJoinDao: AbstractRoomUserJoinDao,
         private val executors: AppExecutors
 ) {
     fun loadListRoom(filters: Array<Int>, type: Int = 0): LiveData<Resource<List<Room>>> {
@@ -191,6 +193,22 @@ class RoomRepository @Inject constructor(
                 return matrixService.inviteUsersToRoom(data.roomId, data.userIds)
             }
         }.asLiveData()
+    }
+
+    fun updateRoomInvites(userId: String, roomId: String): Completable {
+        return Completable.fromAction {
+            val user = User(id = userId, name = userId, avatarUrl = "", status = 0);
+            val roomUerJoin = RoomUserJoin(roomId = roomId, userId = userId);
+            abstractUserDao.insert(user);
+            abstractRoomUserJoinDao.insert(roomUerJoin);
+        }
+    }
+
+    fun updateLeaveRoom(userId: String, roomId: String): Completable {
+        return Completable.fromAction {
+            abstractRoomUserJoinDao.deleteRoomUserJoin(userId, roomId);
+
+        }
     }
 
     fun findListRoomWithText(keyword: String): LiveData<Resource<List<String>>> {

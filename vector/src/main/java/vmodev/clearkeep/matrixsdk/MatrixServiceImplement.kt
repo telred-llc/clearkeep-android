@@ -979,12 +979,12 @@ class MatrixServiceImplement @Inject constructor(private val application: ClearK
             val room = session!!.dataHandler.getRoom(roomId)
             room.getActiveMembersAsync(object : ApiCallback<List<RoomMember>> {
                 override fun onSuccess(p0: List<RoomMember>?) {
-
-                    p0?.forEach { t: RoomMember? ->
-                        t?.let { roomMember ->
-                            users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0))
-                        }
+                    users.clear()
+                    val joinRoomMember = p0?.filterIndexed { index, roomMember -> RoomMember.MEMBERSHIP_JOIN.equals(roomMember.membership) }
+                    joinRoomMember?.forEach { roomMember ->
+                        users.add(User(id = roomMember.userId, avatarUrl = mxUrlToUrl(roomMember.avatarUrl), name = roomMember.name, status = 0))
                     }
+                    Debug.e(" size: ${users.size} - roomID: ${roomId}")
                     emitter.onNext(users)
                     emitter.onComplete()
                 }
