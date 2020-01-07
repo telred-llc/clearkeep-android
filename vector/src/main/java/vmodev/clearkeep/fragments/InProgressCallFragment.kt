@@ -7,14 +7,13 @@ import android.content.Intent
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-
+import androidx.fragment.app.Fragment
 import im.vector.R
 import im.vector.databinding.FragmentInProgressCallBinding
 import im.vector.util.CallsManager
@@ -26,8 +25,8 @@ import org.matrix.androidsdk.call.CallSoundsManager
 import org.matrix.androidsdk.call.IMXCall
 import org.matrix.androidsdk.call.MXCallListener
 import org.matrix.androidsdk.call.VideoLayoutConfiguration
-import org.webrtc.RendererCommon
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.ultis.Debug
 import vmodev.clearkeep.ultis.longTimeToString
 import java.util.concurrent.TimeUnit
 
@@ -37,7 +36,6 @@ import java.util.concurrent.TimeUnit
 class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
 
     private lateinit var binding: FragmentInProgressCallBinding;
-    private var disposableCallElapsedTime: Disposable? = null;
     private lateinit var mxCall: IMXCall;
     private var callView: View? = null;
     private var callManager: CallsManager? = null;
@@ -53,11 +51,12 @@ class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
             super.onStateDidChange(state)
             when (state) {
                 IMXCall.CALL_STATE_CONNECTED -> {
-                    disposableCallElapsedTime?.dispose();
-                    disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
-                            .subscribe {
-                                binding.tvTimeCall.text = mxCall.callElapsedTime.longTimeToString();
-                            }
+//                    disposableCallElapsedTime?.dispose();
+//                    disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
+//                            .subscribe {
+//                                binding.tvTimeCall.text = mxCall.callElapsedTime.longTimeToString();
+//                            }
+                    upDateTimeCall()
                 }
             }
 
@@ -86,6 +85,16 @@ class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
         return this;
     }
 
+    private fun upDateTimeCall() {
+        val disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (mxCall.callElapsedTime > -1) {
+                        binding.tvTimeCall.text = mxCall.callElapsedTime.longTimeToString();
+                    }
+                }
+        compositeDisposable.add(disposableCallElapsedTime)
+    }
+
     override fun onResume() {
         super.onResume()
         mxCall.addListener(callListener);
@@ -97,11 +106,12 @@ class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
                 callView = it.callView;
                 CallsManager.getSharedInstance().setCallActivity(this.activity);
                 callView?.let { insertCallView(); }
-                disposableCallElapsedTime?.dispose();
-                disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
-                        .subscribe {
-                            binding.tvTimeCall.text = mxCall.callElapsedTime.longTimeToString();
-                        }
+//                disposableCallElapsedTime?.dispose();
+//                disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
+//                        .subscribe {
+//                            binding.tvTimeCall.text = mxCall.callElapsedTime.longTimeToString();
+//                        }
+                upDateTimeCall()
             }
             mxCall.visibility = View.VISIBLE;
         } ?: run {

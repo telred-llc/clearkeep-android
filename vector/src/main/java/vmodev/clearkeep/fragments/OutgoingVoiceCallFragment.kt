@@ -14,7 +14,6 @@ import im.vector.databinding.FragmentOutgoingVoiceCallBinding
 import im.vector.util.CallsManager
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.call.CallSoundsManager
 import org.matrix.androidsdk.call.IMXCall
@@ -25,6 +24,7 @@ import vmodev.clearkeep.activities.RoomActivity.Companion.EXTRA_ROOM_ID
 import vmodev.clearkeep.activities.RoomActivity.Companion.EXTRA_START_CALL_ID
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
+import vmodev.clearkeep.ultis.Debug
 import vmodev.clearkeep.ultis.longTimeToString
 import vmodev.clearkeep.viewmodels.interfaces.AbstractOutgoingVoiceCallFragmentViewModel
 import java.util.concurrent.TimeUnit
@@ -42,7 +42,6 @@ class OutgoingVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
     private var callManager: CallsManager? = null
     private var callSoundsManager: CallSoundsManager? = null
     private val videoLayoutConfiguration = VideoLayoutConfiguration(5, 66, 25, 25)
-    private var disposableCallElapsedTime: Disposable? = null
     private var callListener: MXCallListener = object : MXCallListener() {
         override fun onCallEnd(aReasonId: Int) {
             super.onCallEnd(aReasonId)
@@ -68,11 +67,7 @@ class OutgoingVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
                     this@OutgoingVoiceCallFragment.activity?.finish()
                 }
                 IMXCall.CALL_STATE_CONNECTED -> {
-                    disposableCallElapsedTime?.dispose()
-                    disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
-                            .subscribe {
-                                binding.textViewCalling.text = mxCall.callElapsedTime.longTimeToString()
-                            }
+                    upDateTimeCall()
                 }
                 IMXCall.CALL_STATE_READY -> {
                     updateStatusControlCall()
@@ -176,14 +171,15 @@ class OutgoingVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun upDateTimeCall() {
-        if (mxCall.callElapsedTime > -1) {
+        Debug.e("---" + mxCall.callElapsedTime + " ---" + mxCall.callElapsedTime.longTimeToString())
             binding.textViewCalling.setTextColor(ResourcesCompat.getColor(activity!!.resources, R.color.text_color_blue, null))
-            disposableCallElapsedTime?.dispose()
-            disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
+            val disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
-                        binding.textViewCalling.text = mxCall.callElapsedTime.longTimeToString()
+                        if(mxCall.callElapsedTime > -1){
+                            binding.textViewCalling.text = mxCall.callElapsedTime.longTimeToString()
+                        }
                     }
-        }
+            compositeDisposable.add(disposableCallElapsedTime)
     }
 
     private fun updateStatusControlCall() {
@@ -194,4 +190,5 @@ class OutgoingVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
             binding.callSoundsManager = it
         }
     }
+
 }

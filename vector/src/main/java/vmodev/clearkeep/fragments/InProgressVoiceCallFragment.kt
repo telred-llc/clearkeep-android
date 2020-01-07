@@ -2,17 +2,15 @@ package vmodev.clearkeep.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import im.vector.R
 import im.vector.databinding.FragmentInProgressVoiceCallBinding
-import im.vector.util.CallUtilities
 import im.vector.util.CallsManager
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -33,19 +31,19 @@ import javax.inject.Inject
 class InProgressVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
-    lateinit var viewModelFactory: IViewModelFactory<AbstractInProgressVoiceCallFragmentViewModel>;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractInProgressVoiceCallFragmentViewModel>
 
-    private lateinit var binding: FragmentInProgressVoiceCallBinding;
-    private lateinit var mxCall: IMXCall;
-    private var callView: View? = null;
-    private var callManager: CallsManager? = null;
-    private var callSoundsManager: CallSoundsManager? = null;
-    private val videoLayoutConfiguration = VideoLayoutConfiguration(5, 66, 25, 25);
-    private var disposableCallElapsedTime: Disposable? = null;
+    private lateinit var binding: FragmentInProgressVoiceCallBinding
+    private lateinit var mxCall: IMXCall
+    private var callView: View? = null
+    private var callManager: CallsManager? = null
+    private var callSoundsManager: CallSoundsManager? = null
+    private val videoLayoutConfiguration = VideoLayoutConfiguration(5, 66, 25, 25)
+    private var disposableCallElapsedTime: Disposable? = null
     private var callListener: MXCallListener = object : MXCallListener() {
         override fun onCallEnd(aReasonId: Int) {
             super.onCallEnd(aReasonId)
-            this@InProgressVoiceCallFragment.activity?.finish();
+            this@InProgressVoiceCallFragment.activity?.finish()
         }
 
         override fun onStateDidChange(state: String?) {
@@ -64,22 +62,22 @@ class InProgressVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_in_progress_voice_call, container, false, dataBinding.getDataBindingComponent());
-        mxCall = CallsManager.getSharedInstance().activeCall;
-        binding.lifecycleOwner = viewLifecycleOwner;
-        return binding.root;
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_in_progress_voice_call, container, false, dataBinding.getDataBindingComponent())
+        mxCall = CallsManager.getSharedInstance().activeCall
+        binding.lifecycleOwner = viewLifecycleOwner
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mxCall.createCallView();
-        callManager = CallsManager.getSharedInstance();
-        callSoundsManager = CallSoundsManager.getSharedInstance(this.activity);
-        callView = callManager?.callView;
-        setupButtonControl();
-        binding.room = viewModelFactory.getViewModel().getRoomResult();
+        mxCall.createCallView()
+        callManager = CallsManager.getSharedInstance()
+        callSoundsManager = CallSoundsManager.getSharedInstance(this.activity)
+        callView = callManager?.callView
+        setupButtonControl()
+        binding.room = viewModelFactory.getViewModel().getRoomResult()
         FormatString
-        viewModelFactory.getViewModel().setRoomId(mxCall.room.roomId);
+        viewModelFactory.getViewModel().setRoomId(mxCall.room.roomId)
         binding.rippleBackground.startRippleAnimation()
         initComponent()
     }
@@ -90,28 +88,28 @@ class InProgressVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     override fun getFragment(): Fragment {
-        return this;
+        return this
     }
 
     override fun onResume() {
         super.onResume()
-        mxCall.addListener(callListener);
+        mxCall.addListener(callListener)
         callManager?.let {
             if (it.activeCall != null) {
                 if (mxCall.callState == IMXCall.CALL_STATE_CONNECTED && mxCall.isVideo)
-                    mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration);
-                callView = it.callView;
-                CallsManager.getSharedInstance().setCallActivity(this.activity);
+                    mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration)
+                callView = it.callView
+                CallsManager.getSharedInstance().setCallActivity(this.activity)
             }
-            mxCall.visibility = View.VISIBLE;
+            mxCall.visibility = View.VISIBLE
         } ?: run {
-            this.activity?.finish();
+            this.activity?.finish()
         }
     }
 
     override fun onPause() {
         super.onPause()
-        mxCall.removeListener(callListener);
+        mxCall.removeListener(callListener)
     }
 
     @SuppressLint("CheckResult")
@@ -122,23 +120,23 @@ class InProgressVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
         }
         binding.imageViewMicrophone.setOnClickListener {
             callSoundsManager?.let {
-                it.isMicrophoneMute = !it.isMicrophoneMute;
+                it.isMicrophoneMute = !it.isMicrophoneMute
                 Toast.makeText(this.context, if (it.isMicrophoneMute) resources.getString(R.string.microphone_off) else resources.getString(R.string.microphone_on)
-                        , Toast.LENGTH_SHORT).show();
+                        , Toast.LENGTH_SHORT).show()
                 binding.callSoundsManager = it
             }
         }
         binding.imageViewSpeaker.setOnClickListener {
             callManager?.let {
-                callManager?.toggleSpeaker();
+                callManager?.toggleSpeaker()
                 Toast.makeText(this.context, if (it.isSpeakerphoneOn) resources.getString(R.string.speaker_phone_on) else resources.getString(R.string.speaker_phone_off)
-                        , Toast.LENGTH_SHORT).show();
+                        , Toast.LENGTH_SHORT).show()
                 binding.callManager = it
             }
         }
         binding.imageViewGoToRoom.setOnClickListener {
-            CallsManager.getSharedInstance().setCallActivity(null);
-            this.activity?.finish();
+            CallsManager.getSharedInstance().setCallActivity(null)
+            this.activity?.finish()
         }
         upDateTimeCall()
     }
@@ -163,10 +161,13 @@ class InProgressVoiceCallFragment : DataBindingDaggerFragment(), IFragment {
         if (mxCall.callElapsedTime > -1) {
             binding.textViewCalling.setTextColor(ResourcesCompat.getColor(activity!!.resources, R.color.text_color_blue, null))
         }
-        disposableCallElapsedTime?.dispose();
-        disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
+        val disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    binding.textViewCalling.text = mxCall.callElapsedTime.longTimeToString();
+                    if (mxCall.callElapsedTime > -1) {
+                        binding.textViewCalling.text = mxCall.callElapsedTime.longTimeToString()
+                    }
                 }
+        compositeDisposable.add(disposableCallElapsedTime)
     }
+
 }
