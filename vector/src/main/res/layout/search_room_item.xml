@@ -108,6 +108,7 @@
                     android:textSize="@dimen/text_17_sp" />
 
                 <TextView
+                    app:userNumber="@{room_list_user.members.size()}"
                     android:id="@+id/txtmember"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

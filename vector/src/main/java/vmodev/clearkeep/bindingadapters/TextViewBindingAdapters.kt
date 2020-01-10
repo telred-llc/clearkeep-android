@@ -24,4 +24,7 @@ interface TextViewBindingAdapters {
 
     @BindingAdapter(value = ["dataSize"], requireAll = false)
     fun bindDataSize(textView: TextView, fileContent: ImageMessage?)
+
+    @BindingAdapter(value = ["userNumber"], requireAll = false)
+    fun bindUserNumber(textView: TextView, userNumber: Int?)
 }

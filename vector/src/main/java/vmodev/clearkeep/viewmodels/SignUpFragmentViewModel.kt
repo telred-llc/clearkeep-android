@@ -10,14 +10,14 @@ import javax.inject.Inject
 
 class SignUpFragmentViewModel @Inject constructor(loginRepository: LoginRepository) : AbstractSignUpFragmentViewModel() {
 
-    private val _setDataForForRegister = MutableLiveData<RegisterObject>();
+    private val _setDataForForRegister = MutableLiveData<RegisterObject>()
     private val _registerResult = Transformations.switchMap(_setDataForForRegister) { input -> loginRepository.register(input.username, input.email, input.password) }
 
     override fun setDataForRegister(username: String, email: String, password: String) {
-        _setDataForForRegister.value = RegisterObject(username, email, password);
+        _setDataForForRegister.value = RegisterObject(username, email, password)
     }
 
     override fun getRegisterResult(): LiveData<Resource<String>> {
-        return _registerResult;
+        return _registerResult
     }
 }

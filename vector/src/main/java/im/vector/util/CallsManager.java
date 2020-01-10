@@ -249,9 +249,9 @@ public class CallsManager {
                         case IMXCall.CALL_STATE_CREATE_ANSWER:
                         case IMXCall.CALL_STATE_WAIT_LOCAL_MEDIA:
                         case IMXCall.CALL_STATE_WAIT_CREATE_OFFER:
-                            if (mActiveCall.isIncoming()) {
-                                mCallSoundsManager.stopSounds();
-                            } // else ringback
+//                            if (mActiveCall.isIncoming()) {
+//                                mCallSoundsManager.stopSounds();
+//                            } // else ringback
                             break;
 
                         case IMXCall.CALL_STATE_CONNECTED:
@@ -270,7 +270,7 @@ public class CallsManager {
                                 public void run() {
                                     if (null != mActiveCall) {
                                         setCallSpeakerphoneOn(mActiveCall.isVideo() && !HeadsetConnectionReceiver.isHeadsetPlugged(mContext));
-                                        mCallSoundsManager.setMicrophoneMute(false);
+//                                        mCallSoundsManager.setMicrophoneMute(false);
                                     } else {
                                         Log.e(LOG_TAG, "## onStateDidChange() : no more active call");
                                     }

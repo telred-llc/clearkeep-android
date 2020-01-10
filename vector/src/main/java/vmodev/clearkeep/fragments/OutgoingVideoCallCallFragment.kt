@@ -19,7 +19,6 @@ import im.vector.databinding.FragmentOutgoingCallBinding
 import im.vector.util.CallsManager
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.call.CallSoundsManager
 import org.matrix.androidsdk.call.IMXCall
@@ -43,7 +42,6 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
     private var callManager: CallsManager? = null
     private var callSoundsManager: CallSoundsManager? = null
     private val videoLayoutConfiguration = VideoLayoutConfiguration(5, 66, 25, 25)
-    private var disposableCallElapsedTime: Disposable? = null
     private var isConnecting: Boolean = false
     private var callListener: MXCallListener = object : MXCallListener() {
 
@@ -97,8 +95,7 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
                     upDateTimeCall()
                 }
                 IMXCall.CALL_STATE_READY -> {
-                    if (mxCall.callElapsedTime > -1)
-                        upDateTimeCall()
+                    upDateTimeCall()
                 }
             }
         }
@@ -280,11 +277,13 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun upDateTimeCall() {
-        disposableCallElapsedTime?.dispose()
-        disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
+        val disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    binding.tvTimeCall.text = mxCall.callElapsedTime.longTimeToString()
+                    if (mxCall.callElapsedTime > -1) {
+                        binding.tvTimeCall.text = mxCall.callElapsedTime.longTimeToString();
+                    }
                 }
+        compositeDisposable.add(disposableCallElapsedTime)
     }
 
     override fun onDestroy() {

@@ -2,10 +2,7 @@ package vmodev.clearkeep.adapters
 
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.LifecycleOwner
@@ -13,23 +10,19 @@ import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import im.vector.R
-import im.vector.databinding.RoomInviteItemBinding
-import im.vector.databinding.RoomItemBinding
 import im.vector.databinding.SearchRoomItemBinding
 import vmodev.clearkeep.adapters.Interfaces.IListRoomRecyclerViewAdapter
-import vmodev.clearkeep.bindingadapters.DataBindingComponentImplement
 import vmodev.clearkeep.bindingadapters.interfaces.IDataBindingComponent
 import vmodev.clearkeep.executors.AppExecutors
-import vmodev.clearkeep.ultis.FormatString
 import vmodev.clearkeep.viewmodelobjects.RoomListUser
 
-class ListRoomSearchRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<RoomListUser>, private val dataBindingComponent : IDataBindingComponent)
+class ListRoomSearchRecyclerViewAdapter constructor(appExecutors: AppExecutors, diffCallback: DiffUtil.ItemCallback<RoomListUser>, private val dataBindingComponent: IDataBindingComponent)
 
     : ListAdapter<RoomListUser, DataBoundViewHolder<ViewDataBinding>>(AsyncDifferConfig.Builder(diffCallback)
         .setBackgroundThreadExecutor(appExecutors.diskIO())
         .build()), IListRoomRecyclerViewAdapter {
     override fun getflag(flag: Int?) {
-        Log.d("" ,"")
+        Log.d("", "")
     }
 
     private lateinit var itemClick: (RoomListUser, Int) -> Unit?
@@ -39,7 +32,7 @@ class ListRoomSearchRecyclerViewAdapter constructor(appExecutors: AppExecutors, 
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DataBoundViewHolder<ViewDataBinding> {
         val binding = DataBindingUtil.inflate<SearchRoomItemBinding>(LayoutInflater.from(p0.context), R.layout.search_room_item, p0, false, dataBindingComponent.getDataBindingComponent());
-            binding.root.setOnClickListener { binding.roomListUser?.let { itemClick?.invoke(it, 3) } }
+        binding.root.setOnClickListener { binding.roomListUser?.let { itemClick?.invoke(it, 3) } }
         lifecycleOwner?.let { binding.lifecycleOwner = lifecycleOwner }
         return DataBoundViewHolder(binding);
     }
@@ -54,20 +47,8 @@ class ListRoomSearchRecyclerViewAdapter constructor(appExecutors: AppExecutors, 
     }
 
     override fun onBindViewHolder(p0: DataBoundViewHolder<ViewDataBinding>, p1: Int) {
-            (p0.binding as SearchRoomItemBinding).roomListUser = getItem(p1);
-            if (getItem(p1).room?.type==2){
-                p0.binding.txtmember.visibility = View.VISIBLE
-            }else{
-                p0.binding.txtmember.visibility = View.GONE
-            }
-        if (getItem(p1).members?.size==1){
-            p0.binding.txtmember.text = (getItem(p1).members?.size.toString() + " user")
-        }else{
-            p0.binding.txtmember.text = (getItem(p1).members?.size.toString() + " users")
-        }
-            p0.binding.executePendingBindings();
-            p0.binding.currentUserId = currentUserId;
-            p0.binding.members = getItem(p1).members?.size.toString();
+        (p0.binding as SearchRoomItemBinding).roomListUser = getItem(p1);
+        p0.binding.executePendingBindings();
     }
 
     override fun setOnItemClick(itemClick: (RoomListUser, Int) -> Unit?) {

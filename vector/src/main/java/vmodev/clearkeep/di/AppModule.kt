@@ -119,7 +119,8 @@ abstract class AppModule {
                             && p0.room?.notifyCount == p1.room?.notifyCount && p0.room?.type == p1.room?.type
                             && p0.room?.messageId == p1.room?.messageId && p0.room?.notificationState == p1.room?.notificationState
                             && TextUtils.equals(p0.lastMessage?.id, p1.lastMessage?.id)
-                            && p0.lastMessage?.createdAt == p1.lastMessage?.createdAt
+
+                            && p0.lastMessage?.createdAt == p1.lastMessage?.createdAt && p0.members?.size == p1.members?.size;
                 }
             }, dataBindingComponent = dataBindingComponent)
 

@@ -10,6 +10,9 @@ abstract class AbstractUserDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insert(user: User): Long;
 
+    @Query("DELETE FROM user WHERE id =:id")
+    abstract fun deleteUser(id: String): Int
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insertUsers(users: List<User>): List<Long>;
 

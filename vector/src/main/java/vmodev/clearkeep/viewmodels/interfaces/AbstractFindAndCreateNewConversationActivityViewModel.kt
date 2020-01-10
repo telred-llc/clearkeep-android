@@ -14,4 +14,5 @@ abstract class AbstractFindAndCreateNewConversationActivityViewModel : ViewModel
     abstract fun joinRoomResult(): LiveData<Resource<Room>>
     abstract fun setJoinRoom(roomId: String)
     abstract fun getListUserSuggested(type: Int, userID: String): LiveData<Resource<List<User>>>
+    abstract fun getRoomByID(roomId: String): LiveData<Resource<Room>>
 }

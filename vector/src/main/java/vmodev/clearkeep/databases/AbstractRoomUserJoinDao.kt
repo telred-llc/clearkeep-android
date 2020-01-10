@@ -12,6 +12,9 @@ abstract class AbstractRoomUserJoinDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insert(roomUserJoin: RoomUserJoin): Long;
 
+    @Query("DELETE FROM roomUserJoin WHERE user_id =:userId AND room_id =:roomId ")
+    abstract fun deleteRoomUserJoin(userId: String,roomId: String): Int
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insertRoomUserJoins(roomUserJoins: List<RoomUserJoin>): List<Long>;
 

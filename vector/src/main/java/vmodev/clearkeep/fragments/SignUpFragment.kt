@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -43,11 +42,11 @@ import javax.inject.Inject
 class SignUpFragment : DataBindingDaggerFragment(), IFragment {
 
     @Inject
-    lateinit var viewModelFactory: IViewModelFactory<AbstractSignUpFragmentViewModel>;
+    lateinit var viewModelFactory: IViewModelFactory<AbstractSignUpFragmentViewModel>
 
     // TODO: Rename and change types of parameters
     private var listener: OnFragmentInteractionListener? = null
-    private lateinit var binding: FragmentSignUpBinding;
+    private lateinit var binding: FragmentSignUpBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,111 +58,106 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up, container, false, dataBinding.getDataBindingComponent());
-        return binding.root;
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up, container, false, dataBinding.getDataBindingComponent())
+        return binding.root
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?){
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.register = viewModelFactory.getViewModel().getRegisterResult();
+        binding.register = viewModelFactory.getViewModel().getRegisterResult()
         binding.nestedScrollview.setOnTouchListener { v, event ->
             hideKeyboard()
             return@setOnTouchListener true
         }
         binding.frameLayoutHaveAnAccount.setOnClickListener { v ->
-            onPressedHaveAnAccount();
-        };
+            onPressedHaveAnAccount()
+        }
         binding.buttonRegister.setOnClickListener { v ->
-            var email = binding.textInputEditTextUsername.text.toString().trim();
-            var username: String = "";
+            var email = binding.textInputEditTextUsername.text.toString().trim()
+            var username: String = ""
             if (email.isEmailValid()) {
-                username = email.split("@")[0];
+                username = email.split("@")[0]
             } else {
-                email = "";
-                username = binding.textInputEditTextUsername.text.toString().trim();
+                email = ""
+                username = binding.textInputEditTextUsername.text.toString().trim()
             }
 
-            val password = binding.textInputEditTextPassword.text.toString().trim();
-            val confirmPassword = binding.textInputEditTextConfirmPassword.text.toString().trim();
+            val password = binding.textInputEditTextPassword.text.toString().trim()
+            val confirmPassword = binding.textInputEditTextConfirmPassword.text.toString().trim()
             if (TextUtils.isEmpty(username)) {
-                binding.textInputEditTextUsername.error = getString(R.string.error_empty_field_enter_user_name_or_email);
-                return@setOnClickListener;
+                binding.textInputEditTextUsername.error = getString(R.string.error_empty_field_enter_user_name_or_email)
+                return@setOnClickListener
             } else if (TextUtils.isDigitsOnly(username[0].toString())) {
-                showAlertDialog("Username error", "Numeric user IDs are reserved for guest users");
-                return@setOnClickListener;
+                showAlertDialog("Username error", "Numeric user IDs are reserved for guest users")
+                return@setOnClickListener
             } else {
                 val expression = "^[a-z0-9.\\-_=/]+$"
 
                 val pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE)
                 val matcher = pattern.matcher(username)
                 if (!matcher.matches()) {
-                    showAlertDialog("Username error", "User ID can only contain characters a-z,0-9, or '=_-./'");
-                    return@setOnClickListener;
+                    showAlertDialog("Username error", "User ID can only contain characters a-z,0-9, or '=_-./'")
+                    return@setOnClickListener
                 }
             }
             if (TextUtils.isEmpty(password)) {
-                binding.textInputEditTextPassword.error = getString(R.string.error_empty_field_your_password);
-                return@setOnClickListener;
+                binding.textInputEditTextPassword.error = getString(R.string.error_empty_field_your_password)
+                return@setOnClickListener
             }
             if (password.length < 6) {
-                showAlertDialog("Password error", getString(R.string.password_too_short));
-                return@setOnClickListener;
+                showAlertDialog("Password error", getString(R.string.password_too_short))
+                return@setOnClickListener
             }
             if (password.length > 15) {
-                showAlertDialog("Password error", getString(R.string.password_too_long));
-                return@setOnClickListener;
+                showAlertDialog("Password error", getString(R.string.password_too_long))
+                return@setOnClickListener
             }
             if (password.contains(" ")) {
-                showAlertDialog("Password error", getString(R.string.password_contain_space));
-                return@setOnClickListener;
+                showAlertDialog("Password error", getString(R.string.password_contain_space))
+                return@setOnClickListener
             }
             if (TextUtils.isEmpty(confirmPassword)) {
-                binding.textInputEditTextConfirmPassword.error = getString(R.string.error_empty_field_your_password_confirm);
-                return@setOnClickListener;
+                binding.textInputEditTextConfirmPassword.error = getString(R.string.error_empty_field_your_password_confirm)
+                return@setOnClickListener
             }
             if (password.compareTo(confirmPassword) != 0) {
-                showAlertDialog("Password error", "Password don't match");
-                return@setOnClickListener;
+                showAlertDialog("Password error", "Password don't match")
+                return@setOnClickListener
             }
-//            onPressedRegister(username, email, password);
-            viewModelFactory.getViewModel().setDataForRegister(username, email, password);
-        };
+            viewModelFactory.getViewModel().setDataForRegister(username, email, password)
+        }
         viewModelFactory.getViewModel().getRegisterResult().observe(viewLifecycleOwner, Observer {
             it?.let {
                 if (it.status == Status.SUCCESS) {
                     it.data?.let {
                         if (it.compareTo("onWaitingEmailValidation") == 0) {
-                            onWaitingEmailValidation();
+                            onWaitingEmailValidation()
                         } else {
-                            ServerUrlsRepository.saveServerUrls(this.context!!, BuildConfig.HOME_SERVER, BuildConfig.IDENTIFY_SERVER);
-                            val intent = Intent(activity, SplashActivity::class.java);
-                            intent.putExtra(SplashActivity.START_FROM_LOGIN, binding.textInputEditTextPassword.text.toString());
-                            startActivity(intent);
-                            activity?.finish();
+                            ServerUrlsRepository.saveServerUrls(activity!!, BuildConfig.HOME_SERVER, BuildConfig.IDENTIFY_SERVER)
+                            val intent = Intent(activity, SplashActivity::class.java)
+                            intent.putExtra(SplashActivity.START_FROM_LOGIN, binding.textInputEditTextPassword.text.toString())
+                            startActivity(intent)
+                            activity?.finish()
                         }
                     }
                 }
                 if (it.status == Status.ERROR) {
-                    Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show()
                 }
             }
         })
-        binding.lifecycleOwner = viewLifecycleOwner;
-//        binding.nestedScrollview.setOnScrollChangeListener { v: NestedScrollView?, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
-////            hideKeyboard()
-////        }
+        binding.lifecycleOwner = viewLifecycleOwner
     }
 
     override fun getFragment(): Fragment {
-        return this;
+        return this
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     fun onPressedHaveAnAccount() {
         listener?.onPressedHaveAnAccount()
     }
-
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -192,9 +186,9 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
      */
     interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        fun onPressedHaveAnAccount();
+        fun onPressedHaveAnAccount()
 
-        fun onWaitingEmailValidation();
+        fun onWaitingEmailValidation()
     }
 
     companion object {
@@ -216,11 +210,11 @@ class SignUpFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun onWaitingEmailValidation() {
-        listener?.onWaitingEmailValidation();
+        listener?.onWaitingEmailValidation()
     }
 
 
     private fun showAlertDialog(title: String, message: String) {
-        this.context?.let { AlertDialog.Builder(it).setTitle(title).setMessage(message).setNegativeButton("Close", null).show()};
+        this.context?.let { AlertDialog.Builder(it).setTitle(title).setMessage(message).setNegativeButton("Close", null).show() }
     }
 }
