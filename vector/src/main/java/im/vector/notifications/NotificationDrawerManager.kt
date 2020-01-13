@@ -32,6 +32,7 @@ import im.vector.VectorApp
 import im.vector.util.SecretStoringUtils
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.core.Log
+import vmodev.clearkeep.ultis.DateUtil
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -375,7 +376,9 @@ class NotificationDrawerManager(val context: Context) {
                         noisy = hasNewEvent && summaryIsNoisy,
                         lastMessageTimestamp = globalLastMessageTimestamp
                 )?.let {
-                    NotificationUtils.showNotificationMessage(context, null, SUMMARY_NOTIFICATION_ID, it, body)
+                    if (!DateUtil.isNotificationActive(context)) {
+                        NotificationUtils.showNotificationMessage(context, null, SUMMARY_NOTIFICATION_ID, it, body)
+                    }
                 }
 
                 if (hasNewEvent && summaryIsNoisy) {

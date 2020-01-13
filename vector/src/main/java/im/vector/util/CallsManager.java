@@ -556,7 +556,7 @@ public class CallsManager {
      * Start the ringing tone, if the phone is not in "do not disturb" mode
      */
     private void startRinging() {
-        if (DateUtil.Companion.isNotificationActive(mContext)) {
+        if (!DateUtil.Companion.isNotificationActive(mContext)) {
             if (NotificationUtils.INSTANCE.isDoNotDisturbModeOn(mContext)) {
                 Log.w(LOG_TAG, "Do not ring because DO NOT DISTURB MODE is on");
                 mCallSoundsManager.startRingingSilently();
