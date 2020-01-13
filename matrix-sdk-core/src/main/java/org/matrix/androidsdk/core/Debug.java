@@ -1,14 +1,10 @@
-package vmodev.clearkeep.ultis;
+package org.matrix.androidsdk.core;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-
-import com.crashlytics.android.Crashlytics;
-
-import im.vector.BuildConfig;
 
 public class Debug {
 
@@ -89,7 +85,6 @@ public class Debug {
 
     public static void e(String message, Throwable throwable) {
         if (!isDebuggable()) {
-            Crashlytics.logException(throwable);
             return;
         }
         getMethodNames(new Throwable().getStackTrace());

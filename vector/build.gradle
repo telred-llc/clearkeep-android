@@ -32,7 +32,9 @@ kapt {
 ext.abiVersionCodes = ["armeabi-v7a": 1, "arm64-v8a": 2, "x86": 3, "x86_64": 4].withDefault { 0 }
 
 android {
-    compileSdkVersion 29
+
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
 
     packagingOptions {
         exclude 'META-INF/LICENSE'
@@ -59,8 +61,8 @@ android {
 
     defaultConfig {
         applicationId 'com.telred.clearkeep'
-        minSdkVersion 21
-        targetSdkVersion 29
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
         // use the version code
         versionCode rootProject.ext.versionCodeProp
         versionName rootProject.ext.versionNameProp
@@ -217,14 +219,12 @@ dependencies {
     implementation "org.jetbrains.anko:anko-commons:0.10.8"
 
     // Note: do not upgrade to 1.0.3 because it lead to crashes at startup on Android 16
-    implementation "androidx.multidex:multidex:2.0.1"
     implementation 'me.leolin:ShortcutBadger:1.1.22'
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.preference:preference:1.0.0'
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
@@ -250,18 +250,6 @@ dependencies {
     kapt 'com.airbnb.android:epoxy-processor:3.7.0'
     implementation 'com.airbnb.android:mvrx:1.0.1'
 
-    // Network
-    implementation 'com.squareup.retrofit2:retrofit:2.7.1'
-    implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
-    implementation "com.google.code.gson:gson:$gson_version"
-    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
-    implementation 'com.squareup.okhttp3:okhttp-urlconnection:4.3.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.3.0'
-    implementation 'com.facebook.stetho:stetho:1.5.1'
-    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.7.1'
-    implementation 'com.squareup.okio:okio:2.4.1'
-
     // Use Glide library to display image (Gif supported)
     implementation 'com.github.bumptech.glide:glide:4.10.0'
     kapt 'com.github.bumptech.glide:compiler:4.10.0'
@@ -281,8 +269,6 @@ dependencies {
     // you have to uncomment some lines in settings.gradle
 
 
-    /************* jitsi **************/
-    implementation('org.jitsi.react:jitsi-meet-sdk:2.2.2')
 
     /************* analytics **************/
     // another tracking than GA
@@ -291,7 +277,7 @@ dependencies {
     /************* flavors management **************/
 
     // app flavor only
-    appImplementation('com.google.firebase:firebase-messaging:20.0.0') {
+    appImplementation('com.google.firebase:firebase-messaging:20.1.0') {
         exclude group: 'com.google.firebase', module: 'firebase-core'
         exclude group: 'com.google.firebase', module: 'firebase-analytics'
         exclude group: 'com.google.firebase', module: 'firebase-measurement-connector'
@@ -306,7 +292,6 @@ dependencies {
     testImplementation 'androidx.test:runner:1.2.0'
     testImplementation 'androidx.test:rules:1.2.0'
     testImplementation 'org.mockito:mockito-core:2.23.0'
-    testImplementation 'org.hamcrest:hamcrest-library:1.3'
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3' // fixes issue on linux/mac
     testImplementation 'org.robolectric:robolectric:4.3.1'
 
@@ -347,7 +332,7 @@ dependencies {
 
     // ================= Activity =======================================//
     def activity_version = "1.1.0-rc01"
-    implementation "androidx.activity:activity-ktx:$activity_version"
+    implementation "androidx.activity:activity-ktx:1.1.0-rc03"
 //    implementation "androidx.activity:activity:$activity_version"
     //====================================================================//
 
@@ -437,14 +422,14 @@ dependencies {
 
     //================ RxBinding =========================================//
     implementation 'com.jakewharton.rxbinding3:rxbinding:3.1.0'
-    implementation 'com.jakewharton.rxbinding3:rxbinding-core:3.0.0'
+    implementation 'com.jakewharton.rxbinding3:rxbinding-core:3.1.0'
     implementation 'com.jakewharton.rxbinding3:rxbinding-appcompat:3.1.0'
-    implementation 'com.jakewharton.rxbinding3:rxbinding-drawerlayout:3.0.0'
-    implementation 'com.jakewharton.rxbinding3:rxbinding-leanback:3.0.0'
-    implementation 'com.jakewharton.rxbinding3:rxbinding-recyclerview:3.0.0'
-    implementation 'com.jakewharton.rxbinding3:rxbinding-slidingpanelayout:3.0.0'
-    implementation 'com.jakewharton.rxbinding3:rxbinding-swiperefreshlayout:3.0.0'
-    implementation 'com.jakewharton.rxbinding3:rxbinding-viewpager:3.0.0'
+    implementation 'com.jakewharton.rxbinding3:rxbinding-drawerlayout:3.1.0'
+    implementation 'com.jakewharton.rxbinding3:rxbinding-leanback:3.1.0'
+    implementation 'com.jakewharton.rxbinding3:rxbinding-recyclerview:3.1.0'
+    implementation 'com.jakewharton.rxbinding3:rxbinding-slidingpanelayout:3.1.0'
+    implementation 'com.jakewharton.rxbinding3:rxbinding-swiperefreshlayout:3.1.0'
+    implementation 'com.jakewharton.rxbinding3:rxbinding-viewpager:3.1.0'
     implementation 'com.jakewharton.rxbinding3:rxbinding-material:3.1.0'
     //======================================================================//
     //============== Bottom Dialog =========================================//
@@ -457,13 +442,10 @@ dependencies {
     implementation 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
     //======================================================================//
     /*********************** Matrix Android SDK *****************************/
-//    implementation project(path: ':matrix-sdk')
+    implementation project(path: ':matrix-sdk')
 //    implementation project(path: ':matrix-sdk-crypto')
 //    implementation project(path: ':matrix-sdk-core')
 
-    implementation project(':matrix-sdk-core-release')
-    implementation project(':matrix-sdk-crypto-release')
-    implementation project('::matrix-sdk-release-0.9.32')
     /*************************************************************************/
 
     /************************** AssistedInject ****************************/
@@ -475,7 +457,7 @@ dependencies {
     /********************************* olm *******************************/
 //    implementation 'org.matrix.gitlab.matrix-org:olm:3.1.2'
 //    implementation project(path:':olm-sdk')
-    implementation project(':olm-sdk-release')
+//    implementation project(':olm-sdk-release')
     /*********************************************************************/
     implementation 'gun0912.ted:tedpermission:2.2.2'
     implementation project(path: ':stickyscrollviewitems')

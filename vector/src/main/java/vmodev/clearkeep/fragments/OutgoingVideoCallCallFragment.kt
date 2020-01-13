@@ -2,9 +2,7 @@ package vmodev.clearkeep.fragments
 
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.media.projection.MediaProjectionManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -24,7 +22,7 @@ import org.matrix.androidsdk.call.CallSoundsManager
 import org.matrix.androidsdk.call.IMXCall
 import org.matrix.androidsdk.call.MXCallListener
 import org.matrix.androidsdk.call.VideoLayoutConfiguration
-import org.webrtc.RendererCommon
+import org.matrix.androidsdk.core.Debug
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.ultis.longTimeToString
@@ -67,10 +65,10 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
             super.onReady()
             if (mxCall.isIncoming) {
                 mxCall.launchIncomingCall(videoLayoutConfiguration)
-                mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
+//                mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
             } else {
                 mxCall.placeCall(videoLayoutConfiguration)
-                mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
+//                mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
             }
         }
 
@@ -84,7 +82,7 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
                 IMXCall.CALL_STATE_CONNECTED -> {
                     mxCall.visibility = View.VISIBLE
                     mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration)
-                    mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
+//                    mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
 
                 }
                 IMXCall.CALL_STATE_ENDED -> {
@@ -116,8 +114,8 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
 
     private fun setupButtonControl() {
         binding.imageViewHangUp.setOnClickListener {
-            mxCall.hangup(null)
-//            callManager?.onHangUp(null)
+            callManager?.onHangUp(null)
+            activity?.finish()
         }
         binding.imageViewSwitchCamera.setOnClickListener {
             mxCall.switchRearFrontCamera()
@@ -150,12 +148,12 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
             this.activity?.finish()
         }
         binding.imageViewScreenShare.setOnClickListener {
-            if (mxCall.isScreenCast) {
-                mxCall.cameraVideo()
-            } else {
-                val mediaProjectionManager = activity?.application?.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-                startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), SCREEN_SHARE_CODE)
-            }
+            //            if (mxCall.isScreenCast) {
+//                mxCall.cameraVideo()
+//            } else {
+//                val mediaProjectionManager = activity?.application?.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+//                startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), SCREEN_SHARE_CODE)
+//            }
         }
 
         binding.imageViewMakeCamera.setOnClickListener {
@@ -171,7 +169,7 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
         when (requestCode) {
             SCREEN_SHARE_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    mxCall.screenVideo(data)
+//                    mxCall.screenVideo(data)
                 }
             }
         }
@@ -280,14 +278,20 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
         val disposableCallElapsedTime = Observable.interval(1, TimeUnit.SECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     if (mxCall.callElapsedTime > -1) {
-                        binding.tvTimeCall.text = mxCall.callElapsedTime.longTimeToString();
+                        binding.tvTimeCall.text = mxCall.callElapsedTime.longTimeToString()
                     }
                 }
         compositeDisposable.add(disposableCallElapsedTime)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Debug.e("--- onDestroyView")
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+        Debug.e("--- onDestroy")
     }
 
 

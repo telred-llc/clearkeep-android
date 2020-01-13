@@ -37,6 +37,7 @@ import org.matrix.androidsdk.call.IMXCallsManagerListener;
 import org.matrix.androidsdk.call.MXCallListener;
 import org.matrix.androidsdk.call.MXCallsManagerListener;
 import org.matrix.androidsdk.call.VideoLayoutConfiguration;
+import org.matrix.androidsdk.core.Debug;
 import org.matrix.androidsdk.core.Log;
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo;
 import org.matrix.androidsdk.crypto.data.MXUsersDevicesMap;
@@ -52,7 +53,6 @@ import im.vector.notifications.NotificationUtils;
 import im.vector.services.CallService;
 import vmodev.clearkeep.activities.CallViewActivity;
 import vmodev.clearkeep.activities.IncomingCallActivity;
-import vmodev.clearkeep.activities.OutgoingCallActivity;
 
 /**
  * This class contains the call toolbox.
@@ -136,7 +136,7 @@ public class CallsManager {
      */
     public CallsManager(Context context) {
         mContext = context.getApplicationContext();
-        mCallSoundsManager = mCallSoundsManager.getSharedInstance(mContext);
+        mCallSoundsManager = CallSoundsManager.getSharedInstance(mContext);
         HeadsetConnectionReceiver.getSharedInstance(mContext).addListener(mOnHeadsetStatusUpdateListener);
     }
 
@@ -635,8 +635,10 @@ public class CallsManager {
                     public void onMediaReadyToPlay() {
                         if (null != mCallActivity) {
                             if (mCallActivity instanceof VectorCallViewActivity) {
+                                Debug.e("--- EndHere 1");
                                 ((VectorCallViewActivity) mCallActivity).endCall();
                             } else {
+                                Debug.e("--- EndHere 2");
                                 mCallActivity.finish();
                             }
                             mCallActivity = null;

@@ -29,6 +29,7 @@ import im.vector.view.UrlPreviewView
 import im.vector.widgets.WidgetsManager
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.adapters.MessageRow
+import org.matrix.androidsdk.core.Debug
 import org.matrix.androidsdk.core.JsonUtils
 import org.matrix.androidsdk.core.Log
 import org.matrix.androidsdk.core.callback.ApiCallback
@@ -42,7 +43,6 @@ import org.matrix.androidsdk.rest.model.group.GroupProfile
 import org.matrix.androidsdk.rest.model.message.Message
 import org.matrix.androidsdk.rest.model.message.StickerMessage
 import org.matrix.androidsdk.view.HtmlTagHandler
-import vmodev.clearkeep.ultis.Debug
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*

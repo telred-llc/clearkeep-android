@@ -9,6 +9,7 @@ import im.vector.R
 import im.vector.databinding.ActivityOutgoingCallBinding
 import im.vector.util.CallsManager
 import org.matrix.androidsdk.call.IMXCall
+import org.matrix.androidsdk.core.Debug
 import vmodev.clearkeep.activities.interfaces.IActivity
 
 class OutgoingCallActivity : DataBindingDaggerActivity(), IActivity {
@@ -33,5 +34,10 @@ class OutgoingCallActivity : DataBindingDaggerActivity(), IActivity {
 
     override fun getActivity(): FragmentActivity {
         return this
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Debug.e("--- onDestroy 2")
     }
 }

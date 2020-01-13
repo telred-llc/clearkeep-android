@@ -1,4 +1,4 @@
-include ':vector', ':matrix-sdk-release-0.9.32', ':matrix-sdk-core-release', ':matrix-sdk-crypto-release', ':olm-sdk-release', ':stickyscrollviewitems'
+include ':vector', ':stickyscrollviewitems', ':matrix-sdk-core', ':matrix-sdk', ':matrix-sdk-crypto'
 
 // uncomment theses lines to compile matrix SDK as project sources instead of external lib
 // see build.gradle section Matrix SDK management
