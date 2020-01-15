@@ -1652,7 +1652,6 @@ public class MXWebRtcCall extends MXCall {
         Log.d(LOG_TAG, "## hangup(): reason=" + reason);
 
         if (!isCallEnded()) {
-            Debug.e("--- d fuck 1");
             sendHangup(reason);
             terminate(IMXCall.END_CALL_REASON_UNDEFINED);
         }
