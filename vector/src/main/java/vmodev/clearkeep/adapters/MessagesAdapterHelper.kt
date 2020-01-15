@@ -1233,11 +1233,9 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             if (null == row) {
                 return false
             }
-
             val event = row.event
-
             val eventType = event.getType()
-
+            Debug.e("--- event: ${eventType} - row: ${row.event.contentJson}")
             if (Event.EVENT_TYPE_MESSAGE == eventType) {
                 // Redacted messages are not displayed (for the moment)
                 if (event.isRedacted) {
@@ -1259,8 +1257,7 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
 //                val display = RiotEventDisplay(context)
 //                return row.getText(null, display) != null
             } else if (event.isCallEvent) {
-                return (Event.EVENT_TYPE_CALL_ANSWER == eventType
-                        || Event.EVENT_TYPE_CALL_HANGUP == eventType)
+                return (Event.EVENT_TYPE_CALL_ANSWER == eventType || Event.EVENT_TYPE_CALL_HANGUP == eventType)
             } else if (Event.EVENT_TYPE_STATE_ROOM_MEMBER == eventType || Event.EVENT_TYPE_STATE_ROOM_THIRD_PARTY_INVITE == eventType) {
                 // if we can display text for it, it's valid.
                 val prevEventContent = event.prevContent
@@ -1309,6 +1306,10 @@ class MessagesAdapterHelper constructor(val mContext: Context, val mSession: MXS
             } else if (Event.EVENT_TYPE_STATE_ROOM_CREATE == eventType) {
                 val roomCreateContent = JsonUtils.toRoomCreateContent(event.content)
                 return roomCreateContent != null && roomCreateContent.predecessor != null
+            } else if (Event.EVENT_TYPE_STATE_ROOM_AVATAR == eventType) {
+                Debug.e("--- change avatar room")
+                val display = RiotEventDisplay(context)
+                return row.getText(null, display) != null
             }
             return false
         }

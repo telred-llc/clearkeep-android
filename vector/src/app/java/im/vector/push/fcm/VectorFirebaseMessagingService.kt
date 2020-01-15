@@ -133,7 +133,7 @@ class VectorFirebaseMessagingService : FirebaseMessagingService() {
 
                 if (null != sessions && !sessions.isEmpty()) {
                     for (session in sessions) {
-                        if (session.dataHandler?.store?.isReady == true) {
+                        if (session.dataHandler.store?.isReady == true) {
                             session.dataHandler.store?.getEvent(eventId, roomId)?.let {
                                 Log.e(LOG_TAG, "## isEventAlreadyKnown() : ignore the event " + eventId
                                         + " in room " + roomId + " because it is already known")
@@ -204,7 +204,8 @@ class VectorFirebaseMessagingService : FirebaseMessagingService() {
 
                     if (notifiableEvent is NotifiableMessageEvent) {
                         if (TextUtils.isEmpty(notifiableEvent.senderName)) {
-                            notifiableEvent.senderName = data["sender_display_name"] ?: data["sender"] ?: ""
+                            notifiableEvent.senderName = data["sender_display_name"]
+                                    ?: data["sender"] ?: ""
                         }
                         if (TextUtils.isEmpty(notifiableEvent.roomName)) {
                             notifiableEvent.roomName = findRoomNameBestEffort(data, session) ?: ""
@@ -227,7 +228,7 @@ class VectorFirebaseMessagingService : FirebaseMessagingService() {
             // Try to get the room name from our store
             if (session?.dataHandler?.store?.isReady == true) {
                 val room = session.dataHandler.getRoom(roomId)
-                roomName = room?.getRoomDisplayName(this)
+                roomName = room.getRoomDisplayName(this)
             }
         }
         return roomName

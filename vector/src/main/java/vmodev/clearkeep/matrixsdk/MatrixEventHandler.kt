@@ -144,11 +144,17 @@ class MatrixEventHandler @Inject constructor(
                 }
                 Event.EVENT_TYPE_STATE_ROOM_NAME -> {
                     val name = event.contentJson.asJsonObject.get("name").asString
-                    roomRepository.updateRoomName(event.roomId, name).subscribeOn(Schedulers.io()).subscribe({
+                    roomRepository.updateRoomAvatar(event.roomId, name).subscribeOn(Schedulers.io()).subscribe({
                         Debug.e("--- Update room name success")
                     }, {
                         Debug.e("--- Error: ${it.message}")
                     })
+                }
+                Event.EVENT_TYPE_STATE_ROOM_AVATAR -> {
+                    messageRepository.insertMessage(event.toMessage()).subscribeOn(Schedulers.io())
+                            .subscribe {
+                                roomRepository.updateLastMessage(event.roomId, event.eventId).subscribeOn(Schedulers.io()).subscribe()
+                            }
                 }
                 IMatrixEventHandler.M_ROOM_POWER_LEVELS -> {
 

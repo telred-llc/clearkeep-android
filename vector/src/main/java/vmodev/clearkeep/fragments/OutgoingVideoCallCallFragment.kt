@@ -22,7 +22,6 @@ import org.matrix.androidsdk.call.CallSoundsManager
 import org.matrix.androidsdk.call.IMXCall
 import org.matrix.androidsdk.call.MXCallListener
 import org.matrix.androidsdk.call.VideoLayoutConfiguration
-import org.matrix.androidsdk.core.Debug
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.ultis.longTimeToString
@@ -40,12 +39,10 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
     private var callManager: CallsManager? = null
     private var callSoundsManager: CallSoundsManager? = null
     private val videoLayoutConfiguration = VideoLayoutConfiguration(5, 66, 25, 25)
-    private var isConnecting: Boolean = false
     private var callListener: MXCallListener = object : MXCallListener() {
 
         override fun onCallEnd(aReasonId: Int) {
             super.onCallEnd(aReasonId)
-            Log.e("Tag", "--- Demo")
             activity?.finish()
         }
 
@@ -65,10 +62,8 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
             super.onReady()
             if (mxCall.isIncoming) {
                 mxCall.launchIncomingCall(videoLayoutConfiguration)
-//                mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
             } else {
                 mxCall.placeCall(videoLayoutConfiguration)
-//                mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
             }
         }
 
@@ -82,8 +77,6 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
                 IMXCall.CALL_STATE_CONNECTED -> {
                     mxCall.visibility = View.VISIBLE
                     mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration)
-//                    mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
-
                 }
                 IMXCall.CALL_STATE_ENDED -> {
                     Log.e("Tag", "--- Tag endcall 2")
@@ -283,17 +276,6 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
                 }
         compositeDisposable.add(disposableCallElapsedTime)
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Debug.e("--- onDestroyView")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Debug.e("--- onDestroy")
-    }
-
 
     companion object {
         const val SCREEN_SHARE_CODE = 12321

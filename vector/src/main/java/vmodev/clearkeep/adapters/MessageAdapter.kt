@@ -1717,9 +1717,7 @@ internal constructor(// session
 
         var isSupported = MessagesAdapterHelper.isDisplayableEvent(mContext, row)
 
-        if (!isSupported) {
-            Log.w(LOG_TAG, "Unsupported row. Event type: " + event.getType())
-        }
+        Debug.e("--- Event type: ${event.type} is supported show: $isSupported")
 
         if (isSupported && TextUtils.equals(event.getType(), Event.EVENT_TYPE_STATE_ROOM_MEMBER)) {
             val roomMember = JsonUtils.toRoomMember(event.content)
@@ -1745,9 +1743,9 @@ internal constructor(// session
 
                 // !Updated display name && same avatar
                 isSupported = TextUtils.equals(prevUserDisplayName, senderDisplayName) && TextUtils.equals(avatar, prevAvatar)
+                Debug.e("--- show notification timeline $isSupported")
             }
         }
-
         return isSupported
     }
 

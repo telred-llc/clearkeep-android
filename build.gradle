@@ -62,17 +62,7 @@ allprojects {
         maven {
             url "https://maven.google.com"
         }
-        // Jitsi repo
-//        maven {
-//            url "https://github.com/vector-im/jitsi_libre_maven/raw/master/releases"
-//        }
         jcenter()
-//        maven {
-//            url "https://s3.amazonaws.com/repo.commonsware.com"
-//        }
-//        maven {
-//            url "https://oss.sonatype.org/content/repositories/snapshots"
-//        }
     }
 }
 

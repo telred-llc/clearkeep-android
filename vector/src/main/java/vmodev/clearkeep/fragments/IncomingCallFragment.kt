@@ -50,7 +50,6 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
                     this@IncomingCallFragment.activity?.finish()
                 }
                 IMXCall.CALL_STATE_CONNECTED -> {
-//                    mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
                     saveCallView()
                     if (mxCall.isVideo) {
                         findNavController().navigate(IncomingCallFragmentDirections.inProgressCall())

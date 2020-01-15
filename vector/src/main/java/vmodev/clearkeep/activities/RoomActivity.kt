@@ -1617,8 +1617,10 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //                        startActivity(intent)
 
 
-                        val intent = Intent(this@RoomActivity, OutgoingCallActivity::class.java)
-                        startActivity(intent)
+                val intent = Intent(this@RoomActivity, OutgoingCallActivity::class.java)
+                intent.putExtra(CallViewActivity.EXTRA_MATRIX_ID, call.session.credentials.userId)
+                intent.putExtra(CallViewActivity.EXTRA_CALL_ID, call.callId)
+                startActivity(intent)
 //                    }
 //                })
             }
@@ -1666,14 +1668,14 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                                 t?.second?.forEach { d: MXDeviceInfo? ->
                                     d?.let { mxDeviceInfo ->
                                         Debug.e("--- Action verify")
-//                                        if (mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNVERIFIED || mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNKNOWN) {
-//                                            mxSession!!.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, mxDeviceInfo.deviceId, mxDeviceInfo.userId, object : SimpleApiCallback<Void>() {
-//                                                override fun onSuccess(p0: Void?) {
-//                                                    Debug.e("--- Verify device success: ${mxDeviceInfo.deviceId}")
-//                                                }
-//
-//                                            })
-//                                        }
+                                        if (mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNVERIFIED || mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNKNOWN) {
+                                            mxSession!!.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, mxDeviceInfo.deviceId, mxDeviceInfo.userId, object : SimpleApiCallback<Void>() {
+                                                override fun onSuccess(p0: Void?) {
+                                                    Debug.e("--- Verify device success: ${mxDeviceInfo.deviceId}")
+                                                }
+
+                                            })
+                                        }
                                     }
                                 }
                             }

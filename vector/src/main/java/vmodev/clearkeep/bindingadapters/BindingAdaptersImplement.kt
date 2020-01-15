@@ -148,6 +148,15 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
                         Debug.e("--- Error: ${e.message}\n--- message: ${message.encryptedContent}")
                     }
                 }
+                Event.EVENT_TYPE_STATE_ROOM_AVATAR -> {
+                    try {
+                        Debug.e("--- change Avatar")
+                        val message = ClearKeepEventDisplay.getMembershipNotice(textView.context, event, room.state)
+                        textView.text = message
+                    } catch (e: MXDecryptionException) {
+                        Debug.e("--- Error: ${e.message}\n--- message: ${message.encryptedContent}")
+                    }
+                }
                 else -> {
                     val display = EventDisplay(textView.context)
                     textView.text = display.getTextualDisplay(event, room.state)
