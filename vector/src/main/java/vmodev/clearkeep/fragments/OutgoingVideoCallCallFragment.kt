@@ -1,8 +1,9 @@
 package vmodev.clearkeep.fragments
 
-
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.media.projection.MediaProjectionManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,6 +23,7 @@ import org.matrix.androidsdk.call.CallSoundsManager
 import org.matrix.androidsdk.call.IMXCall
 import org.matrix.androidsdk.call.MXCallListener
 import org.matrix.androidsdk.call.VideoLayoutConfiguration
+import org.matrix.androidsdk.core.Debug
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.ultis.longTimeToString
@@ -79,7 +81,6 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
                     mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration)
                 }
                 IMXCall.CALL_STATE_ENDED -> {
-                    Log.e("Tag", "--- Tag endcall 2")
                     this@OutgoingVideoCallCallFragment.activity?.finish()
                 }
                 IMXCall.CALL_STATE_CONNECTING -> {
@@ -107,8 +108,8 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
 
     private fun setupButtonControl() {
         binding.imageViewHangUp.setOnClickListener {
+            //            mxCall.hangup(null)
             callManager?.onHangUp(null)
-            activity?.finish()
         }
         binding.imageViewSwitchCamera.setOnClickListener {
             mxCall.switchRearFrontCamera()
@@ -141,12 +142,14 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
             this.activity?.finish()
         }
         binding.imageViewScreenShare.setOnClickListener {
-            //            if (mxCall.isScreenCast) {
-//                mxCall.cameraVideo()
-//            } else {
-//                val mediaProjectionManager = activity?.application?.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-//                startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), SCREEN_SHARE_CODE)
-//            }
+            if (mxCall.isScreenCast) {
+                Debug.e("--- share screen")
+                mxCall.cameraVideo()
+            } else {
+                Debug.e("--- check permission share")
+                val mediaProjectionManager = activity?.application?.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+                startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), SCREEN_SHARE_CODE)
+            }
         }
 
         binding.imageViewMakeCamera.setOnClickListener {
@@ -162,7 +165,7 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
         when (requestCode) {
             SCREEN_SHARE_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
-//                    mxCall.screenVideo(data)
+                    mxCall.screenVideo(data)
                 }
             }
         }
@@ -212,8 +215,9 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
         callManager?.let {
             if (it.activeCall != null) {
                 mxCall.addListener(callListener)
-                if (mxCall.callState == IMXCall.CALL_STATE_CONNECTED && mxCall.isVideo)
+                if (mxCall.callState == IMXCall.CALL_STATE_CONNECTED && mxCall.isVideo) {
                     mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration)
+                }
                 callView = it.callView
                 CallsManager.getSharedInstance().setCallActivity(this.activity)
                 callView?.let { insertCallView() }

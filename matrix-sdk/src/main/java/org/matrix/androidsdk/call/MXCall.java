@@ -18,6 +18,7 @@
 package org.matrix.androidsdk.call;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
@@ -28,7 +29,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import org.matrix.androidsdk.MXSession;
-import org.matrix.androidsdk.core.Debug;
 import org.matrix.androidsdk.core.Log;
 import org.matrix.androidsdk.core.callback.ApiCallback;
 import org.matrix.androidsdk.core.model.MatrixError;
@@ -49,36 +49,33 @@ import javax.annotation.Nullable;
  * This class is the default implementation
  */
 public class MXCall implements IMXCall {
+    private static final String LOG_TAG = MXCall.class.getSimpleName();
+
     // defines the call timeout
     public static final int CALL_TIMEOUT_MS = 120 * 1000;
-    private static final String LOG_TAG = MXCall.class.getSimpleName();
-    /**
-     * List of events to sends to mCallSignalingRoom
-     */
-    protected final List<Event> mPendingEvents = new ArrayList<>();
-    // UI thread handler
-    final Handler mUIThreadHandler = new Handler();
-    /**
-     * The call events listeners
-     */
-    private final Set<IMXCallListener> mCallListeners = new HashSet<>();
+
     /**
      * The session
      */
     protected MXSession mSession;
+
     /**
      * The context
      */
     protected Context mContext;
+
     /**
      * the turn servers
      */
     protected JsonElement mTurnServer;
+
     protected PeerConnection.IceServer defaultIceServer;
+
     /**
      * The room in which the call is performed.
      */
     protected Room mCallingRoom;
+
     /**
      * The room in which the call events are sent.
      * It might differ from mCallingRoom if it is a conference call.
@@ -86,31 +83,47 @@ public class MXCall implements IMXCall {
      */
     protected Room mCallSignalingRoom;
     /**
+     * List of events to sends to mCallSignalingRoom
+     */
+    protected final List<Event> mPendingEvents = new ArrayList<>();
+
+    /**
      * the call id
      */
     protected String mCallId;
+
     /**
      * Tells if it is a video call
      */
     protected boolean mIsVideoCall = false;
+
     /**
      * Tells if it is an incoming call
      */
     protected boolean mIsIncoming = false;
-    /**
-     * The not responding timer
-     */
-    protected Timer mCallTimeoutTimer;
+
     /**
      * Tells if it is a conference call.
      */
     private boolean mIsConference = false;
+    // UI thread handler
+    final Handler mUIThreadHandler = new Handler();
+
     /**
      * The sending eevent.
      */
     private Event mPendingEvent;
+    /**
+     * The call events listeners
+     */
+    private final Set<IMXCallListener> mCallListeners = new HashSet<>();
+
     // call start time
     private long mStartTime = -1;
+    /**
+     * The not responding timer
+     */
+    protected Timer mCallTimeoutTimer;
 
     /**
      * Create the call view
@@ -454,11 +467,11 @@ public class MXCall implements IMXCall {
      */
     protected void dispatchOnCallViewCreated(View callView) {
         if (isCallEnded()) {
-            Debug.e("--- the call is ended");
+            Log.d(LOG_TAG, "## dispatchOnCallViewCreated(): the call is ended");
             return;
         }
 
-        Debug.e("--- dispatchOnCallViewCreated()");
+        Log.d(LOG_TAG, "## dispatchOnCallViewCreated()");
 
         Collection<IMXCallListener> listeners = getCallListeners();
 
@@ -523,7 +536,7 @@ public class MXCall implements IMXCall {
      * @param newState the new state
      */
     protected void dispatchOnStateDidChange(String newState) {
-        Debug.e("--- newState: =" + newState);
+        Log.d(LOG_TAG, "## dispatchOnCallErrorOnStateDidChange(): " + newState);
 
         // set the call start time
         if (TextUtils.equals(CALL_STATE_CONNECTED, newState) && (-1 == mStartTime)) {
@@ -541,7 +554,7 @@ public class MXCall implements IMXCall {
             try {
                 listener.onStateDidChange(newState);
             } catch (Exception e) {
-                Debug.e("--- Error: " + e.getMessage());
+                Log.e(LOG_TAG, "## dispatchOnStateDidChange(): Exception Msg=" + e.getMessage(), e);
             }
         }
     }
@@ -692,31 +705,32 @@ public class MXCall implements IMXCall {
         mUIThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                Debug.e("--- dispatchOnCallEnd");
                 dispatchOnCallEnd(END_CALL_REASON_USER_HIMSELF);
             }
         });
+
+        Log.d(LOG_TAG, "## sendHangup(): reason=" + reason);
 
         // send hang up event to the server
         mCallSignalingRoom.sendEvent(event, new ApiCallback<Void>() {
             @Override
             public void onSuccess(Void info) {
-                Debug.e("--- onSuccess");
+                Log.d(LOG_TAG, "## sendHangup(): onSuccess");
             }
 
             @Override
             public void onNetworkError(Exception e) {
-                Debug.e("--- onNetworkError Msg=" + e.getMessage());
+                Log.e(LOG_TAG, "## sendHangup(): onNetworkError Msg=" + e.getMessage(), e);
             }
 
             @Override
             public void onMatrixError(MatrixError e) {
-                Debug.e("--- onMatrixError Msg=" + e.getMessage());
+                Log.e(LOG_TAG, "## sendHangup(): onMatrixError Msg=" + e.getMessage());
             }
 
             @Override
             public void onUnexpectedError(Exception e) {
-                Debug.e("--- onUnexpectedError Msg=" + e.getMessage());
+                Log.e(LOG_TAG, "## sendHangup(): onUnexpectedError Msg=" + e.getMessage(), e);
             }
         });
     }
@@ -729,6 +743,21 @@ public class MXCall implements IMXCall {
     @Override
     public boolean isVideoRecordingMuted() {
         Log.w(LOG_TAG, "## muteVideoRecording(): not implemented - default value = false");
+        return false;
+    }
+
+    @Override
+    public void screenVideo(Intent mediaProjectionPermissionResultData) {
+        // Change video source to screen
+    }
+
+    @Override
+    public void cameraVideo() {
+        // Change video source to camera
+    }
+
+    @Override
+    public boolean isScreenCast() {
         return false;
     }
 }

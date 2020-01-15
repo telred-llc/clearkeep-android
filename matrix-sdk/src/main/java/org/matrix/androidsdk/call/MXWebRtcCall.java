@@ -20,12 +20,15 @@ package org.matrix.androidsdk.call;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.media.projection.MediaProjection;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
 import com.google.gson.JsonArray;
@@ -53,9 +56,11 @@ import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.RtpReceiver;
+import org.webrtc.ScreenCapturerAndroid;
 import org.webrtc.SdpObserver;
 import org.webrtc.SessionDescription;
 import org.webrtc.SurfaceTextureHelper;
+import org.webrtc.VideoCapturer;
 import org.webrtc.VideoSource;
 import org.webrtc.VideoTrack;
 
@@ -83,7 +88,7 @@ public class MXWebRtcCall extends MXCall {
     static private PeerConnectionFactory mPeerConnectionFactory = null;
     static private String mFrontCameraName = null;
     static private String mBackCameraName = null;
-    static private CameraVideoCapturer mCameraVideoCapturer = null;
+    static private VideoCapturer mCameraVideoCapturer = null;
     private static boolean mIsInitialized = false;
     // null -> not initialized
     // true / false for the supported status
@@ -475,7 +480,7 @@ public class MXWebRtcCall extends MXCall {
     public boolean switchRearFrontCamera() {
         if ((null != mCameraVideoCapturer) && (isSwitchCameraSupported())) {
             try {
-                mCameraVideoCapturer.switchCamera(null);
+                ((CameraVideoCapturer) mCameraVideoCapturer).switchCamera(null);
 
                 // toggle the video capturer instance
                 if (CAMERA_TYPE_FRONT == mCameraInUse) {
@@ -1735,5 +1740,78 @@ public class MXWebRtcCall extends MXCall {
         }
 
         super.dispatchOnStateDidChange(newState);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void createScreenVideoTrack(Intent mediaProjectionPermissionResultData) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || mediaProjectionPermissionResultData == null) {
+            return;
+        }
+        try {
+            if (null != mCameraVideoCapturer) {
+                mCameraVideoCapturer.dispose();
+                mCameraVideoCapturer = null;
+            }
+
+            mCameraVideoCapturer = new ScreenCapturerAndroid(mediaProjectionPermissionResultData, new MediaProjection.Callback() {
+                @Override
+                public void onStop() {
+                    super.onStop();
+                }
+            });
+        } catch (Exception ex2) {
+            // catch exception due to Android M permissions, when
+            // a call is received and the permissions (camera and audio) were not yet granted
+            Log.e(LOG_TAG, "createVideoTrack(): Exception Msg=" + ex2.getMessage(), ex2);
+        }
+        if (null != mCameraVideoCapturer) {
+            Log.d(LOG_TAG, "createVideoTrack find a video capturer");
+
+            try {
+                // Following instruction here: https://stackoverflow.com/questions/55085726/webrtc-create-peerconnectionfactory-object
+                EglBase rootEglBase = EglUtils.getRootEglBase();
+                SurfaceTextureHelper surfaceTextureHelper = SurfaceTextureHelper.create("CaptureThread", rootEglBase.getEglBaseContext());
+                mVideoSource = mPeerConnectionFactory.createVideoSource(mCameraVideoCapturer.isScreencast());
+                mCameraVideoCapturer.initialize(surfaceTextureHelper, mContext, mVideoSource.getCapturerObserver());
+                mCameraVideoCapturer.startCapture(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_FPS);
+                mLocalVideoTrack = mPeerConnectionFactory.createVideoTrack(VIDEO_TRACK_ID, mVideoSource);
+                mLocalVideoTrack.setEnabled(true);
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "createVideoSource fails with exception " + e.getMessage(), e);
+
+                mLocalVideoTrack = null;
+
+                if (null != mVideoSource) {
+                    mVideoSource.dispose();
+                    mVideoSource = null;
+                }
+            }
+        } else {
+            Log.e(LOG_TAG, "## createVideoTrack(): Cannot create Video Capturer - no camera available");
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void screenVideo(Intent mediaProjectionPermissionResultData) {
+        super.screenVideo(mediaProjectionPermissionResultData);
+        mLocalMediaStream.removeTrack(mLocalVideoTrack);
+        createScreenVideoTrack(mediaProjectionPermissionResultData);
+        mLocalMediaStream.addTrack(mLocalVideoTrack);
+        mPipRTCView.setStream(mLocalMediaStream);
+    }
+
+    @Override
+    public void cameraVideo() {
+        super.cameraVideo();
+        mLocalMediaStream.removeTrack(mLocalVideoTrack);
+        createVideoTrack();
+        mLocalMediaStream.addTrack(mLocalVideoTrack);
+        mPipRTCView.setStream(mLocalMediaStream);
+    }
+
+    @Override
+    public boolean isScreenCast() {
+        return mCameraVideoCapturer.isScreencast();
     }
 }

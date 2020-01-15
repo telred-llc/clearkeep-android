@@ -9,8 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import im.vector.R
 import vmodev.clearkeep.adapters.Interfaces.SectionCallback
 
-
-public
 class RecyclerSectionItemDecoration constructor(private val headerOffset: Int, private val sticky: Boolean, @param:NonNull private val sectionCallback: SectionCallback) : RecyclerView.ItemDecoration() {
 
     private var headerView: View? = null
@@ -51,9 +49,9 @@ class RecyclerSectionItemDecoration constructor(private val headerOffset: Int, p
     private fun drawHeader(c: Canvas, child: View, headerView: View) {
         c.save()
         if (sticky) {
-            c.translate(0F, Math.max(0, child.getTop() - headerView.getHeight()).toFloat())
+            c.translate(0F, Math.max(0, child.top - headerView.height).toFloat())
         } else {
-            c.translate(0F, (child.getTop() - headerView.getHeight()).toFloat())
+            c.translate(0F, (child.top - headerView.height).toFloat())
         }
         headerView.draw(c)
         c.restore()
@@ -72,14 +70,14 @@ class RecyclerSectionItemDecoration constructor(private val headerOffset: Int, p
 
         val childWidth = ViewGroup.getChildMeasureSpec(widthSpec,
                 parent.paddingLeft + parent.paddingRight,
-                view.getLayoutParams().width)
+                view.layoutParams.width)
         val childHeight = ViewGroup.getChildMeasureSpec(heightSpec,
                 parent.paddingTop + parent.paddingBottom,
-                view.getLayoutParams().height)
+                view.layoutParams.height)
 
         view.measure(childWidth, childHeight)
 
-        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight())
+        view.layout(0, 0, view.measuredWidth, view.measuredHeight)
     }
 
 }

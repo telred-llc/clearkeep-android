@@ -418,7 +418,9 @@
         <item name="background_message_text_emote_notice">
             @drawable/background_message_text_emote_notice_dark
         </item>
-        <item name="background_message_text_emote_notice_own">#707070</item>
+        <item name="background_message_text_emote_notice_own">
+            @drawable/background_message_text_emote_notice_own_dark
+        </item>
         <item name="drawable_back">@drawable/ic_arrow_back_dark</item>
         <item name="drawable_video_call">@drawable/ic_videocam_dark</item>
         <item name="drawable_call">@drawable/ic_phone_in_talk_dark</item>
@@ -505,7 +507,9 @@
         <item name="background_message_text_emote_notice">
             @drawable/background_message_text_emote_notice_light
         </item>
-        <item name="background_message_text_emote_notice_own">#F5F5F5</item>
+        <item name="background_message_text_emote_notice_own">
+            @drawable/background_message_text_emote_notice_own_light
+        </item>
         <item name="drawable_back">@drawable/ic_arrow_back_light</item>
         <item name="drawable_video_call">@drawable/ic_videocam_light</item>
         <item name="drawable_call">@drawable/ic_phone_in_talk_light</item>

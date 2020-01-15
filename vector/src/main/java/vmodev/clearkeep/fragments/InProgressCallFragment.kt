@@ -1,7 +1,9 @@
 package vmodev.clearkeep.fragments
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.media.projection.MediaProjectionManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -180,12 +182,12 @@ class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
             }
         }
         binding.imageViewScreenShare.setOnClickListener {
-            //            if (mxCall.isScreenCast) {
-//                mxCall.cameraVideo();
-//            } else {
-//                val mediaProjectionManager = activity?.application?.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-//                startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), OutgoingVideoCallCallFragment.SCREEN_SHARE_CODE)
-//            }
+            if (mxCall.isScreenCast) {
+                mxCall.cameraVideo()
+            } else {
+                val mediaProjectionManager = activity?.application?.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+                startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), OutgoingVideoCallCallFragment.SCREEN_SHARE_CODE)
+            }
         }
     }
 
@@ -215,8 +217,6 @@ class InProgressCallFragment : DataBindingDaggerFragment(), IFragment {
         mxCall.let {
             binding.mxCall = mxCall
         }
-
-
     }
 
     companion object {
