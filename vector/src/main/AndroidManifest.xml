@@ -2,85 +2,36 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="im.vector"
-    android:installLocation="auto"
-    tools:ignore="MissingLeanbackLauncher">
+    android:installLocation="auto">
 
     <uses-sdk tools:overrideLibrary="org.jitsi.meet.sdk,com.oney.WebRTCModule,co.apptailor.googlesignin,com.BV.LinearGradient,com.calendarevents,com.corbt.keepawake,com.dylanvann.fastimage,com.oblador.vectoricons,com.ocetnik.timer,com.rnimmersive,com.zmxv.RNSound,com.i18n.reactnativei18n,org.webkit.androidjsc,com.reactnativecommunity.asyncstorage" />
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission
-        android:name="android.permission.READ_LOGS"
-        tools:ignore="ProtectedPermissions" />
-
-    <!-- universal links management -->
-    <uses-permission android:name="android.permission.REORDER_TASKS" />
-    <!-- for android 4.1.* devices, reported by GA -->
-    <uses-permission android:name="android.permission.GET_TASKS" />
-
-    <!-- videocall permissions -->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <!-- required on android 6.0.0 devices -->
-    <uses-permission
-        android:name="android.permission.WRITE_SETTINGS"
-        tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-
-    <!-- shared files from external application -->
-    <uses-permission
-        android:name="android.permission.MANAGE_DOCUMENTS"
-        tools:ignore="ProtectedPermissions" />
-
-    <!-- to be able to turn on display when a notification is received -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-
-    <!-- start the background sync on boot -->
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
-    <!-- disable the battery optimisation on some devices to let the background sync works -->
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-
-    <!-- videocall feature -->
-    <!-- android.permission.CAMERA defines android.hardware.camera -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false"
+        tools:replace="required" />
     <uses-feature
         android:name="android.hardware.camera.any"
-        android:required="false" />
+        android:required="false"
+        tools:replace="required" />
     <uses-feature
         android:name="android.hardware.camera.autofocus"
-        android:required="false" />
+        android:required="false"
+        tools:replace="required" />
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="false"
         tools:replace="required" />
-
-    <uses-permission android:name="android.permission.CAMERA" />
-
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" />
-    <uses-feature
-        android:name="android.hardware.camera2.full"
-        android:required="false" />
-    <!-- android.permission.RECORD_AUDIO defines android.hardware.microphone -->
     <uses-feature
         android:name="android.hardware.microphone"
         android:required="false"
         tools:replace="required" />
-
+    <uses-feature
+        android:name="android.hardware.bluetooth"
+        android:required="false"
+        tools:replace="required" />
     <uses-feature
         android:name="android.hardware.telephony"
-        android:required="false" />
-    <uses-feature
-        android:name="android.software.leanback"
-        android:required="false" />
-    <uses-feature
-        android:name="android.hardware.touchscreen"
         android:required="false" /> <!-- universal links management -->
     <uses-permission android:name="android.permission.INTERNET" /> <!-- for android 4.1.* devices, reported by GA -->
     <uses-permission android:name="android.permission.VIBRATE" /> <!-- videocall permissions -->
@@ -95,7 +46,6 @@
     <uses-permission android:name="android.permission.GET_TASKS" /> <!-- start the background sync on boot -->
     <uses-permission android:name="android.permission.CAMERA" /> <!-- disable the battery optimisation on some devices to let the background sync works -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- videocall feature -->
-    <!-- android.permission.CAMERA defines android.hardware.camera -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
@@ -111,7 +61,6 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" /> <!-- for htc -->
     <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
     <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" /> <!-- for sony -->
-    <uses-permission android:name="com.sonymobile.media.AUDIO_MODE_CHANGED_ACTION" /> <!-- for sony -->
     <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" />
     <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" /> <!-- for apex -->
     <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" /> <!-- for solid -->
@@ -136,11 +85,11 @@
         android:name="android.permission.WRITE_CALENDAR"
         tools:node="remove" /> <!-- New when targeting API 28 -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
         android:name="vmodev.clearkeep.applications.ClearKeepApplication"
         android:allowBackup="false"
         android:description="@string/store_short_description"
-        android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher_app_second_icon"
         android:label="@string/riot_app_name"
         android:largeHeap="true"
@@ -148,6 +97,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         tools:replace="allowBackup,label">
+
+        <activity
+            android:name="vmodev.clearkeep.features.pickermedia.ClearKeepMediaPickerActivity"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name="vmodev.clearkeep.activities.IncomingCallActivity"
             android:screenOrientation="portrait" />
@@ -400,6 +353,7 @@
             android:label="@string/media_picker_both_capture_title"
             android:launchMode="singleTop"
             android:parentActivityName=".activity.VectorRoomActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.FullScreen.Light"
             android:windowSoftInputMode="stateHidden">
             <meta-data

@@ -27,19 +27,6 @@ import java.util.regex.Pattern;
  */
 public class MXPatterns {
 
-    // list of patterns to find some matrix item.
-    public static final List<Pattern> MATRIX_PATTERNS = Arrays.asList(
-            PATTERN_CONTAIN_MATRIX_TO_PERMALINK_ROOM_ID,
-            PATTERN_CONTAIN_MATRIX_TO_PERMALINK_ROOM_ALIAS,
-            PATTERN_CONTAIN_APP_LINK_PERMALINK_ROOM_ID,
-            PATTERN_CONTAIN_APP_LINK_PERMALINK_ROOM_ALIAS,
-            PATTERN_CONTAIN_MATRIX_USER_IDENTIFIER,
-            PATTERN_CONTAIN_MATRIX_ALIAS,
-            PATTERN_CONTAIN_MATRIX_ROOM_IDENTIFIER,
-            PATTERN_CONTAIN_MATRIX_EVENT_IDENTIFIER,
-            PATTERN_CONTAIN_MATRIX_GROUP_IDENTIFIER
-    );
-
     // Note: TLD is not mandatory (localhost, IP address...)
     private static final String DOMAIN_REGEX = ":[A-Z0-9.-]+(:[0-9]{2,5})?";
 
@@ -89,6 +76,19 @@ public class MXPatterns {
 
     private static final String LINK_TO_APP_ROOM_ALIAS_REGEXP = APP_BASE_REGEX + MATRIX_ROOM_ALIAS_REGEX + SEP_REGEX + MATRIX_EVENT_IDENTIFIER_REGEX;
     public static final Pattern PATTERN_CONTAIN_APP_LINK_PERMALINK_ROOM_ALIAS = Pattern.compile(LINK_TO_APP_ROOM_ALIAS_REGEXP, Pattern.CASE_INSENSITIVE);
+
+    // list of patterns to find some matrix item.
+    public static final List<Pattern> MATRIX_PATTERNS = Arrays.asList(
+            PATTERN_CONTAIN_MATRIX_TO_PERMALINK_ROOM_ID,
+            PATTERN_CONTAIN_MATRIX_TO_PERMALINK_ROOM_ALIAS,
+            PATTERN_CONTAIN_APP_LINK_PERMALINK_ROOM_ID,
+            PATTERN_CONTAIN_APP_LINK_PERMALINK_ROOM_ALIAS,
+            PATTERN_CONTAIN_MATRIX_USER_IDENTIFIER,
+            PATTERN_CONTAIN_MATRIX_ALIAS,
+            PATTERN_CONTAIN_MATRIX_ROOM_IDENTIFIER,
+            PATTERN_CONTAIN_MATRIX_EVENT_IDENTIFIER,
+            PATTERN_CONTAIN_MATRIX_GROUP_IDENTIFIER
+    );
 
     private MXPatterns() {
         // Cannot be instantiated
