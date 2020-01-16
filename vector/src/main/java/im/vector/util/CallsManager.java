@@ -172,9 +172,9 @@ public class CallsManager {
                         case IMXCall.CALL_STATE_CREATE_ANSWER:
                         case IMXCall.CALL_STATE_WAIT_LOCAL_MEDIA:
                         case IMXCall.CALL_STATE_WAIT_CREATE_OFFER:
-                            if (mActiveCall.isIncoming()) {
-                                mCallSoundsManager.stopSounds();
-                            } // else ringback
+//                            if (mActiveCall.isIncoming()) {
+//                                mCallSoundsManager.stopSounds();
+//                            } // else ringback
                             break;
 
                         case IMXCall.CALL_STATE_CONNECTED:
