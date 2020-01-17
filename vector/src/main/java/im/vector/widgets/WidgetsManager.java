@@ -366,7 +366,6 @@ public class WidgetsManager {
                 }
                 return;
             }
-
             // Send a state event with the widget data
             // TODO: This API will be shortly replaced by a pure scalar API
             session.getRoomsApiClient().sendStateEvent(room.getRoomId(), WIDGET_EVENT_TYPE, widgetId, new HashMap<String, Object>(), callback);

@@ -156,13 +156,6 @@ public class MXWebRtcCall extends MXCall {
     }
 
     /**
-     * @return true if this stack can perform calls.
-     */
-    public static boolean isSupported() {
-        return Build.VERSION.SDK_INT > 21;
-    }
-
-    /**
      * @param context the context
      * @return true if this stack can perform calls.
      */

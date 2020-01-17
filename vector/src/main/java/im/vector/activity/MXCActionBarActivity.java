@@ -37,7 +37,7 @@ import org.matrix.androidsdk.data.Room;
 import im.vector.Matrix;
 import im.vector.MyPresenceManager;
 import im.vector.R;
-import im.vector.VectorApp;
+import vmodev.clearkeep.applications.ClearKeepApplication;
 
 /**
  * extends ActionBarActivity to manage the rageshake
@@ -178,7 +178,7 @@ public abstract class MXCActionBarActivity extends VectorAppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        VectorApp.getInstance().getOnActivityDestroyedListener().fire(this);
+        ClearKeepApplication.getInstance().getOnActivityDestroyedListener().fire(this);
     }
 
     @Override

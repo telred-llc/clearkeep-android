@@ -23,7 +23,6 @@ import org.matrix.androidsdk.call.CallSoundsManager
 import org.matrix.androidsdk.call.IMXCall
 import org.matrix.androidsdk.call.MXCallListener
 import org.matrix.androidsdk.call.VideoLayoutConfiguration
-import org.matrix.androidsdk.core.Debug
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.ultis.longTimeToString
@@ -143,10 +142,8 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
         }
         binding.imageViewScreenShare.setOnClickListener {
             if (mxCall.isScreenCast) {
-                Debug.e("--- share screen")
                 mxCall.cameraVideo()
             } else {
-                Debug.e("--- check permission share")
                 val mediaProjectionManager = activity?.application?.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
                 startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), SCREEN_SHARE_CODE)
             }

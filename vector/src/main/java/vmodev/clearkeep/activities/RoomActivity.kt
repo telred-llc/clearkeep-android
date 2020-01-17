@@ -109,6 +109,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
+        mSession = Matrix.getInstance(this).defaultSession
         super.onCreate(savedInstanceState)
     }
 
@@ -756,7 +757,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                         .setMessage(R.string.widget_delete_message_confirmation)
                         .setPositiveButton(R.string.remove) { dialog, which ->
                             showWaitingView()
-
                             val wm = Matrix.getWidgetManager(this@RoomActivity)
                             if (wm != null) {
                                 showWaitingView()
@@ -768,7 +768,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
                                     private fun onError(errorMessage: String?) {
                                         hideWaitingView()
-                                        Toast.makeText(this@RoomActivity, errorMessage, Toast.LENGTH_SHORT).show()
                                     }
 
                                     override fun onNetworkError(e: Exception) {
@@ -851,32 +850,41 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
 
             override fun onCloseWidgetClick(widget: Widget) {
+                showWaitingView()
                 val wm = Matrix.getWidgetManager(this@RoomActivity)
                 if (wm != null) {
-                    showWaitingView()
-
                     wm.closeWidget(mSession, mRoom, widget.widgetId, object : ApiCallback<Void> {
                         override fun onSuccess(info: Void) {
                             hideWaitingView()
+                            Debug.e("--- onSuccess")
                         }
 
-                        private fun onError(errorMessage: String?) {
+                        private fun onError(e: String?) {
                             hideWaitingView()
-                            Toast.makeText(this@RoomActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                            Debug.e("--- onError: ${e}")
                         }
 
                         override fun onNetworkError(e: Exception) {
+                            hideWaitingView()
+                            Debug.e("--- onNetworkError: ${e.message}")
                             onError(e.localizedMessage)
                         }
 
                         override fun onMatrixError(e: MatrixError) {
+                            hideWaitingView()
+                            Debug.e("--- onMatrixError: ${e.message}")
                             onError(e.localizedMessage)
                         }
 
                         override fun onUnexpectedError(e: Exception) {
+                            hideWaitingView()
+                            Debug.e("--- onUnexpectedError: ${e.message}")
                             onError(e.localizedMessage)
                         }
                     })
+                } else {
+                    Debug.e("--- close")
+                    hideWaitingView()
                 }
             }
 
@@ -944,8 +952,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         roomId = savedInstanceState.getString(VectorRoomActivity.EXTRA_ROOM_ID, "")
-//        mxSession = Matrix.getInstance(this).defaultSession
-//        currentRoom = mxSession!!.dataHandler.getRoom(roomId, false)
+        mxSession = Matrix.getInstance(this).defaultSession
+        currentRoom = mxSession!!.dataHandler.getRoom(roomId, false)
         // the listView will be refreshed so the offset might be lost.
         mScrollToIndex = savedInstanceState.getInt(FIRST_VISIBLE_ROW, -1)
     }
@@ -1605,24 +1613,15 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             override fun onSuccess(call: IMXCall) {
                 Debug.e("--- onSuccess")
                 hideWaitingView()
-//                runOnUiThread(object : Runnable {
-//                    override fun run() {
-//
-                Debug.e("--- callId: ${call.callId} --- sessionID: ${mxSession!!.credentials.userId}")
-//                        val intent = Intent(this@RoomActivity, CallViewActivity::class.java)
-//
-//                        intent.putExtra(CallViewActivity.EXTRA_MATRIX_ID, mxSession!!.getCredentials().userId)
-//                        intent.putExtra(CallViewActivity.EXTRA_CALL_ID, call.callId)
-//
-//                        startActivity(intent)
-
-
-                val intent = Intent(this@RoomActivity, OutgoingCallActivity::class.java)
-                intent.putExtra(CallViewActivity.EXTRA_MATRIX_ID, call.session.credentials.userId)
-                intent.putExtra(CallViewActivity.EXTRA_CALL_ID, call.callId)
-                startActivity(intent)
-//                    }
-//                })
+                runOnUiThread(object : Runnable {
+                    override fun run() {
+                        Debug.e("--- callId: ${call.callId} --- sessionID: ${mxSession!!.credentials.userId}")
+                        val intent = Intent(this@RoomActivity, OutgoingCallActivity::class.java)
+                        intent.putExtra(CallViewActivity.EXTRA_MATRIX_ID, call.session.credentials.userId)
+                        intent.putExtra(CallViewActivity.EXTRA_CALL_ID, call.callId)
+                        startActivity(intent)
+                    }
+                })
             }
 
             private fun onError(errorMessage: String) {

@@ -1117,6 +1117,11 @@ internal constructor(// session
             } else {
                 val bodyTextView = convertView!!.findViewById<TextView>(R.id.messagesAdapter_body)
                 // cannot refresh it
+                if (TextUtils.equals(event.sender, mSession.myUserId)) {
+                    bodyTextView.gravity = Gravity.END
+                } else {
+                    bodyTextView.gravity = Gravity.START
+                }
                 if (null == bodyTextView) {
                     Log.e(LOG_TAG, "getTextView : invalid layout")
                     return convertView
@@ -1189,6 +1194,11 @@ internal constructor(// session
             } else {
                 val bodyTextView = convertView!!.findViewById<TextView>(R.id.messagesAdapter_body)
                 // cannot refresh it
+                if (TextUtils.equals(event.sender, mSession.myUserId)) {
+                    bodyTextView.gravity = Gravity.END
+                } else {
+                    bodyTextView.gravity = Gravity.START
+                }
                 if (null == bodyTextView) {
                     Log.e(LOG_TAG, "getTextView : invalid layout")
                     return convertView
@@ -1263,6 +1273,7 @@ internal constructor(// session
                 val htmlReady = mHelper.convertToHtml(minusTags)
                 val blockView = mLayoutInflater.inflate(R.layout.adapter_item_vector_message_code_block, null)
                 val tv = blockView.findViewById<TextView>(R.id.messagesAdapter_body)
+
                 tv.text = htmlReady
                 mHelper.highlightFencedCode(tv)
                 mHelper.applyLinkMovementMethod(tv)
@@ -1957,7 +1968,11 @@ internal constructor(// session
                 text = message.body
             } else {
                 val bodyTextView = contentView.findViewById<TextView>(R.id.messagesAdapter_body)
-
+                if (TextUtils.equals(event.sender, mSession.myUserId)) {
+                    bodyTextView.gravity = Gravity.END
+                } else {
+                    bodyTextView.gravity = Gravity.START
+                }
                 if (null != bodyTextView) {
                     text = bodyTextView.text.toString()
                 }

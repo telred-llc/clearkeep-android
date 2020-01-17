@@ -248,7 +248,7 @@ public class MXCallsManager {
      * @return true if the call feature is supported
      */
     public boolean isSupported() {
-        return /*MXChromeCall.isSupported() || */ MXWebRtcCall.isSupported();
+        return /*MXChromeCall.isSupported() || */ MXWebRtcCall.isSupported(mContext);
     }
 
     /**
