@@ -1510,7 +1510,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                 .show()
     }
 
-    var isVideoCall = false
     /**
      * @param which 0 for voice call, 1 for video call
      */
@@ -1518,7 +1517,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         TedPermission.with(this)
                 .setPermissionListener(object : PermissionListener {
                     override fun onPermissionGranted() {
-                        isVideoCall = which != 0
+                        val isVideoCall = which != 0
                         startIpCall(PreferencesManager.useJitsiConfCall(this@RoomActivity), isVideoCall)
                     }
 
