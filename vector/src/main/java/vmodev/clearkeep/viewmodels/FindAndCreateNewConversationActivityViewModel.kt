@@ -44,7 +44,6 @@ class FindAndCreateNewConversationActivityViewModel @Inject constructor(private 
             _query.value = query
     }
 
-
     override fun joinRoomResult(): LiveData<Resource<Room>> {
         return roomJoin
     }
@@ -61,6 +60,5 @@ class FindAndCreateNewConversationActivityViewModel @Inject constructor(private 
     override fun getRoomByID(roomId: String): LiveData<Resource<Room>> {
         return roomRepository.getRoomByUserId(roomId)
     }
-
 
 }

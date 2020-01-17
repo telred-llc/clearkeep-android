@@ -64,6 +64,7 @@ import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 
 import org.jetbrains.annotations.NotNull;
+import org.matrix.androidsdk.core.Debug;
 import org.matrix.androidsdk.core.ImageUtils;
 import org.matrix.androidsdk.core.Log;
 import org.matrix.androidsdk.core.ResourceUtils;
@@ -191,7 +192,7 @@ public class VectorMediaPickerActivity extends MXCActionBarActivity implements T
     private ImageViewOnTouchListener imageViewOnTouchListener = new ImageViewOnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            return (mIsAvatarMode) ? super.onTouch(v, event) : true;
+            return (!mIsAvatarMode) || super.onTouch(v, event);
         }
     };
 
@@ -263,6 +264,7 @@ public class VectorMediaPickerActivity extends MXCActionBarActivity implements T
         mSwitchCameraImageView = findViewById(R.id.media_picker_switch_camera);
         mCameraTextureView = findViewById(R.id.media_picker_texture_view);
         mCameraTextureView.setSurfaceTextureListener(this);
+
         mCameraTextureMaskView = findViewById(R.id.media_picker_texture_mask_view);
         mRecordAnimationView = findViewById(R.id.media_picker_record_animation);
 
@@ -815,7 +817,7 @@ public class VectorMediaPickerActivity extends MXCActionBarActivity implements T
                 }
             }
         } catch (Exception e) {
-            Log.e(LOG_TAG, "## ## resizeCameraPreviewTexture(): failed " + e.getMessage(), e);
+            Debug.e("--- Error: " + e.getMessage());
         }
     }
 

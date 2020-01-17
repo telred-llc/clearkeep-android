@@ -34,4 +34,5 @@ class OutgoingCallActivity : DataBindingDaggerActivity(), IActivity {
     override fun getActivity(): FragmentActivity {
         return this
     }
+
 }

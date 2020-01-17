@@ -61,10 +61,7 @@ import im.vector.widgets.WidgetsManager
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.adapters.AbstractMessagesAdapter
 import org.matrix.androidsdk.adapters.MessageRow
-import org.matrix.androidsdk.core.JsonUtils
-import org.matrix.androidsdk.core.Log
-import org.matrix.androidsdk.core.MXPatterns
-import org.matrix.androidsdk.core.PermalinkUtils
+import org.matrix.androidsdk.core.*
 import org.matrix.androidsdk.core.callback.SimpleApiCallback
 import org.matrix.androidsdk.crypto.MXCryptoError
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo
@@ -74,7 +71,6 @@ import org.matrix.androidsdk.rest.model.Event
 import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.message.Message
 import org.matrix.androidsdk.view.HtmlTagHandler
-import vmodev.clearkeep.ultis.Debug
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -1121,6 +1117,11 @@ internal constructor(// session
             } else {
                 val bodyTextView = convertView!!.findViewById<TextView>(R.id.messagesAdapter_body)
                 // cannot refresh it
+                if (TextUtils.equals(event.sender, mSession.myUserId)) {
+                    bodyTextView.gravity = Gravity.END
+                } else {
+                    bodyTextView.gravity = Gravity.START
+                }
                 if (null == bodyTextView) {
                     Log.e(LOG_TAG, "getTextView : invalid layout")
                     return convertView
@@ -1193,6 +1194,11 @@ internal constructor(// session
             } else {
                 val bodyTextView = convertView!!.findViewById<TextView>(R.id.messagesAdapter_body)
                 // cannot refresh it
+                if (TextUtils.equals(event.sender, mSession.myUserId)) {
+                    bodyTextView.gravity = Gravity.END
+                } else {
+                    bodyTextView.gravity = Gravity.START
+                }
                 if (null == bodyTextView) {
                     Log.e(LOG_TAG, "getTextView : invalid layout")
                     return convertView
@@ -1267,6 +1273,7 @@ internal constructor(// session
                 val htmlReady = mHelper.convertToHtml(minusTags)
                 val blockView = mLayoutInflater.inflate(R.layout.adapter_item_vector_message_code_block, null)
                 val tv = blockView.findViewById<TextView>(R.id.messagesAdapter_body)
+
                 tv.text = htmlReady
                 mHelper.highlightFencedCode(tv)
                 mHelper.applyLinkMovementMethod(tv)
@@ -1721,9 +1728,7 @@ internal constructor(// session
 
         var isSupported = MessagesAdapterHelper.isDisplayableEvent(mContext, row)
 
-        if (!isSupported) {
-            Log.w(LOG_TAG, "Unsupported row. Event type: " + event.getType())
-        }
+        Debug.e("--- Event type: ${event.type} is supported show: $isSupported")
 
         if (isSupported && TextUtils.equals(event.getType(), Event.EVENT_TYPE_STATE_ROOM_MEMBER)) {
             val roomMember = JsonUtils.toRoomMember(event.content)
@@ -1749,9 +1754,9 @@ internal constructor(// session
 
                 // !Updated display name && same avatar
                 isSupported = TextUtils.equals(prevUserDisplayName, senderDisplayName) && TextUtils.equals(avatar, prevAvatar)
+                Debug.e("--- show notification timeline $isSupported")
             }
         }
-
         return isSupported
     }
 
@@ -1963,7 +1968,11 @@ internal constructor(// session
                 text = message.body
             } else {
                 val bodyTextView = contentView.findViewById<TextView>(R.id.messagesAdapter_body)
-
+                if (TextUtils.equals(event.sender, mSession.myUserId)) {
+                    bodyTextView.gravity = Gravity.END
+                } else {
+                    bodyTextView.gravity = Gravity.START
+                }
                 if (null != bodyTextView) {
                     text = bodyTextView.text.toString()
                 }

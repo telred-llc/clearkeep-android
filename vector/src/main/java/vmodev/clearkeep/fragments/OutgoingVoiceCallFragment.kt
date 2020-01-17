@@ -19,12 +19,12 @@ import org.matrix.androidsdk.call.CallSoundsManager
 import org.matrix.androidsdk.call.IMXCall
 import org.matrix.androidsdk.call.MXCallListener
 import org.matrix.androidsdk.call.VideoLayoutConfiguration
+import org.matrix.androidsdk.core.Debug
 import vmodev.clearkeep.activities.RoomActivity
 import vmodev.clearkeep.activities.RoomActivity.Companion.EXTRA_ROOM_ID
 import vmodev.clearkeep.activities.RoomActivity.Companion.EXTRA_START_CALL_ID
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
-import vmodev.clearkeep.ultis.Debug
 import vmodev.clearkeep.ultis.longTimeToString
 import vmodev.clearkeep.viewmodels.interfaces.AbstractOutgoingVoiceCallFragmentViewModel
 import java.util.concurrent.TimeUnit

@@ -59,6 +59,7 @@ import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.call.IMXCall
 import org.matrix.androidsdk.call.MXCallListener
+import org.matrix.androidsdk.core.Debug
 import org.matrix.androidsdk.core.JsonUtils
 import org.matrix.androidsdk.core.Log
 import org.matrix.androidsdk.core.PermalinkUtils
@@ -86,7 +87,6 @@ import vmodev.clearkeep.dialogfragments.DialogFragmentChoiceSendFile
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.MessageListFragment
 import vmodev.clearkeep.repositories.MessageRepository
-import vmodev.clearkeep.ultis.Debug
 import vmodev.clearkeep.ultis.ReadMarkerManager
 import vmodev.clearkeep.ultis.RoomMediasSender
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomActivityViewModel
@@ -100,6 +100,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         MessageListFragment.VectorMessageListFragmentListener,
         VectorReadReceiptsDialogFragment.VectorReadReceiptsDialogFragmentListener, IActivity, HasAndroidInjector {
 
+    private var isVideoCall: Boolean = false
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
 
@@ -109,6 +110,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
+        mSession = Matrix.getInstance(this).defaultSession
         super.onCreate(savedInstanceState)
     }
 
@@ -549,6 +551,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         mxSession = Matrix.getInstance(this).defaultSession
         roomId = intent.getStringExtra(EXTRA_ROOM_ID)
+        Debug.e("--- roomID: $roomId")
         mRoom = mxSession?.dataHandler?.store?.getRoom(roomId)
 
         if ((mxSession == null) || !mxSession!!.isAlive) {
@@ -755,7 +758,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                         .setMessage(R.string.widget_delete_message_confirmation)
                         .setPositiveButton(R.string.remove) { dialog, which ->
                             showWaitingView()
-
                             val wm = Matrix.getWidgetManager(this@RoomActivity)
                             if (wm != null) {
                                 showWaitingView()
@@ -767,7 +769,6 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
                                     private fun onError(errorMessage: String?) {
                                         hideWaitingView()
-                                        Toast.makeText(this@RoomActivity, errorMessage, Toast.LENGTH_SHORT).show()
                                     }
 
                                     override fun onNetworkError(e: Exception) {
@@ -850,32 +851,41 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
 
             override fun onCloseWidgetClick(widget: Widget) {
+                showWaitingView()
                 val wm = Matrix.getWidgetManager(this@RoomActivity)
                 if (wm != null) {
-                    showWaitingView()
-
                     wm.closeWidget(mSession, mRoom, widget.widgetId, object : ApiCallback<Void> {
                         override fun onSuccess(info: Void) {
                             hideWaitingView()
+                            Debug.e("--- onSuccess")
                         }
 
-                        private fun onError(errorMessage: String?) {
+                        private fun onError(e: String?) {
                             hideWaitingView()
-                            Toast.makeText(this@RoomActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                            Debug.e("--- onError: ${e}")
                         }
 
                         override fun onNetworkError(e: Exception) {
+                            hideWaitingView()
+                            Debug.e("--- onNetworkError: ${e.message}")
                             onError(e.localizedMessage)
                         }
 
                         override fun onMatrixError(e: MatrixError) {
+                            hideWaitingView()
+                            Debug.e("--- onMatrixError: ${e.message}")
                             onError(e.localizedMessage)
                         }
 
                         override fun onUnexpectedError(e: Exception) {
+                            hideWaitingView()
+                            Debug.e("--- onUnexpectedError: ${e.message}")
                             onError(e.localizedMessage)
                         }
                     })
+                } else {
+                    Debug.e("--- close")
+                    hideWaitingView()
                 }
             }
 
@@ -943,8 +953,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         roomId = savedInstanceState.getString(VectorRoomActivity.EXTRA_ROOM_ID, "")
-//        mxSession = Matrix.getInstance(this).defaultSession
-//        currentRoom = mxSession!!.dataHandler.getRoom(roomId, false)
+        mxSession = Matrix.getInstance(this).defaultSession
+        currentRoom = mxSession!!.dataHandler.getRoom(roomId, false)
         // the listView will be refreshed so the offset might be lost.
         mScrollToIndex = savedInstanceState.getInt(FIRST_VISIBLE_ROW, -1)
     }
@@ -1506,7 +1516,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
         TedPermission.with(this)
                 .setPermissionListener(object : PermissionListener {
                     override fun onPermissionGranted() {
-                        val isVideoCall = which != 0
+                        isVideoCall = which != 0
                         startIpCall(PreferencesManager.useJitsiConfCall(this@RoomActivity), isVideoCall)
                     }
 
@@ -1597,32 +1607,29 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
         enableActionBarHeader(HIDE_ACTION_BAR_HEADER)
         showWaitingView()
-
+        Debug.e("--- RoomID: ${currentRoom!!.roomId}")
         // create the call object
         mxSession!!.mCallsManager.createCallInRoom(currentRoom!!.roomId, aIsVideoCall, object : ApiCallback<IMXCall> {
+
             override fun onSuccess(call: IMXCall) {
-                Debug.e("--- startIpCall(): onSuccess")
+                Debug.e("--- onSuccess")
+                hideWaitingView()
                 runOnUiThread(object : Runnable {
                     override fun run() {
-                        hideWaitingView()
-
-//                        val intent = Intent(this@RoomActivity, CallViewActivity::class.java)
-//
-//                        intent.putExtra(CallViewActivity.EXTRA_MATRIX_ID, mxSession!!.getCredentials().userId)
-//                        intent.putExtra(CallViewActivity.EXTRA_CALL_ID, call.callId)
-//
-//                        startActivity(intent)
-
+                        Debug.e("--- callId: ${call.callId} --- sessionID: ${mxSession!!.credentials.userId}")
                         val intent = Intent(this@RoomActivity, OutgoingCallActivity::class.java)
+                        intent.putExtra(CallViewActivity.EXTRA_MATRIX_ID, call.session.credentials.userId)
+                        intent.putExtra(CallViewActivity.EXTRA_CALL_ID, call.callId)
                         startActivity(intent)
                     }
                 })
             }
 
             private fun onError(errorMessage: String) {
+                hideWaitingView()
+                Debug.e("--- onError: $errorMessage")
                 runOnUiThread(object : Runnable {
                     override fun run() {
-                        hideWaitingView()
                         Toast.makeText(this@RoomActivity,
                                 getString(R.string.cannot_start_call) + " (" + errorMessage + ")", Toast.LENGTH_SHORT).show()
                     }
@@ -1630,19 +1637,22 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
 
             override fun onNetworkError(e: Exception) {
-                Debug.e("--- startIpCall(): onNetworkError Msg=" + e.message, e)
+                hideWaitingView()
+                Debug.e("--- onNetworkError Msg=" + e.message)
                 onError(e.localizedMessage)
             }
 
             override fun onMatrixError(e: MatrixError) {
-                Debug.e("--- startIpCall(): onMatrixError Msg=" + e.localizedMessage)
-
+                hideWaitingView()
+                Debug.e("--- onMatrixError Msg=" + e.message)
+                onError(e.localizedMessage)
+                return
                 if (e is MXCryptoError) {
                     val cryptoError = e
                     if (MXCryptoError.UNKNOWN_DEVICES_CODE == cryptoError.errcode) {
                         hideWaitingView()
 //                        CommonActivityUtils.displayUnknownDevicesDialog(mxSession,
-//                                this@RoomActivi
+//                                this@RoomActivity,
 //                                cryptoError.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>,
 //                                true,
 //                                object : VectorUnknownDevicesFragment.IUnknownDevicesSendAnywayListener {
@@ -1650,33 +1660,35 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //                                        startIpCall(useJitsiCall, aIsVideoCall)
 //                                    }
 //                                })
+
                         val devicesInfo = cryptoError.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>
                         devicesInfo.let {
                             val deviceList = getDevicesList(it)
                             deviceList.forEach { t: Pair<String, List<MXDeviceInfo>>? ->
                                 t?.second?.forEach { d: MXDeviceInfo? ->
                                     d?.let { mxDeviceInfo ->
+                                        Debug.e("--- Action verify")
                                         if (mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNVERIFIED || mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNKNOWN) {
                                             mxSession!!.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, mxDeviceInfo.deviceId, mxDeviceInfo.userId, object : SimpleApiCallback<Void>() {
                                                 override fun onSuccess(p0: Void?) {
-                                                    android.util.Log.d("Verify device success", mxDeviceInfo.deviceId.toString())
+                                                    Debug.e("--- Verify device success: ${mxDeviceInfo.deviceId}")
                                                 }
+
                                             })
                                         }
                                     }
                                 }
                             }
                         }
-
                         return
                     }
                 }
-
                 onError(e.localizedMessage)
             }
 
             override fun onUnexpectedError(e: Exception) {
-                Log.e(LOG_TAG, "## startIpCall(): onUnexpectedError Msg=" + e.localizedMessage, e)
+                hideWaitingView()
+                Debug.e("--- onUnexpectedError Msg: ${e.message}")
                 onError(e.localizedMessage)
             }
         })
@@ -3247,7 +3259,7 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 
                         showWaitingView()
 
-                        room.joinWithThirdPartySigned(sRoomPreviewData!!.roomIdOrAlias, signUrl, object : ApiCallback<Void> {
+                        room.joinWithThirdPartySigned(mSession, sRoomPreviewData!!.roomIdOrAlias, signUrl, object : ApiCallback<Void> {
                             override fun onSuccess(info: Void) {
                                 onJoined()
                             }

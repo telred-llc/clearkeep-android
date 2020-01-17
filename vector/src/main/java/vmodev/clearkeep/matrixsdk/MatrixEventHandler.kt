@@ -6,12 +6,12 @@ import im.vector.R
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.Debug
 import org.matrix.androidsdk.crypto.keysbackup.KeysBackupStateManager
 import org.matrix.androidsdk.data.MyUser
 import org.matrix.androidsdk.data.RoomState
 import org.matrix.androidsdk.listeners.MXEventListener
 import org.matrix.androidsdk.rest.model.Event
-import org.matrix.androidsdk.rest.model.RoomMember
 import org.matrix.androidsdk.rest.model.User
 import org.matrix.androidsdk.rest.model.bingrules.BingRule
 import org.matrix.androidsdk.rest.model.sync.AccountDataElement
@@ -26,7 +26,6 @@ import vmodev.clearkeep.ultis.matrixUrlToRealUrl
 import vmodev.clearkeep.ultis.toMessage
 import vmodev.clearkeep.ultis.toRoomCreate
 import vmodev.clearkeep.ultis.toRoomInvite
-import vmodev.clearkeep.ultis.*
 import vmodev.clearkeep.workermanager.interfaces.IUpdateDatabaseFromMatrixEvent
 import javax.inject.Inject
 
@@ -145,11 +144,17 @@ class MatrixEventHandler @Inject constructor(
                 }
                 Event.EVENT_TYPE_STATE_ROOM_NAME -> {
                     val name = event.contentJson.asJsonObject.get("name").asString
-                    roomRepository.updateRoomName(event.roomId, name).subscribeOn(Schedulers.io()).subscribe({
+                    roomRepository.updateRoomAvatar(event.roomId, name).subscribeOn(Schedulers.io()).subscribe({
                         Debug.e("--- Update room name success")
                     }, {
                         Debug.e("--- Error: ${it.message}")
                     })
+                }
+                Event.EVENT_TYPE_STATE_ROOM_AVATAR -> {
+                    messageRepository.insertMessage(event.toMessage()).subscribeOn(Schedulers.io())
+                            .subscribe {
+                                roomRepository.updateLastMessage(event.roomId, event.eventId).subscribeOn(Schedulers.io()).subscribe()
+                            }
                 }
                 IMatrixEventHandler.M_ROOM_POWER_LEVELS -> {
 
