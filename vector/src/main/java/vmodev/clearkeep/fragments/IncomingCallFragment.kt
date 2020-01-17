@@ -45,8 +45,6 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
             super.onStateDidChange(state)
             when (state) {
                 IMXCall.CALL_STATE_ENDED -> {
-
-
                     this@IncomingCallFragment.activity?.finish()
                 }
                 IMXCall.CALL_STATE_CONNECTED -> {
@@ -101,19 +99,21 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
         super.onViewCreated(view, savedInstanceState)
         mxSession = Matrix.getInstance(activity!!).defaultSession
         mxCall = CallsManager.getSharedInstance().activeCall
-        mxCall.createCallView()
-        callManager = CallsManager.getSharedInstance()
-        binding.room = viewModelFactory.getViewModel().getRoomResult()
-        binding.imageViewAccept.setOnClickListener {
-            mxCall.answer()
-            binding.imageViewAccept.visibility = View.GONE
+        if (mxCall != null) {
+            mxCall.createCallView()
+            callManager = CallsManager.getSharedInstance()
+            binding.room = viewModelFactory.getViewModel().getRoomResult()
+            binding.imageViewAccept.setOnClickListener {
+                mxCall.answer()
+                binding.imageViewAccept.visibility = View.GONE
+            }
+            binding.imageViewDecline.setOnClickListener {
+                mxCall.hangup(null)
+                binding.rippleBackground.stopRippleAnimation()
+            }
+            binding.rippleBackground.startRippleAnimation()
+            viewModelFactory.getViewModel().setRoomId(mxCall.room.roomId)
         }
-        binding.imageViewDecline.setOnClickListener {
-            mxCall.hangup(null)
-            binding.rippleBackground.stopRippleAnimation()
-        }
-        binding.rippleBackground.startRippleAnimation()
-        viewModelFactory.getViewModel().setRoomId(mxCall.room.roomId)
     }
 
     override fun getFragment(): Fragment {

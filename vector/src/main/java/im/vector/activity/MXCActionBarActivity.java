@@ -37,6 +37,7 @@ import org.matrix.androidsdk.data.Room;
 import im.vector.Matrix;
 import im.vector.MyPresenceManager;
 import im.vector.R;
+import io.reactivex.disposables.CompositeDisposable;
 import vmodev.clearkeep.applications.ClearKeepApplication;
 
 /**
@@ -48,6 +49,7 @@ public abstract class MXCActionBarActivity extends VectorAppCompatActivity {
 
     protected MXSession mSession = null;
     protected Room mRoom = null;
+    protected CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     /**
      * Dismiss any opened dialog.
@@ -177,6 +179,7 @@ public abstract class MXCActionBarActivity extends VectorAppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        compositeDisposable.clear();
         super.onDestroy();
         ClearKeepApplication.getInstance().getOnActivityDestroyedListener().fire(this);
     }

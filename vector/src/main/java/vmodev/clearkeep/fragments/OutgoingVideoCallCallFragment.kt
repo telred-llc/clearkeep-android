@@ -184,20 +184,20 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
         mxCall.visibility = View.GONE
     }
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_outgoing_call, container, false, dataBinding.getDataBindingComponent())
-        mxCall = CallsManager.getSharedInstance().activeCall
-        mxCall.createCallView()
-        callManager = CallsManager.getSharedInstance()
-        callSoundsManager = CallSoundsManager.getSharedInstance(this.activity)
-        callView = callManager?.callView
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mxCall = CallsManager.getSharedInstance().activeCall
+        if (mxCall != null) {
+            mxCall.createCallView()
+            callManager = CallsManager.getSharedInstance()
+            callSoundsManager = CallSoundsManager.getSharedInstance(this.activity)
+            callView = callManager?.callView
+        }
         setupButtonControl()
         updateStatusControlCall()
     }
@@ -208,7 +208,6 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
 
     override fun onResume() {
         super.onResume()
-        mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration)
         callManager?.let {
             if (it.activeCall != null) {
                 mxCall.addListener(callListener)
@@ -257,6 +256,7 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
         mxCall.let {
             binding.mxCall = mxCall
         }
+
     }
 
     private fun toggleVideo() {
