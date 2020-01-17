@@ -62,5 +62,4 @@ class FindAndCreateNewConversationActivityViewModel @Inject constructor(private 
         return roomRepository.getRoomByUserId(roomId)
     }
 
-
 }
