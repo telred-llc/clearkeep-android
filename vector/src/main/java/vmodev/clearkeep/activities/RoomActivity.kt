@@ -1642,16 +1642,14 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             }
 
             override fun onMatrixError(e: MatrixError) {
-                hideWaitingView()
-                Debug.e("--- onMatrixError Msg=" + e.message)
-                onError(e.localizedMessage)
-                return
+                Debug.e("--- startIpCall(): onMatrixError Msg=" + e.localizedMessage)
+
                 if (e is MXCryptoError) {
                     val cryptoError = e
                     if (MXCryptoError.UNKNOWN_DEVICES_CODE == cryptoError.errcode) {
                         hideWaitingView()
 //                        CommonActivityUtils.displayUnknownDevicesDialog(mxSession,
-//                                this@RoomActivity,
+//                                this@RoomActivi
 //                                cryptoError.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>,
 //                                true,
 //                                object : VectorUnknownDevicesFragment.IUnknownDevicesSendAnywayListener {
@@ -1659,29 +1657,30 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
 //                                        startIpCall(useJitsiCall, aIsVideoCall)
 //                                    }
 //                                })
-
                         val devicesInfo = cryptoError.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>
                         devicesInfo.let {
                             val deviceList = getDevicesList(it)
                             deviceList.forEach { t: Pair<String, List<MXDeviceInfo>>? ->
                                 t?.second?.forEach { d: MXDeviceInfo? ->
                                     d?.let { mxDeviceInfo ->
-                                        Debug.e("--- Action verify")
                                         if (mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNVERIFIED || mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNKNOWN) {
                                             mxSession!!.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, mxDeviceInfo.deviceId, mxDeviceInfo.userId, object : SimpleApiCallback<Void>() {
                                                 override fun onSuccess(p0: Void?) {
-                                                    Debug.e("--- Verify device success: ${mxDeviceInfo.deviceId}")
-                                                }
+                                                    Debug.e("Verify device success "+ mxDeviceInfo.deviceId.toString())
 
+                                                }
                                             })
                                         }
                                     }
                                 }
                             }
+
                         }
+
                         return
                     }
                 }
+
                 onError(e.localizedMessage)
             }
 
