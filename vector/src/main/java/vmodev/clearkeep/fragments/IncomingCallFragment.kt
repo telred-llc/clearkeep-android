@@ -29,7 +29,7 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
     lateinit var viewModelFactory: IViewModelFactory<AbstractIncomingCallFragmentViewModel>
 
     private lateinit var binding: FragmentIncomingCallBinding
-    private lateinit var mxCall: IMXCall
+    private var mxCall: IMXCall? = null
     private var callView: View? = null
     private var callManager: CallsManager? = null
     private val videoLayoutConfiguration = VideoLayoutConfiguration(5, 66, 25, 25)
@@ -49,10 +49,12 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
                 }
                 IMXCall.CALL_STATE_CONNECTED -> {
                     saveCallView()
-                    if (mxCall.isVideo) {
-                        findNavController().navigate(IncomingCallFragmentDirections.inProgressCall())
-                    } else {
-                        findNavController().navigate(IncomingCallFragmentDirections.inProgressVoiceCall())
+                    mxCall?.let {
+                        if (it.isVideo) {
+                            findNavController().navigate(IncomingCallFragmentDirections.inProgressCall())
+                        } else {
+                            findNavController().navigate(IncomingCallFragmentDirections.inProgressVoiceCall())
+                        }
                     }
                 }
                 IMXCall.CALL_STATE_CONNECTING -> {
@@ -68,24 +70,24 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
             super.onCallViewCreated(callView)
             callView?.let {
                 this@IncomingCallFragment.callView = it
-                mxCall.updateLocalVideoRendererPosition(videoLayoutConfiguration)
+                mxCall?.updateLocalVideoRendererPosition(videoLayoutConfiguration)
             }
         }
 
         override fun onReady() {
             super.onReady()
-            mxCall.launchIncomingCall(videoLayoutConfiguration)
+            mxCall?.launchIncomingCall(videoLayoutConfiguration)
         }
     }
 
     override fun onResume() {
         super.onResume()
-        mxCall.addListener(callListener)
+        mxCall?.addListener(callListener)
     }
 
     override fun onPause() {
         super.onPause()
-        mxCall.removeListener(callListener)
+        mxCall?.removeListener(callListener)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -100,19 +102,21 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
         mxSession = Matrix.getInstance(activity!!).defaultSession
         mxCall = CallsManager.getSharedInstance().activeCall
         if (mxCall != null) {
-            mxCall.createCallView()
+            mxCall?.createCallView()
             callManager = CallsManager.getSharedInstance()
             binding.room = viewModelFactory.getViewModel().getRoomResult()
             binding.imageViewAccept.setOnClickListener {
-                mxCall.answer()
+                mxCall?.answer()
                 binding.imageViewAccept.visibility = View.GONE
             }
             binding.imageViewDecline.setOnClickListener {
-                mxCall.hangup(null)
+                mxCall?.hangup(null)
                 binding.rippleBackground.stopRippleAnimation()
             }
             binding.rippleBackground.startRippleAnimation()
-            viewModelFactory.getViewModel().setRoomId(mxCall.room.roomId)
+            mxCall?.let {
+                viewModelFactory.getViewModel().setRoomId(it.room.roomId)
+            }
         }
     }
 
@@ -121,7 +125,7 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun saveCallView() {
-        if (mxCall.callState != IMXCall.CALL_STATE_ENDED) {
+        if (mxCall?.callState != IMXCall.CALL_STATE_ENDED) {
             callView?.let {
                 callManager?.callView = it
                 callManager?.videoLayoutConfiguration = videoLayoutConfiguration

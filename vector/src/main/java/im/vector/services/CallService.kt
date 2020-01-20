@@ -22,6 +22,7 @@ import android.os.PowerManager
 import android.text.TextUtils
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startForegroundService
 import im.vector.Matrix
 import im.vector.VectorApp
 import im.vector.notifications.NotificationUtils
@@ -177,7 +178,7 @@ class CallService : VectorService() {
                         putExtra(EXTRA_CALL_ID, callId)
                     }
 
-            ContextCompat.startForegroundService(context, intent)
+            startForegroundService(context, intent)
         }
 
         fun onPendingCall(context: Context,
@@ -196,7 +197,7 @@ class CallService : VectorService() {
                         putExtra(EXTRA_CALL_ID, callId)
                     }
 
-            ContextCompat.startForegroundService(context, intent)
+            startForegroundService(context, intent)
         }
 
         fun onNoActiveCall(context: Context) {
@@ -204,8 +205,7 @@ class CallService : VectorService() {
                     .apply {
                         action = ACTION_NO_ACTIVE_CALL
                     }
-
-            ContextCompat.startForegroundService(context, intent)
+            startForegroundService(context, intent)
         }
     }
 }

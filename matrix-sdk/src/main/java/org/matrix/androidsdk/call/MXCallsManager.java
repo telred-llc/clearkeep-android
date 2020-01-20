@@ -722,6 +722,7 @@ public class MXCallsManager {
                         // when a room is encrypted, test first there is no unknown device
                         // else the call will fail.
                         // So it seems safer to reject the call creation it it will fail.
+                        assert mSession.getCrypto() != null;
                         if (room.isEncrypted() && mSession.getCrypto().warnOnUnknownDevices()) {
                             room.getJoinedMembersAsync(new SimpleApiCallback<List<RoomMember>>(callback) {
                                 @Override

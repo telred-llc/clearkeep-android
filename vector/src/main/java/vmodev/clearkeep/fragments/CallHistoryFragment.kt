@@ -110,7 +110,7 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
 
         listSearchAdapter.setOnItemClick { messageRoomUser, i ->
             val imxCall = CallsManager.getSharedInstance().activeCall
-            if (null != imxCall) {
+            if (null != imxCall && imxCall.isIncoming) {
                 Toast.makeText(activity!!, getString(R.string.str_you_re_already_on_a_call), Toast.LENGTH_LONG).show()
             } else {
                 onCallItemClicked(i, messageRoomUser)
