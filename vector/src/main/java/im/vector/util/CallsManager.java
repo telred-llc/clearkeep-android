@@ -193,7 +193,6 @@ public class CallsManager {
                                 public void run() {
                                     if (null != mActiveCall) {
                                         setCallSpeakerphoneOn(mActiveCall.isVideo() && !HeadsetConnectionReceiver.isHeadsetPlugged(mContext));
-                                        mCallSoundsManager.setMicrophoneMute(false);
                                     } else {
                                         Log.e(LOG_TAG, "## onStateDidChange() : no more active call");
                                     }
