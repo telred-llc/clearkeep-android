@@ -5,4 +5,5 @@
         android:dither="true"
         android:endColor="#3FC5B9"
         android:startColor="#00C0D8" />
+    <corners android:radius="2dip"></corners>
 </shape>

@@ -31,7 +31,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import org.jetbrains.annotations.Nullable;
 import org.matrix.androidsdk.MXSession;
 import org.matrix.androidsdk.call.IMXCall;
 import org.matrix.androidsdk.call.IMXCallsManagerListener;
@@ -48,7 +47,6 @@ import butterknife.OnClick;
 import im.vector.Matrix;
 import im.vector.R;
 import im.vector.widgets.Widget;
-import im.vector.widgets.WidgetManagerProvider;
 import im.vector.widgets.WidgetsManager;
 
 /**
@@ -214,13 +212,7 @@ public class VectorOngoingConferenceCallView extends RelativeLayout {
 
     @OnClick(R.id.close_widget_icon)
     void onClose() {
-        if (null != mCallClickListener) {
-            try {
-                mCallClickListener.onCloseWidgetClick(mActiveWidget);
-            } catch (Exception e) {
-                Log.e(LOG_TAG, "## initView() : onRemoveWidgetClick failed " + e.getMessage(), e);
-            }
-        }
+        mCallClickListener.onCloseWidgetClick(mActiveWidget);
     }
 
     /**

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
@@ -23,10 +22,9 @@ import im.vector.activity.VectorMediaPickerActivity
 import im.vector.databinding.FragmentCallHistoryBinding
 import im.vector.util.*
 import im.vector.widgets.Widget
-import im.vector.widgets.WidgetManagerProvider
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.call.IMXCall
-import org.matrix.androidsdk.call.MXCall
+import org.matrix.androidsdk.core.Debug
 import org.matrix.androidsdk.core.callback.ApiCallback
 import org.matrix.androidsdk.core.callback.SimpleApiCallback
 import org.matrix.androidsdk.core.model.MatrixError
@@ -111,7 +109,7 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
         binding.rvCallHistory.adapter = listSearchAdapter
 
         listSearchAdapter.setOnItemClick { messageRoomUser, i ->
-            val imxCall = CallsManager.getSharedInstance().activeCall;
+            val imxCall = CallsManager.getSharedInstance().activeCall
             if (null != imxCall) {
                 Toast.makeText(activity!!, getString(R.string.str_you_re_already_on_a_call), Toast.LENGTH_LONG).show()
             } else {
@@ -255,7 +253,8 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
         // create the call object
         mxSession!!.mCallsManager.createCallInRoom(currentRoom!!.roomId, aIsVideoCall, object : ApiCallback<IMXCall> {
             override fun onSuccess(call: IMXCall) {
-                org.matrix.androidsdk.core.Log.d(LOG_TAG, "## startIpCall(): onSuccess")
+                Debug.e("--- onSuccess")
+
                 activity!!.runOnUiThread {
                     //                    hideWaitingView()
                     val intent = Intent(activity!!, OutgoingCallActivity::class.java)
@@ -272,13 +271,13 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
             }
 
             override fun onNetworkError(e: Exception) {
-                org.matrix.androidsdk.core.Log.e(LOG_TAG, "## startIpCall(): onNetworkError Msg=" + e.message, e)
+                Debug.e("--- onNetworkError Msg=" + e.message)
                 onError(e.localizedMessage)
             }
 
             override fun onMatrixError(e: MatrixError) {
-                org.matrix.androidsdk.core.Log.e(LOG_TAG, "## startIpCall(): onMatrixError Msg=" + e.localizedMessage)
-
+                Debug.e("--- onMatrixError Msg=" + e.message)
+                return
                 if (e is MXCryptoError) {
                     val cryptoError = e
                     if (MXCryptoError.UNKNOWN_DEVICES_CODE == cryptoError.errcode) {
@@ -292,7 +291,7 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
                                         if (mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNVERIFIED || mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNKNOWN) {
                                             mxSession!!.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, mxDeviceInfo.deviceId, mxDeviceInfo.userId, object : SimpleApiCallback<Void>() {
                                                 override fun onSuccess(p0: Void?) {
-                                                    android.util.Log.d("Verify device success", mxDeviceInfo.deviceId.toString())
+                                                    Debug.d("--- Verify device success: ${mxDeviceInfo.deviceId}")
                                                 }
                                             })
                                         }
@@ -309,7 +308,7 @@ class CallHistoryFragment : DataBindingDaggerFragment(), IFragment {
             }
 
             override fun onUnexpectedError(e: Exception) {
-                org.matrix.androidsdk.core.Log.e(LOG_TAG, "## startIpCall(): onUnexpectedError Msg=" + e.localizedMessage, e)
+                Debug.e("--- onUnexpectedError Msg=" + e.localizedMessage, e)
                 onError(e.localizedMessage)
             }
         })

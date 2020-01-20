@@ -32,10 +32,7 @@ import im.vector.util.*
 import im.vector.widgets.WidgetsManager
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.adapters.AbstractMessagesAdapter
-import org.matrix.androidsdk.core.JsonUtils
-import org.matrix.androidsdk.core.Log
-import org.matrix.androidsdk.core.MXPatterns
-import org.matrix.androidsdk.core.PermalinkUtils
+import org.matrix.androidsdk.core.*
 import org.matrix.androidsdk.core.callback.ApiCallback
 import org.matrix.androidsdk.core.callback.SimpleApiCallback
 import org.matrix.androidsdk.core.model.MatrixError
@@ -51,7 +48,6 @@ import org.matrix.androidsdk.rest.model.message.FileMessage
 import org.matrix.androidsdk.rest.model.message.ImageMessage
 import org.matrix.androidsdk.rest.model.message.Message
 import org.matrix.androidsdk.rest.model.message.VideoMessage
-import vmodev.clearkeep.ultis.Debug
 import java.io.File
 import java.util.*
 

@@ -25,6 +25,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.Debug
 import vmodev.clearkeep.activities.PreviewInviteRoomActivity
 import vmodev.clearkeep.activities.PreviewJoinActivity
 import vmodev.clearkeep.activities.RoomActivity
@@ -34,7 +35,6 @@ import vmodev.clearkeep.applications.IApplication
 import vmodev.clearkeep.executors.AppExecutors
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.ISearchFragment
-import vmodev.clearkeep.ultis.Debug
 import vmodev.clearkeep.viewmodelobjects.Status
 import vmodev.clearkeep.viewmodels.interfaces.AbstractSearchRoomsFragmentViewModel
 import javax.inject.Inject

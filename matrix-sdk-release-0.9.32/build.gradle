@@ -1,2 +1,0 @@
-configurations.maybeCreate("default")
-artifacts.add("default", file('matrix-sdk-release-0.9.32.aar'))

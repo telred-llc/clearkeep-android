@@ -37,6 +37,7 @@ import org.matrix.androidsdk.call.IMXCallsManagerListener;
 import org.matrix.androidsdk.call.MXCallListener;
 import org.matrix.androidsdk.call.MXCallsManagerListener;
 import org.matrix.androidsdk.call.VideoLayoutConfiguration;
+import org.matrix.androidsdk.core.Debug;
 import org.matrix.androidsdk.core.Log;
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo;
 import org.matrix.androidsdk.crypto.data.MXUsersDevicesMap;
@@ -52,7 +53,7 @@ import im.vector.notifications.NotificationUtils;
 import im.vector.services.CallService;
 import vmodev.clearkeep.activities.CallViewActivity;
 import vmodev.clearkeep.activities.IncomingCallActivity;
-import vmodev.clearkeep.activities.OutgoingCallActivity;
+import vmodev.clearkeep.applications.ClearKeepApplication;
 
 /**
  * This class contains the call toolbox.
@@ -136,85 +137,8 @@ public class CallsManager {
      */
     public CallsManager(Context context) {
         mContext = context.getApplicationContext();
-        mCallSoundsManager = mCallSoundsManager.getSharedInstance(mContext);
+        mCallSoundsManager = CallSoundsManager.getSharedInstance(mContext);
         HeadsetConnectionReceiver.getSharedInstance(mContext).addListener(mOnHeadsetStatusUpdateListener);
-    }
-
-    /**
-     * @return the shared instance
-     */
-    public static CallsManager getSharedInstance() {
-        if (null == mSharedInstance) {
-            mSharedInstance = new CallsManager(VectorApp.getInstance());
-        }
-
-        return mSharedInstance;
-    }
-
-    /**
-     * @return the active call
-     */
-    public IMXCall getActiveCall() {
-        if ((null != mActiveCall) && TextUtils.equals(mActiveCall.getCallState(), IMXCall.CALL_STATE_ENDED)) {
-            return null;
-        }
-        return mActiveCall;
-    }
-
-    /**
-     * Save the callview.
-     *
-     * @param callView the callview
-     */
-    public void setCallView(View callView) {
-        mCallView = callView;
-    }
-
-    /**
-     * @return the callview
-     */
-    public View getCallView() {
-        return mCallView;
-    }
-
-    /**
-     * Save the layout conffig
-     *
-     * @param aLocalVideoLayoutConfig the video config
-     */
-    public void setVideoLayoutConfiguration(VideoLayoutConfiguration aLocalVideoLayoutConfig) {
-        mLocalVideoLayoutConfig = aLocalVideoLayoutConfig;
-    }
-
-    /**
-     * @return the layout config
-     */
-    public VideoLayoutConfiguration getVideoLayoutConfiguration() {
-        return mLocalVideoLayoutConfig;
-    }
-
-    /**
-     * Set the call activity.
-     * This activity will be dismissed when the call ends.
-     *
-     * @param activity the activity
-     */
-    public void setCallActivity(Activity activity) {
-        mCallActivity = activity;
-    }
-
-    /**
-     * Display the error messages
-     *
-     * @param toast the message
-     */
-    private void showToast(final String toast) {
-        mUiHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(mContext, toast, Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     private final IMXCallListener mCallListener = new MXCallListener() {
@@ -233,12 +157,12 @@ public class CallsManager {
                     switch (state) {
                         case IMXCall.CALL_STATE_CREATED:
                             if (mActiveCall.isIncoming()) {
-                                CallService.Companion.onIncomingCall(mContext,
-                                        mActiveCall.isVideo(),
-                                        mActiveCall.getRoom().getRoomDisplayName(mContext),
-                                        mActiveCall.getRoom().getRoomId(),
-                                        mActiveCall.getSession().getMyUserId(),
-                                        mActiveCall.getCallId());
+//                                CallService.Companion.onIncomingCall(mContext,
+//                                        mActiveCall.isVideo(),
+//                                        mActiveCall.getRoom().getRoomDisplayName(mContext),
+//                                        mActiveCall.getRoom().getRoomId(),
+//                                        mActiveCall.getSession().getMyUserId(),
+//                                        mActiveCall.getCallId());
 
                                 startRinging();
                             }
@@ -248,9 +172,9 @@ public class CallsManager {
                         case IMXCall.CALL_STATE_CREATE_ANSWER:
                         case IMXCall.CALL_STATE_WAIT_LOCAL_MEDIA:
                         case IMXCall.CALL_STATE_WAIT_CREATE_OFFER:
-                            if (mActiveCall.isIncoming()) {
-                                mCallSoundsManager.stopSounds();
-                            } // else ringback
+//                            if (mActiveCall.isIncoming()) {
+//                                mCallSoundsManager.stopSounds();
+//                            } // else ringback
                             break;
 
                         case IMXCall.CALL_STATE_CONNECTED:
@@ -362,6 +286,83 @@ public class CallsManager {
             });
         }
     };
+
+    /**
+     * @return the active call
+     */
+    public IMXCall getActiveCall() {
+        if ((null != mActiveCall) && TextUtils.equals(mActiveCall.getCallState(), IMXCall.CALL_STATE_ENDED)) {
+            return null;
+        }
+        return mActiveCall;
+    }
+
+    /**
+     * Save the callview.
+     *
+     * @param callView the callview
+     */
+    public void setCallView(View callView) {
+        mCallView = callView;
+    }
+
+    /**
+     * @return the callview
+     */
+    public View getCallView() {
+        return mCallView;
+    }
+
+    /**
+     * Save the layout conffig
+     *
+     * @param aLocalVideoLayoutConfig the video config
+     */
+    public void setVideoLayoutConfiguration(VideoLayoutConfiguration aLocalVideoLayoutConfig) {
+        mLocalVideoLayoutConfig = aLocalVideoLayoutConfig;
+    }
+
+    /**
+     * @return the layout config
+     */
+    public VideoLayoutConfiguration getVideoLayoutConfiguration() {
+        return mLocalVideoLayoutConfig;
+    }
+
+    /**
+     * Set the call activity.
+     * This activity will be dismissed when the call ends.
+     *
+     * @param activity the activity
+     */
+    public void setCallActivity(Activity activity) {
+        mCallActivity = activity;
+    }
+
+    /**
+     * Display the error messages
+     *
+     * @param toast the message
+     */
+    private void showToast(final String toast) {
+        mUiHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(mContext, toast, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    /**
+     * @return the shared instance
+     */
+    public static CallsManager getSharedInstance() {
+        if (null == mSharedInstance) {
+            mSharedInstance = new CallsManager(ClearKeepApplication.getInstance());
+        }
+
+        return mSharedInstance;
+    }
 
     /**
      * Calls events listener.
@@ -499,7 +500,7 @@ public class CallsManager {
         if ((null != mActiveCall) && !hasActiveCall) {
             Log.e(LOG_TAG, "## checkDeadCalls() : fix an infinite ringing");
 
-            CallService.Companion.onNoActiveCall(mContext);
+//            CallService.Companion.onNoActiveCall(mContext);
 
             releaseCall();
         }
@@ -634,8 +635,10 @@ public class CallsManager {
                     public void onMediaReadyToPlay() {
                         if (null != mCallActivity) {
                             if (mCallActivity instanceof VectorCallViewActivity) {
+                                Debug.e("--- EndHere 1");
                                 ((VectorCallViewActivity) mCallActivity).endCall();
                             } else {
+                                Debug.e("--- onEndHere 2");
                                 mCallActivity.finish();
                             }
                             mCallActivity = null;
@@ -644,10 +647,12 @@ public class CallsManager {
 
                     @Override
                     public void onMediaPlay() {
+                        Debug.e("--- onMediaPlay");
                     }
 
                     @Override
                     public void onMediaCompleted() {
+                        Debug.e("--- onMediaCompleted");
                         releaseCall(call);
                     }
                 });

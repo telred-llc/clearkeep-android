@@ -23,8 +23,6 @@ import me.leolin.shortcutbadger.ShortcutBadger
 import org.matrix.androidsdk.MXDataHandler
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.core.Log
-import org.matrix.androidsdk.data.Room
-import java.util.*
 
 /**
  * Manage application badge (displayed in the launcher)
@@ -51,7 +49,7 @@ object BadgeProxy {
         }
 
         try {
-            ShortcutBadger.setBadge(context, badgeValue)
+            ShortcutBadger.applyCount(context, badgeValue)
         } catch (e: Exception) {
             Log.e(LOG_TAG, "## updateBadgeCount(): Exception Msg=" + e.message, e)
         }

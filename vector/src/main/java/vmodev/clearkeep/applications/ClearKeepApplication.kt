@@ -24,6 +24,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.Debug
 import org.matrix.androidsdk.core.callback.ApiCallback
 import org.matrix.androidsdk.core.model.MatrixError
 import org.matrix.androidsdk.crypto.data.MXDeviceInfo
@@ -39,7 +40,6 @@ import vmodev.clearkeep.matrixsdk.interfaces.MatrixService
 import vmodev.clearkeep.repositories.KeyBackupRepository
 import vmodev.clearkeep.repositories.SignatureRepository
 import vmodev.clearkeep.repositories.UserRepository
-import vmodev.clearkeep.ultis.Debug
 import vmodev.clearkeep.viewmodelobjects.User
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

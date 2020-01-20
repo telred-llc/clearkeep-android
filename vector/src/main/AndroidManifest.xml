@@ -46,7 +46,6 @@
     <uses-permission android:name="android.permission.GET_TASKS" /> <!-- start the background sync on boot -->
     <uses-permission android:name="android.permission.CAMERA" /> <!-- disable the battery optimisation on some devices to let the background sync works -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" /> <!-- videocall feature -->
-    <!-- android.permission.CAMERA defines android.hardware.camera -->
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
@@ -98,51 +97,114 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Light"
         tools:replace="allowBackup,label">
-        <activity android:name="vmodev.clearkeep.activities.IncomingCallActivity" />
-        <activity android:name="vmodev.clearkeep.activities.RoomDetailActivity" />
-        <activity android:name="vmodev.clearkeep.activities.OutgoingCallActivity" />
 
+        <activity
+            android:name="vmodev.clearkeep.features.pickermedia.ClearKeepMediaPickerActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name="vmodev.clearkeep.activities.IncomingCallActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.RoomDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.OutgoingCallActivity"
+            android:screenOrientation="portrait" />
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
         <provider
             android:name="androidx.work.impl.WorkManagerInitializer"
             android:authorities="${applicationId}.workmanager-init"
             android:exported="false"
             tools:node="remove" />
 
+        <service
+            android:name="androidx.work.impl.background.systemjob.SystemJobService"
+            android:directBootAware="false"
+            android:enabled="@bool/enable_system_job_service_default"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
         <activity
             android:name="vmodev.clearkeep.activities.RoomSettingsActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name="vmodev.clearkeep.activities.SettingsActivity" />
+        <activity
+            android:name="vmodev.clearkeep.activities.SettingsActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="vmodev.clearkeep.activities.NewRoomActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name="vmodev.clearkeep.activities.WaitingForVerifyEmailActivity" />
-        <activity android:name="vmodev.clearkeep.activities.PushBackupKeyActivity" />
-        <activity android:name="vmodev.clearkeep.activities.RestoreBackupKeyActivity" />
-        <activity android:name="vmodev.clearkeep.activities.BackupKeyActivity" />
-        <activity android:name="vmodev.clearkeep.activities.ChangeThemeActivity" />
-        <activity android:name="vmodev.clearkeep.activities.MessageListActivity" />
-        <activity android:name="vmodev.clearkeep.activities.UserInformationActivity" />
-        <activity android:name="vmodev.clearkeep.activities.ExportKeyActivity" />
-        <activity android:name="vmodev.clearkeep.activities.EditProfileActivity" />
-        <activity android:name="vmodev.clearkeep.activities.DemoEmptyActivity" />
-        <activity android:name="vmodev.clearkeep.activities.UnifiedSearchActivity" />
-        <activity android:name="vmodev.clearkeep.activities.ViewUserProfileActivity" />
-        <activity android:name="vmodev.clearkeep.activities.RoomfilesListActivity" />
+        <activity
+            android:name="vmodev.clearkeep.activities.WaitingForVerifyEmailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.PushBackupKeyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.RestoreBackupKeyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.BackupKeyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.ChangeThemeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.MessageListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.UserInformationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.ExportKeyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.EditProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.DemoEmptyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.UnifiedSearchActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.ViewUserProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.RoomfilesListActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="vmodev.clearkeep.activities.RoomActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="vmodev.clearkeep.activities.CallViewActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="vmodev.clearkeep.activities.SearchActivity" />
-        <activity android:name="vmodev.clearkeep.activities.PreviewInviteRoomActivity" />
-        <activity android:name="vmodev.clearkeep.activities.PreviewJoinActivity" />
+        <activity
+            android:name="vmodev.clearkeep.activities.SearchActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.PreviewInviteRoomActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.PreviewJoinActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="vmodev.clearkeep.activities.ProfileActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name="vmodev.clearkeep.activities.HomeScreenActivity" />
-        <activity android:name="vmodev.clearkeep.activities.LoginActivity" />
-        <activity android:name="vmodev.clearkeep.activities.SplashActivity">
+        <activity
+            android:name="vmodev.clearkeep.activities.HomeScreenActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="vmodev.clearkeep.activities.SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -291,6 +353,7 @@
             android:label="@string/media_picker_both_capture_title"
             android:launchMode="singleTop"
             android:parentActivityName=".activity.VectorRoomActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.FullScreen.Light"
             android:windowSoftInputMode="stateHidden">
             <meta-data

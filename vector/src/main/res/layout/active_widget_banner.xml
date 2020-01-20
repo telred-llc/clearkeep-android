@@ -11,7 +11,6 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
         android:fontFamily="sans-serif-bold"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -22,7 +21,6 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:padding="8dp"
         android:src="@drawable/ic_material_delete_white"
         android:tint="@color/vector_fuchsia_color" />

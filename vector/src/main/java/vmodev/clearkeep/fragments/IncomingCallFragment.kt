@@ -7,26 +7,17 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.facebook.react.bridge.UiThreadUtil.runOnUiThread
 import im.vector.Matrix
 import im.vector.R
-import im.vector.activity.CommonActivityUtils
-import im.vector.activity.VectorCallViewActivity
 import im.vector.databinding.FragmentIncomingCallBinding
 import im.vector.util.CallsManager
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.call.IMXCall
 import org.matrix.androidsdk.call.MXCallListener
 import org.matrix.androidsdk.call.VideoLayoutConfiguration
-import org.matrix.androidsdk.core.callback.ApiCallback
-import org.matrix.androidsdk.core.model.MatrixError
-import org.matrix.androidsdk.crypto.data.MXDeviceInfo
-import org.matrix.androidsdk.crypto.data.MXUsersDevicesMap
-import org.webrtc.RendererCommon
 import vmodev.clearkeep.factories.viewmodels.interfaces.IViewModelFactory
 import vmodev.clearkeep.fragments.Interfaces.IFragment
 import vmodev.clearkeep.viewmodels.interfaces.AbstractIncomingCallFragmentViewModel
-import java.lang.Exception
 import javax.inject.Inject
 
 /**
@@ -54,12 +45,9 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
             super.onStateDidChange(state)
             when (state) {
                 IMXCall.CALL_STATE_ENDED -> {
-
-
                     this@IncomingCallFragment.activity?.finish()
                 }
                 IMXCall.CALL_STATE_CONNECTED -> {
-                    mxCall.setScalingType(RendererCommon.ScalingType.SCALE_ASPECT_FILL)
                     saveCallView()
                     if (mxCall.isVideo) {
                         findNavController().navigate(IncomingCallFragmentDirections.inProgressCall())
@@ -111,19 +99,21 @@ class IncomingCallFragment : DataBindingDaggerFragment(), IFragment {
         super.onViewCreated(view, savedInstanceState)
         mxSession = Matrix.getInstance(activity!!).defaultSession
         mxCall = CallsManager.getSharedInstance().activeCall
-        mxCall.createCallView()
-        callManager = CallsManager.getSharedInstance()
-        binding.room = viewModelFactory.getViewModel().getRoomResult()
-        binding.imageViewAccept.setOnClickListener {
-            mxCall.answer()
-            binding.imageViewAccept.visibility = View.GONE
+        if (mxCall != null) {
+            mxCall.createCallView()
+            callManager = CallsManager.getSharedInstance()
+            binding.room = viewModelFactory.getViewModel().getRoomResult()
+            binding.imageViewAccept.setOnClickListener {
+                mxCall.answer()
+                binding.imageViewAccept.visibility = View.GONE
+            }
+            binding.imageViewDecline.setOnClickListener {
+                mxCall.hangup(null)
+                binding.rippleBackground.stopRippleAnimation()
+            }
+            binding.rippleBackground.startRippleAnimation()
+            viewModelFactory.getViewModel().setRoomId(mxCall.room.roomId)
         }
-        binding.imageViewDecline.setOnClickListener {
-            mxCall.hangup(null)
-            binding.rippleBackground.stopRippleAnimation()
-        }
-        binding.rippleBackground.startRippleAnimation()
-        viewModelFactory.getViewModel().setRoomId(mxCall.room.roomId)
     }
 
     override fun getFragment(): Fragment {

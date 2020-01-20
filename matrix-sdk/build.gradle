@@ -1,0 +1,164 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'realm-android'
+apply plugin: 'kotlin-android-extensions'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath "io.realm:realm-gradle-plugin:5.13.0"
+    }
+}
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
+
+    packagingOptions {
+        exclude 'LICENSE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+    }
+
+    defaultConfig {
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode 933
+        versionName "0.9.33-dev"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Enable multi dex for test
+        multiDexEnabled true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    // prevent the "superClassName is empty" error for classes not annotated as tests
+    tasks.withType(Test) {
+        scanForTestClasses = false
+        include "**/*Test.class" // whatever Ant pattern matches your test class files
+    }
+
+    android.libraryVariants.all { variant ->
+        task("generate${variant.name.capitalize()}Javadoc", type: Javadoc) {
+            source = android.sourceSets.main.java.srcDirs
+            classpath = files(((Object) android.bootClasspath.join(File.pathSeparator)))
+            // Comment this line else we get a gradle error:
+            // Cannot create variant 'android-lint' after configuration ':matrix-sdk:debugRuntimeElements' has been resolved
+            // Javadoc is still well generated without this line
+            // classpath += files(variant.javaCompiler.classpath.files)
+
+            options.windowTitle("Matrix Android SDK ${defaultConfig.versionName}")
+            options.docTitle("Matrix Android SDK ${defaultConfig.versionName}<br/><i>Please note that Kotlin files are not part of the Javadoc</i>")
+            options.header("<b>Matrix Android SDK ${defaultConfig.versionName}</b><br/><i>Please note that Kotlin files are not part of the Javadoc</i>")
+            options.bottom("&copy; 2019 New Vector Ltd All rights reserved.")
+
+            exclude '**/BuildConfig.java'
+            exclude '**/R.java'
+            // Exclude all kotlin files from javadoc file (it does not work and make the task fails).
+            excludes = ['**/*.kt']
+            failOnError false
+        }
+    }
+
+    buildTypes {
+        debug {
+            resValue "string", "git_sdk_revision", "\"${gitRevision()}\""
+            resValue "string", "git_sdk_revision_unix_date", "\"${gitRevisionUnixDate()}\""
+            resValue "string", "git_sdk_revision_date", "\"${gitRevisionDate()}\""
+
+            minifyEnabled false
+        }
+
+        release {
+            resValue "string", "git_sdk_revision", "\"${gitRevision()}\""
+            resValue "string", "git_sdk_revision_unix_date", "\"${gitRevisionUnixDate()}\""
+            resValue "string", "git_sdk_revision_date", "\"${gitRevisionDate()}\""
+
+            libraryVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def outputFile = output.outputFileName
+                    if (outputFile != null && outputFile.endsWith('.aar')) {
+                        output.outputFileName = outputFile.replace(".aar", "-${defaultConfig.versionName}.aar")
+                    }
+                }
+            }
+        }
+    }
+
+
+    lintOptions {
+        warning 'MissingTranslation'
+
+        // Treat some warnings as errors
+        // Resources
+        error 'TypographyEllipsis'
+        warning 'ImpliedQuantity'
+
+        // UX
+        error 'ButtonOrder'
+
+        // Layout
+        error 'StringFormatCount'
+        error 'HardcodedText'
+        error 'SpUsage'
+        error 'ObsoleteLayoutParam'
+        error 'InefficientWeight'
+        error 'DisableBaselineAlignment'
+        error 'ScrollViewSize'
+
+        // RTL
+        error 'RtlEnabled'
+        error 'RtlHardcoded'
+        error 'RtlSymmetry'
+
+        // Code
+        error 'SetTextI18n'
+        error 'ViewConstructor'
+        error 'UseValueOf'
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+}
+
+androidExtensions {
+    experimental = true
+}
+
+static def gitRevision() {
+    def cmd = "git rev-parse --short HEAD"
+    return cmd.execute().text.trim()
+}
+
+static def gitRevisionUnixDate() {
+    def cmd = "git show -s --format=%ct HEAD^{commit}"
+    return cmd.execute().text.trim()
+}
+
+static def gitRevisionDate() {
+    def cmd = "git show -s --format=%ci HEAD^{commit}"
+    return cmd.execute().text.trim()
+}
+
+dependencies {
+    api project(':matrix-sdk-crypto')
+    testApi 'androidx.test:rules:1.2.0'
+    testApi 'org.mockito:mockito-core:2.23.0'
+    testApi 'org.hamcrest:hamcrest-library:1.3'
+    testApi 'org.apache.maven:maven-ant-tasks:2.1.3'
+    testApi "org.robolectric:robolectric:4.3.1"
+    api 'androidx.multidex:multidex:2.0.1'
+    api('org.jitsi.react:jitsi-meet-sdk:2.5.0')
+}

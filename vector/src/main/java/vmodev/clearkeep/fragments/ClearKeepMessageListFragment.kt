@@ -31,10 +31,7 @@ import im.vector.util.*
 import im.vector.widgets.WidgetsManager
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.adapters.AbstractMessagesAdapter
-import org.matrix.androidsdk.core.JsonUtils
-import org.matrix.androidsdk.core.Log
-import org.matrix.androidsdk.core.MXPatterns
-import org.matrix.androidsdk.core.PermalinkUtils
+import org.matrix.androidsdk.core.*
 import org.matrix.androidsdk.core.callback.ApiCallback
 import org.matrix.androidsdk.core.callback.SimpleApiCallback
 import org.matrix.androidsdk.core.model.MatrixError
@@ -56,7 +53,6 @@ import vmodev.clearkeep.activities.UserInformationActivity
 import vmodev.clearkeep.activities.ViewUserProfileActivity
 import vmodev.clearkeep.adapters.MessagesAdapter
 import vmodev.clearkeep.fragments.BaseMessageListFragment.Companion.VERIF_REQ_CODE
-import vmodev.clearkeep.ultis.Debug
 import java.io.File
 import java.util.*
 

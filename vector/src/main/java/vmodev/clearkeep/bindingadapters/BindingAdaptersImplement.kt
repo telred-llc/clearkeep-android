@@ -20,6 +20,7 @@ import im.vector.extensions.getAttributeDrawable
 import im.vector.ui.themes.ThemeUtils
 import im.vector.util.VectorUtils
 import org.matrix.androidsdk.MXSession
+import org.matrix.androidsdk.core.Debug
 import org.matrix.androidsdk.core.EventDisplay
 import org.matrix.androidsdk.core.callback.SimpleApiCallback
 import org.matrix.androidsdk.crypto.MXDecryptionException
@@ -32,7 +33,6 @@ import org.matrix.androidsdk.rest.model.publicroom.PublicRoom
 import vmodev.clearkeep.enums.EventTypeEnum
 import vmodev.clearkeep.jsonmodels.MessageContent
 import vmodev.clearkeep.ultis.ClearKeepEventDisplay
-import vmodev.clearkeep.ultis.Debug
 import vmodev.clearkeep.ultis.formatSizeData
 import vmodev.clearkeep.ultis.toDateTime
 import vmodev.clearkeep.viewmodelobjects.Message
@@ -144,6 +144,15 @@ class BindingAdaptersImplement : ImageViewBindingAdapters, TextViewBindingAdapte
                                 Debug.e("--- message: null")
                             }
                         }
+                    } catch (e: MXDecryptionException) {
+                        Debug.e("--- Error: ${e.message}\n--- message: ${message.encryptedContent}")
+                    }
+                }
+                Event.EVENT_TYPE_STATE_ROOM_AVATAR -> {
+                    try {
+                        Debug.e("--- change Avatar")
+                        val message = ClearKeepEventDisplay.getMembershipNotice(textView.context, event, room.state)
+                        textView.text = message
                     } catch (e: MXDecryptionException) {
                         Debug.e("--- Error: ${e.message}\n--- message: ${message.encryptedContent}")
                     }
