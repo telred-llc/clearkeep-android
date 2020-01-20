@@ -55,6 +55,7 @@ import im.vector.util.ReadMarkerManager.LIVE_MODE
 import im.vector.util.ReadMarkerManager.PREVIEW_MODE
 import im.vector.view.*
 import im.vector.widgets.Widget
+import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import org.matrix.androidsdk.MXSession
 import org.matrix.androidsdk.call.IMXCall
@@ -92,6 +93,7 @@ import vmodev.clearkeep.ultis.RoomMediasSender
 import vmodev.clearkeep.viewmodels.interfaces.AbstractRoomActivityViewModel
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPreviewDataListener,
@@ -1645,45 +1647,45 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
             override fun onMatrixError(e: MatrixError) {
                 hideWaitingView()
                 Debug.e("--- onMatrixError Msg=" + e.message)
-                onError(e.localizedMessage)
-                return
                 if (e is MXCryptoError) {
                     val cryptoError = e
                     if (MXCryptoError.UNKNOWN_DEVICES_CODE == cryptoError.errcode) {
                         hideWaitingView()
-//                        CommonActivityUtils.displayUnknownDevicesDialog(mxSession,
-//                                this@RoomActivity,
-//                                cryptoError.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>,
-//                                true,
-//                                object : VectorUnknownDevicesFragment.IUnknownDevicesSendAnywayListener {
-//                                    override fun onSendAnyway() {
-//                                        startIpCall(useJitsiCall, aIsVideoCall)
-//                                    }
-//                                })
-
+                        val mData = ArrayList<Unit>()
                         val devicesInfo = cryptoError.mExceptionData as MXUsersDevicesMap<MXDeviceInfo>
                         devicesInfo.let {
                             val deviceList = getDevicesList(it)
                             deviceList.forEach { t: Pair<String, List<MXDeviceInfo>>? ->
                                 t?.second?.forEach { d: MXDeviceInfo? ->
                                     d?.let { mxDeviceInfo ->
-                                        Debug.e("--- Action verify")
                                         if (mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNVERIFIED || mxDeviceInfo.mVerified == MXDeviceInfo.DEVICE_VERIFICATION_UNKNOWN) {
-                                            mxSession!!.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, mxDeviceInfo.deviceId, mxDeviceInfo.userId, object : SimpleApiCallback<Void>() {
+                                            val s = mxSession!!.crypto?.setDeviceVerification(MXDeviceInfo.DEVICE_VERIFICATION_VERIFIED, mxDeviceInfo.deviceId, mxDeviceInfo.userId, object : SimpleApiCallback<Void>() {
                                                 override fun onSuccess(p0: Void?) {
-                                                    Debug.e("--- Verify device success: ${mxDeviceInfo.deviceId}")
+                                                    Debug.d("Verify device success " + mxDeviceInfo.deviceId.toString())
                                                 }
-
                                             })
+                                            mData.add(s!!)
                                         }
                                     }
                                 }
                             }
+
                         }
-                        return
+                        val disposable = Observable.just(mData).subscribeOn(Schedulers.io()).subscribeOn(Schedulers.newThread()).subscribe({
+                            when (isVideoCall) {
+                                true -> {
+                                    imageViewVideoCall.performClick()
+                                }
+                                false -> {
+                                    imageViewVoiceCall.performClick()
+                                }
+                            }
+                        }, {
+                            Debug.e("--- error: ${it.message}")
+                        })
+                        compositeDisposable?.addAll(disposable)
                     }
                 }
-                onError(e.localizedMessage)
             }
 
             override fun onUnexpectedError(e: Exception) {

@@ -37,7 +37,6 @@ android {
 
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    api "com.google.code.gson:gson:2.8.6"
     api "com.squareup.okhttp3:okhttp:4.3.1"
     api 'com.squareup.okhttp3:logging-interceptor:4.3.1'
     api 'com.facebook.stetho:stetho:1.5.1'
@@ -45,6 +44,8 @@ dependencies {
     api 'com.squareup.retrofit2:retrofit:2.7.1'
     api 'com.squareup.retrofit2:converter-gson:2.7.1'
     api 'com.squareup.retrofit2:adapter-rxjava2:2.7.1'
+    api 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    api 'io.reactivex.rxjava2:rxjava:2.2.17'
     api 'com.google.code.gson:gson:2.8.6'
     api 'androidx.appcompat:appcompat:1.1.0'
     api 'androidx.preference:preference:1.0.0'
