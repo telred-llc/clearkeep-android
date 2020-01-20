@@ -61,6 +61,7 @@ import java.util.TimerTask;
 
 public class MXCallsManager {
     private static final String LOG_TAG = MXCallsManager.class.getSimpleName();
+
     // Copied from vector-web:
     // FIXME: This currently forces Vector to try to hit the matrix.org AS for conferencing.
     // This is bad because it prevents people running their own ASes from being used.
@@ -70,18 +71,22 @@ public class MXCallsManager {
     private static final String DOMAIN = "matrix.org";
     private static final Map<String, String> mConferenceUserIdByRoomId = new HashMap<>();
     public static String defaultStunServerUri;
-    // active calls
-    private final Map<String, IMXCall> mCallsByCallId = new HashMap<>();
-    // listeners
-    private final Set<IMXCallsManagerListener> mListeners = new HashSet<>();
-    // incoming calls
-    private final Set<String> mxPendingIncomingCallId = new HashSet<>();
-    // UI handler
-    private final Handler mUIThreadHandler;
     private MXSession mSession = null;
     private Context mContext = null;
     private CallRestClient mCallResClient = null;
     private JsonElement mTurnServer = null;
+
+    // active calls
+    private final Map<String, IMXCall> mCallsByCallId = new HashMap<>();
+
+    // listeners
+    private final Set<IMXCallsManagerListener> mListeners = new HashSet<>();
+
+    // incoming calls
+    private final Set<String> mxPendingIncomingCallId = new HashSet<>();
+
+    // UI handler
+    private final Handler mUIThreadHandler;
     private Timer mTurnServerTimer = null;
 
     /**
@@ -91,29 +96,27 @@ public class MXCallsManager {
      * 3- IMXCallListener.onCallViewCreated(callview) -> insert the callview
      * 4- IMXCallListener.onCallReady() -> IMXCall.placeCall()
      * 5- the call states should follow theses steps
-     * CALL_STATE_WAIT_LOCAL_MEDIA
-     * CALL_STATE_WAIT_CREATE_OFFER
-     * CALL_STATE_INVITE_SENT
-     * CALL_STATE_RINGING
+     *    CALL_STATE_WAIT_LOCAL_MEDIA
+     *    CALL_STATE_WAIT_CREATE_OFFER
+     *    CALL_STATE_INVITE_SENT
+     *    CALL_STATE_RINGING
      * 6- the callee accepts the call
-     * CALL_STATE_CONNECTING
-     * CALL_STATE_CONNECTED
-     * <p>
+     *    CALL_STATE_CONNECTING
+     *    CALL_STATE_CONNECTED
+     *
      * To manage an incoming call
      * 1- IMXCall.createCallView
      * 2- IMXCallListener.onCallViewCreated(callview) -> insert the callview
      * 3- IMXCallListener.onCallReady(), IMXCall.launchIncomingCall()
      * 4- the call states should follow theses steps
-     * CALL_STATE_WAIT_LOCAL_MEDIA
-     * CALL_STATE_RINGING
+     *    CALL_STATE_WAIT_LOCAL_MEDIA
+     *    CALL_STATE_RINGING
      * 5- The user accepts the call, IMXCall.answer()
      * 6- the states should be
-     * CALL_STATE_CREATE_ANSWER
-     * CALL_STATE_CONNECTING
-     * CALL_STATE_CONNECTED
+     *    CALL_STATE_CREATE_ANSWER
+     *    CALL_STATE_CONNECTING
+     *    CALL_STATE_CONNECTED
      */
-    private boolean mSuspendTurnServerRefresh = false;
-    private CallClass mPreferredCallClass = CallClass.WEBRTC_CLASS;
 
     /**
      * Constructor
@@ -150,98 +153,6 @@ public class MXCallsManager {
         });
 
         refreshTurnServer();
-    }
-
-    /**
-     * Tell if a call is in progress.
-     *
-     * @param call the call
-     * @return true if the call is in progress
-     */
-    public static boolean isCallInProgress(IMXCall call) {
-        boolean res = false;
-
-        if (null != call) {
-            String callState = call.getCallState();
-            res = TextUtils.equals(callState, IMXCall.CALL_STATE_CREATED)
-                    || TextUtils.equals(callState, IMXCall.CALL_STATE_CREATING_CALL_VIEW)
-                    || TextUtils.equals(callState, IMXCall.CALL_STATE_READY)
-                    || TextUtils.equals(callState, IMXCall.CALL_STATE_WAIT_LOCAL_MEDIA)
-                    || TextUtils.equals(callState, IMXCall.CALL_STATE_WAIT_CREATE_OFFER)
-                    || TextUtils.equals(callState, IMXCall.CALL_STATE_INVITE_SENT)
-                    || TextUtils.equals(callState, IMXCall.CALL_STATE_RINGING)
-                    || TextUtils.equals(callState, IMXCall.CALL_STATE_CREATE_ANSWER)
-                    || TextUtils.equals(callState, IMXCall.CALL_STATE_CONNECTING)
-                    || TextUtils.equals(callState, IMXCall.CALL_STATE_CONNECTED);
-        }
-
-        return res;
-    }
-
-    /**
-     * Return the id of the conference user dedicated for a room Id
-     *
-     * @param roomId the room id
-     * @return the conference user id
-     */
-    public static String getConferenceUserId(String roomId) {
-        // sanity check
-        if (null == roomId) {
-            return null;
-        }
-
-        String conferenceUserId = mConferenceUserIdByRoomId.get(roomId);
-
-        // it does not exist, compute it.
-        if (null == conferenceUserId) {
-            byte[] data = null;
-
-            try {
-                data = roomId.getBytes(StandardCharsets.UTF_8);
-            } catch (Exception e) {
-                Log.e(LOG_TAG, "conferenceUserIdForRoom failed " + e.getMessage(), e);
-            }
-
-            if (null == data) {
-                return null;
-            }
-
-            String base64 = Base64.encodeToString(data, Base64.NO_WRAP | Base64.URL_SAFE).replace("=", "");
-            conferenceUserId = "@" + USER_PREFIX + base64 + ":" + DOMAIN;
-
-            mConferenceUserIdByRoomId.put(roomId, conferenceUserId);
-        }
-
-        return conferenceUserId;
-    }
-
-    /**
-     * Test if the provided user is a valid conference user Id
-     *
-     * @param userId the user id to test
-     * @return true if it is a valid conference user id
-     */
-    public static boolean isConferenceUserId(String userId) {
-        // test first if it a known conference user id
-        if (mConferenceUserIdByRoomId.values().contains(userId)) {
-            return true;
-        }
-
-        boolean res = false;
-
-        String prefix = "@" + USER_PREFIX;
-        String suffix = ":" + DOMAIN;
-
-        if (!TextUtils.isEmpty(userId) && userId.startsWith(prefix) && userId.endsWith(suffix)) {
-            String roomIdBase64 = userId.substring(prefix.length(), userId.length() - suffix.length());
-            try {
-                res = MXPatterns.isRoomId((new String(Base64.decode(roomIdBase64, Base64.NO_WRAP | Base64.URL_SAFE), StandardCharsets.UTF_8)));
-            } catch (Exception e) {
-                Log.e(LOG_TAG, "isConferenceUserId : failed " + e.getMessage(), e);
-            }
-        }
-
-        return res;
     }
 
     /**
@@ -403,9 +314,7 @@ public class MXCallsManager {
         return call;
     }
 
-    //==============================================================================================================
-    // Turn servers management
-    //==============================================================================================================
+    private boolean mSuspendTurnServerRefresh = false;
 
     /**
      * @return true if there are some active calls.
@@ -876,16 +785,16 @@ public class MXCallsManager {
         }
     }
 
+    //==============================================================================================================
+    // Turn servers management
+    //==============================================================================================================
+
     /**
      * Suspend the turn server  refresh
      */
     public void pauseTurnServerRefresh() {
         mSuspendTurnServerRefresh = true;
     }
-
-    //==============================================================================================================
-    // Conference call
-    //==============================================================================================================
 
     /**
      * Refresh the turn servers until it succeeds.
@@ -1036,6 +945,113 @@ public class MXCallsManager {
         });
     }
 
+    //==============================================================================================================
+    // Conference call
+    //==============================================================================================================
+    private CallClass mPreferredCallClass = CallClass.WEBRTC_CLASS;
+
+    /**
+     * Tell if a call is in progress.
+     *
+     * @param call the call
+     * @return true if the call is in progress
+     */
+    public static boolean isCallInProgress(IMXCall call) {
+        boolean res = false;
+
+        if (null != call) {
+            String callState = call.getCallState();
+            res = TextUtils.equals(callState, IMXCall.CALL_STATE_CREATED)
+                    || TextUtils.equals(callState, IMXCall.CALL_STATE_CREATING_CALL_VIEW)
+                    || TextUtils.equals(callState, IMXCall.CALL_STATE_READY)
+                    || TextUtils.equals(callState, IMXCall.CALL_STATE_WAIT_LOCAL_MEDIA)
+                    || TextUtils.equals(callState, IMXCall.CALL_STATE_WAIT_CREATE_OFFER)
+                    || TextUtils.equals(callState, IMXCall.CALL_STATE_INVITE_SENT)
+                    || TextUtils.equals(callState, IMXCall.CALL_STATE_RINGING)
+                    || TextUtils.equals(callState, IMXCall.CALL_STATE_CREATE_ANSWER)
+                    || TextUtils.equals(callState, IMXCall.CALL_STATE_CONNECTING)
+                    || TextUtils.equals(callState, IMXCall.CALL_STATE_CONNECTED);
+        }
+
+        return res;
+    }
+
+    /**
+     * Return the id of the conference user dedicated for a room Id
+     *
+     * @param roomId the room id
+     * @return the conference user id
+     */
+    public static String getConferenceUserId(String roomId) {
+        // sanity check
+        if (null == roomId) {
+            return null;
+        }
+
+        String conferenceUserId = mConferenceUserIdByRoomId.get(roomId);
+
+        // it does not exist, compute it.
+        if (null == conferenceUserId) {
+            byte[] data = null;
+
+            try {
+                data = roomId.getBytes(StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "conferenceUserIdForRoom failed " + e.getMessage(), e);
+            }
+
+            if (null == data) {
+                return null;
+            }
+
+            String base64 = Base64.encodeToString(data, Base64.NO_WRAP | Base64.URL_SAFE).replace("=", "");
+            conferenceUserId = "@" + USER_PREFIX + base64 + ":" + DOMAIN;
+
+            mConferenceUserIdByRoomId.put(roomId, conferenceUserId);
+        }
+
+        return conferenceUserId;
+    }
+
+    /**
+     * Test if the provided user is a valid conference user Id
+     *
+     * @param userId the user id to test
+     * @return true if it is a valid conference user id
+     */
+    public static boolean isConferenceUserId(String userId) {
+        // test first if it a known conference user id
+        if (mConferenceUserIdByRoomId.values().contains(userId)) {
+            return true;
+        }
+
+        boolean res = false;
+
+        String prefix = "@" + USER_PREFIX;
+        String suffix = ":" + DOMAIN;
+
+        if (!TextUtils.isEmpty(userId) && userId.startsWith(prefix) && userId.endsWith(suffix)) {
+            String roomIdBase64 = userId.substring(prefix.length(), userId.length() - suffix.length());
+            try {
+                res = MXPatterns.isRoomId((new String(Base64.decode(roomIdBase64, Base64.NO_WRAP | Base64.URL_SAFE), StandardCharsets.UTF_8)));
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "isConferenceUserId : failed " + e.getMessage(), e);
+            }
+        }
+
+        return res;
+    }
+
+    /**
+     * Defines the call classes.
+     */
+    public enum CallClass {
+        // disabled because of https://github.com/vector-im/riot-android/issues/1660
+        //CHROME_CLASS,
+        WEBRTC_CLASS,
+        DEFAULT_CLASS
+    }
+
     /**
      * Invite the conference user to a room.
      * It is mandatory before starting a conference call.
@@ -1137,6 +1153,10 @@ public class MXCallsManager {
         }
     }
 
+    //==============================================================================================================
+    // listeners management
+    //==============================================================================================================
+
     /**
      * Add a listener
      *
@@ -1149,10 +1169,6 @@ public class MXCallsManager {
             }
         }
     }
-
-    //==============================================================================================================
-    // listeners management
-    //==============================================================================================================
 
     /**
      * Remove a listener
@@ -1274,15 +1290,5 @@ public class MXCallsManager {
                 Log.e(LOG_TAG, "dispatchOnVoipConferenceFinished " + e.getMessage(), e);
             }
         }
-    }
-
-    /**
-     * Defines the call classes.
-     */
-    public enum CallClass {
-        // disabled because of https://github.com/vector-im/riot-android/issues/1660
-        //CHROME_CLASS,
-        WEBRTC_CLASS,
-        DEFAULT_CLASS
     }
 }
