@@ -79,7 +79,7 @@ class OutgoingVideoCallCallFragment : DataBindingDaggerFragment(), IFragment {
     }
 
     private fun saveCallView() {
-        if ((null != mCall) && !mCall.callState.equals(IMXCall.CALL_STATE_ENDED) && (null != mCallView) && null != mCallView?.parent) {
+        if (null != mCall && !mCall.callState.equals(IMXCall.CALL_STATE_ENDED) && null != mCallView && null != mCallView?.parent) {
             mCall.onPause()
             val parent = mCallView?.parent as ViewGroup
             parent.removeView(mCallView)
