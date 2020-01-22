@@ -50,6 +50,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
 import org.matrix.androidsdk.MXSession;
+import org.matrix.androidsdk.call.CallSoundsManager;
 import org.matrix.androidsdk.core.Log;
 import org.matrix.androidsdk.core.callback.ApiCallback;
 import org.matrix.androidsdk.core.callback.SimpleApiCallback;
@@ -65,7 +66,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -88,6 +88,7 @@ import im.vector.listeners.YesNoListener;
 import im.vector.services.EventStreamServiceX;
 import im.vector.ui.badge.BadgeProxy;
 import im.vector.util.PreferencesManager;
+import vmodev.clearkeep.applications.ClearKeepApplication;
 
 /**
  * Contains useful functions which are called in multiple activities.
@@ -373,8 +374,8 @@ public class CommonActivityUtils {
         // if no activity is provided, use the application context instead.
         final Context context = (null == activity) ? VectorApp.getInstance().getApplicationContext() : activity;
         EventStreamServiceX.Companion.onLogout(context);
-        VectorApp.getInstance().getNotificationDrawerManager().clearAllEvents();
-
+        ClearKeepApplication.getInstance().getNotificationDrawerManager().clearAllEvents();
+        CallSoundsManager.getSharedInstance(context).stopRinging();
         // stopEventStream(context);
 
         BadgeProxy.INSTANCE.updateBadgeCount(context, 0);

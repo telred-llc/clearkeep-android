@@ -28,6 +28,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.matrix.androidsdk.MXSession;
+import org.matrix.androidsdk.core.Debug;
 import org.matrix.androidsdk.core.JsonUtils;
 import org.matrix.androidsdk.core.Log;
 import org.matrix.androidsdk.core.MXPatterns;
@@ -631,55 +632,60 @@ public class MXCallsManager {
                         // when a room is encrypted, test first there is no unknown device
                         // else the call will fail.
                         // So it seems safer to reject the call creation it it will fail.
-                        if (room.isEncrypted() && mSession.getCrypto().warnOnUnknownDevices()) {
-                            room.getJoinedMembersAsync(new SimpleApiCallback<List<RoomMember>>(callback) {
-                                @Override
-                                public void onSuccess(List<RoomMember> members) {
-                                    if (members.size() != 2) {
-                                        // Safety check
-                                        callback.onUnexpectedError(new Exception("Wrong number of members"));
-                                        return;
-                                    }
+                        try {
+                            if (room.isEncrypted() && mSession.getCrypto().warnOnUnknownDevices()) {
+                                room.getJoinedMembersAsync(new SimpleApiCallback<List<RoomMember>>(callback) {
+                                    @Override
+                                    public void onSuccess(List<RoomMember> members) {
+                                        if (members.size() != 2) {
+                                            // Safety check
+                                            callback.onUnexpectedError(new Exception("Wrong number of members"));
+                                            return;
+                                        }
 
-                                    String userId1 = members.get(0).getUserId();
-                                    String userId2 = members.get(1).getUserId();
+                                        String userId1 = members.get(0).getUserId();
+                                        String userId2 = members.get(1).getUserId();
 
-                                    // force the refresh to ensure that the devices list is up-to-date
-                                    mSession.getCrypto().checkUnknownDevices(Arrays.asList(userId1, userId2), new SimpleApiCallback<Void>(callback) {
-                                        @Override
-                                        public void onSuccess(Void anything) {
-                                            final IMXCall call = getCallWithCallId(null, true);
-                                            call.setRooms(room, room);
-                                            call.setIsVideo(isVideo);
-                                            dispatchOnOutgoingCall(call);
+                                        // force the refresh to ensure that the devices list is up-to-date
+                                        mSession.getCrypto().checkUnknownDevices(Arrays.asList(userId1, userId2), new SimpleApiCallback<Void>(callback) {
+                                            @Override
+                                            public void onSuccess(Void anything) {
+                                                final IMXCall call = getCallWithCallId(null, true);
+                                                call.setRooms(room, room);
+                                                call.setIsVideo(isVideo);
+                                                dispatchOnOutgoingCall(call);
 
-                                            if (null != callback) {
-                                                mUIThreadHandler.post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        callback.onSuccess(call);
-                                                    }
-                                                });
+                                                if (null != callback) {
+                                                    mUIThreadHandler.post(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            callback.onSuccess(call);
+                                                        }
+                                                    });
+                                                }
                                             }
+                                        });
+                                    }
+                                });
+                            } else {
+                                final IMXCall call = getCallWithCallId(null, true);
+                                call.setIsVideo(isVideo);
+                                dispatchOnOutgoingCall(call);
+                                call.setRooms(room, room);
+
+                                if (null != callback) {
+                                    mUIThreadHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            callback.onSuccess(call);
                                         }
                                     });
                                 }
-                            });
-                        } else {
-                            final IMXCall call = getCallWithCallId(null, true);
-                            call.setIsVideo(isVideo);
-                            dispatchOnOutgoingCall(call);
-                            call.setRooms(room, room);
-
-                            if (null != callback) {
-                                mUIThreadHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        callback.onSuccess(call);
-                                    }
-                                });
                             }
+                        } catch (Exception e) {
+                            Debug.e("--- Error: " + e.getMessage());
                         }
+
                     } else {
                         Log.d(LOG_TAG, "createCallInRoom : inviteConferenceUser");
 

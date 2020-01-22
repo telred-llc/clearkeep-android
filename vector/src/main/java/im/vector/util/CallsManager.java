@@ -635,10 +635,8 @@ public class CallsManager {
                     public void onMediaReadyToPlay() {
                         if (null != mCallActivity) {
                             if (mCallActivity instanceof VectorCallViewActivity) {
-                                Debug.e("--- EndHere 1");
                                 ((VectorCallViewActivity) mCallActivity).endCall();
                             } else {
-                                Debug.e("--- onEndHere 2");
                                 mCallActivity.finish();
                             }
                             mCallActivity = null;
