@@ -1685,6 +1685,8 @@ class RoomActivity : MXCActionBarActivity(), MatrixMessageListFragment.IRoomPrev
                         })
                         compositeDisposable?.addAll(disposable)
                     }
+                } else {
+                    onError(e.localizedMessage)
                 }
             }
 

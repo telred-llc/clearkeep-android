@@ -15,15 +15,15 @@ class OutgoingCallActivity : DataBindingDaggerActivity(), IActivity {
 
     private lateinit var binding: ActivityOutgoingCallBinding
     private lateinit var navController: NavController
-    private var mxCall: IMXCall? = null
+    private var mCall: IMXCall? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_outgoing_call, dataBinding.getDataBindingComponent())
         navController = findNavController(R.id.fragment)
-        mxCall = CallsManager.getSharedInstance().activeCall
-        if (mxCall != null) {
-            if (mxCall!!.isVideo) {
+        mCall = CallsManager.getSharedInstance().activeCall
+        if (mCall != null) {
+            if (mCall!!.isVideo) {
                 navController.navigate(R.id.outgoingVideoCallFragment)
             } else {
                 navController.navigate(R.id.outgoingVoiceCallFragment)

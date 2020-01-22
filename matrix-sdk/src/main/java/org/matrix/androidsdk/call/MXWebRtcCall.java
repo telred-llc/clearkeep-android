@@ -276,20 +276,16 @@ public class MXWebRtcCall extends MXCall {
     @Override
     public void createCallView() {
         super.createCallView();
-        Debug.e("--- createCallView()");
         if ((null != mIsSupported) && mIsSupported) {
-            Debug.e("--- createCallView(): " + mIsSupported);
 
             dispatchOnStateDidChange(CALL_STATE_CREATING_CALL_VIEW);
             mUIThreadHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     mCallView = new RelativeLayout(mContext);
-                    mCallView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-                            RelativeLayout.LayoutParams.MATCH_PARENT));
+                    mCallView.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
                     mCallView.setBackgroundColor(ContextCompat.getColor(mContext, android.R.color.black));
                     mCallView.setVisibility(View.GONE);
-
                     dispatchOnCallViewCreated(mCallView);
 
                     mUIThreadHandler.post(new Runnable() {
